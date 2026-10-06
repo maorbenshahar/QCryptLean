@@ -273,8 +273,7 @@ private theorem finalStage_program_denote_apply
         ((FinalStage.rawSystem n).splitAt .bob x')) = _
     rw [Instrument.liftAt_operation_apply]
     simp only [Equiv.apply_symm_apply]
-    simpa only [Matrix.submatrix_apply, Prod.eta, Equiv.symm_apply_apply] using
-      Instrument.nondemolitionReadout_operation_apply
+    have h := Instrument.nondemolitionReadout_operation_apply
         (QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec delta Q
           d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome) flag
         (sigma.submatrix
@@ -284,6 +283,8 @@ private theorem finalStage_program_denote_apply
             (y, ((FinalStage.rawSystem n).splitAt .bob x').2)))
         ((FinalStage.rawSystem n).splitAt .bob x).1
         ((FinalStage.rawSystem n).splitAt .bob x').1
+    simp only [Matrix.submatrix_apply, Prod.eta, Equiv.symm_apply_apply] at h
+    exact h
   have hFinalAtFlag
       (d : QKD.BB84.ClassicalTailData n m ell ellEV peSel leakEC)
       (sigma : Op (FinalStage.rawSystem n).total) (flag : Fin 2)
@@ -591,7 +592,8 @@ private theorem fusedStage_done_denote_apply
   have hop := QKD.BB84.fusedAnnouncement_liftedOperation_apply n ell ellEV peSel leakEC ec
     ((QKD.BB84.fusedPublicEquiv n ell ellEV peSel leakEC).symm o).1
     ((QKD.BB84.fusedPublicEquiv n ell ellEV peSel leakEC).symm o).2 sigma x x
-  simpa only [and_self, Fintype.card_fin] using hop
+  simp only [and_self, Fintype.card_fin] at hop
+  exact hop
 
 /-- One PE-bit readout, on the diagonal: the announced bit must be the reader's register bit. -/
 private theorem peBitAnnouncement_liftedOperation_diag
@@ -609,9 +611,10 @@ private theorem peBitAnnouncement_liftedOperation_diag
   refine (congrArg (fun q => (QKD.BB84.peBitAnnouncement n i actor).liftedOperation
     (LOCC.outcomeDigit 2 o) sigma q q)
     ((FinalStage.rawSystem n).splitAtSet_self_symm actor x)).symm.trans ?_
-  simpa only [and_self] using
-    QKD.BB84.peBitAnnouncement_liftedOperation_apply n i actor
-      (LOCC.outcomeDigit 2 o) sigma x x
+  have h := QKD.BB84.peBitAnnouncement_liftedOperation_apply n i actor
+    (LOCC.outcomeDigit 2 o) sigma x x
+  simp only [and_self] at h
+  exact h
 
 /-- The PE announcement loop over `r` rounds followed by the fused stage, read on the diagonal:
 every announced PE bit must be the corresponding register bit, and the fused announcement must
@@ -1005,7 +1008,7 @@ theorem rawClassicalTailProgram_output_apply
     exact hq (hp.symm.trans hp')
 
 /-- Internal nonzero-dimension evidence for the explicit complete tail boundary. -/
-@[implicit_reducible] def rawClassicalTailBoundaryCardNeZero
+theorem rawClassicalTailBoundaryCardNeZero
     (n m ell ellEV : ℕ) (peSel : Fin n → Bool) (leakEC : ℕ) :
     NeZero (Fintype.card
       (QKD.BB84.rawClassicalTailBoundary n m ell ellEV peSel leakEC).space) := by

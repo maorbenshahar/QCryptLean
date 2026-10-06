@@ -564,7 +564,7 @@ private theorem weightedSelectedMeasurementProgram_denote_apply
         (weightedMeasurementSchedule pA pB N).denote rho := by
     ext q q'
     simp [sigma, Program.denote_done, reindexOp,
-      Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply]
+      Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
   -- The grafted continuation runs the selected-record continuation on `sigma`.
   have hgraft :
       (weightedSelectedMeasurementProgram pA pB N f).denote rho =

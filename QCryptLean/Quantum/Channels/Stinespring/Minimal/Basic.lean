@@ -214,7 +214,7 @@ theorem MinimalStinespringDilation.reindex
     have hMA :
         V' * A' * V'.conjTranspose =
         (V * A'.submatrix eN eN * V.conjTranspose).submatrix rowEqInv rowEqInv := by
-      simpa [Equiv.symm_symm] using matrix_conj_submatrix_apply V rowEqInv eN.symm A'
+      exact matrix_conj_submatrix_apply V rowEqInv eN.symm A'
     rw [hMA]
     have hpt :=
       partialTraceB_submatrix_prodEquiv (m := m') (m' := m) (envDim := envDim) eM.symm

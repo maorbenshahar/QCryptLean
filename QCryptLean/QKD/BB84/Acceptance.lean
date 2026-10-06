@@ -234,7 +234,8 @@ theorem successfulCompleteContinuation_acceptWeight (N nK mZ mX ℓ ℓEV leakEC
   refine hgraft.trans ?_
   have htail := rawClassicalTail_acceptWeight_apply (nK + mZ + mX) (mZ + mX) ℓ ℓEV
     (@Sampling.packedPESel nK mZ mX) (@Sampling.packedXSel nK mZ mX) leakEC ec δ Q
-    (BoundaryKeyLayout.leafBlock () ((selectedBitsToRawProgram N (nK + mZ + mX)).denote σ))
+    (BoundaryKeyLayout.leafBlock (B := .leaf (FinalStage.rawSystem (nK + mZ + mX))) ()
+      ((selectedBitsToRawProgram N (nK + mZ + mX)).denote σ))
   rw [BoundaryKeyLayout.acceptWeight] at htail
   refine (Boundary.exitWeight_congr _ (fun _ => Iff.rfl) _).trans (htail.trans ?_)
   simp only [BoundaryKeyLayout.leafBlock_apply]

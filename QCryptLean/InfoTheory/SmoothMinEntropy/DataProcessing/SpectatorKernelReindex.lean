@@ -79,9 +79,9 @@ lemma reindexHetero_blockDiagRefOp {a b dC : ℕ} (e : Fin a ≃ Fin b)
     (ν : Fin dC → SubDensityOp a) :
     Matrix.reindex (tensorRightCongrEquiv dC e) (tensorRightCongrEquiv dC e) (blockDiagRefOp ν) =
       blockDiagRefOp (fun p => SubDensityOp.reindexHetero e (ν p)) := by
-  rw [blockDiagRefOp, blockDiagRefOp, ← Matrix.reindexLinearEquiv_apply ℂ ℂ, map_sum]
+  rw [blockDiagRefOp, blockDiagRefOp, ← Matrix.coe_reindexLinearEquiv ℂ ℂ, map_sum]
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [Matrix.reindexLinearEquiv_apply, reindex_tensorRightCongrEquiv_tensor]
+  rw [Matrix.coe_reindexLinearEquiv, reindex_tensorRightCongrEquiv_tensor]
   rfl
 
 /-- The reindexed block family is still sub-normalised: a reindex preserves the trace. -/

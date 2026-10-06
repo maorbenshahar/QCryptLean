@@ -560,7 +560,7 @@ canonical output reindexing.  The latter program still records the explicit `Uni
     (reindexOp (Boundary.unitAnnouncementSpaceEquiv (Boundary.leaf V.out))).comp
         V.asUnitAnnouncement.run.denote =
       V.run.denote := by
-  simpa only [AnnouncedAction.run, PrivateAction.run] using
+  exact
     V.reindex_denote_asUnitAnnouncement_then
       (Program.done : Program V.out (.leaf V.out))
 

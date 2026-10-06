@@ -557,7 +557,6 @@ lemma supportProjector_unitary_conj {N : ℕ} (σ : DensityOp N) (U : Op N)
   -- The conjugate hypothesis for `Uᴴ`: `Uᴴ·σ·U = σ`.
   have hconj' : U.conjTranspose * σ.toOp * U = σ.toOp := by
     have h := congrArg (fun M => U.conjTranspose * M * U) hconj
-    simp only at h
     rw [show U.conjTranspose * (U * σ.toOp * U.conjTranspose) * U
         = (U.conjTranspose * U) * σ.toOp * (U.conjTranspose * U) from by noncomm_ring,
       hU2, Matrix.one_mul, Matrix.mul_one] at h

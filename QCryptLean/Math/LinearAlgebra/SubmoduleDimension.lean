@@ -11,7 +11,7 @@ import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.Analysis.Matrix.Spectrum
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Analysis.Convex.Combination
 
 /-!

@@ -173,7 +173,7 @@ theorem weightedFrobeniusSq_regExt {dE dV : ℕ} [NeZero dV]
   have hσ : σ.PosDef := by
     rw [hσ_def]; unfold Quantum.TensorProducts.Op.tensor
     rw [Matrix.reindex_apply]
-    exact (Matrix.PosDef.kronecker hσE hM).submatrix_equiv finProdFinEquiv.symm
+    exact (Matrix.PosDef.kronecker hσE hM).submatrix finProdFinEquiv.symm.injective
   have hσE_nn : (0 : Op dE) ≤ σE := Matrix.nonneg_iff_posSemidef.mpr hσE.posSemidef
   have hM_nn : (0 : Op dV) ≤ M := Matrix.nonneg_iff_posSemidef.mpr hM.posSemidef
   set F : Op (dE * dV) := σ ^ (-1/4 : ℝ) with hF_def

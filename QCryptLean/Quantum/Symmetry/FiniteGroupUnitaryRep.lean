@@ -552,9 +552,7 @@ theorem IsIrreduciblyEquivalentGen_of_intertwiner_ne_zero {G : Type*} [Group G]
     rw [hc', Matrix.smul_mul, Matrix.one_mul, hc, Matrix.mul_smul, Matrix.mul_one] at hassoc
     have hentry : c' * Λ k l = c * Λ k l := by
       have h := congrArg (fun M : Matrix (Fin d) (Fin d') ℂ => M k l) hassoc
-      rwa [show (fun M : Matrix (Fin d) (Fin d') ℂ => M k l) (c' • Λ) = c' • Λ k l from rfl,
-        show (fun M : Matrix (Fin d) (Fin d') ℂ => M k l) (c • Λ) = c • Λ k l from rfl,
-        smul_eq_mul, smul_eq_mul] at h
+      exact h
     exact mul_right_cancel₀ hkl hentry
   -- The dimensions agree: the traces give `c · d = c' · d'` (cyclicity of the trace)
   have hdd : d = d' := by

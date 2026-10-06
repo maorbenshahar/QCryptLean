@@ -436,7 +436,7 @@ lemma exists_left_factor_contraction_of_sq_eq_selfAdjoint
   -- Extend it by zero on the orthogonal complement of the range; `U` is its matrix.
   let K : Submodule ℂ (EuclideanSpace ℂ (Fin d)) := LinearMap.range TP
   let C : EuclideanSpace ℂ (Fin d) →L[ℂ] EuclideanSpace ℂ (Fin a) :=
-    L.toContinuousLinearMap.comp K.orthogonalProjection
+    L.toContinuousLinearMap.comp K.orthogonalProjectionOnto
   let U : Matrix (Fin a) (Fin d) ℂ := Matrix.toEuclideanLin.symm C.toLinearMap
   have hU : Matrix.toEuclideanLin U = C.toLinearMap := LinearEquiv.apply_symm_apply _ _
   refine ⟨U.conjTranspose, ?_, ?_⟩
@@ -444,13 +444,13 @@ lemma exists_left_factor_contraction_of_sq_eq_selfAdjoint
     have hUP : U * P = M.conjTranspose := by
       refine Matrix.toEuclideanLin.injective (LinearMap.ext fun x => ?_)
       rw [Matrix.toLpLin_mul_same, LinearMap.comp_apply, hU]
-      exact (congrArg L (Submodule.orthogonalProjection_mem_subspace_eq_self (K := K)
+      exact (congrArg L (Submodule.orthogonalProjectionOnto_mem_subspace_eq_self (K := K)
         ⟨TP x, LinearMap.mem_range_self TP x⟩)).trans (hL x)
     rw [← Matrix.conjTranspose_conjTranspose M, ← hUP, Matrix.conjTranspose_mul, hP_herm]
   · -- `‖Uᴴ‖ = ‖U‖ = ‖C‖ ≤ 1`: `‖C x‖ = ‖proj x‖ ≤ ‖x‖`, since `L` is an isometry.
     have hC : ‖C‖ ≤ 1 := C.opNorm_le_bound zero_le_one fun x => by
       rw [one_mul]
-      exact (L.norm_map _).trans_le (K.norm_orthogonalProjection_apply_le x)
+      exact (L.norm_map _).trans_le (K.norm_orthogonalProjectionOnto_apply_le x)
     rw [Matrix.l2_opNorm_conjTranspose, Matrix.l2_opNorm_def, LinearEquiv.trans_apply, hU]
     exact hC
 

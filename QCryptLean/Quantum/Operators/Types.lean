@@ -4,7 +4,7 @@ import Mathlib.Data.Complex.Basic
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Real.Basic
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Data.Fin.Basic
 import Mathlib.LinearAlgebra.Matrix.Notation
 import Mathlib.LinearAlgebra.Matrix.Hermitian
@@ -339,7 +339,7 @@ def DensityOp.convexComb {n : ℕ} (p : ℝ) (hp : 0 ≤ p ∧ p ≤ 1)
     unfold IsHermitian
     rw [conjTranspose_add, conjTranspose_smul, conjTranspose_smul]
     rw [ρ.toPosSemidefOp.toHermitianOp.isHermitian, σ.toPosSemidefOp.toHermitianOp.isHermitian]
-    simp only [star, id_eq]⟩, by
+    simp only [star]⟩, by
     -- Positive semidefinite: ⟨x|(p•ρ + (1-p)•σ)|x⟩ = p⟨x|ρ|x⟩ + (1-p)⟨x|σ|x⟩ ≥ 0
     intro x
     have h_ρ := ρ.toPosSemidefOp.pos_semidef x

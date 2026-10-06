@@ -163,8 +163,7 @@ lemma partialTraceA_projector_sandwich_posSemidef {n m : ℕ}
     (P : Op n) (M : Op (n * m))
     (hP_herm : P† = P) (hM_psd : M.PosSemidef) :
     (partialTraceA (Op.tensor P (1 : Op m) * M * Op.tensor P (1 : Op m))).PosSemidef := by
-  simpa using
-    posSemidefOp_implies_mathlib
+  exact posSemidefOp_implies_mathlib
       (partialTraceA_projector_sandwich_posSemidefOp P M hP_herm hM_psd)
 
 /-- Quadratic-form nonnegativity for the conditioned partial trace. -/

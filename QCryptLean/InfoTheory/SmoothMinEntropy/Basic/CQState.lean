@@ -202,7 +202,7 @@ lemma CQState.partialTraceB_eq_of_stateMap_partialTraceB_eq
     ρER.partialTraceB = ρE := by
   apply CQState.partialTraceB_eq_of_stateMap_toOp ρER ρE
   intro x
-  simpa using congrArg (fun ρ : SubDensityOp dE => ρ.toOp) (hblocks x)
+  exact congrArg (fun ρ : SubDensityOp dE => ρ.toOp) (hblocks x)
 
 /-- Quantum marginal operator: sum of quantum states. -/
 def CQState.quantumMarginalOp {X : Type*} [Fintype X] {n : ℕ}

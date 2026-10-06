@@ -294,8 +294,7 @@ theorem successCompleteOutputEmbedding_exit
   have hspec := cast_graft_exit B C e h q
   delta successCompleteOutputEmbedding successExitMap QKD.BB84.exitEquiv
   delta QKD.BB84.boundary
-  set_option backward.isDefEq.lazyProjDelta false in
-    with_reducible_and_instances exact hspec
+  with_reducible_and_instances exact hspec
 
 /-- Prefixing a successful raw control preserves the actual output disposition. -/
 theorem successExitMap_disposition
@@ -307,25 +306,24 @@ theorem successExitMap_disposition
         (successExitMap N nK mZ mX ℓ ℓEV leakEC ω hω e) =
       (QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
         (@Sampling.packedPESel nK mZ mX) leakEC).disposition e := by
-  set_option backward.isDefEq.lazyProjDelta false in
-    let outer := Measurement.lateSelectionExit N nK mZ mX ω
-    let h := (completeContinuationBoundary_success
-      N nK mZ mX ℓ ℓEV leakEC ω hω).symm
-    let g := Boundary.graftExitEquiv
-      (Measurement.lateSelectionBoundary N nK mZ mX)
-      (QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC)
-    delta QKD.BB84.outputLayout successExitMap QKD.BB84.exitEquiv
-    delta QKD.BB84.boundary QKD.OutputLayout.graftFixedParties
-    with_reducible_and_instances
-      change (QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
-          (g (g.symm ⟨outer, Equiv.cast (congrArg Boundary.Exit h) e⟩)).1).disposition
-            (g (g.symm ⟨outer, Equiv.cast (congrArg Boundary.Exit h) e⟩)).2 = _
-    rw [g.apply_symm_apply]
-    rw [show QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC outer =
-        QKD.OutputLayout.transport h (QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX)
-          ℓ ℓEV (@Sampling.packedPESel nK mZ mX) leakEC) from
-      completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω]
-    exact QKD.OutputLayout.transport_disposition h _ e
+  let outer := Measurement.lateSelectionExit N nK mZ mX ω
+  let h := (completeContinuationBoundary_success
+    N nK mZ mX ℓ ℓEV leakEC ω hω).symm
+  let g := Boundary.graftExitEquiv
+    (Measurement.lateSelectionBoundary N nK mZ mX)
+    (QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC)
+  delta QKD.BB84.outputLayout successExitMap QKD.BB84.exitEquiv
+  delta QKD.BB84.boundary QKD.OutputLayout.graftFixedParties
+  with_reducible_and_instances
+    change (QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
+        (g (g.symm ⟨outer, Equiv.cast (congrArg Boundary.Exit h) e⟩)).1).disposition
+          (g (g.symm ⟨outer, Equiv.cast (congrArg Boundary.Exit h) e⟩)).2 = _
+  rw [g.apply_symm_apply]
+  rw [show QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC outer =
+      QKD.OutputLayout.transport h (QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX)
+        ℓ ℓEV (@Sampling.packedPESel nK mZ mX) leakEC) from
+    completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω]
+  exact QKD.OutputLayout.transport_disposition h _ e
 
 /-- On an accepting raw classical-tail point, the successful complete-output embedding preserves
 Alice's and Bob's key coordinates in that order.  The target acceptance proof is derived from
@@ -352,75 +350,74 @@ theorem successCompleteOutputEmbedding_acceptedKeys
       (L.acceptCoordinates htarget (V q).2).2.1) =
       ((R.acceptCoordinates haccept q.2).1,
         (R.acceptCoordinates haccept q.2).2.1) := by
-  set_option backward.isDefEq.lazyProjDelta false in
-    have accepted_pair {B₁ B₂ : Boundary Party}
-        (L₁ : QKD.OutputLayout B₁) (L₂ : QKD.OutputLayout B₂)
-        (x : B₁.space) (y : B₂.space)
-        (h₁ : L₁.disposition x.1 = .accept ℓ)
-        (h₂ : L₂.disposition y.1 = .accept ℓ)
-        (hk : (L₁.coordinates x.1 x.2).1 ≍ (L₂.coordinates y.1 y.2).1 ∧
-          (L₁.coordinates x.1 x.2).2.1 ≍ (L₂.coordinates y.1 y.2).2.1) :
-        ((L₁.toBoundaryKeyLayout.acceptCoordinates h₁ x.2).1,
-          (L₁.toBoundaryKeyLayout.acceptCoordinates h₁ x.2).2.1) =
-        ((L₂.toBoundaryKeyLayout.acceptCoordinates h₂ y.2).1,
-          (L₂.toBoundaryKeyLayout.acceptCoordinates h₂ y.2).2.1) := by
-      apply Prod.ext
-      · exact BoundaryKeyLayout.acceptCoordinates_fst_eq_of_coordinates_fst_heq
-          L₁.toBoundaryKeyLayout L₂.toBoundaryKeyLayout h₁ h₂ x.2 y.2 hk.1
-      · exact BoundaryKeyLayout.acceptCoordinates_snd_fst_eq_of_coordinates_snd_fst_heq
-          L₁.toBoundaryKeyLayout L₂.toBoundaryKeyLayout h₁ h₂ x.2 y.2 hk.2
-    have transport_keys {B C : Boundary Party} (h : B = C)
-        (L : QKD.OutputLayout B) (r : B.space) :
-        let x := Equiv.cast (congrArg Boundary.space h) r
-        ((QKD.OutputLayout.transport h L).coordinates x.1 x.2).1 ≍
-            (L.coordinates r.1 r.2).1 ∧
-          ((QKD.OutputLayout.transport h L).coordinates x.1 x.2).2.1 ≍
-            (L.coordinates r.1 r.2).2.1 := by
-      cases h
-      exact ⟨HEq.rfl, HEq.rfl⟩
-    let B := Measurement.lateSelectionBoundary N nK mZ mX
-    let C := QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC
-    let Lc := QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
-    let R := QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
-      (@Sampling.packedPESel nK mZ mX) leakEC
-    let outer := Measurement.lateSelectionExit N nK mZ mX ω
-    let h := (completeContinuationBoundary_success
-      N nK mZ mX ℓ ℓEV leakEC ω hω).symm
-    let qc := Equiv.cast (congrArg Boundary.space h) q
-    have hLc : Lc outer = QKD.OutputLayout.transport h R :=
-      completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω
-    have hc := transport_keys h R q
-    rw [← hLc] at hc
-    have hp : successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q =
-        (Boundary.graftSpaceEquiv B C).symm ⟨outer, qc⟩ := by
-      delta successCompleteOutputEmbedding QKD.BB84.boundary
-      with_reducible_and_instances rfl
-    have hg := QKD.OutputLayout.graftFixedParties_coordinates_keys_heq B C Lc .alice .bob
-      (by decide)
-      (QKD.BB84.completeContinuationOutputLayout_alice N nK mZ mX ℓ ℓEV leakEC)
-      (QKD.BB84.completeContinuationOutputLayout_bob N nK mZ mX ℓ ℓEV leakEC) outer qc
-      (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q) hp
-    let L := QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC
-    let x := successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q
-    have htarget : L.disposition x.1 = .accept ℓ := by
-      change (QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC).disposition
-        (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).1 = _
-      rw [successCompleteOutputEmbedding_exit, successExitMap_disposition]
-      exact haccept
-    have hk :
-        ((QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC).coordinates
-          (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).1
-          (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).2).1 ≍
-            (R.coordinates q.1 q.2).1 ∧
-        ((QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC).coordinates
-          (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).1
-          (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).2).2.1 ≍
-            (R.coordinates q.1 q.2).2.1 := by
-      delta QKD.BB84.outputLayout
-      delta QKD.BB84.boundary
-      with_reducible_and_instances exact ⟨hg.1.trans hc.1, hg.2.trans hc.2⟩
-    with_reducible_and_instances
-      exact accepted_pair L R x q htarget haccept hk
+  have accepted_pair {B₁ B₂ : Boundary Party}
+      (L₁ : QKD.OutputLayout B₁) (L₂ : QKD.OutputLayout B₂)
+      (x : B₁.space) (y : B₂.space)
+      (h₁ : L₁.disposition x.1 = .accept ℓ)
+      (h₂ : L₂.disposition y.1 = .accept ℓ)
+      (hk : (L₁.coordinates x.1 x.2).1 ≍ (L₂.coordinates y.1 y.2).1 ∧
+        (L₁.coordinates x.1 x.2).2.1 ≍ (L₂.coordinates y.1 y.2).2.1) :
+      ((L₁.toBoundaryKeyLayout.acceptCoordinates h₁ x.2).1,
+        (L₁.toBoundaryKeyLayout.acceptCoordinates h₁ x.2).2.1) =
+      ((L₂.toBoundaryKeyLayout.acceptCoordinates h₂ y.2).1,
+        (L₂.toBoundaryKeyLayout.acceptCoordinates h₂ y.2).2.1) := by
+    apply Prod.ext
+    · exact BoundaryKeyLayout.acceptCoordinates_fst_eq_of_coordinates_fst_heq
+        L₁.toBoundaryKeyLayout L₂.toBoundaryKeyLayout h₁ h₂ x.2 y.2 hk.1
+    · exact BoundaryKeyLayout.acceptCoordinates_snd_fst_eq_of_coordinates_snd_fst_heq
+        L₁.toBoundaryKeyLayout L₂.toBoundaryKeyLayout h₁ h₂ x.2 y.2 hk.2
+  have transport_keys {B C : Boundary Party} (h : B = C)
+      (L : QKD.OutputLayout B) (r : B.space) :
+      let x := Equiv.cast (congrArg Boundary.space h) r
+      ((QKD.OutputLayout.transport h L).coordinates x.1 x.2).1 ≍
+          (L.coordinates r.1 r.2).1 ∧
+        ((QKD.OutputLayout.transport h L).coordinates x.1 x.2).2.1 ≍
+          (L.coordinates r.1 r.2).2.1 := by
+    cases h
+    exact ⟨HEq.rfl, HEq.rfl⟩
+  let B := Measurement.lateSelectionBoundary N nK mZ mX
+  let C := QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC
+  let Lc := QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
+  let R := QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
+    (@Sampling.packedPESel nK mZ mX) leakEC
+  let outer := Measurement.lateSelectionExit N nK mZ mX ω
+  let h := (completeContinuationBoundary_success
+    N nK mZ mX ℓ ℓEV leakEC ω hω).symm
+  let qc := Equiv.cast (congrArg Boundary.space h) q
+  have hLc : Lc outer = QKD.OutputLayout.transport h R :=
+    completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω
+  have hc := transport_keys h R q
+  rw [← hLc] at hc
+  have hp : successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q =
+      (Boundary.graftSpaceEquiv B C).symm ⟨outer, qc⟩ := by
+    delta successCompleteOutputEmbedding QKD.BB84.boundary
+    with_reducible_and_instances rfl
+  have hg := QKD.OutputLayout.graftFixedParties_coordinates_keys_heq B C Lc .alice .bob
+    (by decide)
+    (QKD.BB84.completeContinuationOutputLayout_alice N nK mZ mX ℓ ℓEV leakEC)
+    (QKD.BB84.completeContinuationOutputLayout_bob N nK mZ mX ℓ ℓEV leakEC) outer qc
+    (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q) hp
+  let L := QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC
+  let x := successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q
+  have htarget : L.disposition x.1 = .accept ℓ := by
+    change (QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC).disposition
+      (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).1 = _
+    rw [successCompleteOutputEmbedding_exit, successExitMap_disposition]
+    exact haccept
+  have hk :
+      ((QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC).coordinates
+        (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).1
+        (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).2).1 ≍
+          (R.coordinates q.1 q.2).1 ∧
+      ((QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC).coordinates
+        (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).1
+        (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).2).2.1 ≍
+          (R.coordinates q.1 q.2).2.1 := by
+    delta QKD.BB84.outputLayout
+    delta QKD.BB84.boundary
+    with_reducible_and_instances exact ⟨hg.1.trans hc.1, hg.2.trans hc.2⟩
+  with_reducible_and_instances
+    exact accepted_pair L R x q htarget haccept hk
 
 /-- The raw-tail and complete actual residual types agree at the explicit successful exit map.
 This is the well-typedness law for the residual-coordinate embedding; it is a named obligation,
@@ -435,35 +432,34 @@ theorem successExitMap_residual_type
       (QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV
         leakEC).toBoundaryKeyLayout.Residual
           (successExitMap N nK mZ mX ℓ ℓEV leakEC ω hω e) := by
-  set_option backward.isDefEq.lazyProjDelta false in
-    have cast_graft_residual (B : Boundary Party) (C : B.Exit → Boundary Party)
-        (L : ∀ e, QKD.OutputLayout (C e)) (a b : Party) (hab : a ≠ b)
-        (hA : ∀ e, (L e).alice = a) (hB : ∀ e, (L e).bob = b)
-        {D : Boundary Party} (e : B.Exit) (h : D = C e) (R : QKD.OutputLayout D)
-        (hL : L e = QKD.OutputLayout.transport h R) (f : D.Exit) :
-        R.Residual f =
-          (QKD.OutputLayout.graftFixedParties a b hab L hA hB).Residual
-            ((Boundary.graftExitEquiv B C).symm
-              ⟨e, Equiv.cast (congrArg Boundary.Exit h) f⟩) := by
-      subst D
-      exact (congrArg (fun M : QKD.OutputLayout (C e) => M.Residual f) hL).symm.trans
-        (QKD.OutputLayout.graftFixedParties_residual B C L a b hab hA hB e f).symm
-    let B := Measurement.lateSelectionBoundary N nK mZ mX
-    let C := QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC
-    let Lc := QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
-    let R := QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
-      (@Sampling.packedPESel nK mZ mX) leakEC
-    let outer := Measurement.lateSelectionExit N nK mZ mX ω
-    let h := (completeContinuationBoundary_success
-      N nK mZ mX ℓ ℓEV leakEC ω hω).symm
-    have hLc : Lc outer = QKD.OutputLayout.transport h R :=
-      completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω
-    have hspec := cast_graft_residual B C Lc .alice .bob (by decide)
-      (QKD.BB84.completeContinuationOutputLayout_alice N nK mZ mX ℓ ℓEV leakEC)
-      (QKD.BB84.completeContinuationOutputLayout_bob N nK mZ mX ℓ ℓEV leakEC) outer h R hLc e
-    delta QKD.OutputLayout.toBoundaryKeyLayout QKD.BB84.outputLayout
-    delta successExitMap QKD.BB84.exitEquiv QKD.BB84.boundary
-    with_reducible_and_instances exact hspec
+  have cast_graft_residual (B : Boundary Party) (C : B.Exit → Boundary Party)
+      (L : ∀ e, QKD.OutputLayout (C e)) (a b : Party) (hab : a ≠ b)
+      (hA : ∀ e, (L e).alice = a) (hB : ∀ e, (L e).bob = b)
+      {D : Boundary Party} (e : B.Exit) (h : D = C e) (R : QKD.OutputLayout D)
+      (hL : L e = QKD.OutputLayout.transport h R) (f : D.Exit) :
+      R.Residual f =
+        (QKD.OutputLayout.graftFixedParties a b hab L hA hB).Residual
+          ((Boundary.graftExitEquiv B C).symm
+            ⟨e, Equiv.cast (congrArg Boundary.Exit h) f⟩) := by
+    subst D
+    exact (congrArg (fun M : QKD.OutputLayout (C e) => M.Residual f) hL).symm.trans
+      (QKD.OutputLayout.graftFixedParties_residual B C L a b hab hA hB e f).symm
+  let B := Measurement.lateSelectionBoundary N nK mZ mX
+  let C := QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC
+  let Lc := QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
+  let R := QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
+    (@Sampling.packedPESel nK mZ mX) leakEC
+  let outer := Measurement.lateSelectionExit N nK mZ mX ω
+  let h := (completeContinuationBoundary_success
+    N nK mZ mX ℓ ℓEV leakEC ω hω).symm
+  have hLc : Lc outer = QKD.OutputLayout.transport h R :=
+    completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω
+  have hspec := cast_graft_residual B C Lc .alice .bob (by decide)
+    (QKD.BB84.completeContinuationOutputLayout_alice N nK mZ mX ℓ ℓEV leakEC)
+    (QKD.BB84.completeContinuationOutputLayout_bob N nK mZ mX ℓ ℓEV leakEC) outer h R hLc e
+  delta QKD.OutputLayout.toBoundaryKeyLayout QKD.BB84.outputLayout
+  delta successExitMap QKD.BB84.exitEquiv QKD.BB84.boundary
+  with_reducible_and_instances exact hspec
 
 /-- The explicit residual-coordinate embedding at one successful raw classical-tail exit.  It
 depends only on the raw control, source exit, and source residual; it does not inspect either key
@@ -498,16 +494,15 @@ theorem successCompleteOutputEmbedding_residual
         (R.coordinates q.1 q.2).2.2 =
       Equiv.cast (congrArg L.toBoundaryKeyLayout.Residual hexit)
         (L.coordinates (V q).1 (V q).2).2.2 := by
-  set_option backward.isDefEq.lazyProjDelta false in
-    apply (Equiv.cast (successExitMap_residual_type
-      N nK mZ mX ℓ ℓEV leakEC ω hω q.1)).symm.injective
-    apply Prod.ext
-    · apply Prod.ext <;> exact Unit.ext _ _
-    · funext i
-      rcases i with ⟨⟨p, hp⟩, hpb⟩
-      cases p with
-      | alice => exact (hp rfl).elim
-      | bob => exact (hpb (Subtype.ext rfl)).elim
+  apply (Equiv.cast (successExitMap_residual_type
+    N nK mZ mX ℓ ℓEV leakEC ω hω q.1)).symm.injective
+  apply Prod.ext
+  · apply Prod.ext <;> exact Unit.ext _ _
+  · funext i
+    rcases i with ⟨⟨p, hp⟩, hpb⟩
+    cases p with
+    | alice => exact (hp rfl).elim
+    | bob => exact (hpb (Subtype.ext rfl)).elim
 
 /-- The complete output layout reads, at a successfully embedded tail, exactly the output
 coordinates of the raw classical tail. -/
@@ -521,29 +516,28 @@ theorem successCompleteOutputEmbedding_coordinates_heq
         (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q).2 ≍
       (QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
         (@Sampling.packedPESel nK mZ mX) leakEC).coordinates q.1 q.2 := by
-  set_option backward.isDefEq.lazyProjDelta false in
-    let B := Measurement.lateSelectionBoundary N nK mZ mX
-    let C := QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC
-    let Lc := QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
-    let R := QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
-      (@Sampling.packedPESel nK mZ mX) leakEC
-    let outer := Measurement.lateSelectionExit N nK mZ mX ω
-    let h := (completeContinuationBoundary_success N nK mZ mX ℓ ℓEV leakEC ω hω).symm
-    let qc := Equiv.cast (congrArg Boundary.space h) q
-    have hc := QKD.OutputLayout.transport_coordinates_heq h R q
-    rw [← show Lc outer = QKD.OutputLayout.transport h R from
-      completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω] at hc
-    have hp : successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q =
-        (Boundary.graftSpaceEquiv B C).symm ⟨outer, qc⟩ := by
-      delta successCompleteOutputEmbedding QKD.BB84.boundary
-      with_reducible_and_instances rfl
-    have hg := QKD.OutputLayout.graftFixedParties_coordinates_heq B C Lc .alice .bob (by decide)
-      (QKD.BB84.completeContinuationOutputLayout_alice N nK mZ mX ℓ ℓEV leakEC)
-      (QKD.BB84.completeContinuationOutputLayout_bob N nK mZ mX ℓ ℓEV leakEC) outer qc
-      (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q) hp
-    delta QKD.BB84.outputLayout
-    delta QKD.BB84.boundary
-    with_reducible_and_instances exact hg.trans hc
+  let B := Measurement.lateSelectionBoundary N nK mZ mX
+  let C := QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC
+  let Lc := QKD.BB84.completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC
+  let R := QKD.BB84.rawClassicalTailOutputLayout (nK + mZ + mX) (mZ + mX) ℓ ℓEV
+    (@Sampling.packedPESel nK mZ mX) leakEC
+  let outer := Measurement.lateSelectionExit N nK mZ mX ω
+  let h := (completeContinuationBoundary_success N nK mZ mX ℓ ℓEV leakEC ω hω).symm
+  let qc := Equiv.cast (congrArg Boundary.space h) q
+  have hc := QKD.OutputLayout.transport_coordinates_heq h R q
+  rw [← show Lc outer = QKD.OutputLayout.transport h R from
+    completeContinuationOutputLayout_success N nK mZ mX ℓ ℓEV leakEC ω hω] at hc
+  have hp : successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q =
+      (Boundary.graftSpaceEquiv B C).symm ⟨outer, qc⟩ := by
+    delta successCompleteOutputEmbedding QKD.BB84.boundary
+    with_reducible_and_instances rfl
+  have hg := QKD.OutputLayout.graftFixedParties_coordinates_heq B C Lc .alice .bob (by decide)
+    (QKD.BB84.completeContinuationOutputLayout_alice N nK mZ mX ℓ ℓEV leakEC)
+    (QKD.BB84.completeContinuationOutputLayout_bob N nK mZ mX ℓ ℓEV leakEC) outer qc
+    (successCompleteOutputEmbedding N nK mZ mX ℓ ℓEV leakEC ω hω q) hp
+  delta QKD.BB84.outputLayout
+  delta QKD.BB84.boundary
+  with_reducible_and_instances exact hg.trans hc
 
 /-- **The successful complete-output embedding is a morphism of key layouts** from the raw
 classical tail to the complete output.  Its exit renaming is `successExitMap`, and the complete
@@ -600,23 +594,22 @@ theorem shortageCompleteOutput_rawControl
         ((QKD.BB84.exitEquiv N nK mZ mX ℓ ℓEV leakEC)
           (shortageCompleteOutput N nK mZ mX ℓ ℓEV leakEC ω hω).1).1 =
       ω := by
-  set_option backward.isDefEq.lazyProjDelta false in
-    have recover (B : Boundary Party) (C : B.Exit → Boundary Party)
-        {T : Type} (f : B.Exit → T) (z : Σ e : B.Exit, (C e).space)
-        (t : T) (hz : f z.1 = t) :
-        f ((Boundary.graftExitEquiv B C
-          ((Boundary.graftSpaceEquiv B C).symm z).1).1) = t := by
-      rw [← Boundary.graftSpaceEquiv_fst, Equiv.apply_symm_apply]
-      exact hz
-    have hlast : QKD.BB84.lateSelectionExitEquiv N nK mZ mX
-        (Measurement.lateSelectionAbortAt N nK mZ mX ω hω).1 = ω := by
-      rw [lateSelectionAbortAt_exit]
-      exact (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply ω
-    delta shortageCompleteOutput QKD.BB84.exitEquiv QKD.BB84.boundary
-    with_reducible_and_instances
-      exact recover (Measurement.lateSelectionBoundary N nK mZ mX)
-        (QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC)
-        (QKD.BB84.lateSelectionExitEquiv N nK mZ mX) _ ω hlast
+  have recover (B : Boundary Party) (C : B.Exit → Boundary Party)
+      {T : Type} (f : B.Exit → T) (z : Σ e : B.Exit, (C e).space)
+      (t : T) (hz : f z.1 = t) :
+      f ((Boundary.graftExitEquiv B C
+        ((Boundary.graftSpaceEquiv B C).symm z).1).1) = t := by
+    rw [← Boundary.graftSpaceEquiv_fst, Equiv.apply_symm_apply]
+    exact hz
+  have hlast : QKD.BB84.lateSelectionExitEquiv N nK mZ mX
+      (Measurement.lateSelectionAbortAt N nK mZ mX ω hω).1 = ω := by
+    rw [lateSelectionAbortAt_exit]
+    exact (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply ω
+  delta shortageCompleteOutput QKD.BB84.exitEquiv QKD.BB84.boundary
+  with_reducible_and_instances
+    exact recover (Measurement.lateSelectionBoundary N nK mZ mX)
+      (QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC)
+      (QKD.BB84.lateSelectionExitEquiv N nK mZ mX) _ ω hlast
 
 /-- The actual complete-output disposition at the metadata-bearing shortage point is abort. -/
 theorem shortageCompleteOutput_disposition
@@ -624,36 +617,35 @@ theorem shortageCompleteOutput_disposition
     (hω : ¬Sampling.HasQuotas nK mZ mX ω) :
     (QKD.BB84.outputLayout N nK mZ mX ℓ ℓEV leakEC).disposition
         (shortageCompleteOutput N nK mZ mX ℓ ℓEV leakEC ω hω).1 = .abort := by
-  set_option backward.isDefEq.lazyProjDelta false in
-    have graft_disposition (B : Boundary Party) (C : B.Exit → Boundary Party)
-        (L : ∀ e, QKD.OutputLayout (C e)) (a b : Party) (hab : a ≠ b)
-        (hA : ∀ e, (L e).alice = a) (hB : ∀ e, (L e).bob = b)
-        (e : (B.graft C).Exit) :
-        (QKD.OutputLayout.graftFixedParties a b hab L hA hB).disposition e =
-          (L (Boundary.graftExitEquiv B C e).1).disposition
-            (Boundary.graftExitEquiv B C e).2 := by
+  have graft_disposition (B : Boundary Party) (C : B.Exit → Boundary Party)
+      (L : ∀ e, QKD.OutputLayout (C e)) (a b : Party) (hab : a ≠ b)
+      (hA : ∀ e, (L e).alice = a) (hB : ∀ e, (L e).bob = b)
+      (e : (B.graft C).Exit) :
+      (QKD.OutputLayout.graftFixedParties a b hab L hA hB).disposition e =
+        (L (Boundary.graftExitEquiv B C e).1).disposition
+          (Boundary.graftExitEquiv B C e).2 := by
+    rfl
+  have hshort : ¬Sampling.HasQuotas nK mZ mX
+      (QKD.BB84.lateSelectionExitEquiv N nK mZ mX
+        ((QKD.BB84.exitEquiv N nK mZ mX ℓ ℓEV leakEC)
+          (shortageCompleteOutput N nK mZ mX ℓ ℓEV leakEC ω hω).1).1) := by
+    rw [shortageCompleteOutput_rawControl]
+    exact hω
+  delta QKD.BB84.exitEquiv at hshort
+  delta QKD.BB84.outputLayout
+  rw [graft_disposition]
+  unfold QKD.BB84.completeContinuationOutputLayout
+  split
+  · rename_i hquota
+    exact (hshort hquota).elim
+  · have transport_disposition {B C : Boundary Party} (h : B = C)
+        (L : QKD.OutputLayout B) (x : C.Exit) :
+        (QKD.OutputLayout.transport h L).disposition x =
+          L.disposition (h.symm ▸ x) := by
+      cases h
       rfl
-    have hshort : ¬Sampling.HasQuotas nK mZ mX
-        (QKD.BB84.lateSelectionExitEquiv N nK mZ mX
-          ((QKD.BB84.exitEquiv N nK mZ mX ℓ ℓEV leakEC)
-            (shortageCompleteOutput N nK mZ mX ℓ ℓEV leakEC ω hω).1).1) := by
-      rw [shortageCompleteOutput_rawControl]
-      exact hω
-    delta QKD.BB84.exitEquiv at hshort
-    delta QKD.BB84.outputLayout
-    rw [graft_disposition]
-    unfold QKD.BB84.completeContinuationOutputLayout
-    split
-    · rename_i hquota
-      exact (hshort hquota).elim
-    · have transport_disposition {B C : Boundary Party} (h : B = C)
-          (L : QKD.OutputLayout B) (x : C.Exit) :
-          (QKD.OutputLayout.transport h L).disposition x =
-            L.disposition (h.symm ▸ x) := by
-        cases h
-        rfl
-      rw [transport_disposition]
-      rfl
+    rw [transport_disposition]
+    rfl
 
 section ShortageFibre
 
@@ -689,7 +681,7 @@ theorem graftSpaceEquiv_symm_shortage_fibre
   have hsub : Subsingleton
       (QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC
         ((QKD.BB84.lateSelectionExitEquiv N nK mZ mX).symm omega)).space := by
-    simpa only [QKD.BB84.lateSelectionExitEquiv] using hsubLit
+    exact hsubLit
   have hfst : (G s).1 =
       (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).symm omega := by
     apply (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).injective

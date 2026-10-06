@@ -69,9 +69,9 @@ lemma traceNorm_continuous {n : ℕ} [NeZero n] :
     change traceNorm A ≤ (NNReal.sqrt n : ℝ) * ‖A‖
     simpa using traceNorm_le_sqrt_natCast_mul_norm A
   have hq_cont : Continuous q := by
-    simpa [q, Seminorm.coe_smul, coe_normSeminorm] using
-      (continuous_const.mul continuous_norm)
-  simpa [traceNormSeminorm] using
+    change Continuous (fun A : Op n => (NNReal.sqrt n : ℝ) * ‖A‖)
+    exact continuous_const.mul continuous_norm
+  exact
     (Seminorm.continuous_of_le hq_cont hp_le : Continuous (traceNormSeminorm n))
 
 private lemma integrable_traceNorm_comp
@@ -95,10 +95,10 @@ theorem traceNorm_integral_le_integral_traceNorm_of_isProbability
     traceNorm (∫ x, f x ∂μ) ≤ ∫ x, traceNorm (f x) ∂μ := by
   let p : Seminorm ℂ (Op n) := traceNormSeminorm n
   have hp_cont : Continuous p := by
-    simpa [p, traceNormSeminorm] using traceNorm_continuous (n := n)
+    exact traceNorm_continuous (n := n)
   have hgi : Integrable (fun x => p (f x)) μ := by
-    simpa [p, traceNormSeminorm] using integrable_traceNorm_comp μ hf
-  simpa [p, traceNormSeminorm] using
+    exact integrable_traceNorm_comp μ hf
+  exact
     ConvexOn.map_integral_le (μ := μ) (s := Set.univ) (f := f) (g := p)
       p.convexOn hp_cont.continuousOn isClosed_univ
       (Filter.Eventually.of_forall fun x => Set.mem_univ (f x)) hf hgi
@@ -111,10 +111,10 @@ theorem traceNorm_average_le_average_traceNorm
     traceNorm (⨍ x, f x ∂μ) ≤ ⨍ x, traceNorm (f x) ∂μ := by
   let p : Seminorm ℂ (Op n) := traceNormSeminorm n
   have hp_cont : Continuous p := by
-    simpa [p, traceNormSeminorm] using traceNorm_continuous (n := n)
+    exact traceNorm_continuous (n := n)
   have hgi : Integrable (fun x => p (f x)) μ := by
-    simpa [p, traceNormSeminorm] using integrable_traceNorm_comp μ hf
-  simpa [p, traceNormSeminorm] using
+    exact integrable_traceNorm_comp μ hf
+  exact
     ConvexOn.map_average_le (μ := μ) (s := Set.univ) (f := f) (g := p)
       p.convexOn hp_cont.continuousOn isClosed_univ
       (Filter.Eventually.of_forall fun x => Set.mem_univ (f x)) hf hgi

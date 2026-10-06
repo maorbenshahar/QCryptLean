@@ -377,10 +377,8 @@ open Matrix
 /-!
 ## Multi-Qubit State Notation
 
-
 Usage: These expand to tensor products via ⊗
 -/
-
 
 -- ============================================================================
 -- General Tensor Product Notation (for arbitrary kets/bras)
@@ -416,7 +414,6 @@ macro_rules
 syntax (name := tensorBra) "⟨" term,+ "|" : term
 
 -- Macro expansion for tensor bra
-set_option quotPrecheck false in
 macro_rules
   | `(⟨ $x:term, $xs:term,* |) => do
     let mut result ← `(ToKet.toKet $x)
@@ -458,7 +455,6 @@ macro_rules
     for x in xs.getElems do
       result ← `($result ⊗ ToNormKet.toNormKet $x)
     return result
-
 
 end Quantum.TensorProducts
 

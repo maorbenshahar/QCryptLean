@@ -172,7 +172,7 @@ lemma roundDifferenceMap_eq_encoded (A : Op ((dA * dB) ^ n)) :
   conv_lhs => rw [← M.toProtocol.acceptProj_comp_roundDifferenceMap l']
   change M.toProtocol.acceptProj
     ((M.toProtocol.variantReal l' _ - M.toProtocol.variantIdeal l' _)) = _
-  simp only [map_sub, LinearEquiv.coe_coe, Matrix.reindexLinearEquiv_apply]
+  simp only [map_sub, LinearEquiv.coe_coe, Matrix.coe_reindexLinearEquiv]
   rw [C.acceptProj_variantReal ρ, C.acceptProj_variantIdeal ρ]
   change _ = C.encode * C.hashDifferenceMap ρ.toOp * C.encodeᴴ
   rw [C.hashDifferenceMap_apply_toOp, Matrix.mul_sub, Matrix.sub_mul]

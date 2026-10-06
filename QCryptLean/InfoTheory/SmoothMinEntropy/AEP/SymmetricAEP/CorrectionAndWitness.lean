@@ -242,7 +242,8 @@ theorem aep_correction_distvN_tendsto_zero
   have hsqrt : Filter.Tendsto
       (fun n : ℕ => Real.sqrt (2 / (n:ℕ) * Real.logb 2 (4 / ε))) Filter.atTop (nhds 0) := by
     have := (Real.continuous_sqrt.tendsto 0).comp hinner
-    simpa using this
+    simp only [Real.sqrt_zero] at this
+    exact this
   have hfinal := hsqrt.const_mul (5 / 2 * Real.logb 2 alphabetSize + 5)
   simp only [mul_zero] at hfinal
   refine hfinal.congr (fun n => ?_)

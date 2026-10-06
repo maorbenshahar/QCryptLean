@@ -70,7 +70,7 @@ theorem idTensorRectBlock_conjTranspose
     (idTensorRectBlock B E E' V)ᴴ = idTensorRectBlock B E' E Vᴴ := by
   ext p q
   simp only [idTensorRectBlock, Matrix.of_apply, Matrix.conjTranspose_apply,
-    Equiv.toFun_as_coe, finProdFinEquiv_symm_apply]
+    finProdFinEquiv_symm_apply]
   by_cases hab : q.divNat = p.divNat
   · have hba : p.divNat = q.divNat := hab.symm
     rw [if_pos hab, if_pos hba]

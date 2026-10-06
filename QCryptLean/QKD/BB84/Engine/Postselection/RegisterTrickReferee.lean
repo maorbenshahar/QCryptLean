@@ -209,7 +209,7 @@ lemma bellRegExt_traceNorm_as_sum {n dimR dimOut : ℕ} [NeZero (4 ^ n)] [NeZero
     simp only [mapTensorId, Matrix.of_apply, bellRegExt, Matrix.blockDiagonal_apply,
       Matrix.submatrix_apply, Matrix.smul_apply, smul_eq_mul, Equiv.symm_apply_apply, e_out,
       bellRegReindexOut, Equiv.trans_apply, Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst,
-      Prod.map_snd, id_eq, Equiv.prodAssoc_symm_apply, M', M, bellRegBlock, Equiv.toFun_as_coe,
+      Prod.map_snd, id_eq, Equiv.prodAssoc_symm_apply, M', M, bellRegBlock,
       Matrix.smul_apply, smul_eq_mul]
     split_ifs with h
     · rfl

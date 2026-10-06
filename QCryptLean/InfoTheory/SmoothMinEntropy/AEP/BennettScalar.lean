@@ -60,14 +60,14 @@ private lemma padeGap_nonneg {w : ℝ} (hw : 0 ≤ w) :
     have hlog : HasDerivAt (fun y : ℝ => Real.log (1 + y)) (1 / (1 + x)) x := by
       have h1 : HasDerivAt (fun y : ℝ => 1 + y) 1 x := by
         simpa using (hasDerivAt_id x).const_add (1 : ℝ)
-      simpa [div_eq_inv_mul] using (Real.hasDerivAt_log hx.ne').comp x h1
+      simpa only [Function.comp_def, mul_one, one_div] using (Real.hasDerivAt_log hx.ne').comp x h1
     have hlin : HasDerivAt (fun y : ℝ => 2 + y) 1 x := by
       simpa using (hasDerivAt_id x).const_add (2 : ℝ)
     have hmul := hlin.mul hlog
     have h2 : HasDerivAt (fun y : ℝ => 2 * y) 2 x := by
       simpa using (hasDerivAt_id x).const_mul (2 : ℝ)
     have := hmul.sub h2
-    convert this using 1
+    apply this.congr_deriv
     field_simp
   have hmono : MonotoneOn f (Set.Ici (0 : ℝ)) := by
     refine monotoneOn_of_deriv_nonneg (convex_Ici _) ?cont ?diff ?sign
@@ -126,7 +126,7 @@ private lemma bennettBernsteinGap_nonneg {w : ℝ} (hw : 0 ≤ w) :
     have hlog : HasDerivAt (fun y : ℝ => Real.log (1 + y)) (1 / (1 + x)) x := by
       have h1 : HasDerivAt (fun y : ℝ => 1 + y) 1 x := by
         simpa using (hasDerivAt_id x).const_add (1 : ℝ)
-      simpa [div_eq_inv_mul] using (Real.hasDerivAt_log hx.ne').comp x h1
+      simpa only [Function.comp_def, mul_one, one_div] using (Real.hasDerivAt_log hx.ne').comp x h1
     have honeadd : HasDerivAt (fun y : ℝ => 1 + y) 1 x := by
       simpa using (hasDerivAt_id x).const_add (1 : ℝ)
     have hsix : HasDerivAt (fun y : ℝ => 6 + 2 * y) 2 x := by
@@ -134,11 +134,11 @@ private lemma bennettBernsteinGap_nonneg {w : ℝ} (hw : 0 ≤ w) :
     have hinner : HasDerivAt (fun y : ℝ => (1 + y) * Real.log (1 + y) - y)
         (Real.log (1 + x) + (1 + x) * (1 / (1 + x)) - 1) x := by
       have := (honeadd.mul hlog).sub (hasDerivAt_id x)
-      simpa using this
+      exact this.congr_deriv (by rw [one_mul])
     have hsq : HasDerivAt (fun y : ℝ => 3 * y ^ 2) (3 * (2 * x)) x := by
       simpa using ((hasDerivAt_pow 2 x).const_mul (3 : ℝ))
     have := (hsix.mul hinner).sub hsq
-    convert this using 1
+    apply this.congr_deriv
     field_simp
     ring
   have hmono : MonotoneOn g (Set.Ici (0 : ℝ)) := by

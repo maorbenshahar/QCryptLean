@@ -211,10 +211,6 @@ lemma isFeasible_isClosed {X : Type*} [Fintype X] {n : ℕ}
       ∀ v : Fin n → ℂ,
         (quadraticForm (ρ.stateMap x).toOp v).re ≤
           (quadraticForm (Complex.ofReal t • σ.toOp) v).re)) (fun x => ?_)
-  change IsClosed (setOf (fun t : ℝ =>
-    ∀ v : Fin n → ℂ,
-      (quadraticForm (ρ.stateMap x).toOp v).re ≤
-        (quadraticForm (Complex.ofReal t • σ.toOp) v).re))
   rw [Set.setOf_forall]
   refine isClosed_iInter
     (f := fun v : Fin n → ℂ => setOf (fun t : ℝ =>

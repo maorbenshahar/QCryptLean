@@ -109,7 +109,6 @@ lemma mapIdTensor_preserves_psd {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
   rw [Finset.sum_comm]
   congr 1
   ext l
-  simp only [Equiv.toFun_as_coe]
   conv_rhs => simp only [mul_assoc]
   simp_rw [finProdFinEquiv_sum_ite_left]
   simp_rw [apply_ite star, star_zero]
@@ -177,7 +176,7 @@ lemma trace_mapIdTensor_eq {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
           congr 1
           ext a
           simp only [mapIdTensor, Matrix.of_apply]
-          simp only [Equiv.toFun_as_coe, Equiv.symm_apply_apply]]
+          simp only [Equiv.symm_apply_apply]]
   exact Finset.sum_comm
 
 /-- Partial trace over the `A`-factor preserves Mathlib PSD. -/

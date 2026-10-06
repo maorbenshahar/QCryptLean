@@ -33,9 +33,6 @@ structure HashFamily (Domain Codomain Seed : Type*) where
   /-- Codomain is nonempty -/
   [codomainNonempty : Nonempty Codomain]
 
-attribute [instance] HashFamily.seedFintype HashFamily.seedNonempty
-attribute [instance] HashFamily.codomainFintype HashFamily.codomainNonempty
-
 /-- The 2-universal collision bound property.
 
     For any two distinct inputs x ≠ x', the number of seeds where they

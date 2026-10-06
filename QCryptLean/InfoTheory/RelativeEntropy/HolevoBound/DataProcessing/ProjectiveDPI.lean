@@ -179,9 +179,10 @@ lemma projector_mul_eigenvector_unitary_eq_zero_of_ne {N m : ℕ} [NeZero N] [Ne
   have h_entry : (P y' * U) i j * (hH.eigenvalues j : ℂ) =
       (y'.val : ℂ) * (P y' * U) i j := by
     have h := congr_fun (congr_fun h_B_diag i) j
-    simp only [Matrix.mul_apply, Matrix.diagonal_apply, smul_apply, smul_eq_mul] at h
+    simp only [Matrix.mul_apply, Matrix.diagonal_apply, Matrix.smul_apply, smul_eq_mul] at h
     rw [Finset.sum_eq_single j] at h
-    · simpa using h
+    · simp only at h
+      exact h
     · intro b _ hb
       rw [if_neg hb, mul_zero]
     · exact absurd (Finset.mem_univ j)

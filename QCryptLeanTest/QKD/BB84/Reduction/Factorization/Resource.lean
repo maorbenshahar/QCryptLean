@@ -270,8 +270,6 @@ private instance : Unique
     · rcases failure with ⟨j, rest⟩
       exact Fin.elim0 j
 
-attribute [local simp] rawControl_zero_eq emptySubset_eq
-
 /-- The successful ambient typed input carrying unequal accepted keys. -/
 def successTypedInput :
     Op (ReconstructionInput 0 0 0 0 1 0 0) :=

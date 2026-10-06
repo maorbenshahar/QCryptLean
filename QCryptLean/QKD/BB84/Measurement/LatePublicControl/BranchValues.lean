@@ -55,11 +55,12 @@ private theorem completedBasisAliceAnnouncement_liftedOperation_diag (N : ℕ)
       (((weightedStreamSystem (finishAcc Unit N) 0).set .alice
         (CompletedLocalRecord N)).pairEquiv.symm (rA, rB)) = _
   rw [Instrument.liftAt_alice_operation_apply]
-  simpa only [Matrix.submatrix_apply, and_self] using
-    Instrument.nondemolitionReadout_operation_apply (completedBasisString N) a
+  have h := Instrument.nondemolitionReadout_operation_apply (completedBasisString N) a
       (sigma.submatrix
         (fun x => (weightedStreamSystem (finishAcc Unit N) 0).pairEquiv.symm (x, rB))
         (fun x => (weightedStreamSystem (finishAcc Unit N) 0).pairEquiv.symm (x, rB))) rA rA
+  simp only [Matrix.submatrix_apply, and_self] at h
+  exact h
 
 /-- After both basis announcements, exactly the diagonal entries whose two records carry the
 announced basis strings survive. -/
@@ -239,7 +240,8 @@ theorem weightedLatePublicSelectionProgram_success_apply
         (cast (congrArg MultipartiteSystem.total hB.symm) z))
       (cast (congrArg MultipartiteSystem.total hself.symm)
         (cast (congrArg MultipartiteSystem.total hB.symm) z')) = _ at hop
-    simpa only [cast_cast] using hop
+    simp only [cast_cast] at hop
+    exact hop
   unfold latePublicSelectionProgram lateSelectionSuccessAt
   simp only [id_eq]
   have hAlice := Program.denote_then_publicSpaceEquiv_symm_apply
@@ -586,7 +588,8 @@ theorem weightedLatePublicSelectionProgram_abort_apply
         (cast (congrArg MultipartiteSystem.total hB.symm) z))
       (cast (congrArg MultipartiteSystem.total hself.symm)
         (cast (congrArg MultipartiteSystem.total hB.symm) z')) = _ at hop
-    simpa only [cast_cast] using hop
+    simp only [cast_cast] at hop
+    exact hop
   unfold latePublicSelectionProgram lateSelectionAbortAt
   simp only [id_eq]
   have hAlice := Program.denote_then_publicSpaceEquiv_symm_apply
@@ -732,9 +735,7 @@ theorem weightedLatePublicSelectionProgram_abort_apply
     have hs := weightedMeasurementSchedule_output_apply pA pB N rho
       rA rA rB rB
     simp only [and_self, if_true] at hs
-    simpa [sigma, recordStreamEquiv, reindexOp,
-      weightedScheduleOutputEquiv, weightedScheduleUnitInputEquiv,
-      weightedStreamPairEquiv, weightedScheduleInputBlock] using hs
+    exact hs
   rw [htransport hleaf (discardCompletedRecords N) upsilon
     abortRow abortRow (cast_heq _ _) (cast_heq _ _)]
   rw [discardCompletedRecords_denote_apply]

@@ -675,17 +675,14 @@ theorem ToNormKet.toNormKet_normket {n : ℕ} (ψ : NormKet n) : ToNormKet.toNor
 notation "|0⟩" => stdKet 2 0
 notation "|1⟩" => stdKet 2 1
 
-set_option quotPrecheck false in
 notation "⟨0|" => Ket.dag (stdKet 2 0)
 
-set_option quotPrecheck false in
 notation "⟨1|" => Ket.dag (stdKet 2 1)
 
 -- General notation: |i:n⟩ creates stdKet n i
 notation "|" i ":" n "⟩" => stdKet n i
 
 -- General bra notation: ⟨x| converts x to Bra (dags Kets, keeps Bras)
-set_option quotPrecheck false in
 notation "⟨" x "|" => ToBra.toBra x
 
 -- General ket notation: |x⟩ converts x to Ket (keeps Kets, dags Bras)

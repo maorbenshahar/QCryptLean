@@ -476,7 +476,7 @@ lemma braOpKet_le_one {n : ℕ} (ρ : DensityOp n) (ψ : Ket n)
       rw [braOpKet_eq_quadraticForm]
       unfold quadraticForm
       rw [h_spec]
-      convert spectral_quadratic_form_re U ev ψ.vec using 2
+      exact spectral_quadratic_form_re U ev ψ.vec
     rw [h_expect]
     calc ∑ i, ev i * a i ≤ ∑ i, 1 * a i := by
           apply Finset.sum_le_sum; intro i _

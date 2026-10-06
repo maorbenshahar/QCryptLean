@@ -98,7 +98,7 @@ theorem sum_tensor_single_eq_reindex_blockDiagonal {d k : ℕ} (A : Fin k → Op
     ∑ i, A i ⊗ (Matrix.single i i (1 : ℂ) : Op k) =
       Matrix.reindex finProdFinEquiv finProdFinEquiv (Matrix.blockDiagonal A) := by
   simp only [Op.tensor]
-  simp_rw [← Matrix.reindexLinearEquiv_apply ℂ ℂ]
+  simp_rw [← Matrix.coe_reindexLinearEquiv ℂ ℂ]
   rw [← map_sum]
   congr 1
   exact sum_kronecker_single_eq_blockDiagonal A
@@ -128,10 +128,10 @@ theorem sum_single_tensor_eq_reindex_blockDiagonal {d k : ℕ} (B : Fin k → Op
       Matrix.reindex ((Equiv.prodComm (Fin d) (Fin k)).trans finProdFinEquiv)
         ((Equiv.prodComm (Fin d) (Fin k)).trans finProdFinEquiv) (Matrix.blockDiagonal B) := by
   simp only [Op.tensor]
-  simp_rw [← Matrix.reindexLinearEquiv_apply ℂ ℂ]
+  simp_rw [← Matrix.coe_reindexLinearEquiv ℂ ℂ]
   rw [← map_sum, sum_single_kronecker_eq_reindex_blockDiagonal]
   ext i j
-  simp only [Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply, Matrix.submatrix_apply,
+  simp only [Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply, Matrix.submatrix_apply,
     Equiv.symm_trans_apply]
 
 end Quantum.TensorProducts

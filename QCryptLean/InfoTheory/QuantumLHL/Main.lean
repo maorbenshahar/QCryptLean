@@ -143,7 +143,6 @@ lemma extractorOutputState_joint_trace_eq_one_of_normalized
   rw [CQState.toJointDensity_trace_eq_sum]
   change ∑ z : Z, (extractorWeightedOp H (ρ : CQState X n) z).trace.re = 1
   rw [← Complex.re_sum, ← Matrix.trace_sum, sum_extractorWeightedOp_eq_quantumMarginalOp]
-  change ((ρ : CQState X n).quantumMarginalOp).trace.re = 1
   simp only [CQState.quantumMarginalOp, Matrix.trace_sum, Complex.re_sum]
   exact ρ.weight_eq_one
 

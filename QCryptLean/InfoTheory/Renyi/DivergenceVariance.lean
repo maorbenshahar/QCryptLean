@@ -389,15 +389,15 @@ private lemma exp_le_taylor_three (u : ℝ) :
       have hB : HasDerivAt (fun u : ℝ => u ^ 2 / 2) (2 * v ^ 1 / 2) v :=
         (hasDerivAt_pow 2 v).div_const 2
       have := hA.add hB
-      convert this using 1
+      apply this.congr_deriv
       ring
     have h2 : HasDerivAt (fun u : ℝ => Real.exp (-u)) (-Real.exp (-v)) v := by
       have := (Real.hasDerivAt_exp (-v)).comp v ((hasDerivAt_id v).neg)
-      simpa using this
+      exact this.congr_deriv (by ring)
     have h3 : HasDerivAt (fun u : ℝ => u ^ 3 / 6) (3 * v ^ 2 / 6) v :=
       (hasDerivAt_pow 3 v).div_const 6
     have h4 := ((h1.mul h2).add h3).sub_const 1
-    convert h4 using 1
+    apply h4.congr_deriv
     ring
   have hg0 : g 0 = 0 := by simp [hgdef]
   have hdiff : Differentiable ℝ g := fun v => (hg' v).differentiableAt
@@ -449,8 +449,7 @@ private lemma concaveOn_sq_log :
       HasDerivAt (fun x : ℝ => (Real.log x) ^ 2) (2 * (Real.log s / s)) s := by
     intro s hs
     have h := (Real.hasDerivAt_log hs.ne').pow 2
-    convert h using 1
-    field_simp
+    apply h.congr_deriv
     ring
   refine AntitoneOn.concaveOn_of_deriv (convex_Ici _) ?_ ?_ ?_
   · exact fun s hs =>
@@ -504,9 +503,7 @@ private lemma concaveOn_cube_log_add :
     have h1 : HasDerivAt (fun x : ℝ => Real.log (x + Real.exp 2)) (1 / (t + Real.exp 2)) t :=
       h0.log (hpos t ht).ne'
     have h2 := h1.pow 3
-    convert h2 using 1
-    have := (hpos t ht).ne'
-    field_simp
+    apply h2.congr_deriv
     ring
   refine AntitoneOn.concaveOn_of_deriv (convex_Ici _) ?_ ?_ ?_
   · exact fun t ht => ((hderiv t ht).continuousAt).continuousWithinAt
@@ -613,7 +610,8 @@ private lemma sinh_div_strictMonoOn :
     have h1 : HasDerivAt (fun z : ℝ => Real.sinh z) (Real.cosh y) y := Real.hasDerivAt_sinh y
     have h2 : HasDerivAt (fun z : ℝ => z) 1 y := hasDerivAt_id y
     have h3 := h1.div h2 (ne_of_gt hy)
-    simpa using h3
+    simp only [mul_one] at h3
+    exact h3
   have hdiff : DifferentiableOn ℝ (fun z : ℝ => Real.sinh z / z) (Set.Ioi 0) :=
     fun y hy => (hderiv y hy).differentiableAt.differentiableWithinAt
   refine strictMonoOn_of_deriv_pos (convex_Ioi 0) hdiff.continuousOn ?_
@@ -1318,8 +1316,7 @@ private lemma cfc_blockDiagonal' {X : Type*} [Fintype X] [DecidableEq X] {N : �
   set q : Polynomial ℝ := Lagrange.interpolate s id f with hq
   have hval : ∀ μ ∈ s, Polynomial.eval μ q = f μ := by
     intro μ hμ
-    simpa using
-      Lagrange.eval_interpolate_at_node (s := s) (v := (id : ℝ → ℝ)) f (Set.injOn_id _) hμ
+    exact Lagrange.eval_interpolate_at_node (s := s) (v := (id : ℝ → ℝ)) f (Set.injOn_id _) hμ
   have hmain : cfc f (Matrix.blockDiagonal M)
       = (Polynomial.aeval (Matrix.blockDiagonal M)) q := by
     rw [← cfc_polynomial (R := ℝ) q (Matrix.blockDiagonal M)]
@@ -1505,8 +1502,7 @@ theorem petzTrace_one_sub_le_card_rpow {X : Type*} [Fintype X] [DecidableEq X] {
     (fun p => hSh.eigenvalues p.2) (fun p => nsOverlap hRh hSh p.1 p.2)
     (fun p => ns_eigenvalues_nonneg hRh hR0 p.1) (fun p => ns_eigenvalues_nonneg hSh hS0 p.2)
     (fun p => nsOverlap_nonneg hRh hSh p.1 p.2) hν0 hν1
-    (by simp only []; rw [hA]; norm_num) (by simp only []; rw [hB]; exact hcard)
-  simp only [] at hhold
+    (by rw [hA]; norm_num) (by rw [hB]; exact hcard)
   rw [hA, hB, Real.one_rpow, one_mul] at hhold
   rw [ns_petzTrace hR0 hS0 hRh hSh (1 - ν), show (1 : ℝ) - (1 - ν) = ν from by ring,
     ← Fintype.sum_prod_type (fun p : (Fin n × X) × (Fin n × X) =>
@@ -1547,9 +1543,8 @@ theorem condVonNeumann_le_logb_card {X : Type*} [Fintype X] [DecidableEq X] {n :
     (fun p => hSh.eigenvalues p.2) (fun p => nsOverlap hRh hSh p.1 p.2)
     (fun p => ns_eigenvalues_nonneg hRh hR0 p.1) (fun p => ns_eigenvalues_nonneg hSh hS0 p.2)
     (fun p => nsOverlap_nonneg hRh hSh p.1 p.2)
-    (by simp only []; exact hA) (by simp only []; rw [hB]; exact hcard)
+    hA (by rw [hB]; exact hcard)
     (fun p hp => ns_support hRh hSh hR0 (toJointOp_ker_sub ρ) hp p.1)
-  simp only [] at hklein
   rw [hB] at hklein
   have hnsD : ∑ p : (Fin n × X) × (Fin n × X), hRh.eigenvalues p.1
       * (Real.log (hRh.eigenvalues p.1) - Real.log (hSh.eigenvalues p.2))
@@ -1624,7 +1619,6 @@ theorem petzRenyiDivergence_le_relEntropy_add {m : Type*} [Fintype m] [Decidable
   have hcl := classical_continuity_le (nsW hρh hσh) (fun p => nsL hρh hσh p - nsD hρh hσh)
     (fun p => nsW_nonneg hρh hσh hρ p) (ns_sum_one hρh hσh hnorm) (ns_Y_sum hρh hσh hnorm)
     hν hμ0
-  simp only [] at hcl
   rw [petzContinuityK, show α + μ - 1 = α - 1 + μ from by ring, hMv, hMvm,
     ns_divVar_eq hρh hσh hnorm]
   set A : ℝ := Real.log (∑ p : m × m, nsW hρh hσh p

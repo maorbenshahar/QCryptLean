@@ -310,11 +310,7 @@ theorem iidAEPWitnessWithReferenceSpectrum_action
     (W : IIDAEPSpectralWitness X n n_copies) :
     iidAEPReferenceSpectralAction σ n_copies
       (iidAEPWitnessWithReferenceSpectrum σ W) := by
-  simpa [iidAEPReferenceSpectralAction,
-    iidAEPWitnessWithReferenceSpectrum, iidAEPReferenceSpectrumData,
-    iidAEPReferenceEigenvalueLabels,
-    iidAEPReferenceSpectralIncrementProjector]
-    using isHermitian_eigenvectorBasis_rankOneProjectors_action
+  exact isHermitian_eigenvectorBasis_rankOneProjectors_action
       (iidAEPTensorReference σ n_copies).toPosSemidefOp.toHermitianOp.isHermitian
 
 /-- Construction stage after the nonzero orthogonal spectral increments have

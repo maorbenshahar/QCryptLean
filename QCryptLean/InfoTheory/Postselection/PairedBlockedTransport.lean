@@ -109,7 +109,7 @@ theorem pairedToBlockedEquiv_transports_isPure (dA dB n : ℕ) [NeZero dA] [NeZe
   unfold DensityOp.IsPure at hΨ_pure ⊢
   change Matrix.reindex e e Ψ.toOp * Matrix.reindex e e Ψ.toOp = Matrix.reindex e e Ψ.toOp
   have h := congrArg (Matrix.reindexAlgEquiv ℂ ℂ e) hΨ_pure
-  simpa only [Matrix.reindexAlgEquiv_apply, map_mul] using h
+  simpa only [Matrix.coe_reindexAlgEquiv, map_mul] using h
 
 /-- **The paired symmetric-projector support hypothesis transports (paired → blocked)
     across `pairedToBlockedEquiv`.** Conjugating `hΨ_supp` by the composed equivalence and
@@ -125,7 +125,7 @@ theorem pairedToBlockedEquiv_transports_support (dA dB n : ℕ) [NeZero dA] [NeZ
       symmetricProjectorPairedGen dA (dA * dB ^ 2) n = Matrix.reindex e e Ψ := by
   intro e
   have h := congrArg (Matrix.reindexAlgEquiv ℂ ℂ e) hΨ_supp
-  simp only [Matrix.reindexAlgEquiv_apply, map_mul] at h
+  simp only [Matrix.coe_reindexAlgEquiv, map_mul] at h
   rwa [pairedToBlockedEquiv_conjugates_projector] at h
 
 /-- **The blocked-register `symmetricProjectorPairedGen`-support hypothesis transports
@@ -144,7 +144,7 @@ theorem pairedToBlockedEquiv_transports_support_symm (dA dB n : ℕ)
       symmetricProjectorPaired (dA * dB) n = Matrix.reindex e.symm e.symm X := by
   intro e
   have h := congrArg (Matrix.reindexAlgEquiv ℂ ℂ e.symm) hX_supp
-  simp only [Matrix.reindexAlgEquiv_apply, map_mul] at h
+  simp only [Matrix.coe_reindexAlgEquiv, map_mul] at h
   have hproj : Matrix.reindex e.symm e.symm (symmetricProjectorPairedGen dA (dA * dB ^ 2) n) =
       symmetricProjectorPaired (dA * dB) n := by
     have hc := pairedToBlockedEquiv_conjugates_projector dA dB n

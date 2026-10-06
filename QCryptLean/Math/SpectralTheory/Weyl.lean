@@ -109,22 +109,6 @@ private lemma rootMultiplicity_comp_neg_X (p : Polynomial ℂ) (z : ℂ) :
     rw [rootMultiplicity_eq_zero h_not_root_comp, rootMultiplicity_eq_zero h_root]
 
 open Polynomial in
-/-- Roots of p.comp(-X) are negatives of roots of p. -/
-lemma roots_comp_neg_X (p : Polynomial ℂ) :
-    (p.comp (-X)).roots = p.roots.map (fun z => -z) := by
-  by_cases hp : p = 0
-  · simp [hp, zero_comp]
-  rw [Multiset.ext]
-  intro z
-  simp only [count_roots]
-  have h_count : Multiset.count z (p.roots.map (fun w => -w)) = Multiset.count (-z) p.roots := by
-    have h : z = -(-z) := by ring
-    conv_lhs => rw [h]
-    exact Multiset.count_map_eq_count' _ _ neg_injective (-z)
-  rw [h_count, count_roots]
-  exact rootMultiplicity_comp_neg_X p z
-
-open Polynomial in
 /-- Ring homomorphism for composition with -X. -/
 private noncomputable def compNegXHom : Polynomial ℂ →+* Polynomial ℂ where
   toFun p := p.comp (-X)
@@ -174,7 +158,7 @@ lemma roots_charpoly_neg_eq {m : Type*} [DecidableEq m] [Fintype m] (A : Matrix 
   rw [charpoly_neg_eq]
   have h_ne : ((-1 : ℂ) ^ Fintype.card m) ≠ 0 := pow_ne_zero _ (by norm_num)
   rw [roots_C_mul _ h_ne]
-  exact roots_comp_neg_X A.charpoly
+  exact Polynomial.roots_comp_neg_X A.charpoly
 
 /-- The multiset of eigenvalues of -A equals the negation of eigenvalues of A.
 

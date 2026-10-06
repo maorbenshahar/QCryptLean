@@ -88,7 +88,7 @@ theorem mapTensorIdLinear_coordinateLinear {n m k : ℕ} [NeZero n] [NeZero m] [
   change Quantum.Channels.mapTensorId (coordinateLinear eA eA' Φ) X _ _ = _
   rw [Quantum.Channels.mapTensorId_apply_eq_apply_block]
   simp only [Equiv.symm_apply_apply, coordinateLinear, LinearMap.comp_apply, LinearEquiv.coe_coe,
-    Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply, Matrix.submatrix_apply,
+    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply, Matrix.submatrix_apply,
     Equiv.symm_symm, Equiv.symm_trans_apply, Equiv.prodCongr_symm, Equiv.prodCongr_apply,
     tensorIdLinear_apply, Prod.map_apply]
   refine congrArg (fun N => Φ N (eA'.symm i) (eA'.symm j)) ?_

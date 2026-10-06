@@ -183,7 +183,7 @@ private lemma eigenvalues_dilation_eq_doubled {n : ℕ} [NeZero n] (A : Op n)
     rw [← h_roots_HH, h_cp, h_roots_prod, h_roots_AA]
   apply Multiset.map_injective Complex.ofReal_injective
   simp only [Multiset.map_add, Multiset.map_map]
-  convert h_complex_eq using 2
+  exact h_complex_eq
 
 /-- **Trace norm of the self-adjoint dilation**: ‖H_A‖₁ = 2·‖A‖₁.
 
@@ -381,7 +381,7 @@ private lemma kraus_sum_of_cp_linear {n m : ℕ} [NeZero n] [NeZero m]
       Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
     congr 1; ext i; congr 1; ext j
     congr 1
-    simp only [E, ChoiMatrix, Matrix.of_apply, Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+    simp only [E, ChoiMatrix, Matrix.of_apply, Equiv.symm_apply_apply]
   rw [hΦ_entry, hv]
   simp only [vecMulVec, Pi.star_apply]
   have h_push : ∀ i j : Fin n,

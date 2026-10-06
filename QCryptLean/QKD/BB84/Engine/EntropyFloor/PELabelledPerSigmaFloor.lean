@@ -64,12 +64,12 @@ lemma CQState.coarsen_reindexQHetero {Xc Yc : Type*} [Fintype Xc] [Fintype Yc] [
       ∑ x : Xc, if g x = y then Matrix.reindex e e ((ρ.stateMap x).toOp) else 0 := rfl
   have hR : ((CQState.reindexQHetero e (CQState.coarsen g ρ)).stateMap y).toOp =
       Matrix.reindex e e (∑ x : Xc, if g x = y then (ρ.stateMap x).toOp else 0) := rfl
-  rw [hL, hR, ← Matrix.reindexLinearEquiv_apply ℂ ℂ, map_sum]
+  rw [hL, hR, ← Matrix.coe_reindexLinearEquiv ℂ ℂ, map_sum]
   refine Finset.sum_congr rfl (fun x _ => ?_)
   by_cases hx : g x = y
-  · rw [if_pos hx, if_pos hx, Matrix.reindexLinearEquiv_apply]
+  · rw [if_pos hx, if_pos hx, Matrix.coe_reindexLinearEquiv]
   · rw [if_neg hx, if_neg hx]
-    simp [Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply]
+    simp [Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
 
 /-- **An announce kernel that factors through a second classical map is the announce kernel of the
 refined coarsening.**

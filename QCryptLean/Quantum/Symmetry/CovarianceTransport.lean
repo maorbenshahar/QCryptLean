@@ -32,7 +32,7 @@ theorem permutationCovariant_castDimLinear_comp {d n m m' : ℕ} [NeZero d] [NeZ
       (fun opv : Op m' => K (Op.castDim h.symm opv))
       (castDimLinear_isCPTP h)
       (cptp_comp K (⇑(Op.castDimLinear h.symm)) hK (castDimLinear_isCPTP h.symm))
-    simpa [Function.comp, Op.castDimLinear] using hcomp
+    exact hcomp
   · intro ρ
     simp only [LinearMap.comp_apply, Op.castDimLinear, LinearMap.coe_mk, AddHom.coe_mk]
     rw [hInt ρ]

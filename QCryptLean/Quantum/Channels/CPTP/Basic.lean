@@ -363,7 +363,7 @@ lemma partialTraceB_choiMatrix_eq {n m : ℕ} [NeZero n] [NeZero m]
   simp only [partialTraceB, ChoiMatrix, Matrix.of_apply, Matrix.trace, Matrix.diag]
   apply Finset.sum_congr rfl
   intro k _
-  simp only [Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+  simp only [Equiv.symm_apply_apply]
 
 /-- The trace of the matrix unit E_{ij} is δ_{ij}. -/
 lemma trace_matrixUnit {n : ℕ} [NeZero n] (i j : Fin n) :
@@ -485,7 +485,7 @@ lemma cptp_eq_kraus_sum {n m : ℕ} [NeZero n] [NeZero m]
       Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
     congr 1; ext i; congr 1; ext j
     congr 1
-    simp only [E, ChoiMatrix, Matrix.of_apply, Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+    simp only [E, ChoiMatrix, Matrix.of_apply, Equiv.symm_apply_apply]
   rw [hΦ_entry, hv]
   -- Simplify LHS: push sum application inside
   simp only [vecMulVec, Pi.star_apply]
@@ -737,7 +737,7 @@ private lemma choi_entry_Φ {m k : ℕ} [NeZero m] [NeZero k]
   have h1 : ChoiMatrix m k Φ (finProdFinEquiv (c, a)) (finProdFinEquiv (d, b)) =
       Φ (single c d 1) a b := by
     dsimp only [ChoiMatrix]
-    simp only [of_apply, Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+    simp only [of_apply, Equiv.symm_apply_apply]
     congr 1; ext r c₁; simp [single_apply, eq_comm]
   rw [← h1, hvΦ]
   simp [Matrix.sum_apply, vecMulVec, Pi.star_apply, of_apply]
@@ -804,7 +804,7 @@ theorem isCompletelyPositive_comp {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
     choi_entry_Φ Φ vΦ hvΦ _ _ α.modNat β.modNat, Finset.sum_mul, Finset.mul_sum]
   rw [sum_reorder_four]
   congr 1; ext s; congr 1; ext t
-  simp only [hw_def, Equiv.toFun_as_coe, finProdFinEquiv_symm_apply]
+  simp only [hw_def, finProdFinEquiv_symm_apply]
   rw [map_sum (starRingEnd ℂ)]
   simp_rw [map_mul (starRingEnd ℂ)]
   rw [Finset.sum_mul]

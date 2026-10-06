@@ -63,7 +63,6 @@ theorem Op.tensor_mulKet {n m : ℕ} (A : Op n) (B : Op m) (ψ : Ket n) (φ : Ke
     rw [show ((x, y) : Fin n × Fin m).1 = x from rfl, show ((x, y) : Fin n × Fin m).2 = y from rfl]
   rw [← Finset.sum_mul_sum]
   -- Step 4: Unfold (A * ψ).vec and (B * φ).vec to match
-  simp only [HMul.hMul, Matrix.mulVec, dotProduct]
   rfl
 
 -- ============================================================================
@@ -274,7 +273,7 @@ lemma ketbra_tensor {n m : ℕ} (ψ₁ : Ket n) (φ₁ : Bra n) (ψ₂ : Ket m) 
   ext i j
   simp only [Op.tensor, Ket.tensor, Bra.tensor, HMul.hMul,
              Matrix.of_apply, Matrix.reindex_apply, Matrix.submatrix_apply,
-             Matrix.kroneckerMap_apply, Equiv.toFun_as_coe]
+             Matrix.kroneckerMap_apply]
   -- (a * b) * (c * d) = (a * c) * (b * d) by commutativity
   exact mul_mul_mul_comm _ _ _ _
 

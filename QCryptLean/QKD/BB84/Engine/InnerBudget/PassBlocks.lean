@@ -380,8 +380,7 @@ theorem bb84SymChannels_diamondDist_le_correctness_add_symDim_mul_agreeTraceDist
     (bb84SymDifferBlock_diamondNorm_le_two_pow_neg_lEV n m ℓ ℓEV Q δ peSel xSel leakEC ec)
   have h := (diamondNorm_add_le _ _).trans (hsum.trans_eq (add_comm _ _))
   have hhalf := mul_le_mul_of_nonneg_left h (by norm_num : (0 : ℝ) ≤ 1 / 2)
-  convert hhalf using 1
-  ring
+  exact hhalf.trans_eq (by ring)
 
 end QKD.BB84.Engine
 

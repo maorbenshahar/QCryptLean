@@ -83,8 +83,9 @@ lemma jointGroupAction_mul_groupBlockedTwirlProjector
   have h := congrArg (Matrix.reindexAlgEquiv ℂ ℂ (pairedToBlockedEquiv dA dB n))
     (pairedGroupAction_mul_groupPairedTwirlProjector
       (prodRep πA πB) (prodRep_isUnitaryRep πA hπA πB hπB) v)
-  simpa only [map_mul, Matrix.reindexAlgEquiv_apply, pairedToBlockedEquiv_groupAction
-    πA hπA πB hπB] using h
+  simp only [map_mul, Matrix.coe_reindexAlgEquiv, pairedToBlockedEquiv_groupAction
+    πA hπA πB hπB] at h
+  exact h
 
 /-- The blocked group twirl is an orthogonal projection. -/
 lemma groupBlockedTwirlProjector_isOrthogonalProjection
@@ -111,7 +112,7 @@ lemma groupBlockedTwirlProjector_commute_symmetricProjectorPairedGen
       (symmetricProjectorPairedGen dA (dA * dB ^ 2) n) := by
   have h := congrArg (Matrix.reindexAlgEquiv ℂ ℂ (pairedToBlockedEquiv dA dB n))
     (groupPairedTwirlProjector_commute_symmetricProjectorPaired (n := n) (prodRep πA πB))
-  simp only [map_mul, Matrix.reindexAlgEquiv_apply,
+  simp only [map_mul, Matrix.coe_reindexAlgEquiv,
     pairedToBlockedEquiv_conjugates_projector] at h
   exact h
 
@@ -186,7 +187,7 @@ lemma tensor_one_commute_groupBlockedTwirlProjector
     intro v
     have hAU := hA (fun k => (v k).1)
     apply (Matrix.reindexAlgEquiv ℂ ℂ e).injective
-    simp only [map_mul, Matrix.reindexAlgEquiv_apply]
+    simp only [map_mul, Matrix.coe_reindexAlgEquiv]
     rw [show Matrix.reindex e e M = Op.tensor A (1 : Op (dB ^ n)) from
       Matrix.reindex_reindex_symm e e _]
     have hfamily : Matrix.reindex e e (tensorFamily (fun k => prodRep πA πB (v k))) =
@@ -205,7 +206,7 @@ lemma tensor_one_commute_groupBlockedTwirlProjector
     change _ * _ = _ * _
     rw [Op.tensor_mul, Op.tensor_mul, one_mul, mul_one, hcomm]
   have h := congrArg (Matrix.reindexAlgEquiv ℂ ℂ (pairedToBlockedEquiv dA dB n)) hpaired.eq
-  simp only [map_mul, Matrix.reindexAlgEquiv_apply] at h
+  simp only [map_mul, Matrix.coe_reindexAlgEquiv] at h
   rw [show Matrix.reindex (pairedToBlockedEquiv dA dB n) (pairedToBlockedEquiv dA dB n)
       (Op.tensor M (1 : Op ((dA * dB) ^ n))) =
       Op.tensor A (1 : Op ((dA * dB ^ 2) ^ n)) from

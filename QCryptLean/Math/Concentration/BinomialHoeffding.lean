@@ -1,6 +1,5 @@
 import Mathlib.Probability.Moments.SubGaussian
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
-import Mathlib.Probability.ProbabilityMassFunction.Integrals
+import Mathlib.Probability.Distributions.Bernoulli
 import Mathlib.Data.Nat.Choose.Sum
 import QCryptLean.Math.Concentration.BernoulliKLToolkit
 import QCryptLean.Math.Concentration.BinomialKLTail
@@ -34,7 +33,7 @@ retained as a statement of independent interest:
 1. **Single-Bernoulli MGF (Hoeffding's lemma)**: for `0 ≤ p ≤ 1` and any `t : ℝ`,
    `p · exp(t(1-p)) + (1-p) · exp(-tp) ≤ exp(t²/8)`.  We obtain this from
    Mathlib's `ProbabilityTheory.hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero`
-   applied to the canonical `PMF.bernoulli` measure.
+   applied to the canonical `ProbabilityTheory.bernoulliMeasure` measure.
 2. **Binomial centred MGF identity**: the centred MGF
    `∑_k C(n,k) p^k (1-p)^(n-k) exp(t(k - np))` equals the n-th power of the
    single-Bernoulli centred MGF (via `add_pow`).
@@ -71,18 +70,8 @@ lemma bernoulli_centered_mgf_le (p : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 1) (t : ℝ
   -- We use Mathlib's `hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero` applied
   -- to the canonical Bernoulli measure on `Bool`.
   classical
-  -- Build PMF.bernoulli with parameter `p.toNNReal`.
-  set pNN : ℝ≥0 := p.toNNReal with hpNN_def
-  have hpNN_le : pNN ≤ 1 := by
-    rw [hpNN_def]
-    -- toNNReal p ≤ 1
-    exact Real.toNNReal_le_one.mpr h1
-  -- Now `(p.toNNReal : ℝ) = p` since p ≥ 0.
-  have hpReal : (pNN : ℝ) = p := by
-    rw [hpNN_def]; exact Real.coe_toNNReal p h0
-  -- The Bernoulli measure on `Bool`.
-  let μ : Measure Bool := (PMF.bernoulli pNN hpNN_le).toMeasure
-  have hμ_prob : IsProbabilityMeasure μ := PMF.toMeasure.isProbabilityMeasure _
+  let μ : Measure Bool := bernoulliMeasure true false ⟨p, h0, h1⟩
+  have hμ_prob : IsProbabilityMeasure μ := inferInstance
   -- The random variable: 1 if true, 0 if false.
   let X : Bool → ℝ := fun b => cond b 1 0
   -- X is bounded in [0,1].
@@ -94,9 +83,8 @@ lemma bernoulli_centered_mgf_le (p : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 1) (t : ℝ
     exact measurable_of_countable _
   have hX_ae : ∀ᵐ b ∂μ, X b ∈ Set.Icc (0 : ℝ) 1 := ae_of_all _ hX_bound
   -- The expectation of X under μ is p.
-  have hX_int : ∫ b, X b ∂μ = (pNN : ℝ) := PMF.bernoulli_expectation hpNN_le
-  -- So `∫ X dμ = p`.
-  have hX_int' : ∫ b, X b ∂μ = p := by rw [hX_int, hpReal]
+  have hX_int' : ∫ b, X b ∂μ = p := by
+    simp [μ, integral_bernoulliMeasure, X]
   -- Apply Hoeffding's lemma from Mathlib.
   have hSubG :
       HasSubgaussianMGF (fun b => X b - p) ((‖(1 : ℝ) - 0‖₊ / 2) ^ 2) μ := by
@@ -111,26 +99,10 @@ lemma bernoulli_centered_mgf_le (p : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 1) (t : ℝ
     simp only [sub_zero, nnnorm_one]; norm_num
   rw [hParam] at hmgf
   -- mgf of (X - p) at t = E[exp(t (X - p))] = p · exp(t(1-p)) + (1-p) · exp(-tp).
-  have hp_le_one_real : p ≤ 1 := h1
   have hmgf_eq :
       mgf (fun b => X b - p) μ t =
         p * Real.exp (t * (1 - p)) + (1 - p) * Real.exp (-(t * p)) := by
-    rw [mgf]
-    rw [PMF.integral_eq_sum]
-    simp only [Fintype.sum_bool, PMF.bernoulli_apply, X, _root_.cond, smul_eq_mul]
-    -- Convert the ENNReal-coerced NNReal values back to reals: pNN.toReal = p, (1 - pNN).toReal = 1
-    -- - p
-    have h_pNN : ((pNN : ℝ≥0∞)).toReal = p := by
-      rw [ENNReal.coe_toReal]; exact hpReal
-    have h_1pNN : (((1 - pNN : ℝ≥0) : ℝ≥0∞)).toReal = 1 - p := by
-      rw [ENNReal.coe_toReal,
-          NNReal.coe_sub (by exact_mod_cast hpNN_le), NNReal.coe_one, hpReal]
-    rw [h_pNN, h_1pNN]
-    -- Goal: p * exp(t * (1 - p)) + (1 - p) * exp(t * (0 - p))
-    --     = p * exp(t * (1 - p)) + (1 - p) * exp(-(t * p))
-    have h_arg : Real.exp (t * ((0 : ℝ) - p)) = Real.exp (-(t * p)) := by
-      congr 1; ring
-    rw [h_arg]
+    simp [mgf, μ, integral_bernoulliMeasure, X, mul_neg]
   -- Convert the bound on mgf into the desired form.
   have h_target : p * Real.exp (t * (1 - p)) + (1 - p) * Real.exp (-(t * p)) ≤
       Real.exp (((1 / 4 : NNReal) : ℝ) * t ^ 2 / 2) := by

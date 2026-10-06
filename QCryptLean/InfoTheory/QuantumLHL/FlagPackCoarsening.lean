@@ -199,8 +199,7 @@ lemma flagPackOp_finsetSum {C ι : Type*} [Fintype C] [DecidableEq C] {nE : ℕ}
     rw [Finset.sum_apply]
   rw [hfun, ← Matrix.blockDiagonalAddMonoidHom_apply, map_sum]
   simp only [Matrix.blockDiagonalAddMonoidHom_apply]
-  rw [← Matrix.reindexLinearEquiv_apply ℂ ℂ, map_sum]
-  simp only [Matrix.reindexLinearEquiv_apply]
+  rw [← Matrix.coe_reindexLinearEquiv ℂ ℂ, map_sum]
 
 /-- Packing commutes with scalar multiplication (real or complex scalars). -/
 lemma flagPackOp_smul {C : Type*} [Fintype C] [DecidableEq C] {nE : ℕ}
@@ -356,7 +355,6 @@ lemma sum_seedKeyExtractorOutputState_trace {S X Z : Type*} [Fintype S] [Fintype
       = ∑ x : X, (ρ.stateMap x).trace := by
   change ∑ sz : S × Z, (seedPerSeedWeightedOp H ρ sz.1 sz.2).trace.re = _
   rw [← Complex.re_sum, ← Matrix.trace_sum, sum_seedPerSeedWeightedOp_eq_quantumMarginalOp]
-  change (ρ.quantumMarginalOp).trace.re = _
   unfold CQState.quantumMarginalOp
   rw [Matrix.trace_sum, Complex.re_sum]
   rfl

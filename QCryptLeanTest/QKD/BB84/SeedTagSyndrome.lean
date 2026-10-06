@@ -62,8 +62,8 @@ theorem announcedLiftedOperation_eq_local
         (((FinalStage.rawSystem n).splitAtSet actor ((FinalStage.rawSystem n).reg actor)) q).1
         (((FinalStage.rawSystem n).splitAtSet actor ((FinalStage.rawSystem n).reg actor)) q').1 :=
           by
-  simpa only [AnnouncedAction.liftedOperation_ofInstrument_eq_liftAt_operation] using
-    Instrument.liftAt_operation_apply actor L o rho q q'
+  rw [AnnouncedAction.liftedOperation_ofInstrument_eq_liftAt_operation]
+  exact Instrument.liftAt_operation_apply actor L o rho q q'
 
 /-! ## Fused public cell and visible seed -/
 
@@ -121,8 +121,7 @@ def sampleEC : ECScheme 1 samplePeSel 0 :=
 
 theorem fused_announcement_is_injective :
     Function.Injective (fusedAnnouncement 1 1 0 samplePeSel 0 sampleEC).announce := by
-  simpa [fusedAnnouncement] using
-    (fusedPublicEquiv 1 1 0 samplePeSel 0).injective
+  exact (fusedPublicEquiv 1 1 0 samplePeSel 0).injective
 
 theorem fused_semantic_to_raw_to_semantic
     (rv : FusedSeedIndex 1 1 0 samplePeSel × FusedValue 0 0) :

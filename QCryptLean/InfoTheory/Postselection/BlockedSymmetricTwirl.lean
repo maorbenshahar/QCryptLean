@@ -107,7 +107,7 @@ lemma groupBlockedSymmetricTwirl_mul_reindex_of_supported
   haveI : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   intro e
   have hG' := congrArg (Matrix.reindexAlgEquiv ℂ ℂ e) hG
-  simp only [map_mul, Matrix.reindexAlgEquiv_apply] at hG'
+  simp only [map_mul, Matrix.coe_reindexAlgEquiv] at hG'
   have hGl := (idempotent_sandwich_left_right
     (groupBlockedTwirlProjector_isOrthogonalProjection (n := n) πA hπA πB hπB).2 hG').1
   have hPl := (idempotent_sandwich_left_right
@@ -200,7 +200,7 @@ lemma groupBlockedSymmetricTwirl_partialTraceB_posDef
   have hcomm := groupBlockedTwirlProjector_commute_symmetricProjectorPairedGen (n := n) πA πB
   have hPG : PG * Ψb.toOp = Ψb.toOp := by
     have h := congrArg (Matrix.reindexAlgEquiv ℂ ℂ e) hΨG
-    simp only [map_mul, Matrix.reindexAlgEquiv_apply] at h
+    simp only [map_mul, Matrix.coe_reindexAlgEquiv] at h
     exact (idempotent_sandwich_left_right hGG h).1
   have hP : P * Ψb.toOp = Ψb.toOp :=
     (idempotent_sandwich_left_right hPP

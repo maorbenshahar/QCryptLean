@@ -142,7 +142,7 @@ lemma referenceTwirl_commute {H : Type*} [Group H] [MeasurableSpace H] [Measurab
       (Matrix.mem_unitaryGroup_iff').mp (U g).2, Op.tensor_one]
   have h := congrArg (fun X => X * Op.tensor (1 : Op a) (U g : Op b))
     (referenceTwirl_conj μ U T hint g)
-  simpa only [mul_assoc, hunit, mul_one] using h
+  simpa only [Commute, SemiconjBy, mul_assoc, hunit, mul_one] using h
 
 /-- A reference twirl preserves right support on an invariant projection. -/
 lemma referenceTwirl_mul_eq {H : Type*} [MeasurableSpace H] {a b : ℕ}

@@ -276,7 +276,7 @@ theorem bipartiteMaxReference_fidelity_pos_of_posDef {dA dB : ℕ} [NeZero (dA *
   rw [bipartiteMaxReferenceOp_toOp]
   unfold Quantum.TensorProducts.Op.tensor
   rw [Matrix.reindex_apply]
-  exact (Matrix.PosDef.kronecker Matrix.PosDef.one hσ).submatrix_equiv finProdFinEquiv.symm
+  exact (Matrix.PosDef.kronecker Matrix.PosDef.one hσ).submatrix finProdFinEquiv.symm.injective
 
 /-!
 ## `D_max` monotonicity under order-preserving maps

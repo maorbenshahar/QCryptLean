@@ -46,13 +46,13 @@ private theorem hasDerivAt_klBer_fst {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1)
   have hlog1 : HasDerivAt (fun a : ℝ => Real.log (a / θ)) (1 / a) a := by
     have := (Real.hasDerivAt_log haθ_ne).comp a ((hasDerivAt_id a).div_const θ)
     simp only [id] at this
-    convert this using 1
+    apply this.congr_deriv
     field_simp
   have hterm1 : HasDerivAt (fun a : ℝ => a * Real.log (a / θ))
       (Real.log (a / θ) + 1) a := by
     have := (hasDerivAt_id a).mul hlog1
     simp only [id] at this
-    convert this using 1
+    apply this.congr_deriv
     field_simp
   -- Second summand: (1 - a) * log ((1 - a) / (1 - θ)).
   have hlog2 : HasDerivAt (fun a : ℝ => Real.log ((1 - a) / (1 - θ)))
@@ -61,14 +61,14 @@ private theorem hasDerivAt_klBer_fst {θ : ℝ} (hθ0 : 0 < θ) (hθ1 : θ < 1)
       have := ((hasDerivAt_id a).const_sub 1).div_const (1 - θ)
       simpa using this
     have := (Real.hasDerivAt_log h1aθ_ne).comp a hinner
-    convert this using 1
+    apply this.congr_deriv
     rw [inv_div]
     field_simp
   have hterm2 : HasDerivAt (fun a : ℝ => (1 - a) * Real.log ((1 - a) / (1 - θ)))
       (-Real.log ((1 - a) / (1 - θ)) - 1) a := by
     have := ((hasDerivAt_id a).const_sub 1).mul hlog2
     simp only [id] at this
-    convert this using 1
+    apply this.congr_deriv
     field_simp
     ring
   have hsum := hterm1.add hterm2
@@ -177,16 +177,16 @@ private theorem hasDerivAt_klBer_snd {a : ℝ} (ha0 : 0 < a) (ha1 : a < 1)
   -- First summand: a * log (a / θ).
   have hlog1 : HasDerivAt (fun θ : ℝ => Real.log (a / θ)) (-(1 / θ)) θ := by
     have hinv : HasDerivAt (fun θ : ℝ => θ⁻¹) (-1 / θ ^ 2) θ := by
-      simpa using (hasDerivAt_id θ).inv hne_θ
+      exact (hasDerivAt_id θ).inv hne_θ
     have hinner : HasDerivAt (fun θ : ℝ => a / θ) (a * (-1 / θ ^ 2)) θ := by
       have := hinv.const_mul a
       simpa [div_eq_mul_inv] using this
     have := (Real.hasDerivAt_log haθ_ne).comp θ hinner
-    convert this using 1
+    apply this.congr_deriv
     field_simp
   have hterm1 : HasDerivAt (fun θ : ℝ => a * Real.log (a / θ)) (-(a / θ)) θ := by
     have := hlog1.const_mul a
-    convert this using 1
+    apply this.congr_deriv
     field_simp
   -- Second summand: (1 - a) * log ((1 - a) / (1 - θ)).
   have hlog2 : HasDerivAt (fun θ : ℝ => Real.log ((1 - a) / (1 - θ))) (1 / (1 - θ)) θ := by
@@ -198,13 +198,13 @@ private theorem hasDerivAt_klBer_snd {a : ℝ} (ha0 : 0 < a) (ha1 : a < 1)
       have := hinv.const_mul (1 - a)
       simpa [div_eq_mul_inv] using this
     have := (Real.hasDerivAt_log h1aθ_ne).comp θ hinner
-    convert this using 1
+    apply this.congr_deriv
     rw [inv_div]
     field_simp
   have hterm2 : HasDerivAt (fun θ : ℝ => (1 - a) * Real.log ((1 - a) / (1 - θ)))
       ((1 - a) / (1 - θ)) θ := by
     have := hlog2.const_mul (1 - a)
-    convert this using 1
+    apply this.congr_deriv
     field_simp
   have hsum := hterm1.add hterm2
   exact hsum
@@ -220,12 +220,12 @@ private theorem hasDerivAt_klBer_snd' {a : ℝ} {θ : ℝ} (hθ0 : 0 < θ) (hθ1
   -- d/dθ (-(a/θ)) = a / θ^2.
   have h1 : HasDerivAt (fun θ : ℝ => -(a / θ)) (a / θ ^ 2) θ := by
     have hinv : HasDerivAt (fun θ : ℝ => θ⁻¹) (-1 / θ ^ 2) θ := by
-      simpa using (hasDerivAt_id θ).inv hne_θ
+      exact (hasDerivAt_id θ).inv hne_θ
     have hd : HasDerivAt (fun θ : ℝ => a / θ) (a * (-1 / θ ^ 2)) θ := by
       have := hinv.const_mul a
       simpa [div_eq_mul_inv] using this
     have := hd.neg
-    convert this using 1
+    apply this.congr_deriv
     field_simp
   -- d/dθ ((1-a)/(1-θ)) = (1-a) / (1-θ)^2.
   have h2 : HasDerivAt (fun θ : ℝ => (1 - a) / (1 - θ)) ((1 - a) / (1 - θ) ^ 2) θ := by
@@ -309,9 +309,9 @@ theorem klBer_quad_lower {a θ θ₀ θLo θHi κ : ℝ}
     have hquad : HasDerivAt (fun s : ℝ => κ / 2 * (s - θ₀) ^ 2) (κ * (s - θ₀)) s := by
       have hbase : HasDerivAt (fun s : ℝ => (s - θ₀) ^ 2) (2 * (s - θ₀)) s := by
         have := ((hasDerivAt_id s).sub_const θ₀).pow 2
-        simpa using this
+        exact this.congr_deriv (by norm_num)
       have := hbase.const_mul (κ / 2)
-      convert this using 1
+      apply this.congr_deriv
       ring
     have := (hk.sub hlin).sub hquad
     exact this
@@ -434,7 +434,7 @@ theorem two_mul_sq_le_klBer_zero_left {b : ℝ} (hb0 : 0 < b) (hb1 : b < 1) :
     have hx1 : (1 : ℝ) - x ≠ 0 := sub_ne_zero_of_ne (by linarith)
     have hlog : HasDerivAt (fun x : ℝ => -Real.log (1 - x)) (1 / (1 - x)) x := by
       have hcomp := (Real.hasDerivAt_log hx1).comp x ((hasDerivAt_id x).const_sub 1)
-      simpa using hcomp.neg
+      exact hcomp.neg.congr_deriv (by simp)
     have hquad : HasDerivAt (fun x : ℝ => 2 * x ^ 2) (4 * x) x := by
       exact (((hasDerivAt_id x).pow 2).const_mul 2).congr_deriv (by simp only [id_eq]; ring)
     exact (hlog.sub hquad).congr_deriv (by field_simp; ring)
@@ -477,9 +477,9 @@ theorem two_mul_sq_le_klBer_interior {a b : ℝ} (ha0 : 0 < a) (ha1 : a < 1)
       hasDerivAt_klBer_fst hb0 hb1 hs0 hs1
     have hquad : HasDerivAt (fun s : ℝ => 2 * (s - b) ^ 2) (4 * (s - b)) s := by
       have h1 : HasDerivAt (fun s : ℝ => (s - b) ^ 2) (2 * (s - b)) s := by
-        simpa using ((hasDerivAt_id s).sub_const b).pow 2
+        exact (((hasDerivAt_id s).sub_const b).pow 2).congr_deriv (by norm_num)
       have := h1.const_mul 2
-      convert this using 1
+      apply this.congr_deriv
       ring
     have hexp : Real.log (s / b) - Real.log ((1 - s) / (1 - b))
         = Real.log s - Real.log (1 - s) + C := by
@@ -496,7 +496,8 @@ theorem two_mul_sq_le_klBer_interior {a b : ℝ} (ha0 : 0 < a) (ha1 : a < 1)
       have h1 : HasDerivAt (fun s : ℝ => Real.log s) (1 / s) s := by
         simpa using Real.hasDerivAt_log (ne_of_gt hs0)
       have h2 : HasDerivAt (fun s : ℝ => Real.log (1 - s)) (-(1 / (1 - s))) s := by
-        simpa using (Real.hasDerivAt_log (sub_ne_zero_of_ne (by linarith))).comp s
+        simpa only [Function.comp_def, mul_neg, mul_one, one_div]
+          using (Real.hasDerivAt_log (sub_ne_zero_of_ne (by linarith))).comp s
           ((hasDerivAt_id s).const_sub 1)
       have h4 : HasDerivAt (fun s : ℝ => 4 * (s - b)) 4 s := by
         simpa using ((hasDerivAt_id s).sub_const b).const_mul 4

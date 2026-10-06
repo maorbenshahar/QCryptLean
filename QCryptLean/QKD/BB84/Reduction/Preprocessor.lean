@@ -46,7 +46,7 @@ def comparisonInitialSubset {N n : ℕ} (hN : n ≤ N) :
 
 /-- The ambient comparison control is inhabited for every `N,n`: use the empty retained subset
 when `n = 0`, and the first shortage label when `n` is positive. -/
-@[implicit_reducible] def comparisonControlNonempty (N n : ℕ) :
+theorem comparisonControlNonempty (N n : ℕ) :
     Nonempty (ComparisonControl N n) :=
   match n with
   | 0 => ⟨Sum.inl (comparisonInitialSubset (N := N) (n := 0) (Nat.zero_le N))⟩
@@ -86,12 +86,12 @@ def comparisonPreOutputEquiv (N n : ℕ) :
   (Equiv.prodCongr (Equiv.refl _) (Fintype.equivFin _)).trans finProdFinEquiv
 
 /-- The actual physical input coordinate dimension is nonzero. -/
-@[implicit_reducible] def comparisonPreInputDimNeZero (N : ℕ) :
+theorem comparisonPreInputDimNeZero (N : ℕ) :
     NeZero (Fintype.card (Measurement.weightedStreamSystem Unit N).total) :=
   Measurement.weightedStreamInputCardNeZero N
 
 /-- The native-input-times-control output coordinate dimension is nonzero. -/
-@[implicit_reducible] def comparisonPreOutputDimNeZero (N n : ℕ) :
+theorem comparisonPreOutputDimNeZero (N n : ℕ) :
     NeZero ((2 ^ n * 2 ^ n) * Fintype.card (ComparisonControl N n)) :=
   ⟨Nat.mul_ne_zero
     (Nat.mul_ne_zero (pow_ne_zero _ (by decide)) (pow_ne_zero _ (by decide)))
@@ -496,7 +496,7 @@ theorem comparisonPreInstrument_channel_apply
       · rintro ⟨_, hq, hq'⟩
         exact ⟨(Prod.ext hq.1 hq.2).symm, (Prod.ext hq'.1 hq'.2).symm⟩
     · simp only [comparisonPreFailureKraus, hj, ↓reduceIte, Matrix.zero_mul, conjTranspose_zero,
-        Matrix.mul_zero, zero_apply, false_and]
+        Matrix.mul_zero, Matrix.zero_apply, false_and]
   rw [Instrument.channel, Fintype.sum_unique, Instrument.operation]
   simp only [LinearMap.sum_apply, matrixConjLinear, LinearMap.coe_mk,
     AddHom.coe_mk]

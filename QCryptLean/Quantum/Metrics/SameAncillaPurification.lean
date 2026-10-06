@@ -513,7 +513,7 @@ lemma sameAncillaPurificationDensity_pureKet_tensorUnitary_overlap_re_le_one
   have hχ_norm : χ.dag * χ = 1 := by
     change dotProduct (star (Ut.toOp.mulVec ψρ.vec)) (Ut.toOp.mulVec ψρ.vec) = 1
     rw [Ut.preserves_inner]
-    simpa [bra_mul_ket_eq, Ket.dag_vec] using
+    exact
       (sameAncillaPurificationDensity ρ).pureKetOf_normalized
         (sameAncillaPurificationDensity_isPure ρ)
   have hψσ_norm : ψσ.dag * ψσ = 1 :=

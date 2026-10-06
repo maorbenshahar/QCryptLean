@@ -131,8 +131,7 @@ lemma continuous_trace_mul_densityOp_toOp {d : ℕ} (A : Op d) :
 /-- The single-round phase-flip error rate is continuous. -/
 lemma phaseFlipErrorRate_single_continuous :
     Continuous phaseFlipErrorRate_single := by
-  simpa [phaseFlipErrorRate_single] using
-    (Complex.continuous_re.comp (continuous_trace_mul_densityOp_toOp phaseFlipProjector))
+  exact Complex.continuous_re.comp (continuous_trace_mul_densityOp_toOp phaseFlipProjector)
 
 /-- The single-round phase-flip error rate is measurable. -/
 lemma phaseFlipErrorRate_single_measurable :

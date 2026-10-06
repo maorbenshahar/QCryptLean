@@ -59,9 +59,6 @@ structure QuantumHashFamily (S X Z : Type*) where
   /-- Output type is nonempty -/
   [outputNonempty : Nonempty Z]
 
-attribute [instance] QuantumHashFamily.seedFintype QuantumHashFamily.seedNonempty
-attribute [instance] QuantumHashFamily.outputFintype QuantumHashFamily.outputNonempty
-
 /-- 2-universality property for a quantum hash family.
 
     Tomamichel 2016, §7.3.2, eq. 7.31:

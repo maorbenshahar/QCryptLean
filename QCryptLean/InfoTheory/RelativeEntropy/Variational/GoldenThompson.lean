@@ -752,7 +752,7 @@ lemma gibbs_variational_bound_of_isHermitian {N : ℕ} [NeZero N]
     gibbs_variational_diagonal_bound ρ' σ' α hσ'_pd
   have hA_spec :
       A = U * Matrix.diagonal (RCLike.ofReal ∘ α) * U.conjTranspose := by
-    simpa [U, α] using hA.spectral_theorem
+    exact hA.spectral_theorem
   let U_units : (Matrix (Fin N) (Fin N) ℂ)ˣ := {
     val := U
     inv := U.conjTranspose

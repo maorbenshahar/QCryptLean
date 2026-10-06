@@ -424,10 +424,15 @@ lemma exists_norm_one_vecMulVec_eq_of_rank_one_projection {n : ℕ} [NeZero n]
   have hp_proj : p.IsSymmetricProjection := ⟨hp_idem, hp_symm⟩
   have h_range_finrank : Module.finrank ℂ (LinearMap.range p) = 1 := by
     have h_rank_range : P.rank = Module.finrank ℂ (LinearMap.range p) := by
-      simpa [p, Matrix.toEuclideanLin_eq_toLin_orthonormal] using
-        (Matrix.rank_eq_finrank_range_toLin P
-          (EuclideanSpace.basisFun (Fin n) ℂ).toBasis
-          (EuclideanSpace.basisFun (Fin n) ℂ).toBasis)
+      have he := congrArg
+        (fun e : Matrix (Fin n) (Fin n) ℂ ≃ₗ[ℂ]
+            (EuclideanSpace ℂ (Fin n) →ₗ[ℂ] EuclideanSpace ℂ (Fin n)) => e P)
+        Matrix.toEuclideanLin_eq_toLin_orthonormal
+      exact (Matrix.rank_eq_finrank_range_toLin P
+        (EuclideanSpace.basisFun (Fin n) ℂ).toBasis
+        (EuclideanSpace.basisFun (Fin n) ℂ).toBasis).trans
+        (congrArg (fun f : EuclideanSpace ℂ (Fin n) →ₗ[ℂ] EuclideanSpace ℂ (Fin n) =>
+          Module.finrank ℂ (LinearMap.range f)) he.symm)
     rw [← h_rank_range]
     exact hP_rank
   obtain ⟨v, hv_ne, hv_span⟩ :=

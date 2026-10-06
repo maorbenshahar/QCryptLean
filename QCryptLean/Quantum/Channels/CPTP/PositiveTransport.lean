@@ -61,7 +61,6 @@ lemma choiMatrix_traceSmulMap {n m : ℕ} [NeZero n] [NeZero m]
     Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.kroneckerMap_apply,
     Matrix.one_apply, smul_eq_mul]
   rw [trace_matrixUnit]
-  simp only [Equiv.toFun_as_coe]
   ring_nf
 
 /-- A nonzero positive input block can be transported to any positive output

@@ -72,8 +72,7 @@ lemma swapOp_mul_self (n : ℕ) [NeZero n] : swapOp n * swapOp n = 1 := by
   have hinv : swapEquiv n (swapEquiv n p) = p := by
     have : (swapEquiv n).symm = swapEquiv n := by
       ext x
-      simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply,
-        Equiv.symm_trans_apply]
+      simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply]
     rw [← this]
     exact (swapEquiv n).symm_apply_apply p
   rw [hinv]
@@ -84,8 +83,7 @@ lemma swapOp_conjTranspose (n : ℕ) : (swapOp n)ᴴ = swapOp n := by
   simp only [conjTranspose_apply, swapOp, Matrix.of_apply]
   have hsymm : (swapEquiv n).symm = swapEquiv n := by
     ext x
-    simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply,
-      Equiv.symm_trans_apply]
+    simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply]
   split_ifs with h1 h2 h2
   · simp
   · exfalso; apply h2; rw [← hsymm, ← h1]
@@ -116,8 +114,7 @@ lemma swapOp_tensor {n : ℕ} [NeZero n] (A : Op n) (B : Op n) :
   simp_rw [Finset.sum_ite_eq', Finset.mem_univ, if_true]
   have hsymm : (swapEquiv n).symm = swapEquiv n := by
     ext x
-    simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply,
-      Equiv.symm_trans_apply]
+    simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply]
   rw [hsymm]
   have key : ∀ (x : Fin (n * n)),
       (finProdFinEquiv.symm (swapEquiv n x)).1 = (finProdFinEquiv.symm x).2 ∧
@@ -142,7 +139,7 @@ lemma swapOp_conj_entry (n : ℕ) [NeZero n] (X : Op (n * n)) (p q : Fin (n * n)
   simp_rw [Finset.sum_ite_eq', Finset.mem_univ, if_true]
   have hsymm : (swapEquiv n).symm = swapEquiv n := by
     ext x
-    simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply, Equiv.symm_trans_apply]
+    simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply]
   rw [hsymm]
 
 -- ============================================================================
@@ -202,7 +199,6 @@ lemma traceNorm_mapTensorId_eq_mapIdTensor {n m : ℕ} [NeZero n] [NeZero m]
       Equiv.trans_apply, Equiv.prodComm_apply,
       finProdFinEquiv_symm_apply, Prod.swap_prod_mk,
       Equiv.symm_apply_apply]
-    simp
   -- Step 2: traceNorm is invariant under reindexing by an equivalence
   rw [h_sub]
   exact traceNorm_submatrix_equiv _ e

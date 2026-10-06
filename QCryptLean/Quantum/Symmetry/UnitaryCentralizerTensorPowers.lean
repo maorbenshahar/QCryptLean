@@ -72,7 +72,7 @@ lemma hermCpow_commute {d : ℕ} {A T : Op d} (hA : A.IsHermitian)
   have h' := h.map e.symm
   rw [hdiag] at h'
   have hp := commute_diagonal_map _ (fun x : ℂ => x ^ z) h'
-  simpa only [StarAlgEquiv.apply_symm_apply] using hp.map e
+  simpa only [StarAlgEquiv.apply_symm_apply, Function.comp_def, hermCpow, e] using hp.map e
 
 /-- Commutation with constrained unitary tensor powers extends to positive definite matrices. -/
 lemma commute_tensorPow_posDef_of_unitaryCentralizer {d n : ℕ} (S : Set (Op d))
@@ -103,7 +103,8 @@ lemma conjTranspose_mem_commutant {d : ℕ} (S : Set (Op d))
     ∀ M ∈ S, Commute M Aᴴ := by
   intro M hM
   have h := congrArg Matrix.conjTranspose (hA Mᴴ (hS M hM)).eq
-  simpa only [Matrix.conjTranspose_mul, Matrix.conjTranspose_conjTranspose] using h.symm
+  simpa only [Commute, SemiconjBy, Matrix.conjTranspose_mul,
+    Matrix.conjTranspose_conjTranspose] using h.symm
 
 /-- Inverting an invertible matrix preserves every commutation relation. -/
 lemma nonsing_inv_commute_of_isUnit {d : ℕ} {A M : Op d}
@@ -150,10 +151,10 @@ lemma commute_tensorPow_isUnit_of_unitaryCentralizer {d n : ℕ}
 /-- The scalar shifts making a square matrix invertible form a dense subset of the complex plane. -/
 lemma dense_isUnit_scalar_shift {d : ℕ} (A : Op d) :
     Dense (setOf fun z : ℂ => IsUnit (A + z • (1 : Op d))) := by
-  have hd := Dense.diff_finite dense_univ (-A).finite_spectrum
+  have hd := Dense.sdiff_finite dense_univ (-A).finite_spectrum
   have hs : Set.univ \ spectrum ℂ (-A) = setOf (fun z : ℂ => IsUnit (A + z • (1 : Op d))) := by
     ext z
-    simp only [Set.mem_diff, Set.mem_univ, true_and, spectrum.mem_iff, not_not,
+    simp only [Set.mem_sdiff, Set.mem_univ, true_and, spectrum.mem_iff, not_not,
       Algebra.algebraMap_eq_smul_one, sub_neg_eq_add, add_comm, Set.mem_setOf_eq]
   rwa [hs] at hd
 
@@ -172,6 +173,6 @@ theorem commute_tensorPow_of_unitaryCentralizer {d n : ℕ}
     intro z hz
     exact (commute_tensorPow_isUnit_of_unitaryCentralizer S hS T hU hz fun M hM =>
       (hAS M hM).add_right ((Commute.one_right M).smul_right z)).eq
-  simpa only [zero_smul, add_zero] using congrFun heq 0
+  simpa only [Commute, SemiconjBy, zero_smul, add_zero] using congrFun heq 0
 
 end Quantum.Symmetry

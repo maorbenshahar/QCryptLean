@@ -697,13 +697,7 @@ theorem perfect_measurement_implies_eigenvalue_one {n : ℕ} (M : POVM n 2) (i :
   -- Also compute the quadratic form of I with ψ (it's ⟨ψ|ψ⟩ = 1)
   have h_qf_I : star ψ.vec ⬝ᵥ (1 : Matrix (Fin n) (Fin n) ℂ).mulVec ψ.vec = 1 := by
     simp only [Matrix.one_mulVec]
-    -- star ψ.vec ⬝ᵥ ψ.vec = ⟨ψ|ψ⟩ = 1
-    have h := hψ_norm
-    -- Convert via bra_mul_ket_eq
-    unfold dotProduct
-    unfold Ket.dag at h
-    simp only [bra_mul_ket_eq] at h
-    convert h using 1
+    exact hψ_norm
   -- Now compute ⟨ψ|(1 - M_i)|ψ⟩
   have h_qf_comp : star ψ.vec ⬝ᵥ (1 - M.elements i).mulVec ψ.vec = 0 := by
     have h1 : (1 - M.elements i).mulVec ψ.vec =

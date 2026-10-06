@@ -251,7 +251,7 @@ lemma max_eigenvalue_ge_one_sub_traceDistance {n : ℕ} [NeZero n] (ρ : Density
         simp only [bra_mul_ket_eq, op_mul_ket_vec, Ket.dag_vec]
         unfold quadraticForm dotProduct; rfl
       rw [h_eq]; unfold quadraticForm; rw [h_spec]
-      convert spectral_quadratic_form_re U ev ψ.vec using 2
+      exact spectral_quadratic_form_re U ev ψ.vec
     -- ∑ ev_i * a_i ≤ ev_max * ∑ a_i = ev_max
     rw [h_expect]
     -- Each ev_i ≤ eigenvaluesOf ρ i_max

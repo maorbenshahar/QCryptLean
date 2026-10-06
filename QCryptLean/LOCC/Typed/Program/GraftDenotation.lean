@@ -222,7 +222,7 @@ theorem controlledContinuation_comp_publicInclKraus
         ∑ b : (k e).Branch, matrixConjLinear (controlledContinuationKraus k e b)) =
       ∑ z : Y, ∑ e : (next z).Exit, ∑ b : (k ⟨z, e⟩).Branch,
         matrixConjLinear (controlledContinuationKraus k ⟨z, e⟩ b) := by
-    simpa only [Boundary.Exit, Boundary.instFintypeExit] using
+    exact
       (Fintype.sum_sigma (fun e : (Boundary.announce Y next).Exit =>
         ∑ b : (k e).Branch, matrixConjLinear (controlledContinuationKraus k e b)))
   rw [hsigma]
@@ -303,7 +303,7 @@ theorem denote_graft {R : MultipartiteSystem P} {B : Boundary P} (p : Program R 
       intro ρ
       have hblockApply := LinearMap.congr_fun hblock
         ((next (A.announce o)).denote (matrixConjLinear (A.liftedKraus o r) ρ))
-      simpa only [LinearMap.comp_apply] using hblockApply.symm
+      exact hblockApply.symm
   | @priv R B A next ih =>
       rw [graft_priv, denote_priv, denote_priv, ih]
       apply LinearMap.ext

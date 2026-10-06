@@ -190,13 +190,13 @@ private lemma weighted_mixture_fidelityGen_ge_univ
       rw [haNe, huNe, hvNe]; exact hcomp z)
   have e1 : ∑ s ∈ S, wN s * aN s = ∑ z, w z * a z :=
     hsumN (fun z => w z * a z) (fun s => wN s * aN s)
-      (fun z => by change wN (e z) * aN (e z) = w z * a z; rw [hwNe, haNe])
+      (fun z => by rw [hwNe, haNe])
   have e2 : ∑ s ∈ S, wN s * uN s = ∑ z, w z * u z :=
     hsumN (fun z => w z * u z) (fun s => wN s * uN s)
-      (fun z => by change wN (e z) * uN (e z) = w z * u z; rw [hwNe, huNe])
+      (fun z => by rw [hwNe, huNe])
   have e3 : ∑ s ∈ S, wN s * vN s = ∑ z, w z * v z :=
     hsumN (fun z => w z * v z) (fun s => wN s * vN s)
-      (fun z => by change wN (e z) * vN (e z) = w z * v z; rw [hwNe, hvNe])
+      (fun z => by rw [hwNe, hvNe])
   rw [e1, e2, e3] at key
   simpa only [zero_add] using key
 

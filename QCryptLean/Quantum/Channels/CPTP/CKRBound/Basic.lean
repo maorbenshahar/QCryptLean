@@ -84,7 +84,7 @@ theorem partialTraceB_mapIdTensor_of_tracePreserving {k n m : ℕ}
     (Φ : Op n →ₗ[ℂ] Op m) (hΦ : IsTracePreserving ⇑Φ) (W : Op (k * n)) :
     partialTraceB (mapIdTensor Φ W) = partialTraceB W := by
   ext s t
-  simp only [partialTraceB, Matrix.of_apply, mapIdTensor, Equiv.toFun_as_coe,
+  simp only [partialTraceB, Matrix.of_apply, mapIdTensor,
     Equiv.symm_apply_apply]
   -- LHS: ∑ a, ∑ i, ∑ j, Φ(E_ij) a a · W (s,i) (t,j); collapse ∑ₐ Φ(E_ij) a a = Tr Φ(E_ij) = δ_ij.
   have htr : ∀ i j : Fin n,
@@ -198,7 +198,7 @@ lemma cp_linear_eq_kraus_sum {n m : ℕ} [NeZero n] [NeZero m]
       Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
     congr 1; ext i; congr 1; ext j
     congr 1
-    simp only [E, ChoiMatrix, Matrix.of_apply, Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+    simp only [E, ChoiMatrix, Matrix.of_apply, Equiv.symm_apply_apply]
   rw [hT_entry, hv]
   -- Simplify LHS: push sum application inside
   simp only [vecMulVec, Pi.star_apply]
@@ -417,7 +417,7 @@ private lemma reshapeVec_krausVec {nH nK nR : ℕ}
     congr_arg Prod.fst h_eq
   have h2 : (finProdFinEquiv.symm (finProdFinEquiv (s, a))).2 = a :=
     congr_arg Prod.snd h_eq
-  simp only [Equiv.toFun_as_coe, h1, h2]
+  simp only [h1, h2]
   congr 1; ext r; ring
 
 /-- `mapIdTensor (krausMapFintype K)` applied to a rank-1 operator `|ψ⟩⟨ψ|` equals
@@ -433,8 +433,6 @@ private lemma mapIdTensor_krausMapFintype_vecMulVec_eq {nH nK nR : ℕ}
   ext p q
   simp only [mapIdTensor, Matrix.of_apply, vecMulVec_apply, Pi.star_apply,
     Matrix.sum_apply, krausVec]
-  -- Normalize Equiv coercion notation
-  simp only [Equiv.toFun_as_coe]
   -- Unfold krausMapFintype to get explicit sum
   simp only [krausMapFintype, LinearMap.coe_mk, AddHom.coe_mk]
   simp_rw [Matrix.sum_apply]

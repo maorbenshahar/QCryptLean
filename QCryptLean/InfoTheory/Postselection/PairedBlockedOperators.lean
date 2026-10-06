@@ -98,7 +98,7 @@ lemma pairedPermutation_mul_symmetricProjectorPairedGen
     Op.tensor (permutationRepresentation dA n σ) (permutationRepresentation dR n σ) *
       symmetricProjectorPairedGen dA dR n = symmetricProjectorPairedGen dA dR n := by
   apply (Matrix.reindexAlgEquiv ℂ ℂ (interleavingEquivGen dA dR n)).injective
-  simp only [map_mul, Matrix.reindexAlgEquiv_apply,
+  simp only [map_mul, Matrix.coe_reindexAlgEquiv,
     interleavingEquivGen_conjugates_perm, interleavingEquivGen_conjugates_projector]
   exact permRep_mul_symmetricProjector σ
 
@@ -245,17 +245,19 @@ lemma maxEntangledOp_tensorPow_interleaving {d n : ℕ} [NeZero d] :
   have hfst (i : Fin (d ^ n * d ^ n)) (k : Fin n) :
       (finProdFinEquiv.symm (finFunctionFinEquiv.symm (interleavingEquivGen d d n i) k)).1 =
         finFunctionFinEquiv.symm (finProdFinEquiv.symm i).1 k := by
-    simpa only [Equiv.symm_apply_apply] using
-      (interleavingEquivGen_digit_fst (interleavingEquivGen d d n i) k).symm
+    have h := (interleavingEquivGen_digit_fst (interleavingEquivGen d d n i) k).symm
+    simp only [Equiv.symm_apply_apply] at h
+    exact h
   have hsnd (i : Fin (d ^ n * d ^ n)) (k : Fin n) :
       (finProdFinEquiv.symm (finFunctionFinEquiv.symm (interleavingEquivGen d d n i) k)).2 =
         finFunctionFinEquiv.symm (finProdFinEquiv.symm i).2 k := by
-    simpa only [Equiv.symm_apply_apply] using
-      (interleavingEquivGen_digit_snd (interleavingEquivGen d d n i) k).symm
+    have h := (interleavingEquivGen_digit_snd (interleavingEquivGen d d n i) k).symm
+    simp only [Equiv.symm_apply_apply] at h
+    exact h
   ext i j
   simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm,
     Op.tensorPow_eq_tensorFamily, tensorFamily_apply, maxEntangledOp, Matrix.of_apply,
-    Equiv.toFun_as_coe, hfst, hsnd, Fintype.prod_ite_zero, forall_and, ← funext_iff,
+    hfst, hsnd, Fintype.prod_ite_zero, forall_and, ← funext_iff,
     finFunctionFinEquiv.symm.injective.eq_iff, Finset.prod_const_one]
 
 /-- Reassociation turns two successive partial traces into one partial trace. -/

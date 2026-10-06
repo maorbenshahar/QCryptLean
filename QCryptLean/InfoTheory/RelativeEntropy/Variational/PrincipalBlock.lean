@@ -65,7 +65,6 @@ lemma toBlocks₁₁CLM_apply {n m : Type*} [Fintype n] [Fintype m]
     toBlocks₁₁CLM n m M = M.toBlocks₁₁ :=
   rfl
 
-set_option linter.unusedFintypeInType false in
 @[simp]
 lemma toBlocks₁₁_one {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m] :
@@ -101,7 +100,6 @@ lemma toBlocks₁₁_neg {n m : Type*} (A : Matrix (n ⊕ m) (n ⊕ m) ℂ) :
     (-A).toBlocks₁₁ = -A.toBlocks₁₁ :=
   rfl
 
-set_option linter.unusedFintypeInType false in
 @[simp]
 lemma toBlocks₁₁_one_add_smul {n m : Type*} [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m] (t : ℝ) (M : Matrix (n ⊕ m) (n ⊕ m) ℂ) :
@@ -199,7 +197,7 @@ lemma cfc_rpow_sub_one_eq {n : Type*} [Fintype n] [DecidableEq n]
     exact Or.inr hp
   change cfc (fun x : ℝ => p⁻¹ • (x ^ p - 1)) A = p⁻¹ • (A ^ p - 1)
   rw [cfc_smul (s := p⁻¹) (f := fun x : ℝ => x ^ p - 1) (a := A) (hf := by
-      simpa [sub_eq_add_neg] using hpow_cont.sub continuousOn_const),
+      exact hpow_cont.sub continuousOn_const),
     cfc_sub (a := A) (f := fun x : ℝ => x ^ p) (g := fun _ : ℝ => 1),
     CFC.rpow_eq_cfc_real (a := A) (y := p) hA,
     cfc_const_one (R := ℝ) A]

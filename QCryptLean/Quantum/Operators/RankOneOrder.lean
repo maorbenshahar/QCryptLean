@@ -190,7 +190,6 @@ theorem vecMulVec_opLe_card_smul_one_tensor_partialTraceA (φ : Fin (dA * dC) �
   rw [Finset.sum_congr rfl fun a _ => hblock a]
   refine normSq_sum_diag_le_card_mul_sum_normSq
     (fun a b => star (bipartiteSlice v a) ⬝ᵥ bipartiteSlice φ b) S (fun a ha => ?_) hK
-  change star (bipartiteSlice v a) ⬝ᵥ bipartiteSlice φ a = 0
   rw [hsupp a ha, dotProduct_zero]
 
 end Quantum.TensorProducts

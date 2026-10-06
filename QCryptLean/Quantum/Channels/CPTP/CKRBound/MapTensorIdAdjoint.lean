@@ -39,7 +39,6 @@ lemma mapTensorId_preserves_conjTranspose_of_preserves_conj {n m k : ℕ}
   ext p q
   simp only [mapTensorId, Matrix.of_apply, Matrix.conjTranspose_apply]
   simp only [star_sum, star_mul']
-  simp only [Equiv.toFun_as_coe]
   simp_rw [preserves_conjTranspose_on_matrix_units (Δ := Δ) (hΔ_conj := hΔ_conj)]
   simp only [← Matrix.conjTranspose_apply]
   exact Finset.sum_comm

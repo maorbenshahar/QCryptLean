@@ -97,7 +97,7 @@ lemma reindexLinearEquiv_comp_symm {a a' : ℕ} (e : Fin a ≃ Fin a') :
     (Matrix.reindexLinearEquiv ℂ ℂ e e).toLinearMap.comp
         (Matrix.reindexLinearEquiv ℂ ℂ e.symm e.symm).toLinearMap =
       (LinearMap.id : Op a' →ₗ[ℂ] Op a') := by
-  simpa using reindexLinearEquiv_symm_comp e.symm
+  exact reindexLinearEquiv_symm_comp e.symm
 
 /-! ## The invariance -/
 
@@ -177,7 +177,7 @@ theorem precomp_reindex_preserves_conjTranspose {a a' p : ℕ}
     (hHP : ∀ M : Op a', Δ Mᴴ = (Δ M)ᴴ) (M : Op a) :
     (Δ.comp (Matrix.reindexLinearEquiv ℂ ℂ e e).toLinearMap) Mᴴ =
       ((Δ.comp (Matrix.reindexLinearEquiv ℂ ℂ e e).toLinearMap) M)ᴴ := by
-  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, Matrix.reindexLinearEquiv_apply]
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, Matrix.coe_reindexLinearEquiv]
   rw [show Matrix.reindex e e Mᴴ = (Matrix.reindex e e M)ᴴ from by simp]
   exact hHP _
 

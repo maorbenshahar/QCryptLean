@@ -618,8 +618,7 @@ private lemma cfc_blockDiagonal {X : Type*} [Fintype X] [DecidableEq X] {N : ℕ
   set q : Polynomial ℝ := Lagrange.interpolate s id f with hq
   have hval : ∀ μ ∈ s, Polynomial.eval μ q = f μ := by
     intro μ hμ
-    simpa using
-      Lagrange.eval_interpolate_at_node (s := s) (v := (id : ℝ → ℝ)) f (Set.injOn_id _) hμ
+    exact Lagrange.eval_interpolate_at_node (s := s) (v := (id : ℝ → ℝ)) f (Set.injOn_id _) hμ
   have hmain : cfc f (Matrix.blockDiagonal M)
       = (Polynomial.aeval (Matrix.blockDiagonal M)) q := by
     rw [← cfc_polynomial (R := ℝ) q (Matrix.blockDiagonal M) hBD]

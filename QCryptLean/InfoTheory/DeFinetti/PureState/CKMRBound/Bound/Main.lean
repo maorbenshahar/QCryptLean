@@ -104,20 +104,20 @@ lemma ckmr_gamma_identity {d n : ℕ} [NeZero d] [NeZero n]
     · exact h_V_entry j b
   -- Integrability of each piece
   have h_int_1 : Integrable (fun g => dim_nk • ckmrUnnorm Ψ k _hk g) haar :=
-    (continuous_const.smul h_A_cont).integrable_of_hasCompactSupport
+    (h_A_cont.const_smul dim_nk).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   have h_int_2 : Integrable (fun g => dim_nk •
       ((coherentStateDensityOp g k).toOp * ckmrUnnorm Ψ k _hk g)) haar :=
-    (continuous_const.smul (h_P_cont.mul h_A_cont)).integrable_of_hasCompactSupport
+    ((h_P_cont.mul h_A_cont).const_smul dim_nk).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   have h_int_3 : Integrable (fun g => dim_nk •
       (ckmrUnnorm Ψ k _hk g * (coherentStateDensityOp g k).toOp)) haar :=
-    (continuous_const.smul (h_A_cont.mul h_P_cont)).integrable_of_hasCompactSupport
+    ((h_A_cont.mul h_P_cont).const_smul dim_nk).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   have h_int_4 : Integrable (fun g => dim_nk •
       ((coherentStateDensityOp g k).toOp * ckmrUnnorm Ψ k _hk g *
        (coherentStateDensityOp g k).toOp)) haar :=
-    (continuous_const.smul ((h_P_cont.mul h_A_cont).mul h_P_cont)).integrable_of_hasCompactSupport
+    (((h_P_cont.mul h_A_cont).mul h_P_cont).const_smul dim_nk).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   -- Expand integrand: dim_nk • (1-P)*A*(1-P) = dim_nk•A - dim_nk•P*A - dim_nk•A*P + dim_nk•P*A*P
   have h_expand : ∀ g : unitaryGroup (Fin d) ℂ,
@@ -199,7 +199,8 @@ lemma ckmr_gamma_integral_form {d n : ℕ} [NeZero d] [NeZero n]
   · -- Integrable: continuous on compact space → integrable w.r.t. probability measure
     haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
     apply (Continuous.integrable_of_hasCompactSupport · (HasCompactSupport.of_compactSpace _))
-    apply continuous_const.smul
+    apply Continuous.const_smul
+      (c := (Nat.choose (n - k + d - 1) (d - 1) : ℝ))
     -- Continuity of coherentStateDensityOp entries
     have h_Pg_cont : Continuous (fun g : unitaryGroup (Fin d) ℂ =>
         (coherentStateDensityOp g k).toOp) :=

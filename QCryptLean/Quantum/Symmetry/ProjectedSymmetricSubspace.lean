@@ -43,7 +43,7 @@ lemma exists_unitary_diagonal_indicator_of_projection {d : ℕ} (P : Op d)
   let U := hP.eigenvectorUnitary
   let D : Op d := Matrix.diagonal (RCLike.ofReal ∘ hP.eigenvalues)
   have hspec : P = (U : Op d) * D * (U : Op d)ᴴ := by
-    simpa only [Unitary.conjStarAlgAut_apply] using hP.spectral_theorem
+    exact hP.spectral_theorem
   have hU : (U : Op d)ᴴ * (U : Op d) = 1 := Unitary.coe_star_mul_self U
   have hU' : (U : Op d) * (U : Op d)ᴴ = 1 := Unitary.coe_mul_star_self U
   have hD : (U : Op d)ᴴ * P * (U : Op d) = D := by

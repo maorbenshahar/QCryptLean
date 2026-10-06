@@ -1,7 +1,7 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Base
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.Real.Sqrt
 import QCryptLean.Math.Concentration.BernoulliKL
 import Mathlib.Analysis.Complex.ExponentialBounds
 

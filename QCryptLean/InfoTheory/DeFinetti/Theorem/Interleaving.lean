@@ -208,7 +208,7 @@ lemma symmetricProjectorPaired_trace {d n : ℕ} [NeZero d] [NeZero n] :
     have := Matrix.trace_map
       (Matrix.reindexAlgEquiv ℂ ℂ (interleavingEquiv d n))
       (symmetricProjectorPaired d n)
-    simp only [Matrix.reindexAlgEquiv_apply] at this
+    simp only [Matrix.coe_reindexAlgEquiv] at this
     exact this.symm
   rw [h_trace_eq, interleavingEquiv_conjugates_projector, symmetricProjector_trace]
   have hd : 1 ≤ d * d := by
@@ -262,7 +262,7 @@ lemma deFinetti_paired {d n : ℕ} [NeZero d] [NeZero n]
       symmetricProjector (d * d) n = Ψ'.toOp := by
     set e := interleavingEquiv d n
     have hsym_reindexed := congrArg (Matrix.reindexAlgEquiv ℂ ℂ e) _hsym
-    simp only [Matrix.reindexAlgEquiv_apply, map_mul] at hsym_reindexed
+    simp only [Matrix.coe_reindexAlgEquiv, map_mul] at hsym_reindexed
     rw [interleavingEquiv_conjugates_projector] at hsym_reindexed
     simpa [Ψ', reindexInterleave, densityOp_reindex] using hsym_reindexed
   obtain ⟨ν, hν⟩ := InfoTheory.DeFinetti.PureState.pure_state_deFinetti_symmetric (d * d) n Ψ' hsym'

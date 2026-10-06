@@ -153,8 +153,9 @@ theorem retainedAnalysisProgram_denote_apply
         (cast (congrArg MultipartiteSystem.total (R.set_self i).symm) x) = sigma x x := by
     refine (congrArg₂ (fun u v => measure R i sigma u v)
       (R.splitAtSet_self_symm i x) (R.splitAtSet_self_symm i x)).symm.trans ?_
-    simpa only [measure, if_pos rfl] using
-      PrivateAction.computationalMeasurement_liftedChannel_apply R i sigma x x
+    have h := PrivateAction.computationalMeasurement_liftedChannel_apply R i sigma x x
+    simp only [ite_true] at h
+    exact h
   have hMeasurements (sigma : TypedLOCC.Op (FinalStage.rawSystem n).total)
       (a b : (QKD.BB84.rawClassicalTailBoundary n (mZ + mX) ell ellEV peSel leakEC).space) :
       (QKD.BB84.Reduction.privateMeasurements n tail).denote sigma a b =

@@ -71,7 +71,7 @@ def comparisonPreToRetainedControlEquiv (N n : ℕ) :
       finProdFinEquiv)
 
 /-- The complete comparison-control dimension is nonzero for every `N,n`. -/
-@[implicit_reducible] def comparisonControlCardNeZero (N n : ℕ) :
+theorem comparisonControlCardNeZero (N n : ℕ) :
     NeZero (Fintype.card (ComparisonControl N n)) := by
   letI : Nonempty (ComparisonControl N n) := comparisonControlNonempty N n
   exact ⟨Fintype.card_ne_zero⟩
@@ -110,7 +110,7 @@ abbrev FailureControlSupport
     0 < totalFailureControlKernel N nK mZ mX pA pB j omega}
 
 /-- Positive selected-kernel support supplies the actual quota witness. -/
-def selectedControlSupport_hasQuotas
+theorem selectedControlSupport_hasQuotas
     (N nK mZ mX : ℕ) (pA pB : PMF Basis)
     (S : Set.powersetCard (Fin N) (nK + mZ + mX))
     (pi : Equiv.Perm (Fin (nK + mZ + mX)))
@@ -141,7 +141,7 @@ theorem selectedControlSupport_selectedEmbedding
   · simp at hselect
 
 /-- Positive failure-kernel support supplies the actual shortage witness. -/
-def failureControlSupport_not_hasQuotas
+theorem failureControlSupport_not_hasQuotas
     (N nK mZ mX : ℕ) (pA pB : PMF Basis)
     (j : Fin (nK + mZ + mX))
     (omega : FailureControlSupport N nK mZ mX pA pB j) :
@@ -793,8 +793,7 @@ def reconstructionInputEquiv
   (Equiv.prodCongr (Equiv.refl _) (Fintype.equivFin _)).trans finProdFinEquiv
 
 /-- The reconstruction input coordinate dimension is nonzero. -/
-@[implicit_reducible]
-def reconstructionInputDimNeZero
+theorem reconstructionInputDimNeZero
     (N nK mZ mX ell ellEV leakEC : ℕ) :
     NeZero (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC *
       Fintype.card (ComparisonControl N (nK + mZ + mX))) :=
@@ -837,9 +836,8 @@ theorem retainedControlLift_isCPTP
     (k := Fintype.card (ComparisonControl N n)) Phi hPhi
   have hReindex := Quantum.Channels.reindexLinearEquiv_isCPTP
     (comparisonPreToRetainedControlEquiv N n)
-  simpa only [retainedControlLift, LinearMap.coe_comp, Function.comp_def,
-    Quantum.Channels.mapTensorIdLinear] using
-    Quantum.Channels.cptp_comp _ _ hTensor hReindex
+  have h := Quantum.Channels.cptp_comp _ _ hTensor hReindex
+  exact h
 
 /-- Control lifting respects composition on the retained factor. -/
 theorem retainedControlLift_comp

@@ -357,7 +357,8 @@ private theorem weightedLatePublicSelection_selectedBits_sum
           apply Prod.ext
           · exact hb
           · apply (retainedBitCoordinateEquiv (nK + mZ + mX)).injective
-            simpa [qA0, QKD.BB84.selectedBitsToRaw, retainedBitCoordinateEquiv] using hbits.symm
+            simp only [qA0, Equiv.apply_symm_apply]
+            exact hbits.symm
         simp [hbits, hbase]
       · simp [hbits]
     · simp
@@ -369,7 +370,8 @@ private theorem weightedLatePublicSelection_selectedBits_sum
         apply Prod.ext
         · exact hb
         · apply (retainedBitCoordinateEquiv (nK + mZ + mX)).injective
-          simpa [qB0, QKD.BB84.selectedBitsToRaw, retainedBitCoordinateEquiv] using hbits.symm
+          simp only [qB0, Equiv.apply_symm_apply]
+          exact hbits.symm
       simp [hbits, hbase]
     · simp [hbits]
   · simp
@@ -615,7 +617,6 @@ private theorem reconstruction_success
       have hrc := congrArg (fun y =>
         QKD.BB84.lateSelectionExitEquiv N nK mZ mX
           ((QKD.BB84.exitEquiv N nK mZ mX ell ellEV leakEC) y.1).1) heq
-      dsimp only at hrc
       rw [shortageCompleteOutput_rawControl] at hrc
       rw [successCompleteOutputEmbedding_exit] at hrc
       unfold successExitMap at hrc
@@ -703,7 +704,6 @@ private theorem reconstruction_success
       have hrc := congrArg (fun y =>
         QKD.BB84.lateSelectionExitEquiv N nK mZ mX
           ((QKD.BB84.exitEquiv N nK mZ mX ell ellEV leakEC) y.1).1) hc.2.2
-      dsimp only at hrc
       rw [hsuccessRaw omega hquota q,
         hsuccessRaw eta.1
           (selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi eta)
@@ -829,7 +829,7 @@ private theorem retainedMid_success
   dsimp only
   unfold retainedControlLift reconstructionInputEquiv
   simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-    Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply,
+    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply,
     Matrix.submatrix_apply, Equiv.symm_symm]
   change Quantum.Channels.mapTensorId
       (retainedAnalysisReal nK mZ mX ell ellEV leakEC ec delta Q)
@@ -1027,7 +1027,7 @@ private theorem retainedAnalysisReal_success
       ext i j
       simp [rhoNum, block, retainedAnalysisRoundToBlock,
         retainedSelectedPairToRoundEquiv, Matrix.reindex_apply,
-        Matrix.reindexLinearEquiv_apply]
+        Matrix.coe_reindexLinearEquiv]
     rw [hMeasured]
     let e := retainedAnalysisBlockInputEquiv n
     let kappa := QKD.BB84.Model.siftPermHalf n

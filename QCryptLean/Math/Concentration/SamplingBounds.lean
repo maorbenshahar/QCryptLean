@@ -16,8 +16,6 @@ Concentration inequalities for random sampling used in QKD security proofs.
 
 open MeasureTheory ProbabilityTheory Set Finset
 
-set_option linter.style.emptyLine false
-
 namespace Math.Concentration.SamplingBounds
 
 /-! ## Helper Lemmas -/
@@ -64,7 +62,7 @@ lemma sum_subgaussian_upper_tail
       apply iIndepFun.comp hIndep
       intro i
       exact measurable_sub_const trueRate
-    convert h using 1
+    exact h
   -- Each Y_i is sub-Gaussian with parameter ((1-0)/2)² = 1/4
   have hSubG : ∀ i : Fin n, HasSubgaussianMGF (Y i) ((‖(1:ℝ) - 0‖₊ / 2) ^ 2) P := by
     intro i
@@ -111,7 +109,7 @@ lemma sum_subgaussian_lower_tail
       apply iIndepFun.comp hIndep
       intro i
       exact measurable_sub_const trueRate
-    convert h using 1
+    exact h
   have hSubG : ∀ i : Fin n, HasSubgaussianMGF (Y i) ((‖(1:ℝ) - 0‖₊ / 2) ^ 2) P := by
     intro i
     have h := hasSubgaussianMGF_of_mem_Icc (hMeas i) (hBounded i)
@@ -126,7 +124,7 @@ lemma sum_subgaussian_lower_tail
       apply iIndepFun.comp hIndepY
       intro i
       exact measurable_neg
-    convert h using 1
+    exact h
   -- Apply the sum bound to -Y_i
   have hBound := HasSubgaussianMGF.measure_sum_ge_le_of_iIndepFun hIndepNegY
     (s := Finset.univ) (c := fun _ => (‖(1:ℝ) - 0‖₊ / 2) ^ 2)
@@ -195,15 +193,12 @@ theorem hoeffding_sampling_bound
       2 * Real.exp (-2 * δ^2 * n) := by
   -- Define centered variables Y_i = X_i - trueRate
   let Y : Fin n → Ω → ℝ := fun i ω => samples i ω - trueRate
-
   -- The centered sum equals (sum - n*trueRate)
   have hSumY : ∀ ω, ∑ i : Fin n, Y i ω = (∑ i : Fin n, samples i ω) - n * trueRate := by
     intro ω
     simp only [Y, Finset.sum_sub_distrib, Finset.sum_const, Finset.card_fin, nsmul_eq_mul]
-
   have hn' : (n : ℝ) > 0 := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)
   have hn'' : (n : ℝ) ≠ 0 := ne_of_gt hn'
-
   -- Rewrite the event in terms of centered sum
   have hEvent : ∀ ω, |((∑ i : Fin n, samples i ω) / n) - trueRate| > δ ↔
                      |(∑ i : Fin n, Y i ω)| > n * δ := by
@@ -224,14 +219,11 @@ theorem hoeffding_sampling_bound
       rw [abs_div, abs_of_pos hn', gt_iff_lt, lt_div_iff₀ hn']
       rw [gt_iff_lt, mul_comm] at h1
       exact h1
-
   -- Rewrite using hEvent
   have hSetEq : {ω | |((∑ i : Fin n, samples i ω) / n) - trueRate| > δ} =
                 {ω | |(∑ i : Fin n, Y i ω)| > n * δ} := by
     ext ω; simp only [Set.mem_setOf_eq]; exact hEvent ω
-
   rw [hSetEq]
-
   -- Decompose into upper and lower tails
   have hDecomp : {ω | |(∑ i : Fin n, Y i ω)| > n * δ} =
                  {ω | (∑ i : Fin n, Y i ω) > n * δ} ∪
@@ -239,9 +231,7 @@ theorem hoeffding_sampling_bound
     ext ω
     simp only [Set.mem_setOf_eq, Set.mem_union]
     exact abs_gt_iff_or
-
   rw [hDecomp]
-
   -- Apply union bound and tail bounds
   calc P.real ({ω | (∑ i, Y i ω) > n * δ} ∪ {ω | (∑ i, Y i ω) < -(n * δ)})
       ≤ P.real {ω | (∑ i, Y i ω) > n * δ} + P.real {ω | (∑ i, Y i ω) < -(n * δ)} := by

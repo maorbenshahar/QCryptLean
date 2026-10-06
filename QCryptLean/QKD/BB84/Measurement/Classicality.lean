@@ -222,9 +222,11 @@ theorem weightedMeasurementScheduleAux_preserves_accumulator_block_zero
                 (fun j => (fA', Fin.cons j tailA'))) = 0 := by
           ext j k
           exact hzero (Fin.cons j tailA) (Fin.cons k tailA') xB xB'
-        simpa only [map_zero, Matrix.zero_apply] using
+        have h :=
           congrArg (fun M => (weightedMeasureAndRecord pA).operation observed M stored stored')
             hlocal
+        simp only [map_zero, Matrix.zero_apply] at h
+        exact h
       -- ... and Bob's head step reads only the zero block left by Alice's.
       have hBobZero
           (observedA observedB : Record)
@@ -247,9 +249,11 @@ theorem weightedMeasurementScheduleAux_preserves_accumulator_block_zero
           ext j k
           exact hAliceZero observedA storedA storedA' tailA tailA'
             (Fin.cons j tailB) (Fin.cons k tailB')
-        simpa only [map_zero, Matrix.zero_apply] using
+        have h :=
           congrArg (fun M => (weightedMeasureAndRecord pB).operation observedB M storedB storedB')
             hlocal
+        simp only [map_zero, Matrix.zero_apply] at h
+        exact h
       change ((weightedMeasurementScheduleAux pA pB F (n + 1)).denote rho)
         ((weightedScheduleOutputEquiv F (n + 1)).symm
           ((fA, rA), (fB, rB)))
@@ -362,9 +366,11 @@ theorem weightedMeasurementScheduleAux_recordsDiagonal
           ext j k
           exact hAliceHeadZero observedA hne tailA tailA'
             (Fin.cons j tailB) (Fin.cons k tailB')
-        simpa only [map_zero, Matrix.zero_apply] using
+        have h :=
           congrArg (fun M => (weightedMeasureAndRecord pB).operation observedB M (rB 0) (rB' 0))
             hlocal
+        simp only [map_zero, Matrix.zero_apply] at h
+        exact h
       change ((weightedMeasurementScheduleAux pA pB F (n + 1)).denote rho)
         ((weightedScheduleOutputEquiv F (n + 1)).symm
           ((fA, rA), (fB, rB)))

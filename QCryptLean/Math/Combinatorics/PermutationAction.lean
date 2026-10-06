@@ -77,7 +77,7 @@ def permutationRepresentation (d n : ℕ) [NeZero d] (σ : Equiv.Perm (Fin n)) :
 /-- Helper: (σ₁ * σ₂).symm x = σ₂.symm (σ₁.symm x) -/
 private lemma perm_mul_symm_apply {α : Type*} (σ₁ σ₂ : Equiv.Perm α) (x : α) :
     (σ₁ * σ₂).symm x = σ₂.symm (σ₁.symm x) := by
-  simp [Equiv.Perm.mul_def, Equiv.symm_trans_apply]
+  simp [Equiv.Perm.mul_def]
 
 private lemma perm_inv_symm {α : Type*} (σ : Equiv.Perm α) :
     (σ⁻¹ : Equiv.Perm α).symm = σ := by
@@ -687,21 +687,21 @@ noncomputable def permFunOrbitsEquivSym (d n : ℕ) :
   let toSymFn : (Fin n → Fin d) → Sym (Fin d) n :=
     fun f => ⟨Multiset.ofList (List.ofFn f), by simp⟩
   apply Equiv.ofBijective (Quotient.lift toSymFn (fun f g hfg => by
-    simpa only [toSymFn] using (sym_of_fn_eq_iff_perm_fun_orbit_rel f g).mpr hfg))
+    exact (sym_of_fn_eq_iff_perm_fun_orbit_rel f g).mpr hfg))
   constructor
   · intro q₁ q₂ h
     induction q₁ using Quotient.inductionOn with | h f =>
     induction q₂ using Quotient.inductionOn with | h g =>
     simp only [Quotient.lift_mk] at h
     apply Quotient.sound
-    exact (sym_of_fn_eq_iff_perm_fun_orbit_rel f g).mp (by simpa only [toSymFn] using h)
+    exact (sym_of_fn_eq_iff_perm_fun_orbit_rel f g).mp h
   · intro s
     use Quotient.mk _ (fun i : Fin n => s.val.toList.get ⟨i.val, by
       have hlen : s.val.toList.length = n := by
         rw [Multiset.length_toList]
         exact_mod_cast s.2
       omega⟩)
-    simpa only [Quotient.lift_mk, toSymFn] using sym_of_fn_get_to_list_eq s
+    exact sym_of_fn_get_to_list_eq s
 
 /-- Orbits of functions `Fin n → Fin d` under domain permutations are classified
 by multisets of length `n`, hence counted by stars and bars. -/

@@ -139,8 +139,8 @@ private lemma reindex_interleaving_mul {d n : ℕ} [NeZero d] (A B : Op (d ^ n *
     Matrix.reindex (interleavingEquiv d n) (interleavingEquiv d n) (A * B) =
       Matrix.reindex (interleavingEquiv d n) (interleavingEquiv d n) A *
         Matrix.reindex (interleavingEquiv d n) (interleavingEquiv d n) B := by
-  have h := Matrix.reindexAlgEquiv_mul ℂ ℂ (interleavingEquiv d n) A B
-  simp only [Matrix.reindexAlgEquiv_apply] at h
+  have h := map_mul (Matrix.reindexAlgEquiv ℂ ℂ (interleavingEquiv d n)) A B
+  simp only [Matrix.coe_reindexAlgEquiv] at h
   exact h
 
 private lemma reindex_interleaving_pairedTensorPow {d n : ℕ} [NeZero d] [NeZero (d * d)]

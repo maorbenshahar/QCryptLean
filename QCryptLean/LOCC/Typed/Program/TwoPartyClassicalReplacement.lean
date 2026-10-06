@@ -111,7 +111,8 @@ theorem classicalReplacementKraus_complete {R : MultipartiteSystem P}
       Real.mul_self_sqrt (A.localClassicalWeight_nonneg _ _ _)]
     convert congrArg (fun x : ℝ => (x : ℂ))
       (A.sum_localClassicalWeight i) using 1
-    simp [Matrix.sum_apply, Matrix.single_apply]
+    · simp [Matrix.sum_apply, Matrix.single_apply]
+    · exact Complex.ofReal_one.symm
   · simp only [Matrix.sum_apply, Matrix.one_apply, hij, if_false]
     apply Finset.sum_eq_zero
     intro o _
@@ -552,14 +553,10 @@ theorem PreservesHonestRegistersDiagonal.classicalReplacement_liftedOperation_te
     tensorIdLinear E (A.classicalReplacement.liftedOperation o) rho =
       tensorIdLinear E (A.liftedOperation o) rho := by
   have hAunit : A.asUnitAnnouncement.PreservesHonestRegistersDiagonal := by
-    simpa [PrivateAction.asUnitAnnouncement] using hA
+    exact hA
   have h := hAunit.classicalReplacement_liftedOperation_tensorId
     A.asUnitAnnouncement rho hrho o
-  simpa [PrivateAction.asUnitAnnouncement, PrivateAction.classicalReplacement,
-    AnnouncedAction.classicalReplacement, AnnouncedAction.classicalReplacementKraus,
-    AnnouncedAction.localClassicalWeight, AnnouncedAction.localOperation,
-    Instrument.classicalReplacement, Instrument.classicalReplacementKraus,
-    Instrument.classicalWeight] using h
+  exact h
 
 end PrivateAction
 
@@ -639,7 +636,8 @@ private theorem IsHonestClassical.classicalReplacement_denote_eq
             A.liftedOperation o rho := by
         ext q q'
         have hentry := congrArg (fun M => M (q, ()) (q', ())) hactionTensor
-        simpa [rhoRef, tensorIdLinear_apply] using hentry
+        simp only [tensorIdLinear_apply] at hentry
+        exact hentry
       rw [haction]
       simp only [AnnouncedAction.classicalReplacement_announce]
       exact congrArg _ (ih (A.announce o) (A.liftedOperation o rho) (hA o rho hrho))
@@ -661,7 +659,8 @@ private theorem IsHonestClassical.classicalReplacement_denote_eq
             A.liftedOperation o rho := by
         ext q q'
         have hentry := congrArg (fun M => M (q, ()) (q', ())) hactionTensor
-        simpa [rhoRef, tensorIdLinear_apply] using hentry
+        simp only [tensorIdLinear_apply] at hentry
+        exact hentry
       rw [haction]
       exact ih (A.liftedOperation o rho) (hA o rho hrho)
 
@@ -742,7 +741,7 @@ private theorem denote_done_comp_reindexOp (R : MultipartiteSystem TwoParty.Part
   rcases x with ⟨⟨⟩, x⟩
   rcases y with ⟨⟨⟩, y⟩
   simp [Program.denote_done, LinearMap.comp_apply, reindexOp,
-    Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply, Boundary.leafSpaceEquiv]
+    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply, Boundary.leafSpaceEquiv]
 
 /-- A continuation controlled by a leaf's unique exit is its sole continuation after removing
 the leaf's trivial public coordinate. -/

@@ -389,7 +389,9 @@ private lemma factorization_identity {n m q : ℕ} {r : ℕ}
   -- Step 4: `(A k)ᴴ * (I - P) = 0`
   have h_mat : (A k)ᴴ * (1 - B * S_pinv * Bᴴ) = 0 := by
     ext i j
-    simpa using congr_fun (h_Ak_P (Pi.single j 1)) i
+    have h := h_Ak_P (Pi.single j 1)
+    rw [mulVec_mulVec, mulVec_single_one] at h
+    exact congr_fun h i
   have hSp_herm : S_pinvᴴ = S_pinv := (pinv_isHermitian hS).eq
   have hP_herm : (B * S_pinv * Bᴴ).IsHermitian := by
     rw [Matrix.IsHermitian, conjTranspose_mul, conjTranspose_mul,

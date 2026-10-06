@@ -118,7 +118,7 @@ private theorem eigenvalues_conjTranspose_mul_eq_sq {n : ℕ} [NeZero n]
   rw [h_eig_eq]
   apply Multiset.map_injective Complex.ofReal_injective
   simp only [Multiset.map_map]
-  convert h1.symm.trans h2 using 2
+  exact h1.symm.trans h2
 
 /-- For Hermitian matrices, `traceNorm` equals `traceNormHermitian`. -/
 theorem traceNorm_hermitian_eq {n : ℕ} [NeZero n]
@@ -328,7 +328,7 @@ lemma posSemidef_sq_quadform_le {n : ℕ} [NeZero n] (A : PosSemidefOp n)
   have h_form : (star v ⬝ᵥ (A.toOp.mulVec v)).re =
       ∑ j, p j * Complex.normSq (φ j) := by
     rw [h_A_eq]
-    convert spectral_quadratic_form_re U p v using 2
+    exact spectral_quadratic_form_re U p v
   rw [h_sq_form, h_form]
   apply Finset.sum_le_sum; intro j _
   exact mul_le_mul_of_nonneg_right (h_sq_le j) (h_φ_nonneg j)
@@ -617,7 +617,7 @@ theorem projector_trace_re_le_traceNormHermitian {n : ℕ} [NeZero n]
   have h_spec : A = U * D * U† := by
     have := hA_herm.spectral_theorem
     rw [Unitary.conjStarAlgAut_apply] at this
-    convert this using 2
+    exact this
   have h_trace_eq : (P * A).trace = ((U† * P * U) * D).trace := by
     calc (P * A).trace
         = (P * (U * D * U†)).trace := by rw [h_spec]

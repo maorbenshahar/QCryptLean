@@ -120,7 +120,7 @@ theorem famKraus_partyKraus_eq {R : MultipartiteSystem P} {B : Boundary P} {p : 
         (Equiv.cast (congrArg (fun f => (B.system f).total) b.2).symm) id := by
   rcases b with ⟨b, h⟩
   subst e
-  simpa [partyKraus] using b.pathKraus_eq_famKraus.symm
+  exact b.pathKraus_eq_famKraus.symm
 
 /-- Embedding the transported product matrix into its fixed exit block recovers the program's
 common-output Kraus matrix. -/
@@ -140,7 +140,7 @@ theorem famKraus_partyKraus_gram {R : MultipartiteSystem P} {B : Boundary P} {p 
       b.1.pathKrausᴴ * b.1.pathKraus := by
   rcases b with ⟨b, h⟩
   subst e
-  simpa [partyKraus] using
+  exact
     (congrArg (fun K => Kᴴ * K) b.pathKraus_eq_famKraus).symm
 
 end ExitBranch
@@ -215,7 +215,7 @@ theorem exitBranch_famKraus_gram_sum {R : MultipartiteSystem P} {B : Boundary P}
       (Fintype.sum_sigma _).symm
     _ = ∑ b : p.Branch, b.pathKrausᴴ * b.pathKraus :=
       Fintype.sum_equiv p.exitBranchSigmaEquiv _ _ fun b => by
-        simpa [exitBranchSigmaEquiv] using
+        exact
           ExitBranch.famKraus_partyKraus_gram b.2
     _ = 1 := p.pathKraus_complete
 

@@ -59,7 +59,9 @@ theorem Instrument.discardToUnit_complete
     (K : Type) [Fintype K] [DecidableEq K] [Nonempty K] :
     ∑ k : K, ((Instrument.discardToUnit K).kraus () k)ᴴ *
       (Instrument.discardToUnit K).kraus () k = 1 := by
-  simpa using (Instrument.discardToUnit K).complete
+  have h := (Instrument.discardToUnit K).complete
+  rw [Fintype.sum_unique] at h
+  exact h
 
 /-- The unique observed operation of `discardToUnit` returns the trace of the input matrix. -/
 @[simp] theorem Instrument.discardToUnit_operation_apply

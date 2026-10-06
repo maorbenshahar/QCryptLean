@@ -103,7 +103,9 @@ theorem registerExtendedMixtureFloor_linear_le_add
   · have hext := smoothMinEntropy_extension_freeRef_ge_marginal_sub_twice_log_dim_sameRadius
       (ρ_good.tensorMaxMixed g) ρ_good M.sigmaE
       (CQState.tensorMaxMixed_partialTraceB g ρ_good) εbar
-    simpa only [RawKeyMeasurement.mixRef, Real.logb, mul_div_assoc] using hfloor.trans hext
+    have h := hfloor.trans hext
+    simp only [mul_div_assoc] at h
+    exact h
 
 /-- A completed signed floor holds on a dominated good branch, with bad-branch weight charged
 only to the trace gap and with no positive retained-weight premise. -/
@@ -215,7 +217,8 @@ theorem registerExtendedMixtureFloorReal_linear
     have hassoc : 2 * Real.log (g : ℝ) / Real.log 2 = 2 * (Real.log (g : ℝ) / Real.log 2) := by
       ring
     rw [hlogb]
-    exact (sub_le_sub_right hfloor _).trans (by simpa only [hassoc] using hB17)
+    rw [hassoc] at hB17
+    exact (sub_le_sub_right hfloor _).trans hB17
 
 end RawKeyMeasurement
 

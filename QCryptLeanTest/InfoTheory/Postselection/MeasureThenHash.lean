@@ -38,7 +38,6 @@ lemma extractor_eq_uniform_of_variants_eq (C : MeasureThenHash M l')
         (C.acceptCQ ρ).quantumMarginal).toJointDensity.toOp := by
   have heq := congrArg (fun f => M.toProtocol.acceptProj
     (f (Matrix.reindex (roundGroupEquiv dA dB n) (roundGroupEquiv dA dB n) ρ.toOp))) h
-  dsimp only at heq
   rw [C.acceptProj_variantReal ρ, C.acceptProj_variantIdeal ρ] at heq
   have hinj : Function.Injective (fun A : Op (C.publicDim * Fintype.card (C.Seed × C.Key)) =>
       C.encode * A * C.encodeᴴ) := by

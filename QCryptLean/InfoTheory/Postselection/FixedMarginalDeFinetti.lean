@@ -315,8 +315,8 @@ private lemma fmReg_symm {dA dR n : ℕ} [NeZero dA] [NeZero dR] (V : Op dA) (W 
 /-- `reindex e.symm e.symm` is multiplicative (via `reindexAlgEquiv`). -/
 private lemma fmReindex_symm_mul {N M : ℕ} (e : Fin N ≃ Fin M) (A B : Op N) :
     Matrix.reindex e e (A * B) = Matrix.reindex e e A * Matrix.reindex e e B := by
-  have := Matrix.reindexAlgEquiv_mul ℂ ℂ e A B
-  simpa only [Matrix.reindexAlgEquiv_apply] using this
+  have := map_mul (Matrix.reindexAlgEquiv ℂ ℂ e) A B
+  simpa only [Matrix.coe_reindexAlgEquiv] using this
 
 /-- **PERU.** The per-`U` marginal identity: tracing out `Eⁿ` from the
     interleave-transport of the twirl integrand gives `σ_AB(U)^{⊗n}`. -/

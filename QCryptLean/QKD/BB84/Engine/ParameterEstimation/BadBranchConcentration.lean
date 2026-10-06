@@ -43,8 +43,6 @@ References: Renner (2005), `arXiv:quant-ph/0512258v2`, §6.5; Nahar, Tupkary, Zh
 `bb84_xBasisConjugate_bitRate_eq_phaseRate`.
 -/
 
-set_option linter.style.longLine false
-
 open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
 open Quantum.Basis.BellStates InfoTheory.DeFinetti MeasureTheory
 open QKD.BB84.Model

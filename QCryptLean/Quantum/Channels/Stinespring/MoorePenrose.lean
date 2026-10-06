@@ -58,7 +58,7 @@ theorem psd_exists_moorePenrose_pinv
   have hstarU : (star U : Op n) = Uᴴ := rfl
   have hGeq : G = U * D * Uᴴ := by
     have h := hSpec
-    simpa [hU_def, hD_def, hstarU] using h
+    exact h
   have hUstarU : Uᴴ * U = 1 := by
     have h := Matrix.UnitaryGroup.star_mul_self hM.eigenvectorUnitary
     simpa [hU_def, Matrix.star_eq_conjTranspose] using h

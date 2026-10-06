@@ -52,9 +52,9 @@ lemma adjoint_mul_sum_tensor_single {d k : ℕ} [NeZero d] [NeZero k] [NeZero (d
     ∑ i, ((A i)ᴴ * A i) ⊗ (Matrix.single i i 1 : Op k) := by
   -- Bridge to blockDiagonal, factor via conjTranspose/mul, bridge back
   rw [sum_tensor_single_eq_reindex_blockDiagonal, conjTranspose_reindex]
-  simp only [← Matrix.reindexLinearEquiv_apply ℂ ℂ]
+  simp only [← Matrix.coe_reindexLinearEquiv ℂ ℂ]
   rw [Matrix.reindexLinearEquiv_mul]
-  simp only [Matrix.reindexLinearEquiv_apply]
+  simp only [Matrix.coe_reindexLinearEquiv]
   rw [Matrix.blockDiagonal_conjTranspose, ← Matrix.blockDiagonal_mul]
   rw [← sum_tensor_single_eq_reindex_blockDiagonal]
 

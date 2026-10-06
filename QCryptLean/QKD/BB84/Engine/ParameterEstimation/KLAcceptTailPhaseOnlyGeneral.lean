@@ -214,12 +214,14 @@ theorem bb84UnitRegisterEmbed_isAcceptSplitPhaseBadBranchBounded_klTailPhaseOnly
       (klAcceptTailPhaseOnlyDev peSel xSel Q δ dev) := by
   have hcap := bb84_integral_onComponent_localPhaseBadBranch_le_klChernoff_exact_anyMeasureDev
     peSel xSel Q δ dev hdev (Quantum.Channels.ckrMixtureMeasure signalDim)
-  simpa only [one_mul] using
+  have h :=
     bb84_peLabelledRhoEtilde_acceptSplit_phaseBadBranch_traceNorm_le_ofSourceCapDev (m := m)
       1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ dev
       1 zero_le_one
       (fun σ _ => by rw [bb84UnitRegisterEmbed_localAcceptMass_eq_onComponent, one_mul])
       (klAcceptTailPhaseOnlyDev peSel xSel Q δ dev) hcap
+  simp only [one_mul] at h
+  exact h
 
 /-- The exact KL bad-branch bound at the phase-only pivot with deviation equal to the window.
 

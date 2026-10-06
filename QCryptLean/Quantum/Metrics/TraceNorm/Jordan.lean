@@ -54,7 +54,8 @@ lemma traceNormHermitian_eq_trace_pos_neg {n : ℕ} [NeZero n]
     have h_diag_sub : Matrix.diagonal dpos - Matrix.diagonal dneg =
         Matrix.diagonal (RCLike.ofReal ∘ ev) := by
       ext i j
-      simp only [Matrix.diagonal, sub_apply, Matrix.of_apply, Function.comp_apply, dpos, dneg]
+      simp only [Matrix.diagonal, Matrix.sub_apply, Matrix.of_apply, Function.comp_apply,
+        dpos, dneg]
       split
       · next h =>
           subst h

@@ -52,8 +52,8 @@ lemma symmetricProjectorPaired_is_projector' (d n : ℕ) [NeZero d] [NeZero n] :
     Equiv.injective _
   have h_reindex_mul : (Matrix.reindex e e) (P * P) =
       (Matrix.reindex e e) P * (Matrix.reindex e e) P := by
-    have := Matrix.reindexAlgEquiv_mul ℂ ℂ e P P
-    simp only [Matrix.reindexAlgEquiv_apply] at this
+    have := map_mul (Matrix.reindexAlgEquiv ℂ ℂ e) P P
+    simp only [Matrix.coe_reindexAlgEquiv] at this
     exact this
   have h_reindex_conj : (Matrix.reindex e e) Pᴴ = ((Matrix.reindex e e) P)ᴴ :=
     (Matrix.conjTranspose_reindex e e P).symm
@@ -94,7 +94,7 @@ lemma symmetricProjectorPaired_trace_re_pos (d n : ℕ) [NeZero d] [NeZero n] :
         (symmetricProjectorPaired d n)).trace := by
     have := Matrix.trace_map (Matrix.reindexAlgEquiv ℂ ℂ (interleavingEquiv d n))
       (symmetricProjectorPaired d n)
-    simp only [Matrix.reindexAlgEquiv_apply] at this
+    simp only [Matrix.coe_reindexAlgEquiv] at this
     exact this.symm
   rw [h_trace_eq, interleavingEquiv_conjugates_projector]
   exact symmetricProjector_trace_re_pos (d * d) n
@@ -485,7 +485,7 @@ private lemma ckr_psd_bound_paired_core_zero {d dimOut dimR : ℕ}
     rw [Complex.ofReal_one, one_smul, hτ_ptrace]
     change ((1 : Op 1) - partialTraceB (n := 1) (m := 1) ρ).PosSemidef
     rw [partialTraceB_dim1_op]
-    simpa using Quantum.Operators.psd_le_one_of_trace_le_one ρ hρ_psd hρ_trace
+    exact Quantum.Operators.psd_le_one_of_trace_le_one ρ hρ_psd hρ_trace
   simpa using
     traceNorm_mapTensorId_substate_bound Δ ρ hρ_psd τ hτ.isPure 1 one_pos h_dom
 

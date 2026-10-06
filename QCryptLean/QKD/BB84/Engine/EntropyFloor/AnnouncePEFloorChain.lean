@@ -56,10 +56,10 @@ lemma coarsen_reindexQ {Xc Yc : Type*} [Fintype Xc] [Fintype Yc] [DecidableEq Yc
   have hR : ((CQState.reindexQ e (CQState.coarsen g ρ)).stateMap y).toOp =
       Matrix.reindex e e (∑ x : Xc, if g x = y then (ρ.stateMap x).toOp else 0) := rfl
   rw [hL, hR]
-  conv_rhs => rw [← Matrix.reindexLinearEquiv_apply ℂ ℂ, map_sum]
+  conv_rhs => rw [← Matrix.coe_reindexLinearEquiv ℂ ℂ, map_sum]
   apply Finset.sum_congr rfl
   intro x _
-  rw [Matrix.reindexLinearEquiv_apply]
+  rw [Matrix.coe_reindexLinearEquiv]
   by_cases hx : g x = y <;> simp [hx, Matrix.reindex_apply, Matrix.submatrix_zero]
 
 /-- Classical coarsening composes: coarsening by `f` then `g` is coarsening by `g ∘ f`. -/

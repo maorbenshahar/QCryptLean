@@ -86,7 +86,7 @@ lemma mapTensorId_blockDiagExtFamily_eq_blockDiagonal {d k dimOut : ℕ}
   simp only [mapTensorId, Matrix.of_apply, blockDiagExtFamily, Matrix.blockDiagonal_apply,
     Matrix.submatrix_apply, Matrix.smul_apply, smul_eq_mul, Equiv.symm_apply_apply,
     finProdFinEquiv_assoc_right, Equiv.trans_apply, Equiv.prodCongr_apply, Equiv.coe_refl,
-    Prod.map_fst, Prod.map_snd, id_eq, Equiv.prodAssoc_symm_apply, Equiv.toFun_as_coe]
+    Prod.map_fst, Prod.map_snd, id_eq, Equiv.prodAssoc_symm_apply]
   split_ifs with h
   · rfl
   · simp [mul_zero]

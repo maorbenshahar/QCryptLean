@@ -515,7 +515,7 @@ theorem exists_keyLength_gt_liftedLiteratureKeyLength {epsilonAEP epsilonTotal :
       (εPA := Real.exp (-(p.sifted : ℝ) * p.tolerance ^ 2 / 2))
       (β := secondOrderSharpBeta bb84SharpVarianceCap
         (bb84KeyRoundCount p.sifted p.tests) epsilonAEP) hK
-      (by simpa only [hhalf] using h.literatureKeyLength_nonneg)
+      (by rw [hhalf]; exact h.literatureKeyLength_nonneg)
       (by
         rw [hK, ← finiteSizePenaltySecondOrderSharp_eq, hlog]
         exact h.penaltyGap)
@@ -525,7 +525,8 @@ theorem exists_keyLength_gt_liftedLiteratureKeyLength {epsilonAEP epsilonTotal :
       keyRate := improvedKeyRateCondition_of_improvedKeyRateConditionAt
         ((improvedKeyRateConditionAtDev_eq _ _ _ _ _ _ _ _ _ _).mp hkey)
       ecTranslationEquivariant := h.ecTranslationEquivariant }
-  exact ⟨ℓ, by simpa only [hhalf] using hlt, hcond, h.improvedBudget_le,
+  rw [hhalf] at hlt
+  exact ⟨ℓ, hlt, hcond, h.improvedBudget_le,
     (({ p with keyLength := ℓ }).isFullInterfaceSecure_improved hcond).mono h.improvedBudget_le⟩
 
 end Parameters

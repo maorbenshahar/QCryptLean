@@ -60,7 +60,7 @@ character → spectral → polar → finite-root-density chain:
    closing the load-bearing inclusion). For arbitrary `A`, the map
    `z ↦ [Op.tensorPow (A + z•1) n, T]` is continuous in `z ∈ ℂ`, vanishes off the finite root
    set of `(-A).charpoly` (`Matrix.eval_charpoly`, `Polynomial.finite_setOf_isRoot`), and that
-   complement is dense (`Dense.diff_finite`); by `Continuous.ext_on` the map vanishes
+   complement is dense (`Dense.sdiff_finite`); by `Continuous.ext_on` the map vanishes
    identically, in particular at `z = 0`.
 -/
 
@@ -216,7 +216,6 @@ private lemma commute_tensorPow_posDef {P : Op dR} (hP : P.PosDef)
         * Op.tensorPow (Matrix.diagonal (fun k => ((hH.eigenvalues k : ℝ) : ℂ))) n
         * Op.tensorPow ((V : Op dR)ᴴ) n := by
     have hcongr := congrArg (Op.tensorPow · n) hspec
-    dsimp only at hcongr
     rw [Op.mul_tensorPow, Op.mul_tensorPow] at hcongr
     exact hcongr
   rw [hPn]
@@ -307,8 +306,8 @@ theorem commute_tensorPow_of_commute_unitaryTensorPow
     rw [hbad_eq]
     exact Polynomial.finite_setOf_isRoot ((Matrix.charpoly_monic (-A)).ne_zero)
   have hdense : Dense badᶜ := by
-    have hd : Dense ((Set.univ : Set ℂ) \ bad) := Dense.diff_finite dense_univ hbad_finite
-    rwa [← Set.compl_eq_univ_diff] at hd
+    have hd : Dense ((Set.univ : Set ℂ) \ bad) := Dense.sdiff_finite dense_univ hbad_finite
+    rwa [← Set.compl_eq_univ_sdiff] at hd
   have heq : Set.EqOn g (fun _ => (0 : Op (dR ^ n))) badᶜ := by
     intro z hz
     have hzu : IsUnit (A + z • (1 : Op dR)) := by

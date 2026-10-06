@@ -122,7 +122,7 @@ lemma traceNorm_fromBlocks_scalar {n : ℕ} [NeZero n] (M : Op n) (c : ℝ) (hc 
   have hYadj_mul : Yᴴ * Y =
       Matrix.reindex finSumFinEquiv finSumFinEquiv (Xᴴ * X) := by
     simp only [Y, Matrix.conjTranspose_reindex]
-    simp only [← Matrix.reindexLinearEquiv_apply (R := ℂ) (A := ℂ)]
+    simp only [← Matrix.coe_reindexLinearEquiv (R := ℂ) (A := ℂ)]
     rw [Matrix.reindexLinearEquiv_mul]
   -- Step 2: Xᴴ * X splits into the scalar-block form, with c² (as a real) as
   -- the 1×1 block.

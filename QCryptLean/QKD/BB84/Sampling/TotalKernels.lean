@@ -249,8 +249,10 @@ theorem selectFiberDefault
         funext i
         refine Fin.addCases (m := nK + mZ + mX)
           (n := N - (nK + mZ + mX)) (fun k => ?_) (fun k => ?_) i
-        · simpa using fiberDefaultOrderEquiv_apply_selected f k
-        · simpa using fiberDefaultOrderEquiv_apply_complement f k
+        · rw [Fin.append_left]
+          exact fiberDefaultOrderEquiv_apply_selected f k
+        · rw [Fin.append_right]
+          exact fiberDefaultOrderEquiv_apply_complement f k
   have hfSplit :
       List.ofFn f =
         List.ofFn (fun k : Fin (nK + mZ) => f (Fin.castAdd mX k)) ++

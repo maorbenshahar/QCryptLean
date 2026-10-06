@@ -250,7 +250,7 @@ theorem keyCopyAnnounceRelabelLinear_isCPTP (dk dSeed dLeak dSev dEv dPE dE dR d
       (keyCopyAnnounceRelabel_dim dk dSeed dLeak dSev dEv dPE dE dR dSpair hcard))) :=
     castDimLinear_isCPTP _
   have hcomp := cptp_comp _ _ hconj hcast
-  simpa [keyCopyAnnounceRelabelLinear, Function.comp_apply, Op.castDimLinear] using hcomp
+  exact hcomp
 
 /-! ## The announced-PE digit, transcript prefix, and agree-block τ-side states -/
 
@@ -938,7 +938,7 @@ private lemma bb84SeedPairDigitEquiv_symm_apply (n ℓ ℓEV : ℕ) (peSel : Fin
           ((Fintype.equivFin (KeyHashSeedPairEV n ℓ ℓEV peSel)).symm stp).1,
         Fintype.equivFin (KeyHashSeed n ℓEV peSel)
           ((Fintype.equivFin (KeyHashSeedPairEV n ℓ ℓEV peSel)).symm stp).2) := by
-  simp [bb84SeedPairDigitEquiv, Equiv.symm_trans_apply, Prod.map]
+  simp [bb84SeedPairDigitEquiv, Prod.map]
 
 /-- **The inverse relabelling on a fully split target index.**  It splits the seed-pair digit
 back into the hash-seed digit of the transcript prefix and the announced error-verification seed

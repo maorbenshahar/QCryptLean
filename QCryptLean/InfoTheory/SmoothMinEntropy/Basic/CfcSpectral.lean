@@ -147,7 +147,7 @@ lemma cfc_of_orthogonalResolution {n : Type*} [Fintype n] [DecidableEq n] {ι : 
     intro μ hμ
     have hμs : μ ∈ s := by rw [hs, Set.Finite.mem_toFinset]; exact hμ
     have := Lagrange.eval_interpolate_at_node (s := s) (v := (id : ℝ → ℝ)) f hInj hμs
-    simpa using this
+    exact this
   -- `cfc f A = aeval A q` (agree on spectrum, then `cfc` of a polynomial is `aeval`).
   have hcfc_eq : cfc f A = (Polynomial.aeval A) q := by
     rw [← cfc_polynomial (R := ℝ) q A]

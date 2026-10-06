@@ -62,7 +62,7 @@ lemma trace_compressedState_support_diagonal_re {N : ℕ}
   have hρ_embed_toOp : ρ.toOp = S * ρs.toOp * S.conjTranspose := by
     have h := congrArg (fun τ => τ.toOp)
       (compressedState_embed (σ := σ) (ρ := ρ) (hρP := hρP))
-    simpa [S, ρs] using h.symm
+    exact h.symm
   calc
     ((ρs.toOp * (S.conjTranspose * D * S)).trace.re)
         = (((S * ρs.toOp * S.conjTranspose) * D).trace.re) := by
@@ -179,14 +179,14 @@ lemma gibbs_variational_diagonal_bound_of_ker_sub {N : ℕ} [NeZero N]
       (compressedSigma_eigenvalues_pos σ)
   have hnum_eq :
       (ρs.toOp * Hs).trace.re = ∑ j, (ρ.toOp j j).re * h j := by
-    simpa [ρs, Hs, S] using
+    exact
       (trace_compressedState_support_diagonal_re σ ρ h
         (rho_mul_supportProjector_of_ker_sub ρ σ h_ker))
   have hnum_le :
       ∑ j, (ρ.toOp j j).re * h j ≤ (ρs.toOp * Ls).trace.re := by
     have hbridge :
         (ρs.toOp * Hs).trace.re ≤ (ρs.toOp * Ls).trace.re := by
-      simpa [ρs, Hs, Ls, A, S] using
+      exact
         (trace_compressedState_support_diagonal_le_log_support_exp_diagonal
           σ ρ h (rho_mul_supportProjector_of_ker_sub ρ σ h_ker))
     linarith [hnum_eq]

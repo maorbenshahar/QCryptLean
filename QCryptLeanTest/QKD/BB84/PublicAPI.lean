@@ -151,9 +151,8 @@ theorem demoEC_isTranslationEquivariant : demoEC.IsTranslationEquivariant :=
 /-- The unbiased per-round basis law: `Z` and `X` with probability `1/2` each. -/
 noncomputable def uniformBasisLaw : PMF Measurement.Basis :=
   PMF.map (fun b : Bool => if b then Measurement.Basis.x else Measurement.Basis.z)
-    (PMF.bernoulli ⟨(1 : ℝ) / 2, by positivity⟩ (by
-      change (1 : ℝ) / 2 ≤ 1
-      norm_num))
+    (ProbabilityTheory.bernoulliMeasure true false
+      ⟨(1 : ℝ) / 2, by constructor <;> norm_num⟩).toPMF
 
 /-- **One fully instantiated measure-first BB84 experiment**: 64 measured signals, an unbiased
 basis choice on both sides, 8 sifted key rounds with 4 Z-basis and 4 X-basis test rounds, a 4-bit

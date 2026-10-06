@@ -118,7 +118,7 @@ lemma partialTraceB_mapTensorId {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
     partialTraceB (mapTensorId Φ X) = Φ (partialTraceB X) := by
   ext a b
   rw [Quantum.Channels.linearMap_apply_eq_sum_single Φ (partialTraceB X) a b]
-  simp only [partialTraceB, mapTensorId, Matrix.of_apply, Equiv.toFun_as_coe,
+  simp only [partialTraceB, mapTensorId, Matrix.of_apply,
     finProdFinEquiv_symm_apply]
   simp_rw [finProdFinEquiv_apply_divNat, finProdFinEquiv_apply_modNat]
   rw [Finset.sum_comm]
@@ -150,7 +150,7 @@ lemma partialTraceB_mapTensorId_trailing {n m d1 d2 : ℕ}
       mapTensorId Φ (partialTraceB ((Nat.mul_assoc n d1 d2).symm ▸ X)) := by
   ext α β
   simp only [partialTraceB, mapTensorId, Matrix.of_apply, matrix_eqRec_apply,
-    Equiv.toFun_as_coe, finProdFinEquiv_symm_cast_assoc, finProdFinEquiv_cast_assoc,
+    finProdFinEquiv_symm_cast_assoc, finProdFinEquiv_cast_assoc,
     Equiv.symm_apply_apply]
   simp only [Finset.mul_sum]
   rw [Finset.sum_comm]
@@ -167,7 +167,7 @@ lemma partialTraceA_mapTensorId {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
     (Φ : Op n →ₗ[ℂ] Op m) (hΦ_tp : IsTracePreserving ⇑Φ) (X : Op (n * k)) :
     partialTraceA (mapTensorId Φ X) = partialTraceA X := by
   ext i j
-  simp only [partialTraceA, mapTensorId, Matrix.of_apply, Equiv.toFun_as_coe,
+  simp only [partialTraceA, mapTensorId, Matrix.of_apply,
     finProdFinEquiv_symm_apply]
   simp_rw [finProdFinEquiv_apply_divNat, finProdFinEquiv_apply_modNat]
   -- `Σ_a` is outermost; swap it past `Σ_{i'}` and `Σ_{j'}`, then factor it as
@@ -224,7 +224,7 @@ lemma mapTensorId_isCompletelyPositive {n m k : ℕ} [NeZero n] [NeZero m] [NeZe
   -- Simplify matrix units and expand L
   simp only [Matrix.single_apply, mul_ite, mul_one, mul_zero, ite_and,
     ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-  simp only [L, Matrix.of_apply, Equiv.toFun_as_coe, finProdFinEquiv_symm_apply]
+  simp only [L, Matrix.of_apply, finProdFinEquiv_symm_apply]
   simp only [star_mul', apply_ite, star_one, star_zero]
   -- Transform RHS: decompose Fin(n*k) sums, simplify, collapse indicators
   symm
@@ -275,7 +275,7 @@ lemma mapTensorId_isTracePreserving {n m k : ℕ} [NeZero n] [NeZero m] [NeZero 
   intro A
   change (mapTensorId Φ A).trace = A.trace
   simp only [mapTensorId, Matrix.trace, Matrix.diag, Matrix.of_apply,
-    Equiv.toFun_as_coe, finProdFinEquiv_symm_apply]
+    finProdFinEquiv_symm_apply]
   -- Reindex outer sum to Fin m × Fin k and split
   rw [← Equiv.sum_comp finProdFinEquiv]
   simp only [Fintype.sum_prod_type]
@@ -384,7 +384,7 @@ lemma mapIdTensor_isCompletelyPositive {n m k : ℕ} [NeZero n] [NeZero m] [NeZe
   simp only [Matrix.single_apply, mul_ite, mul_one, mul_zero, ite_and,
     ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   -- Expand L on RHS
-  simp only [L, Matrix.of_apply, Equiv.toFun_as_coe, finProdFinEquiv_symm_apply]
+  simp only [L, Matrix.of_apply, finProdFinEquiv_symm_apply]
   -- Handle star/conjugate of if-then-else
   simp only [apply_ite star, star_zero]
   -- Collapse inner Fin(k*n) sum: the delta on divNat selects one k-component
@@ -441,7 +441,7 @@ lemma mapIdTensor_isTracePreserving {n m k : ℕ} [NeZero n] [NeZero m] [NeZero 
   intro A
   change (mapIdTensor Φ A).trace = A.trace
   simp only [mapIdTensor, Matrix.trace, Matrix.diag, Matrix.of_apply,
-    Equiv.toFun_as_coe, finProdFinEquiv_symm_apply]
+    finProdFinEquiv_symm_apply]
   -- Reindex outer sum to Fin k × Fin m and split
   rw [← Equiv.sum_comp (finProdFinEquiv (m := k) (n := m))]
   simp only [Fintype.sum_prod_type]
@@ -493,7 +493,7 @@ theorem mapTensorId_compose_different_factors
     mapTensorId Δ (mapIdTensor T X) = mapIdTensor T (mapTensorId Δ X) := by
   ext p q
   simp only [mapTensorId, mapIdTensor, Matrix.of_apply]
-  simp only [Equiv.toFun_as_coe, Equiv.symm_apply_apply, finProdFinEquiv_symm_apply]
+  simp only [Equiv.symm_apply_apply, finProdFinEquiv_symm_apply]
   simp_rw [Finset.mul_sum, mul_left_comm (Δ _ _ _) (T _ _ _)]
   conv_lhs =>
     arg 2; ext x
@@ -517,7 +517,7 @@ private lemma mapIdTensor_krausMapFintype_single_idTensorRect_conj {c m n : ℕ}
   dsimp
   ext p q
   simp only [mapIdTensor, krausMapFintype, Finset.univ_unique, Fin.default_eq_zero,
-    Fin.isValue, Finset.sum_const, Finset.card_singleton, one_smul, Equiv.toFun_as_coe,
+    Fin.isValue, Finset.sum_const, Finset.card_singleton, one_smul,
     finProdFinEquiv_symm_apply, LinearMap.coe_mk, AddHom.coe_mk, mul_apply, single_apply,
     mul_ite, mul_one, mul_zero, conjTranspose_apply, RCLike.star_def, of_apply,
     conjTranspose_submatrix, submatrix_apply, kroneckerMap_apply, one_apply, ite_mul,

@@ -156,13 +156,13 @@ lemma exists_unitary_toBlocks₁₁_compression {n N : ℕ}
   apply Finset.sum_congr rfl
   intro k hk
   have hkj : U k (e (Sum.inl j)) = A k j := by
-    simpa [e, finSumFinEquiv_apply_left] using hU_cols j k
+    exact hU_cols j k
   rw [hkj]
   congr 1
   apply Finset.sum_congr rfl
   intro x hx
   have hxi : U x (e (Sum.inl i)) = A x i := by
-    simpa [e, finSumFinEquiv_apply_left] using hU_cols i x
+    exact hU_cols i x
   rw [hxi]
 
 /-- Principal-block form of the exponential compression inequality. -/
@@ -171,7 +171,7 @@ lemma exp_reindex {m n : Type*}
     (e : m ≃ n) (M : Matrix m m ℂ) :
     NormedSpace.exp (Matrix.reindex e e M) =
       Matrix.reindex e e (NormedSpace.exp M) := by
-  simpa [Matrix.reindexAlgEquiv_apply] using
+  simpa [Matrix.coe_reindexAlgEquiv] using
     (NormedSpace.map_exp_of_mem_ball
       (𝕂 := ℂ)
       (f := (Matrix.reindexAlgEquiv ℂ ℂ e : Matrix m m ℂ →+* Matrix n n ℂ))
@@ -218,7 +218,7 @@ lemma compression_diagonal_le_log_compression_exp_diagonal {N n : ℕ}
   let M : Matrix (Fin n ⊕ Fin (N - n)) (Fin n ⊕ Fin (N - n)) ℂ :=
     Matrix.reindex e.symm e.symm (U.conjTranspose * D * U)
   have hM₁₁ : M.toBlocks₁₁ = S.conjTranspose * D * S := by
-    simpa [M] using hblock D
+    exact hblock D
   have hUDU : (U.conjTranspose * D * U).IsHermitian :=
     Matrix.isHermitian_conjTranspose_mul_mul U hD
   have hM : M.IsHermitian := by
@@ -244,7 +244,7 @@ lemma compression_diagonal_le_log_compression_exp_diagonal {N n : ℕ}
             (U.conjTranspose * NormedSpace.exp D * U)).toBlocks₁₁ := by
               rw [hExpConj]
       _ = S.conjTranspose * NormedSpace.exp D * S := by
-            simpa using hblock (NormedSpace.exp D)
+            exact hblock (NormedSpace.exp D)
   have hExpM_nonneg : 0 ≤ NormedSpace.exp M := hM.isSelfAdjoint.exp_nonneg
   have hExpM_psd : (NormedSpace.exp M).PosSemidef :=
     Matrix.nonneg_iff_posSemidef.mp hExpM_nonneg

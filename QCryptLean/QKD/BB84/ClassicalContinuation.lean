@@ -103,7 +103,8 @@ theorem protocol_real_honestRegistersDiagonal
     cases h
     exact hdiff.elim (fun ha => ha rfl) (fun hb => hb rfl)
   have hzero := hclass ⟨e, q⟩ ⟨e, q'⟩ () () hne
-  simpa [rhoRef, tensorIdLinear_apply] using hzero
+  simp only [tensorIdLinear_apply] at hzero
+  exact hzero
 
 /-- The complete output boundary has an inhabited output space, established from its explicit
 public exits and terminal registers rather than a caller premise.
@@ -134,10 +135,9 @@ theorem boundary_space_nonempty
       (nK + mZ + mX) (mZ + mX) ℓ ℓEV
       (@Sampling.packedPESel nK mZ mX) leakEC).symm d
     let finalExit : (FinalStage.boundary ℓ).Exit := ⟨1, by
-      simpa [FinalStage.flagBoundary] using
-        (() : (Boundary.leaf FinalStage.abortSystem).Exit)⟩
+      exact (() : (Boundary.leaf FinalStage.abortSystem).Exit)⟩
     let finalSpace : (FinalStage.boundary ℓ).space := ⟨finalExit, by
-      simpa [finalExit, FinalStage.flagBoundary] using qAbort⟩
+      exact qAbort⟩
     let rawSpace :
         (QKD.BB84.rawClassicalTailBoundary (nK + mZ + mX) (mZ + mX) ℓ ℓEV
           (@Sampling.packedPESel nK mZ mX) leakEC).space :=
@@ -187,8 +187,7 @@ theorem boundary_card_ne_zero
   Fintype.card_ne_zero
 
 /-- Internal coordinate evidence for the explicit complete output boundary. -/
-@[implicit_reducible]
-def boundaryCardNeZero
+theorem boundaryCardNeZero
     (N nK mZ mX ℓ ℓEV leakEC : ℕ) :
     NeZero (Fintype.card
       (QKD.BB84.boundary N nK mZ mX ℓ ℓEV leakEC).space) :=
@@ -253,8 +252,7 @@ theorem protocol_real_honestRegistersDiagonal_mapTensorId
             (QKD.BB84.boundary N nK mZ mX ℓ ℓEV leakEC).space ⟨e, q'⟩) =
         (QKD.BB84.protocol pA pB N nK mZ mX ℓ ℓEV leakEC ec delta Q).real rho
           ⟨e, q⟩ ⟨e, q'⟩ := by
-      simpa only [Equiv.apply_symm_apply] using
-        coordinateLinear_reindex_apply
+      exact coordinateLinear_reindex_apply
           (Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total)
           (Fintype.equivFin
             (QKD.BB84.boundary N nK mZ mX ℓ ℓEV leakEC).space)
@@ -276,7 +274,8 @@ theorem protocol_real_honestRegistersDiagonal_mapTensorId
       have hzero := protocol_real_isClassicalOnFirst
         pA pB N nK mZ mX ℓ ℓEV leakEC ec delta Q rhoRef
         ⟨e, q⟩ ⟨e, q'⟩ s t hne
-      simpa [rho, rhoRef, tensorIdLinear_apply] using hzero
+      simp only [tensorIdLinear_apply] at hzero
+      exact hzero
 
 /-- Entries between distinct complete public exits remain zero after adjoining an arbitrary finite
 reference, again with independent reference row and column indices.
@@ -334,8 +333,7 @@ theorem protocol_real_exitBlockDiagonal_mapTensorId
             (QKD.BB84.boundary N nK mZ mX ℓ ℓEV leakEC).space ⟨f, q'⟩) =
         (QKD.BB84.protocol pA pB N nK mZ mX ℓ ℓEV leakEC ec delta Q).real rho
           ⟨e, q⟩ ⟨f, q'⟩ := by
-      simpa only [Equiv.apply_symm_apply] using
-        coordinateLinear_reindex_apply
+      exact coordinateLinear_reindex_apply
           (Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total)
           (Fintype.equivFin
             (QKD.BB84.boundary N nK mZ mX ℓ ℓEV leakEC).space)
@@ -356,6 +354,7 @@ theorem protocol_real_exitBlockDiagonal_mapTensorId
       have hzero := protocol_real_isClassicalOnFirst
         pA pB N nK mZ mX ℓ ℓEV leakEC ec delta Q rhoRef
         ⟨e, q⟩ ⟨f, q'⟩ s t hne
-      simpa [rho, rhoRef, tensorIdLinear_apply] using hzero
+      simp only [tensorIdLinear_apply] at hzero
+      exact hzero
 
 end QKD.BB84

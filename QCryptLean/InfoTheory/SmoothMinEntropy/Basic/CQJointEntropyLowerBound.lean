@@ -158,7 +158,7 @@ theorem CQState.isEigenvalueSpectrum_toJointDensityOp_jointEigenvalues
     intro x
     have hsp := (ρ.stateMap x).isHermitian.spectral_theorem
     simp only [Unitary.conjStarAlgAut_apply] at hsp
-    simpa [U, D, CQState.blockEigenvalues, Function.comp] using hsp
+    exact hsp
   have hUU : ∀ x, U x * (U x)ᴴ = 1 := by
     intro x
     exact_mod_cast (ρ.stateMap x).isHermitian.eigenvectorUnitary.2.2

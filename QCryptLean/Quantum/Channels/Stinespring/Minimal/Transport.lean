@@ -129,11 +129,13 @@ private lemma dilation_recovers_pullback
           (W * B.submatrix eIn.symm eIn.symm * W†)
           = Ψ (B.submatrix eIn.symm eIn.symm) := (hW_rec _).symm
       _ = (Φ B).submatrix eOut.symm eOut.symm := by
-          simpa [Matrix.submatrix_submatrix, Function.comp_def] using
+          simpa [Matrix.submatrix_submatrix, ← Equiv.coe_trans, Equiv.self_trans_symm,
+            Equiv.symm_trans_self, Equiv.coe_refl, Matrix.submatrix_id_id] using
             h_reindex (B.submatrix eIn.symm eIn.symm)
   have hpush :=
     congrArg (fun M : Op m' => M.submatrix eOut eOut) hpartial
-  simpa [Matrix.submatrix_submatrix, Function.comp_def] using hpush.symm
+  simpa [Matrix.submatrix_submatrix, ← Equiv.coe_trans, Equiv.self_trans_symm,
+            Equiv.symm_trans_self, Equiv.coe_refl, Matrix.submatrix_id_id] using hpush.symm
 
 /-- Transport a minimal Stinespring dilation across finite input and output
 basis equivalences.

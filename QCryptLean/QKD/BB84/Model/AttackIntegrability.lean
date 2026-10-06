@@ -42,6 +42,6 @@ lemma matrix_integrable_of_entry_integrable
     { toFun := fun A => A
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
-  simpa [G, toMatrix] using toMatrix.integrable_comp hG
+  exact toMatrix.integrable_comp hG
 
 end QKD.BB84.Model

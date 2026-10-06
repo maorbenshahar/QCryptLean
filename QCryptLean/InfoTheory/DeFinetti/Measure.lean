@@ -158,7 +158,6 @@ theorem partialTraceToFirst_tensorPowGen {d : ℕ} [NeZero d] (ρ : DensityOp d)
   | zero => exact absurd rfl (NeZero.ne 0)
   | succ k =>
     apply DensityOp.ext
-    change (partialTraceToFirst (ρ.tensorPowGen (k + 1))).toOp = ρ.toOp
     simp only [partialTraceToFirst, DensityOp.tensorPowGen]
     change (DensityOp.castDim (pow_succ' d k)
       (DensityOp.castDim (pow_succ' d k).symm (ρ.tensor (ρ.tensorPowGen k)))).partialTraceB.toOp = _
@@ -403,7 +402,7 @@ lemma measurable_toOp_entry {d : ℕ} [NeZero d] (i j : Fin d) :
 lemma densityOp_castDim_continuous {n m : ℕ} (h : n = m) :
     Continuous (DensityOp.castDim h : DensityOp n → DensityOp m) := by
   cases h
-  simpa [DensityOp.castDim] using (continuous_id : Continuous (fun ρ : DensityOp n => ρ))
+  exact (continuous_id : Continuous (fun ρ : DensityOp n => ρ))
 
 /-- Casting a density operator along an equality of dimensions is measurable. -/
 lemma densityOp_castDim_measurable {n m : ℕ} (h : n = m) :
@@ -482,7 +481,7 @@ lemma partialTraceToFirst_continuous {d n : ℕ} [NeZero d] [NeZero n] [NeZero (
     cases n with
     | zero => exact absurd rfl (NeZero.ne 0)
     | succ m => simp [pow_succ, mul_comm]
-  convert partialTraceB_continuous_general.comp (densityOp_castDim_continuous hdim) using 1
+  exact partialTraceB_continuous_general.comp (densityOp_castDim_continuous hdim)
 
 /-- Tracing all but the first tensor factor is measurable. -/
 lemma partialTraceToFirst_measurable {d n : ℕ} [NeZero d] [NeZero n] [NeZero (d ^ n)] :
@@ -786,7 +785,7 @@ noncomputable def pureStateMap {d : ℕ} [NeZero d]
     -- hU : star U.val * U.val = 1 (as matrices)
     have h00 := congr_fun (congr_fun hU 0) 0
     simp only [Matrix.mul_apply, Matrix.star_apply, Matrix.one_apply_eq] at h00
-    convert h00 using 1)
+    exact h00)
 
 /-- The pure-state map U ↦ |Uψ₀⟩⟨Uψ₀| is continuous. -/
 lemma pureStateMap_continuous {d : ℕ} [NeZero d] :

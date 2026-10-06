@@ -31,7 +31,7 @@ private lemma mapTensorId_id_eq {n k : ℕ} [NeZero n] [NeZero k]
   simp only [mapTensorId, LinearMap.id_apply, Matrix.of_apply]
   rw [Finset.sum_eq_single p.divNat]
   · rw [Finset.sum_eq_single q.divNat]
-    · simp only [Equiv.toFun_as_coe, finProdFinEquiv_symm_apply, single_apply_same,
+    · simp only [finProdFinEquiv_symm_apply, single_apply_same,
         one_mul]
       rw [(finProdFinEquiv_divNat_modNat p).symm,
         (finProdFinEquiv_divNat_modNat q).symm]
@@ -56,7 +56,8 @@ private lemma mapTensorId_permuteSignalLinear_eq_tensor_left
     (LinearMap.id : Op (4 ^ n) →ₗ[ℂ] Op (4 ^ n)) π
     (fun y => permuteSignalLinear n π y) (permuteSignalLinear_isCPTP n π).1
     (by intro ρ; rfl) x
-  simpa [mapTensorId_id_eq, permuteSignalLinear] using h.symm
+  simp only [mapTensorId_id_eq] at h
+  exact h.symm
 
 /-- Paired permutation invariance moves a left signal-register permutation to the
 inverse unitary conjugation on the right reference register. -/

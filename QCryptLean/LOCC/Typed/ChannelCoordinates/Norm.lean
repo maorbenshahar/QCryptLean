@@ -46,7 +46,7 @@ theorem coordinateLinear_reindexOp {A B : Type} [Fintype A] [DecidableEq A]
   apply LinearMap.ext
   intro M
   ext i j
-  simp [coordinateLinear, reindexOp, Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply]
+  simp [coordinateLinear, reindexOp, Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
 
 /-- A structural register relabelling is a channel in any explicit finite coordinates. -/
 theorem coordinateLinear_reindexOp_isCPTP {A B : Type} [Fintype A] [DecidableEq A]
@@ -72,14 +72,14 @@ theorem coordinateLinear_conj_eq {alpha beta : Type}
             (coordinateLinear eA eB Phi)).comp
         (Matrix.reindexLinearEquiv ℂ ℂ (eA'.symm.trans eA)
           (eA'.symm.trans eA)).toLinearMap := by
-  have hcomp : ((eA'.symm.trans eA).symm : Fin dA → Fin dA') ∘ (eA : alpha → Fin dA) =
-      (eA' : alpha → Fin dA') := by
+  have hcomp : ((eA' : alpha → Fin dA') ∘ (eA.symm : Fin dA → alpha)) ∘
+      (eA : alpha → Fin dA) = (eA' : alpha → Fin dA') := by
     funext x
     simp
   apply LinearMap.ext
   intro rho
   ext i j
-  simp [coordinateLinear, Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply, hcomp]
+  simp [coordinateLinear, Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply, hcomp]
 
 /-- **Two explicit finite coordinate presentations of one and the same typed-register linear map
 have the same diamond norm.**  Only basis renumberings relate them, and

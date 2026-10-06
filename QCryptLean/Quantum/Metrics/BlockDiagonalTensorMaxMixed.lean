@@ -119,9 +119,9 @@ lemma sqrtPosSemidefOp_cqBlock
           (Matrix.blockDiagonal (fun x => CFC.sqrt (A x).toOp)) =
       (cqBlockPosSemidefOp A).toOp
     rw [cqBlockPosSemidefOp_toOp]
-    simp only [← Matrix.reindexLinearEquiv_apply ℂ ℂ]
+    simp only [← Matrix.coe_reindexLinearEquiv ℂ ℂ]
     rw [Matrix.reindexLinearEquiv_mul]
-    simp only [Matrix.reindexLinearEquiv_apply]
+    simp only [Matrix.coe_reindexLinearEquiv]
     rw [← Matrix.blockDiagonal_mul]
     change Matrix.reindex e e
         (Matrix.blockDiagonal (fun x => CFC.sqrt (A x).toOp * CFC.sqrt (A x).toOp)) =
@@ -163,9 +163,9 @@ theorem traceNorm_sqrtProduct_cqBlock_eq_sum
       Matrix.reindex e e
         (Matrix.blockDiagonal
           (fun x => sqrtPosSemidefOp (A x) * sqrtPosSemidefOp (B x))) := by
-    simp only [← Matrix.reindexLinearEquiv_apply ℂ ℂ]
+    simp only [← Matrix.coe_reindexLinearEquiv ℂ ℂ]
     rw [Matrix.reindexLinearEquiv_mul]
-    simp only [Matrix.reindexLinearEquiv_apply]
+    simp only [Matrix.coe_reindexLinearEquiv]
     rw [← Matrix.blockDiagonal_mul]
   rw [hmul]
   exact traceNorm_blockDiagonal

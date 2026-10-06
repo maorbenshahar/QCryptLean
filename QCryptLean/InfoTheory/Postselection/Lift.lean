@@ -68,7 +68,7 @@ theorem mapTensorId_reindexLinearEquiv {b a k : ℕ} [NeZero b] [NeZero a] [NeZe
       Matrix.reindex (Equiv.finProdCongrExt e k) (Equiv.finProdCongrExt e k) Y := by
   ext p q
   rw [mapTensorId_apply_eq_apply_block, Matrix.reindex_apply, Matrix.submatrix_apply]
-  simp only [LinearEquiv.coe_toLinearMap, Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply,
+  simp only [LinearEquiv.coe_toLinearMap, Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply,
     Matrix.submatrix_apply, Matrix.of_apply]
   simp [Equiv.finProdCongrExt, Equiv.prodCongr_symm, Equiv.prodCongr_apply]
 
@@ -160,14 +160,14 @@ theorem PMQKDProtocol.mapTensorId_roundDifferenceMap_trace_zero
       (⇑((P.variantReal l').comp (Matrix.reindexLinearEquiv ℂ ℂ e e).toLinearMap)) := by
     intro A
     change (P.variantReal l' ((Matrix.reindexLinearEquiv ℂ ℂ e e).toLinearMap A)).trace = A.trace
-    rw [LinearEquiv.coe_toLinearMap, Matrix.reindexLinearEquiv_apply,
+    rw [LinearEquiv.coe_toLinearMap, Matrix.coe_reindexLinearEquiv,
       (P.variantReal_isCPTP l').2.2 (Matrix.reindex e e A)]
     exact Matrix.trace_reindex_self e A
   have hI : IsTracePreserving
       (⇑((P.variantIdeal l').comp (Matrix.reindexLinearEquiv ℂ ℂ e e).toLinearMap)) := by
     intro A
     change (P.variantIdeal l' ((Matrix.reindexLinearEquiv ℂ ℂ e e).toLinearMap A)).trace = A.trace
-    rw [LinearEquiv.coe_toLinearMap, Matrix.reindexLinearEquiv_apply,
+    rw [LinearEquiv.coe_toLinearMap, Matrix.coe_reindexLinearEquiv,
       (P.variantIdeal_isCPTP l').2.2 (Matrix.reindex e e A)]
     exact Matrix.trace_reindex_self e A
   have hRtr := mapTensorId_isTracePreserving _ hR Y

@@ -1,5 +1,5 @@
 import QCryptLean.QKD.BB84.Streaming
-import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.Distributions.Bernoulli
 import Mathlib.Util.AssertNoSorry
 import QCryptLean.QKD.BB84.Program
 
@@ -28,9 +28,8 @@ open QKD.BB84.Engine
 /-- A nondegenerate biased law: probability `1/3` selects `X`, while `2/3` selects `Z`. -/
 noncomputable def biasedBasisLaw : PMF Basis :=
   PMF.map (fun b : Bool => if b then Basis.x else Basis.z)
-    (PMF.bernoulli ⟨(1 : ℝ) / 3, by positivity⟩ (by
-      change (1 : ℝ) / 3 ≤ 1
-      norm_num))
+    (ProbabilityTheory.bernoulliMeasure true false
+      ⟨(1 : ℝ) / 3, by constructor <;> norm_num⟩).toPMF
 
 /-- One-bit future tail containing `1`. -/
 def tailOne : Fin 1 → Bit := fun _ => 1

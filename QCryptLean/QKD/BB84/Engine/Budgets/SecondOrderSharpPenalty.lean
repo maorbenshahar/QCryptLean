@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import QCryptLean.Math.Analysis.LogBounds
 import QCryptLean.InfoTheory.Renyi.SecondOrderConstants
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Log.Base
 import Mathlib.Analysis.Complex.ExponentialBounds
 

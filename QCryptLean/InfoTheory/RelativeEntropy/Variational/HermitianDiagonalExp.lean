@@ -136,7 +136,7 @@ lemma hermitian_eq_eigenvector_unitary_mul_diagonal_mul_conjTranspose {N : ℕ}
       (hH.eigenvectorUnitary : Matrix (Fin N) (Fin N) ℂ) *
         Matrix.diagonal (fun j => (hH.eigenvalues j : ℂ)) *
         ((hH.eigenvectorUnitary : Matrix (Fin N) (Fin N) ℂ)).conjTranspose := by
-  simpa [Function.comp] using hH.spectral_theorem
+  exact hH.spectral_theorem
 
 /-- The diagonal entries of a Hermitian matrix are weighted averages of its eigenvalues,
 with weights given by the squared moduli of the spectral-unitary row. -/
@@ -166,7 +166,7 @@ lemma hermitian_eq_eigenvector_units_mul_diagonal_mul_inv {N : ℕ}
   have hstarU : star (U_unitary : Matrix (Fin N) (Fin N) ℂ) = (U_units⁻¹).val := by
     simp [U_units, Unitary.toUnits]
   have hU_eq : (U_unitary : Matrix (Fin N) (Fin N) ℂ) = U_units.val := rfl
-  simpa [U_units, U_unitary, Function.comp] using hspec
+  exact hspec
 
 /-- The diagonal entries of `exp H` are the same weighted averages of `exp` applied to
 the eigenvalues of a Hermitian matrix. -/
@@ -187,7 +187,7 @@ lemma hermitian_exp_diag_eq_weighted_exp_eigenvalues {N : ℕ}
     ext j
     simp [Pi.coe_exp, ← Complex.exp_eq_exp_ℂ, Complex.ofReal_exp]
   rw [hexp_diag]
-  simpa [Unitary.toUnits] using
+  exact
     conj_diagonal_diag_eq_sum_normSq
       ((Unitary.toUnits hH.eigenvectorUnitary).val) (fun j => Real.exp (hH.eigenvalues j)) i
 

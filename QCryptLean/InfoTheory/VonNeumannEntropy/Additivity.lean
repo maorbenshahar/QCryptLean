@@ -169,7 +169,6 @@ theorem vonNeumannEntropy_tensor_additive {n m : ℕ} [NeZero n] [NeZero m]
           congr 1
           ext k
           simp only [prodEigs, Complex.ofReal_mul]
-          rfl
         -- Expand using spectral decompositions
         rw [h_tensor_op, hspec_ρ, hspec_σ]
         -- Use Op_tensor_mul_symm to expand the LHS

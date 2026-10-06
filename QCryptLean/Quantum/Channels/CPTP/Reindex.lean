@@ -71,7 +71,7 @@ theorem reindexLinearEquiv_isCPTP {a b : â„•} [NeZero a] [NeZero b] (e : Fin a â
   have h := K.is_cptp
   have heq : K.applyOp = (fun M : Op a => Matrix.reindex e e M) := funext hK_apply
   rw [heq] at h
-  simpa [Matrix.reindexLinearEquiv] using h
+  exact h
 
 end Quantum.Channels
 

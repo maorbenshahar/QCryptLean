@@ -82,7 +82,7 @@ lemma mem_tensorWreathRep_commutant_iff {G : Type*} [Group G] {d n : ℕ} [NeZer
     constructor
     · intro v
       have hv := h _ ⟨⟨v, 1⟩, rfl⟩
-      simpa only [tensorWreathRep, MonoidHom.coe_mk, OneHom.coe_mk,
+      simpa only [Commute, SemiconjBy, tensorWreathRep, MonoidHom.coe_mk, OneHom.coe_mk,
         permutationRepresentation_one, mul_one] using hv
     · intro σ
       have hσ := h _ ⟨⟨1, σ⟩, rfl⟩

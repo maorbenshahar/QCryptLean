@@ -259,7 +259,7 @@ theorem bb84_mapTensorId_unitRegisterEmbed_eq_castDim {n : ℕ} [NeZero (4 ^ n)]
     intro i j
     rw [bb84UnitRegisterEmbed_apply, Op_tensor_apply_finProd, Matrix.one_apply,
       if_pos (Subsingleton.elim _ _), mul_one]
-  simp only [Equiv.toFun_as_coe, hΦ, Matrix.single_apply]
+  simp only [hΦ, Matrix.single_apply]
   rw [Finset.sum_eq_single (finProdFinEquiv.symm (finProdFinEquiv.symm p).1).1]
   · rw [Finset.sum_eq_single (finProdFinEquiv.symm (finProdFinEquiv.symm q).1).1]
     · rw [if_pos ⟨rfl, rfl⟩, one_mul]

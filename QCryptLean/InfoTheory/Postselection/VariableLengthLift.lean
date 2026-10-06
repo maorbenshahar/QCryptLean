@@ -43,7 +43,6 @@ private theorem sum_mul_sqrt_le_sqrt_sum_mul {T : Type*} [Fintype T]
   have hsq2 : ∑ t, (Real.sqrt (p t * w t)) ^ 2 = ∑ t, p t * w t := by
     apply Finset.sum_congr rfl; intro t _
     exact Real.sq_sqrt (mul_nonneg (hp_nonneg t) (hw_nonneg t))
-  simp only at hkey
   rw [hsq1, hsq2] at hkey
   calc ∑ t, p t * Real.sqrt (w t)
       = ∑ t, Real.sqrt (p t) * Real.sqrt (p t * w t) := by

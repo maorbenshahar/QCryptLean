@@ -162,9 +162,7 @@ theorem fusedAnnouncement_liftedOperation_apply
       (fun r => Instrument.nondemolitionReadout
         (Model.evTagSynOf n ℓ ℓEV peSel leakEC ec r)) r v) _) _) _).trans ?_
   simp only [LinearMap.smul_apply, Matrix.smul_apply, smul_eq_mul, Equiv.apply_symm_apply]
-  simpa only [mul_ite, mul_zero, Matrix.submatrix_apply, Prod.eta,
-    Equiv.symm_apply_apply] using
-    congrArg (fun z => (Fintype.card (FusedSeedIndex n ℓ ℓEV peSel) : ℂ)⁻¹ * z)
+  have h := congrArg (fun z => (Fintype.card (FusedSeedIndex n ℓ ℓEV peSel) : ℂ)⁻¹ * z)
       (Instrument.nondemolitionReadout_operation_apply
         (QKD.BB84.Model.evTagSynOf n ℓ ℓEV peSel leakEC ec r) v
         (rho.submatrix
@@ -174,5 +172,8 @@ theorem fusedAnnouncement_liftedOperation_apply
             (x, ((FinalStage.rawSystem n).splitAt .alice q').2)))
         ((FinalStage.rawSystem n).splitAt .alice q).1
         ((FinalStage.rawSystem n).splitAt .alice q').1)
+  simp only [mul_ite, mul_zero, Matrix.submatrix_apply, Prod.eta,
+    Equiv.symm_apply_apply] at h
+  exact h
 
 end QKD.BB84

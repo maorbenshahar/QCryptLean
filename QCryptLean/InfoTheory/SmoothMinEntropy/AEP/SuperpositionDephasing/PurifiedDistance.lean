@@ -45,7 +45,6 @@ lemma sum_weight_sqrt_mul_sq_le
   have key := Finset.sum_mul_sq_le_sq_mul_sq S
     (fun i => Real.sqrt (w i) * Real.sqrt (u i))
     (fun i => Real.sqrt (w i) * Real.sqrt (v i))
-  simp only at key
   have h1 :
       (∑ i ∈ S, Real.sqrt (w i) * Real.sqrt (u i) * (Real.sqrt (w i) * Real.sqrt (v i)))
         = ∑ i ∈ S, w i * Real.sqrt (u i * v i) := by

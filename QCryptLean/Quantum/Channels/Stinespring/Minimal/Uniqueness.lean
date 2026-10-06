@@ -121,7 +121,7 @@ lemma choiMatrix_eq_reshape_row_gram_submatrix
       ← partialTraceB_mul_unitMatrix_conjTranspose_apply_eq_reshape_sum U a b i j,
       ← hrec]
   -- LHS: unfold `ChoiMatrix` and reduce `finProdFinEquiv.symm (finProdFinEquiv _)`.
-  simp only [ChoiMatrix, Matrix.of_apply, Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+  simp only [ChoiMatrix, Matrix.of_apply, Equiv.symm_apply_apply]
 
 /-- **Helper 2 — rank of the reshape equals the Choi rank.**
 For any isometric dilation `U` of `Φ`, the rank of `stinespringReshape U` equals

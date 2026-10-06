@@ -26,7 +26,7 @@ namespace Quantum.Channels
 /-- The zero operator map is completely positive. -/
 lemma isCompletelyPositive_zero_map {n m : ℕ} [NeZero n] [NeZero m] :
     IsCompletelyPositive (0 : Op n → Op m) := by
-  simpa [IsCompletelyPositive, ChoiMatrix] using
+  exact
     (Matrix.PosSemidef.zero :
       (0 : Op (n * m)).PosSemidef)
 

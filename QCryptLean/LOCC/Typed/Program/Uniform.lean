@@ -58,8 +58,7 @@ theorem coordinateUniformDenote_isCPTP {R S : MultipartiteSystem P} {T : TList}
     {dR dOut : ℕ} [NeZero dR] [NeZero dOut]
     (eR : R.total ≃ Fin dR) (eOut : (S.total × Transcript T) ≃ Fin dOut) :
     Quantum.Channels.IsCPTP ⇑(coordinateLinear eR eOut p.uniformDenote) := by
-  simpa only [uniformDenote, coordinateLinear, LinearMap.comp_assoc,
-    Matrix.reindexLinearEquiv_trans] using
+  exact
     p.coordinateDenote_isCPTP eR ((Boundary.uniformSpaceEquiv S T).trans eOut)
 
 end Program

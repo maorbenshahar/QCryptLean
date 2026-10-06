@@ -35,7 +35,9 @@ private def diagonalState (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a + b
 (Tomamichel 2016, §2.4.4). -/
 private def oneOutcome {n : ℕ} (σ : SubDensityOp n) : CQState Unit n where
   stateMap _ := σ
-  weight_le_one := by simpa using σ.trace_le_one
+  weight_le_one := by
+    simp only [Fintype.sum_unique]
+    exact σ.trace_le_one
 
 /-- The diagonal state's weight is the sum of its entries (Tomamichel 2016, §2.3.2). -/
 private lemma diagonalState_trace (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b)

@@ -44,7 +44,7 @@ lemma tensorUnitary_ket_normalized
   set Ut : UnitaryOp (d * d) := tensorUnitary U with hUt
   change dotProduct (star (Ut.toOp.mulVec ψ.vec)) (Ut.toOp.mulVec ψ.vec) = 1
   rw [Ut.preserves_inner]
-  simpa [bra_mul_ket_eq, Ket.dag_vec] using hψ
+  exact hψ
 
 /-- Associativity of `Op * Op * Ket`: acting sequentially by `B` then `A` on a
 ket is the same as acting by the product `A * B`. -/

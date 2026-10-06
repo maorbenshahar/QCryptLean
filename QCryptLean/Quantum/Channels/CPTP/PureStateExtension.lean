@@ -134,7 +134,7 @@ theorem appendKetLinear_isCPTP {d k : ℕ} [NeZero d] [NeZero k] [NeZero (d * k)
 theorem castDimLinear_isCPTP {d e : ℕ} [NeZero d] [NeZero e] (h : d = e) :
     IsCPTP (⇑(Op.castDimLinear h)) := by
   subst h
-  simpa [Op.castDimLinear, Op.castDim] using id_is_cptp d
+  exact id_is_cptp d
 
 end Quantum.Channels
 

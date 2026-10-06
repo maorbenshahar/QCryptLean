@@ -117,8 +117,8 @@ theorem bb84SiftedRotation_conj_reindex_roundGroupEquiv (n : ℕ) (peSel xSel : 
               (fun a => if peSel a && xSel a then Quantum.Gates.hadamard else (1 : Op 2)))
             (tensorFamily
               (fun a => if peSel a && xSel a then Quantum.Gates.hadamard else (1 : Op 2))))ᴴ := by
-  rw [← Matrix.reindexAlgEquiv_apply ℂ ℂ, map_mul, map_mul,
-    Matrix.reindexAlgEquiv_apply, Matrix.reindexAlgEquiv_apply, Matrix.reindexAlgEquiv_apply,
+  rw [← Matrix.coe_reindexAlgEquiv ℂ ℂ, map_mul, map_mul,
+    Matrix.coe_reindexAlgEquiv,
     bb84SiftedRotation_reindex_roundGroupEquiv, ← Matrix.conjTranspose_reindex,
     bb84SiftedRotation_reindex_roundGroupEquiv]
 
@@ -151,8 +151,8 @@ theorem permuteSignalLinear_reindex_roundGroupEquiv (n : ℕ) [NeZero n] [NeZero
           Matrix.reindex (roundGroupEquiv 2 2 n) (roundGroupEquiv 2 2 n) ρ *
           (Op.tensor (permutationRepresentation 2 n π) (permutationRepresentation 2 n π))ᴴ := by
   simp only [permuteSignalLinear, LinearMap.coe_mk, AddHom.coe_mk]
-  rw [← Matrix.reindexAlgEquiv_apply ℂ ℂ, map_mul, map_mul,
-    Matrix.reindexAlgEquiv_apply, Matrix.reindexAlgEquiv_apply, Matrix.reindexAlgEquiv_apply,
+  rw [← Matrix.coe_reindexAlgEquiv ℂ ℂ, map_mul, map_mul,
+    Matrix.coe_reindexAlgEquiv,
     permuteSignalLinear_kraus_reindex_roundGroupEquiv, ← Matrix.conjTranspose_reindex,
     permuteSignalLinear_kraus_reindex_roundGroupEquiv]
 

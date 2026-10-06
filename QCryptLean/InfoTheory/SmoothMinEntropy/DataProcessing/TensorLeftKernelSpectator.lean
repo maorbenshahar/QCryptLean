@@ -226,7 +226,7 @@ lemma tensorLeftKernel_blocks_integrable {X : Type*} [Fintype X] {dC dE : ℕ}
       { toFun := fun A => A
         map_add' := fun _ _ => rfl
         map_smul' := fun _ _ => rfl }
-  simpa [G, toMatrix] using toMatrix.integrable_comp hG
+  exact toMatrix.integrable_comp hG
 
 /-- **The Nahar et al. B13 blockwise integral split transports across a spectator kernel.**
 

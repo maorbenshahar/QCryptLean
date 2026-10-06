@@ -152,7 +152,6 @@ lemma mapTensorId_apply_eq_apply_block {n m k : ℕ} [NeZero n] [NeZero m] [NeZe
         (finProdFinEquiv.symm p).1 (finProdFinEquiv.symm q).1 := by
   simp only [mapTensorId, Matrix.of_apply]
   rw [mapTensorId_entry_eq_apply_block]
-  rfl
 
 /-- `mapTensorId` respects composition in the first tensor factor. -/
 lemma mapTensorId_comp {n m m' k : ℕ} [NeZero n] [NeZero m] [NeZero m'] [NeZero k]
@@ -162,7 +161,7 @@ lemma mapTensorId_comp {n m m' k : ℕ} [NeZero n] [NeZero m] [NeZero m'] [NeZer
   ext p q
   simp only [mapTensorId, Matrix.of_apply, LinearMap.comp_apply]
   simp_rw [mapTensorId_entry_eq_apply_block Δ X]
-  simp only [Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+  simp only [Equiv.symm_apply_apply]
   simp_rw [mul_comm (K _ _ _) (Δ _ _ _)]
   rw [← linearMap_apply_eq_sum_single K
     (Δ (Matrix.of fun i j =>
@@ -390,7 +389,7 @@ theorem mapTensorId_integral_commute
     (Φ : Op n →ₗ[ℂ] Op m) (f : α → Op (n * k)) (hf : Integrable f μ) :
     mapTensorId Φ (∫ x, f x ∂μ) = ∫ x, mapTensorId Φ (f x) ∂μ := by
   let T : Op (n * k) →L[ℂ] Op (m * k) := mapTensorIdCLM (n := n) (m := m) (k := k) Φ
-  simpa [mapTensorIdCLM, LinearMap.coe_toContinuousLinearMap'] using
+  exact
     (T.integral_comp_comm hf).symm
 
 /-- The diamond norm is non-negative. -/
@@ -690,7 +689,7 @@ lemma mapTensorId_tensor {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
   simp_rw [show ∀ (x y z : ℂ), x * (y * z) = z * (y * x) from fun x y z => by ring]
   simp_rw [← Finset.mul_sum]
   rw [linearity]
-  simp only [Equiv.toFun_as_coe, mul_comm]
+  simp only [mul_comm]
 
 /-- For nonneg reals, if ∑ √λ ≤ 1 then ∑ λ ≤ 1.
 Each √λ ∈ [0,1], so λ = (√λ)² ≤ √λ, and summing gives ∑λ ≤ ∑√λ ≤ 1. -/

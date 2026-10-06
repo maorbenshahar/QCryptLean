@@ -134,7 +134,9 @@ def branchAction : AnnouncedAction privateMeasure.out Bool where
   announce := id
   krausIndex _ := Unit
   kraus o _ := branchKraus o
-  complete := by simpa using branchKraus_complete
+  complete := by
+    simp only [Fintype.sum_unique]
+    exact branchKraus_complete
 
 /-- The two public branches have different Alice-register dimensions. -/
 theorem successor_actor_dimensions :

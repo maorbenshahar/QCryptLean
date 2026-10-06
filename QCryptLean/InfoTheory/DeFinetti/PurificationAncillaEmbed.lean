@@ -255,11 +255,9 @@ lemma padOpAncillaB_quadraticForm_eq
       intro J' _
       rw [padOpAncillaB_apply_castLE_embed h ρ I' J']
     · intro J hJ
-      dsimp only
       rw [padOpAncillaB_apply_zero_right h ρ _ J hJ]
       ring
   · intro I hI
-    dsimp only
     have h0 : (padOpAncillaB h ρ).mulVec x I = 0 := by
       unfold Matrix.mulVec dotProduct
       apply Finset.sum_eq_zero
@@ -321,7 +319,6 @@ lemma padOpAncillaB_mul {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂) (ρ σ : Op (n *
             (fun b => padOpAncillaB h ρ i (finProdFinEquiv (a, b)) *
                        padOpAncillaB h σ (finProdFinEquiv (a, b)) j)
             (fun b hb => by
-              dsimp only
               rw [padOpAncillaB_apply_zero_right h ρ i (finProdFinEquiv (a, b))
                     (by simpa using hb)]
               ring)]

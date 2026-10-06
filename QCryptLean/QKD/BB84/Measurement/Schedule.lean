@@ -38,8 +38,7 @@ def finishAcc (F : Type) (N : ℕ) : Type :=
   | n + 1 => finishAcc (F × StoredRecord) n
 
 /-- Explicit nonempty instance for a finished accumulator. -/
-@[implicit_reducible]
-def finishAccNonempty (F : Type) [hF : Nonempty F] (N : ℕ) :
+theorem finishAccNonempty (F : Type) [hF : Nonempty F] (N : ℕ) :
     Nonempty (finishAcc F N) :=
   match N with
   | 0 => hF

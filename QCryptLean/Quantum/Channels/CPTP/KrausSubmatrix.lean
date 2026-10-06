@@ -61,7 +61,7 @@ lemma mapTensorId_krausMapFintype_submatrix_entry_eq_mapTensorId_embed_entry
     Equiv.symm_apply_apply finProdFinEquiv (embed a, s)
   have h_ebt : finProdFinEquiv.symm (finProdFinEquiv (embed b, t)) = (embed b, t) :=
     Equiv.symm_apply_apply finProdFinEquiv (embed b, t)
-  simp only [mapTensorId, Matrix.of_apply, Equiv.toFun_as_coe, h_as, h_bt, h_eas, h_ebt]
+  simp only [mapTensorId, Matrix.of_apply, h_as, h_bt, h_eas, h_ebt]
   apply Finset.sum_congr rfl
   intro x _
   apply Finset.sum_congr rfl

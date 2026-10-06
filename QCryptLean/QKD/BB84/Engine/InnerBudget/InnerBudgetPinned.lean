@@ -103,10 +103,8 @@ theorem bb84SiftedPEAnnounceLinear_isCPTP (n m ℓ ℓEV : ℕ) [NeZero n] (peSe
       (stdKet_braket_self idx)
   have hcast : IsCPTP (⇑(Op.castDimLinear hdim)) :=
     castDimLinear_isCPTP hdim
-  simpa [bb84SiftedPEAnnounceLinear, appendKetLinear, permAnnounceProjector, baseDim, idx,
-    hdim, Function.comp_def] using
-    (cptp_comp (⇑(Op.castDimLinear hdim))
-      (⇑(appendKetLinear (d := baseDim) (stdKet n.factorial idx))) hcast happend)
+  exact cptp_comp (⇑(Op.castDimLinear hdim))
+    (⇑(appendKetLinear (d := baseDim) (stdKet n.factorial idx))) hcast happend
 
 /-- Appending the public permutation announcement while retaining Eve is CPTP at a general test-set
     size `m`. -/
@@ -146,28 +144,26 @@ private theorem announce_PEAnnounce_bare_average_isCPTP (n m ℓ ℓEV : ℕ) [N
     intro π
     have hembed : IsCPTP (⇑((bb84SiftedConjChannel n 1 peSel xSel).comp
         (bb84UnitRegisterEmbed n))) := by
-      simpa only [Function.comp_def] using
-        cptp_comp (⇑(bb84SiftedConjChannel n 1 peSel xSel)) (⇑(bb84UnitRegisterEmbed n))
+      exact cptp_comp (⇑(bb84SiftedConjChannel n 1 peSel xSel)) (⇑(bb84UnitRegisterEmbed n))
           (bb84SiftedConjChannel_isCPTP n 1 peSel xSel)
           (bb84UnitRegisterEmbed_isCPTP n)
     have hinner : IsCPTP (⇑(((bb84SiftedConjChannel n 1 peSel xSel).comp
         (bb84UnitRegisterEmbed n)).comp (permuteSignalLinear n π))) := by
-      simpa only [Function.comp_def] using
-        cptp_comp (⇑((bb84SiftedConjChannel n 1 peSel xSel).comp (bb84UnitRegisterEmbed n)))
+      exact cptp_comp (⇑((bb84SiftedConjChannel n 1 peSel xSel).comp (bb84UnitRegisterEmbed n)))
           (⇑(permuteSignalLinear n π)) hembed (permuteSignalLinear_isCPTP n π)
     have hbaseinner : IsCPTP (⇑(base.comp (((bb84SiftedConjChannel n 1 peSel xSel).comp
         (bb84UnitRegisterEmbed n)).comp (permuteSignalLinear n π)))) := by
-      simpa only [Function.comp_def] using
-        cptp_comp (⇑base) (⇑(((bb84SiftedConjChannel n 1 peSel xSel).comp
+      exact cptp_comp (⇑base) (⇑(((bb84SiftedConjChannel n 1 peSel xSel).comp
           (bb84UnitRegisterEmbed n)).comp (permuteSignalLinear n π))) hbase hinner
-    simpa only [Φ, Function.comp_def] using
-      cptp_comp (⇑(bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV 1 peSel leakEC π))
+    exact cptp_comp (⇑(bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV 1 peSel leakEC π))
         (⇑(base.comp (((bb84SiftedConjChannel n 1 peSel xSel).comp
           (bb84UnitRegisterEmbed n)).comp (permuteSignalLinear n π))))
         (bb84SiftedPEAnnounceLinearEveVisible_isCPTP n m ℓ ℓEV 1 peSel leakEC π) hbaseinner
   have hmix := cptp_uniformAverage (κ := Equiv.Perm (Fin n)) Φ hΦ
   change IsCPTP (⇑((1 / (n.factorial : ℂ)) • ∑ π : Equiv.Perm (Fin n), Φ π))
-  simpa only [Fintype.card_perm, Fintype.card_fin, one_div] using hmix
+  rw [one_div]
+  simp only [Fintype.card_perm, Fintype.card_fin, Complex.ofReal_natCast] at hmix
+  exact hmix
 
 /-- **The bare general-`m` symmetrized real channel is CPTP** — proved without naming an attack
     object. -/
@@ -489,8 +485,9 @@ theorem bb84_differAndAccept_weight_le_two_pow_neg_lEV {n : ℕ} [NeZero n] [NeZ
     push_cast
     ring
   rw [hcard] at hkey
-  simpa only [bb84SiftedEveVisible_differAndAcceptWeight, bb84SiftedLocalPEAndEVPassed,
-    evVerified, verificationTag, aliceKeyHashFamily] using hkey
+  simp only [bb84SiftedEveVisible_differAndAcceptWeight, bb84SiftedLocalPEAndEVPassed,
+    evVerified, verificationTag]
+  exact hkey
 
 /-!
 ### The operator form of the correctness leg

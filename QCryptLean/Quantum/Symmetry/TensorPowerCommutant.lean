@@ -427,7 +427,6 @@ lemma amplProj_commute (dR n : ℕ) [NeZero dR]
                 (ampl (dR ^ n) (permutationRepresentation dR n π))ᴴ *
                 ampl (dR ^ n) (permutationRepresentation dR n τ))
     (fun π => ?_)
-  dsimp only
   rw [amplPermRep_conjTranspose_shift dR n τ π, ← Matrix.mul_assoc]
 
 /-- **`amplProj dR n`: the group-averaged projection onto `W_vec`.** -/

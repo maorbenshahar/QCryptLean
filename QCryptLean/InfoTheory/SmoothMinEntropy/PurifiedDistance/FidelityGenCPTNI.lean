@@ -273,7 +273,7 @@ lemma cp_linear_eq_kraus_sum {n m : ℕ} [NeZero n] [NeZero m]
       Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul]
     congr 1; ext i; congr 1; ext j
     congr 1
-    simp only [E, Quantum.Channels.ChoiMatrix, Matrix.of_apply, Equiv.toFun_as_coe,
+    simp only [E, Quantum.Channels.ChoiMatrix, Matrix.of_apply,
       Equiv.symm_apply_apply]
   rw [hΦ_entry, hv]
   simp only [Matrix.vecMulVec, Pi.star_apply]

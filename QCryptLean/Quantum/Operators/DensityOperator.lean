@@ -205,7 +205,7 @@ theorem DensityOp.pureKetOf_normalized {n : ℕ} [NeZero n] (ρ : DensityOp n) (
   -- This is (U†U)ᵢᵢ = 1ᵢᵢ = 1
   have h_diag : (Uᴴ * U) i i = 1 := by rw [h_UU]; simp
   simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, star] at h_diag
-  convert h_diag using 1
+  exact h_diag
 
 /-- The density operator equals |ψ⟩⟨ψ| where ψ is the extracted ket. -/
 theorem DensityOp.pureKetOf_spec {n : ℕ} [NeZero n] (ρ : DensityOp n) (hpure : ρ.IsPure) :

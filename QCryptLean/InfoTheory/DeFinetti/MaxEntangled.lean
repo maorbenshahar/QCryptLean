@@ -76,7 +76,7 @@ lemma maxEntangledOp_ne_zero (m : ℕ) [NeZero m] : maxEntangledOp m ≠ 0 := by
   intro hzero
   have h : maxEntangledOp m (finProdFinEquiv ((0 : Fin m), (0 : Fin m)))
       (finProdFinEquiv ((0 : Fin m), (0 : Fin m))) = 1 := by
-    simp only [maxEntangledOp, Matrix.of_apply, Equiv.toFun_as_coe,
+    simp only [maxEntangledOp, Matrix.of_apply,
       Equiv.symm_apply_apply]
     simp
   rw [hzero] at h
@@ -88,7 +88,7 @@ lemma maxEntangledOp_partialTraceA (m : ℕ) :
   unfold partialTraceA maxEntangledOp
   ext i j
   simp only [Matrix.of_apply, Matrix.one_apply]
-  simp only [Equiv.symm_apply_apply, Equiv.toFun_as_coe]
+  simp only [Equiv.symm_apply_apply]
   by_cases hij : i = j
   · subst hij
     simp [Finset.sum_ite_eq', Finset.mem_univ, and_self]
@@ -105,7 +105,7 @@ lemma maxEntangledOp_partialTraceB (m : ℕ) :
   unfold partialTraceB maxEntangledOp
   ext i j
   simp only [Matrix.of_apply, Matrix.one_apply]
-  simp only [Equiv.symm_apply_apply, Equiv.toFun_as_coe]
+  simp only [Equiv.symm_apply_apply]
   by_cases hij : i = j
   · subst hij
     simp [Finset.mem_univ, and_self]
@@ -309,7 +309,7 @@ lemma maxEntangledOp_sandwich {m : ℕ} (M : Op m) :
   by_cases hi : (finProdFinEquiv.symm i).1 = (finProdFinEquiv.symm i).2
   · simp only [hi, ite_true]
     simp_rw [maxEntangledOp, Matrix.of_apply]
-    simp only [Equiv.toFun_as_coe, hi]
+    simp only [hi]
     rw [Fintype.sum_equiv finProdFinEquiv.symm _ (fun p =>
       M p.2 p.1 * if p.1 = p.2 ∧ (finProdFinEquiv.symm j).1 = (finProdFinEquiv.symm j).2
                    then 1 else 0)
@@ -323,7 +323,7 @@ lemma maxEntangledOp_sandwich {m : ℕ} (M : Op m) :
     · simp [trace, Matrix.diag]
   · simp only [hi, ite_false, zero_mul, Finset.sum_const_zero]
     have hΩ : maxEntangledOp m i j = 0 := by
-      simp only [maxEntangledOp, Matrix.of_apply, Equiv.toFun_as_coe,
+      simp only [maxEntangledOp, Matrix.of_apply,
         show ¬((finProdFinEquiv.symm i).1 = (finProdFinEquiv.symm i).2 ∧ _) from
           fun h => hi h.1, ite_false]
     rw [hΩ, mul_zero]

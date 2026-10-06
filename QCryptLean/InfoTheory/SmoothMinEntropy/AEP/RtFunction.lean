@@ -589,7 +589,7 @@ private lemma phi_div_sq_monotoneOn :
     have hdiv := hphi.div hq hx2_ne
     -- hdiv : HasDerivAt (fun v => (exp v - v - 1) / v^2)
     --   (((exp x - 1) * x^2 - (exp x - x - 1) * (2 * x)) / (x^2)^2) x
-    convert hdiv using 1
+    apply hdiv.congr_deriv
     have hx3_ne : x ^ 3 ≠ 0 := pow_ne_zero 3 hx_ne
     field_simp
     ring
@@ -668,7 +668,7 @@ lemma phi_le_half_sq_of_nonpos {v : ℝ} (hv : v ≤ 0) :
       have e1 : HasDerivAt (fun y : ℝ => y ^ 2) (2 * x ^ (2 - 1)) x := by
         simpa using hasDerivAt_pow 2 x
       have := e1.div_const 2
-      convert this using 1
+      apply this.congr_deriv
       ring
     have e3 : HasDerivAt Real.exp (Real.exp x) x := Real.hasDerivAt_exp x
     have e4 : HasDerivAt (fun y : ℝ => y) 1 x := hasDerivAt_id x

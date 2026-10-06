@@ -45,7 +45,7 @@ lemma traceNormHermitian_partialTraceB_le {n m : ℕ}
   have h_TrB_decomp : partialTraceB A = partialTraceB Apos - partialTraceB Aneg := by
     rw [h_decomp]
     ext i j
-    simp only [partialTraceB, sub_apply, Matrix.of_apply, Finset.sum_sub_distrib]
+    simp only [partialTraceB, Matrix.sub_apply, Matrix.of_apply, Finset.sum_sub_distrib]
   -- Step 3: Partial traces of PSD matrices are PSD
   -- Bridge Mathlib's PosSemidef to QI's PosSemidefOp for partialTraceB_posSemidef
   have hApos_qi : ∀ x : Fin (n * m) → ℂ, 0 ≤ (quadraticForm Apos x).re := by
@@ -130,7 +130,7 @@ lemma partialTraceB_contracts_traceDistance {n m : ℕ}
       partialTraceB (ρ.toOp - σ.toOp) := by
     ext i j
     simp only [DensityOp.partialTraceB, PosSemidefOp.partialTraceB,
-      partialTraceB, sub_apply, Matrix.of_apply, Finset.sum_sub_distrib]
+      partialTraceB, Matrix.sub_apply, Matrix.of_apply, Finset.sum_sub_distrib]
   -- Dependent rewrite: traceNormHermitian depends on the hermiticity proof.
   -- Use calc to handle the dependency.
   have hA := densityOp_sub_isHermitian ρ σ

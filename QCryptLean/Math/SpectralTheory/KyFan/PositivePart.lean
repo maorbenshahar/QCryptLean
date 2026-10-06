@@ -260,7 +260,7 @@ lemma per_eigenvalue_bound {n : ℕ} [NeZero n]
     have h_lb := Math.LinearAlgebra.SubmoduleDim.rayleigh_lower_bound₀ M₁₂ hM₁₂ (s.val + 1)
       (by omega) hs_succ_le x hx_V hx_unit
     -- rayleigh_lower_bound₀ gives ≥ eigenvalues₀ ⟨(s+1)-1, ...⟩ = eigenvalues₀ ⟨s, ...⟩
-    convert h_lb using 2
+    simpa only [Nat.add_sub_cancel] using h_lb
   · -- Upper bound: x ∈ W = eigenvecSpanFrom₀(M₁, s) → ⟨x, M₁ x⟩.re ≤ λ_s(M₁)
     exact Math.LinearAlgebra.SubmoduleDim.rayleigh_upper_bound₀ M₁ hM₁ s x hx_W hx_unit
 

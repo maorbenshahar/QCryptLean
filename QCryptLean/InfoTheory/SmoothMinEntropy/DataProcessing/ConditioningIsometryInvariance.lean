@@ -397,7 +397,7 @@ lemma bipartiteMinEntropyOptSet_nonempty {dA dC : ℕ} [NeZero dA] [NeZero dC]
   have hpd : (Op.tensor (1 : Op dA) σ.toOp).PosDef := by
     unfold Quantum.TensorProducts.Op.tensor
     rw [Matrix.reindex_apply]
-    exact (Matrix.PosDef.kronecker Matrix.PosDef.one hσpd).submatrix_equiv finProdFinEquiv.symm
+    exact (Matrix.PosDef.kronecker Matrix.PosDef.one hσpd).submatrix finProdFinEquiv.symm.injective
   exact ⟨bipartiteMinEntropyReal ρ σ, σ,
     hasDmaxFeasibleLambda_of_posDef_reference
       (posSemidefOp_implies_mathlib ρ.toPosSemidefOp) hpd, rfl⟩

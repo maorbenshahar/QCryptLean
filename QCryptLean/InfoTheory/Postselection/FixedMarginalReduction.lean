@@ -100,9 +100,8 @@ theorem roundwiseAliceMarginal_symmetrize
           Matrix.reindex e e σ.toOp *
           (Op.tensor (permutationRepresentation dA n π)
             (permutationRepresentation dB n π))ᴴ := by
-      rw [← Matrix.reindexAlgEquiv_apply ℂ ℂ, map_mul, map_mul,
-        Matrix.reindexAlgEquiv_apply, Matrix.reindexAlgEquiv_apply,
-        Matrix.reindexAlgEquiv_apply, he, reindex_roundGroupEquiv_permRep,
+      rw [← Matrix.coe_reindexAlgEquiv ℂ ℂ, map_mul, map_mul,
+        Matrix.coe_reindexAlgEquiv, he, reindex_roundGroupEquiv_permRep,
         ← Matrix.conjTranspose_reindex, reindex_roundGroupEquiv_permRep]
     rw [hmul, Op.tensor_conjTranspose,
       partialTraceB_sandwich_tensor_unitary

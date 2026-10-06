@@ -132,7 +132,7 @@ lemma generalized_klein_diagonal_bound {n N : ℕ} [NeZero n] [NeZero N]
   have h_ker' : ∀ v : Fin N → ℂ, σ'.toOp.mulVec v = 0 → ρ'.toOp.mulVec v = 0 :=
     ker_mulVec_zero_conj σ.toOp ρ.toOp W hW_inj h_ker
   rw [← relativeEntropyReal_isometry_invariance W hWU' ρ σ]
-  simpa [ρ', σ'] using InfoTheory.RelativeEntropy.data_processing_pinching ρ' σ' h_ker'
+  exact InfoTheory.RelativeEntropy.data_processing_pinching ρ' σ' h_ker'
 
 /-- On a finite set where `p` is nonnegative, the totalized KL sum only depends on
 the indices where `p` is strictly positive. -/

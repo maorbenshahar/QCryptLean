@@ -58,7 +58,6 @@ variable {n : Type*} [Fintype n] [DecidableEq n]
 
 -- `[Fintype n]` is used by the entrywise proof (`differentiable_pi` needs the finite
 -- product norm), not by the statement.
-set_option linter.unusedFintypeInType false in
 /-- A diagonal matrix with differentiable entries is a differentiable matrix-valued
 function. -/
 theorem differentiable_matrix_diagonal {d : n → ℂ → ℂ} (hd : ∀ i, Differentiable ℂ (d i)) :
@@ -95,7 +94,6 @@ theorem differentiable_matrix_mul_right (C : Matrix n n ℂ) {f : ℂ → Matrix
   differentiable_matrix_mul hf (differentiable_const C)
 
 omit [DecidableEq n] in
-set_option linter.unusedFintypeInType false in
 /-- Precomposing a differentiable matrix-valued function with a differentiable scalar
 function is differentiable. -/
 theorem differentiable_matrix_comp {f : ℂ → Matrix n n ℂ} (hf : Differentiable ℂ f)

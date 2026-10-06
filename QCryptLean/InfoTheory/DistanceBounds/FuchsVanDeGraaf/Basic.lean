@@ -115,9 +115,7 @@ lemma traceDistance_from_fidelity_dim2 (ρ : DensityOp 2) (ψ : Ket 2)
   -- Key fact: eigenvalues sum to 0, so ev 0 + ev 1 = 0
   have h_sum_zero : ev 0 + ev 1 = 0 := by
     have h := densityOp_sub_pure_eigenvalues_sum_zero ρ ψ hψ
-    simp only [Finset.sum_fin_eq_sum_range, Finset.sum_range_succ, Finset.sum_range_zero,
-               zero_add] at h
-    convert h using 1
+    simpa only [Fin.sum_univ_two] using h
   -- In 2D with trace 0: ev 1 = -ev 0
   have h_ev1_neg : ev 1 = -ev 0 := by linarith only [h_sum_zero]
   -- Trace distance = (1/2)(|ev 0| + |ev 1|) = (1/2)(|ev 0| + |-ev 0|) = |ev 0|

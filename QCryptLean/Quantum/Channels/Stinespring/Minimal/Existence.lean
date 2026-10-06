@@ -90,7 +90,7 @@ theorem choiRank_kraus_isometric_packing
         smul_eq_mul]
       congr 1; ext i; congr 1; ext j
       congr 1
-      simp only [E, ChoiMatrix, Matrix.of_apply, Equiv.toFun_as_coe,
+      simp only [E, ChoiMatrix, Matrix.of_apply,
         Equiv.symm_apply_apply]
     rw [hΦ_entry, hv]
     simp only [vecMulVec, Pi.star_apply]
@@ -214,7 +214,7 @@ theorem dilation_envDim_ge_choiRank
         (finProdFinEquiv ((finProdFinEquiv.symm α).2, k))
         (finProdFinEquiv ((finProdFinEquiv.symm β).2, k))
     -- Massage LHS into the sandwich form.
-    convert hsand using 2
+    exact hsand
   -- Now use rank(W * W†) = rank(W) and rank(W) ≤ envDim'.
   rw [hC, Matrix.rank_self_mul_conjTranspose]
   exact Matrix.rank_le_width W

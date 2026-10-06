@@ -33,7 +33,7 @@ theorem choiMatrix_matrixConjLinear {p q : ℕ} [NeZero p] [NeZero q]
   obtain ⟨⟨i, a⟩, rfl⟩ := finProdFinEquiv.surjective α
   obtain ⟨⟨j, b⟩, rfl⟩ := finProdFinEquiv.surjective β
   simp only [ChoiMatrix, Matrix.of_apply, Matrix.vecMulVec, conjChoiVec, Pi.star_apply,
-    Equiv.toFun_as_coe, Equiv.symm_apply_apply, krausMapFintype, LinearMap.coe_mk,
+    Equiv.symm_apply_apply, krausMapFintype, LinearMap.coe_mk,
     AddHom.coe_mk, Fintype.sum_unique]
   exact mul_unitMatrix_conjTranspose_apply L i j a b
 

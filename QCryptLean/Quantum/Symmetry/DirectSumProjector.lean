@@ -142,7 +142,7 @@ private def blockIndexFiberEquiv {k : ℕ} (dv : Fin k → ℕ) (i : Fin k) :
     apply Subtype.ext
     simp only [blockIndex] at ha
     subst ha
-    simpa only [Fin.cast_eq_self] using finSigmaFinEquiv.apply_symm_apply a
+    exact finSigmaFinEquiv.apply_symm_apply a
   right_inv := by
     intro x
     dsimp only

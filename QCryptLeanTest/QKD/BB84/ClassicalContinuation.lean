@@ -275,9 +275,8 @@ theorem twoZControl_success :
 /-- A nondegenerate basis law: probability `1/3` selects `X`, while `2/3` selects `Z`. -/
 noncomputable def biasedBasisLaw : PMF Basis :=
   PMF.map (fun b : Bool => if b then Basis.x else Basis.z)
-    (PMF.bernoulli ⟨(1 : ℝ) / 3, by positivity⟩ (by
-      change (1 : ℝ) / 3 ≤ 1
-      norm_num))
+    (ProbabilityTheory.bernoulliMeasure true false
+      ⟨(1 : ℝ) / 3, by constructor <;> norm_num⟩).toPMF
 
 /-- A biased Alice law and a zero-support Bob law remain distinct inputs of the physical
 measurement schedule preceding the late public control. -/

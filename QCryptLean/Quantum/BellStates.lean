@@ -470,7 +470,7 @@ theorem bellState00_tensor_one : bellState00_tensor 1 = bellState00 := by
   simp only
   -- bellState00_tensor 0 = ⟨![1]⟩ so .vec at any Fin 1 index is 1
   have h1 : (bellState00_tensor 0).vec
-      (finProdFinEquiv.symm.1 (Fin.cast (by ring : 4 ^ (0 + 1) = 4 * 1) i)).2 = 1 := by
+      (finProdFinEquiv.symm (Fin.cast (by ring : 4 ^ (0 + 1) = 4 * 1) i)).2 = 1 := by
     simp only [bellState00_tensor, Matrix.cons_val_fin_one]
   rw [h1, mul_one]
   congr 1

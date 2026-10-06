@@ -56,9 +56,6 @@ private lemma idTensorRectMatrix_apply' {c m k : ℕ}
       if (finProdFinEquiv.symm p).1 = (finProdFinEquiv.symm q).1
         then W (finProdFinEquiv.symm p).2 (finProdFinEquiv.symm q).2 else 0 := by
   rw [idTensorRectMatrix, ← idTensorRect_eq_of, Matrix.of_apply]
-  rcases finProdFinEquiv.symm p with ⟨a, e⟩
-  rcases finProdFinEquiv.symm q with ⟨b, f⟩
-  rfl
 
 /-- Entry of the reference-side conjugation `(1 ⊗ W)·A·(1 ⊗ W)ᴴ` of an operator `A` on
 `a ⊗ R`, with both indices given as explicit `(signal, reference)` pairs. -/

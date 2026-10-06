@@ -11,8 +11,6 @@ floor. The real exponential sums are formed before conversion to `ENNReal`, so n
 rates retain their meaning.
 -/
 
-set_option linter.unusedFintypeInType false
-
 open Quantum.Operators Quantum.Metrics Matrix
 open InfoTheory.QuantumLHL
 open scoped ComplexOrder MatrixOrder BigOperators
@@ -185,7 +183,7 @@ lemma CQState.toJointDensity_posDef_of_forall {X : Type*} [Fintype X] [Decidable
     (ρ : CQState X n) (h : ∀ x : X, (ρ.stateMap x).toOp.PosDef) :
     ρ.toJointDensity.toOp.PosDef := by
   rw [CQState.toJointDensity_toOp_eq_reindex_blockDiagonal, Matrix.reindex_apply]
-  exact Matrix.PosDef.submatrix_equiv (Matrix.posDef_blockDiagonal h) _
+  exact (Matrix.posDef_blockDiagonal h).submatrix (Equiv.injective _)
 
 /-- **The optimally weighted block-diagonal reference is positive-definite** when the per-block
 references are.  This is the positive-definiteness side condition consumed by the union-event
@@ -306,8 +304,6 @@ theorem flagPack_purifiedDistance_le_sqrt_two_sum
     (CQState.flagPack blocks hj).toJointDensity (CQState.flagPack blocks' hj').toJointDensity) ?_
   exact Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left hstep (by norm_num))
 
-set_option linter.unusedFintypeInType true
-
 /-- Per-block extended entropy floors certify the packed positive-part entropy.
 A nonpositive packed exponent is automatic; a positive exponent forces every block rate positive. -/
 theorem flagPack_conditionalMinEntropy_ge_of_blocks
@@ -382,7 +378,6 @@ theorem flagPack_smoothMinEntropy_ge_of_block_witnesses
       (Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left
         (Finset.sum_le_sum (fun c _ => hball c)) (by norm_num)))
   · exact flagPack_conditionalMinEntropy_ge_of_blocks τ hτjoint σ k hk
-
 
 /-- Packing classical flags preserves the signed floor `-logb 2 (packExpSum k)` against
 `flagPackRef σ k` when the packed state has positive weight. -/

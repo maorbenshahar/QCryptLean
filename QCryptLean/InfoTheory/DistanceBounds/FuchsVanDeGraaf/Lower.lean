@@ -122,7 +122,7 @@ theorem effect_trace_re_abs_le_half_traceNormHermitian_of_trace_zero {n : ℕ} [
   have h_spec : A = U * D * U† := by
     have := hA_herm.spectral_theorem
     rw [Unitary.conjStarAlgAut_apply] at this
-    convert this using 2
+    exact this
   have h_trace_eq : (E * A).trace = ((U† * E * U) * D).trace := by
     calc (E * A).trace
         = (E * (U * D * U†)).trace := by rw [h_spec]

@@ -155,9 +155,6 @@ private lemma coarsen_deFinetti_postFilter_data
     rw [hsum, sum_fiber_indicator_eq_sum]
     exact h_badBranch_traceNorm
 
-set_option linter.unusedDecidableInType false in
-set_option linter.unusedDecidableInType false in
-set_option linter.unusedDecidableInType false in
 /-- **The good-branch restriction commutes with classical coarsening (block form).**
 
 The `y`-block of the good branch of the *coarsened* family `fun τ => CQState.coarsen g (f τ)` is the
@@ -266,7 +263,6 @@ lemma coarsen_stateMap_toOp_eq_goodBranchBlockOp_coarsen
   · simp only [if_pos hx, hρ_good_eq x]
   · simp only [if_neg hx]
 
-set_option linter.unusedDecidableInType false in
 /-- Coarsened component smooth floors give an extended post-filter floor at radius
 `εBar + sqrt (2 * ε)` without a retained-mass hypothesis. -/
 theorem smoothMinEntropy_coarsen_ge_of_deFinetti_postFilter_finiteSmoothFloor_subNormalized
@@ -463,7 +459,6 @@ theorem smoothMinEntropy_coarsen_ge_of_deFinetti_postFilter_ownMarginal_heavyFlo
     hF_lin hF_cont goodSet hClosed P hP_closed hP_ae k εBar ε
     hεBar_nonneg hF_badBranch hF_floor
   rwa [CQState.coarsen_quantumMarginal] at hfloor
-
 
 /-- A signed smooth floor on the coarsened accepting components transfers to the coarsened
 mixture at radius `εBar + sqrt (2 * ε)`. -/

@@ -83,8 +83,7 @@ theorem program_eq_schedule_graft_classicalContinuation
         exact congrArg (cast _) (ih (F := F × Measurement.StoredRecord) k)
   unfold QKD.BB84.program classicalContinuation
     Measurement.weightedLatePublicSelectionProgram
-  simpa [Measurement.weightedMeasurementSchedule] using
-    schedule_graft_assoc Unit N
+  exact schedule_graft_assoc Unit N
       (Measurement.latePublicSelectionProgram N nK mZ mX)
       (QKD.BB84.completeContinuation N nK mZ mX ℓ ℓEV leakEC ec delta Q)
 

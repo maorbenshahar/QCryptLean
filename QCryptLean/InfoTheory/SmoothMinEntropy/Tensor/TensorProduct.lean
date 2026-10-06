@@ -71,31 +71,6 @@ lemma SubDensityOp.tensor_trace {n m : ℕ} (ρ : SubDensityOp n) (σ : SubDensi
   rw [Op.trace_tensor]
   simp [Complex.mul_re, ρ.trace_im_eq_zero, σ.trace_im_eq_zero]
 
-set_option linter.unusedFintypeInType false in
-/-- Equiv-flavoured submatrix preservation of `Matrix.PosDef`. Mirrors
-`Matrix.posSemidef_submatrix_equiv` from Mathlib; the strict variant is not
-yet in Mathlib in the version pinned by this project. -/
-lemma _root_.Matrix.PosDef.submatrix_equiv {m n R : Type*}
-    [Fintype n] [Fintype m] [Ring R] [PartialOrder R] [StarRing R]
-    {M : Matrix n n R} (hM : M.PosDef) (e : m ≃ n) :
-    (M.submatrix e e).PosDef := by
-  rw [Matrix.posDef_iff_dotProduct_mulVec]
-  refine ⟨hM.1.submatrix _, fun x hx => ?_⟩
-  set y : n → R := x ∘ e.symm with hy_def
-  have hy_ne : y ≠ 0 := by
-    intro hy
-    apply hx
-    funext i
-    have := congrFun hy (e i)
-    simpa [hy_def] using this
-  have hpos := hM.dotProduct_mulVec_pos hy_ne
-  have hstar_y : star y = (star x : m → R) ∘ e.symm := by
-    funext i; simp [y, Pi.star_apply]
-  have heq : star x ⬝ᵥ ((M.submatrix e e) *ᵥ x) = star y ⬝ᵥ (M *ᵥ y) := by
-    rw [Matrix.submatrix_mulVec_equiv, hstar_y, comp_equiv_symm_dotProduct]
-  rw [heq]
-  exact hpos
-
 /-- The tensor product of two positive-definite sub-density operators is
 positive-definite. Bridges `Matrix.PosDef.kronecker` (Mathlib) to the
 project-internal `Op.tensor`/`SubDensityOp.tensor` definition. -/
@@ -106,7 +81,7 @@ lemma SubDensityOp.tensor_posDef {n m : ℕ}
   change (ρ.toOp ⊗ σ.toOp).PosDef
   unfold Quantum.TensorProducts.Op.tensor
   rw [Matrix.reindex_apply]
-  exact (Matrix.PosDef.kronecker hρ hσ).submatrix_equiv finProdFinEquiv.symm
+  exact (Matrix.PosDef.kronecker hρ hσ).submatrix finProdFinEquiv.symm.injective
 
 /-- The sub-density operator on `ℂ^1` induced by `DensityOp.trivial`. -/
 noncomputable def SubDensityOp.trivialOne : SubDensityOp 1 :=
@@ -193,7 +168,6 @@ lemma SubDensityOp.tensorFinProd_posDef {d : ℕ} [NeZero d] (m : ℕ) (f : Fin 
     (hf : ∀ i, (f i).toOp.PosDef) : (SubDensityOp.tensorFinProd m f).toOp.PosDef := by
   rw [SubDensityOp.tensorFinProd_toOp]
   exact Matrix.PosDef.tensorFamily fun k => hf (Fin.rev k)
-
 
 /-- **Constant-reference tensorization of the operator order.**
 

@@ -155,7 +155,7 @@ lemma mapIdTensor_conj_of_conj
   -- row (left factor) or column (right factor) inside one `Fin k` block only.
   have hW (s t : Fin k) (a : Fin m) (b : Fin m') :
       idTensorW (finProdFinEquiv (s, a)) (finProdFinEquiv (t, b)) = if s = t then W a b else 0 := by
-    simp only [idTensorW, Matrix.of_apply, Equiv.toFun_as_coe, Equiv.symm_apply_apply]
+    simp only [idTensorW, Matrix.of_apply, Equiv.symm_apply_apply]
   have hrow (s : Fin k) (a : Fin m) (f : Fin (k * m') → ℂ) :
       ∑ p, idTensorW (finProdFinEquiv (s, a)) p * f p =
         ∑ a', W a a' * f (finProdFinEquiv (s, a')) := by
@@ -179,7 +179,7 @@ lemma mapIdTensor_conj_of_conj
   rw [hcol]
   simp only [hrow]
   -- Both sides are now the same fourfold sum over the block indices `i j` and the `W`-indices.
-  simp only [mapIdTensor, Matrix.of_apply, Equiv.toFun_as_coe, Equiv.symm_apply_apply, hΦ,
+  simp only [mapIdTensor, Matrix.of_apply, Equiv.symm_apply_apply, hΦ,
     Matrix.mul_apply, Matrix.conjTranspose_apply, Finset.mul_sum, Finset.sum_mul]
   conv_lhs => rw [fintype_sum_four_rotate]
   refine Finset.sum_congr rfl fun b' _ => Finset.sum_congr rfl fun a' _ =>

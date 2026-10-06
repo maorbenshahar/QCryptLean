@@ -87,7 +87,7 @@ private theorem eigenvalues_smul_conjTranspose_mul {n : ℕ} [NeZero n]
   rw [h_eig]
   apply Multiset.map_injective Complex.ofReal_injective
   simp only [Multiset.map_map]
-  convert h_roots.symm.trans h_prod_roots using 2
+  exact h_roots.symm.trans h_prod_roots
 
 /-- Trace norm scales with complex norm: `‖c • X‖₁ = ‖c‖ · ‖X‖₁`. -/
 theorem traceNorm_smul_eq {n : ℕ} [NeZero n]

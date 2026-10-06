@@ -70,9 +70,7 @@ theorem ckrDeFinettiCanonicalPurification_toOp_eq_ketbra
     (ckrDeFinettiCanonicalPurification d n).toOp =
       sameAncillaPurificationKet (ckrDeFinettiState d n) *
         (sameAncillaPurificationKet (ckrDeFinettiState d n)).dag := by
-  simpa [ckrDeFinettiCanonicalPurification] using
-    (sameAncillaPurification_eq_ketbra_sameAncillaPurificationKet
-      (ckrDeFinettiState d n))
+  exact sameAncillaPurification_eq_ketbra_sameAncillaPurificationKet (ckrDeFinettiState d n)
 
 /-- The canonical CKR de Finetti purification satisfies `IsCKRDeFinettiPurification`.
 

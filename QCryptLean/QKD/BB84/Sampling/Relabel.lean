@@ -32,7 +32,6 @@ def matchedRelabelEquiv {N : ℕ} (τ : Fin N ≃ Fin N) (a b : Fin N → Basis)
     exact (Finset.mem_filter.mp i.2).2⟩
   invFun j := ⟨τ.symm j.1, by
     refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
-    change a (τ.symm j.1) = b (τ.symm j.1)
     exact (Finset.mem_filter.mp j.2).2⟩
   left_inv i := Subtype.ext (τ.symm_apply_apply i.1)
   right_inv j := Subtype.ext (τ.apply_symm_apply j.1)

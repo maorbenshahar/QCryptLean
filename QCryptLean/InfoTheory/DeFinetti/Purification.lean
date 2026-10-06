@@ -73,8 +73,10 @@ private lemma tensor_one_continuous {n k : ℕ} :
     Continuous (fun A : Op n => A ⊗ (1 : Op k)) := by
   apply continuous_matrix
   intro i j
-  simpa only [Op.tensor, reindex_apply, submatrix_apply, kroneckerMap_apply] using
-    (continuous_apply_apply _ _).mul continuous_const
+  change Continuous (fun A : Op n =>
+    A (finProdFinEquiv.symm i).1 (finProdFinEquiv.symm j).1 *
+      (1 : Op k) (finProdFinEquiv.symm i).2 (finProdFinEquiv.symm j).2)
+  exact (continuous_apply_apply _ _).mul continuous_const
 
 /-- The positive semidefinite square root of a density operator.
     For ρ PSD with eigendecomposition ρ = Σᵢ λᵢ|eᵢ⟩⟨eᵢ|, this is √ρ = Σᵢ √λᵢ|eᵢ⟩⟨eᵢ|.
@@ -288,11 +290,9 @@ lemma maxEntangledOp_left_perm_invariant {d n : ℕ} [NeZero d] [NeZero n]
   · simp only [hj, ite_true]
     simp_rw [Finset.sum_ite_eq Finset.univ, Finset.mem_univ, ite_true]
     rw [horth]
-    have hj' : j.divNat = j.modNat := by simpa [finProdFinEquiv] using hj
-    simp [hj']
+    simp
   · simp only [hj, ite_false, Finset.sum_const_zero]
-    have hj' : ¬(j.divNat = j.modNat) := by simpa [finProdFinEquiv] using hj
-    simp [hj']
+    simp
 
 /-- The maximally entangled state is invariant under simultaneous permutation:
     `(U_σ ⊗ U_σ) * Ψ * (U_σ ⊗ U_σ)† = Ψ`. -/

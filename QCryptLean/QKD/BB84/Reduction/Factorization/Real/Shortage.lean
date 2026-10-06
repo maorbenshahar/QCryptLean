@@ -79,13 +79,12 @@ private theorem reconstruction_shortage
       have hrc := congrArg (fun y =>
         QKD.BB84.lateSelectionExitEquiv N nK mZ mX
           ((QKD.BB84.exitEquiv N nK mZ mX ell ellEV leakEC) y.1).1) hc.2.2
-      dsimp only at hrc
       rw [shortageCompleteOutput_rawControl] at hrc
       rw [successCompleteOutputEmbedding_exit] at hrc
       unfold successExitMap at hrc
       rw [Equiv.apply_symm_apply] at hrc
       have hrc' : omega = eta.1 := by
-        simpa [QKD.BB84.lateSelectionExitEquiv] using hrc
+        exact hrc
       apply hshort
       rw [hrc']
       exact selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi eta
@@ -117,7 +116,6 @@ private theorem reconstruction_shortage
       have hrc := congrArg (fun y =>
         QKD.BB84.lateSelectionExitEquiv N nK mZ mX
           ((QKD.BB84.exitEquiv N nK mZ mX ell ellEV leakEC) y.1).1) heq
-      dsimp only at hrc
       rw [shortageCompleteOutput_rawControl,
         shortageCompleteOutput_rawControl] at hrc
       exact heta hrc
@@ -266,7 +264,7 @@ private theorem program_denote_shortage_eq_abort
       (Boundary.leafSpaceEquiv Measurement.lateSelectionAbortSystem
         (Equiv.cast (congrArg Boundary.space hout) c))
   rw [Program.denote_done]
-  simp only [LinearEquiv.coe_coe, Matrix.reindexLinearEquiv_apply,
+  simp only [LinearEquiv.coe_coe, Matrix.coe_reindexLinearEquiv,
     Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.symm_symm]
   rw [hextract]
   simp only [Equiv.cast_refl, Equiv.refl_symm, Equiv.refl_apply,
@@ -344,7 +342,7 @@ private theorem retainedMid_failure_trace
   dsimp only
   unfold retainedControlLift reconstructionInputEquiv
   simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-    Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply,
+    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply,
     Matrix.submatrix_apply, Equiv.symm_symm]
   let regrouped := Matrix.reindex
     (comparisonPreToRetainedControlEquiv N (nK + mZ + mX))

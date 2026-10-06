@@ -251,8 +251,7 @@ lemma seed_visible_stateMap_sub_uniform_toOp_eq
     change ((uniformCQState (X := S × Z) ρ.quantumMarginal :
       CQState (S × Z) n).stateMap sz).toOp =
         (((1 / (Fintype.card (S × Z) : ℝ) : ℝ) : ℂ)) • ρ.quantumMarginalOp
-    simpa using
-      (uniformOutput_stateMap_toOp (Z := S × Z) ρ.quantumMarginal sz)
+    exact uniformOutput_stateMap_toOp (Z := S × Z) ρ.quantumMarginal sz
   rw [hUblock, smul_sub]
   congr 1
   have hsc := seed_uniform_scalar_eq (S := S) (Z := Z)

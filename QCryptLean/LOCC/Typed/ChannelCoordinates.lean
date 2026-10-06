@@ -29,7 +29,7 @@ preservation nor naturality. -/
     {dA dB : ℕ} (eA : A ≃ Fin dA) (eB : B ≃ Fin dB) (Φ : Op A →ₗ[ℂ] Op B)
     (ρ : Op A) (i j : B) :
     coordinateLinear eA eB Φ (Matrix.reindex eA eA ρ) (eB i) (eB j) = Φ ρ i j := by
-  simp [coordinateLinear, LinearMap.comp_apply, Matrix.reindexLinearEquiv_apply,
+  simp [coordinateLinear, LinearMap.comp_apply, Matrix.coe_reindexLinearEquiv,
     Matrix.reindex_apply]
 
 /-- Entry of a coordinated map: the typed map applied to the pulled-back input operator, read at
@@ -39,7 +39,7 @@ theorem coordinateLinear_apply
     {dA dB : ℕ} (eA : A ≃ Fin dA) (eB : B ≃ Fin dB) (Φ : Op A →ₗ[ℂ] Op B)
     (M : Quantum.Operators.Op dA) (i j : Fin dB) :
     coordinateLinear eA eB Φ M i j = Φ (M.submatrix eA eA) (eB.symm i) (eB.symm j) := by
-  simp [coordinateLinear, Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply]
+  simp [coordinateLinear, Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
 
 /-- A coordinated map sends the explicit coordinates of an operator to the explicit coordinates
 of its image. -/
@@ -77,7 +77,7 @@ theorem coordinateLinear_reindexOp_cancel
   intro rho
   ext i j
   simp [coordinateLinear, reindexOp, LinearMap.comp_apply,
-    Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply]
+    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
 
 /-- Explicit coordinate changes preserve composition. -/
 theorem coordinateLinear_comp {A B C : Type}
@@ -88,7 +88,7 @@ theorem coordinateLinear_comp {A B C : Type}
     coordinateLinear eA eC (Ψ.comp Φ) =
       (coordinateLinear eB eC Ψ).comp (coordinateLinear eA eB Φ) := by
   ext ρ i j
-  simp [coordinateLinear, LinearMap.comp_apply, Matrix.reindexLinearEquiv_apply,
+  simp [coordinateLinear, LinearMap.comp_apply, Matrix.coe_reindexLinearEquiv,
     Matrix.reindex_apply]
 
 /-- Coordinates a matrix-conjugation map by reindexing its Kraus matrix. -/
@@ -99,7 +99,7 @@ theorem coordinateMatrixConj_eq {A B : Type}
       matrixConjLinear (Matrix.reindex eB eA K) := by
   ext ρ i j
   simp only [coordinateLinear, matrixConjLinear, LinearMap.comp_apply, LinearEquiv.coe_coe,
-    Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply, Equiv.symm_symm, LinearMap.coe_mk,
+    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply, Equiv.symm_symm, LinearMap.coe_mk,
     AddHom.coe_mk, Matrix.submatrix_apply, Matrix.conjTranspose_submatrix]
   have hρ : ρ = (ρ.submatrix eA eA).submatrix eA.symm eA.symm := by
     ext a b
@@ -127,7 +127,7 @@ theorem coordinateLinear_sub {A B : Type}
   intro ρ
   ext i j
   simp [coordinateLinear, LinearMap.comp_apply,
-    Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply]
+    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
 
 /-- Explicit coordinate changes commute with finite sums of linear maps. -/
 theorem coordinateLinear_sum {A B κ : Type}
@@ -136,7 +136,7 @@ theorem coordinateLinear_sum {A B κ : Type}
     (Φ : κ → (Op A →ₗ[ℂ] Op B)) :
     coordinateLinear eA eB (∑ x, Φ x) = ∑ x, coordinateLinear eA eB (Φ x) := by
   ext ρ i j
-  simp [coordinateLinear, LinearMap.comp_apply, Matrix.reindexLinearEquiv_apply,
+  simp [coordinateLinear, LinearMap.comp_apply, Matrix.coe_reindexLinearEquiv,
     Matrix.reindex_apply, LinearMap.sum_apply]
 
 /-- **A complete instrument gives a CPTP channel in any explicit finite coordinates.**  This is
@@ -154,7 +154,7 @@ theorem Instrument.coordinateChannel_isCPTP {A B Outcome : Type}
     apply LinearMap.ext
     intro ρ
     simp only [coordinateLinear, Instrument.channel, Instrument.operation, matrixConjLinear,
-      LinearMap.comp_apply, LinearEquiv.coe_coe, Matrix.reindexLinearEquiv_apply,
+      LinearMap.comp_apply, LinearEquiv.coe_coe, Matrix.coe_reindexLinearEquiv,
       Matrix.reindex_apply, Equiv.symm_symm, LinearMap.sum_apply, LinearMap.coe_mk,
       AddHom.coe_mk, map_sum, Quantum.Channels.krausMapFintype,
       Matrix.conjTranspose_submatrix, K]

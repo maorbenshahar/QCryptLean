@@ -227,28 +227,28 @@ theorem partialTraceB_add {n m : ℕ} (ρ σ : Op (n * m)) :
     partialTraceB (ρ + σ) = partialTraceB ρ + partialTraceB σ := by
   ext i j
   unfold partialTraceB
-  simp only [Matrix.of_apply, add_apply, Finset.sum_add_distrib]
+  simp only [Matrix.of_apply, Matrix.add_apply, Finset.sum_add_distrib]
 
 /-- Partial trace over `B` commutes with complex scalar multiplication. -/
 theorem partialTraceB_smul {n m : ℕ} (c : ℂ) (ρ : Op (n * m)) :
     partialTraceB (c • ρ) = c • partialTraceB ρ := by
   ext i j
   unfold partialTraceB
-  simp only [Matrix.of_apply, smul_apply, smul_eq_mul, Finset.mul_sum]
+  simp only [Matrix.of_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
 
 /-- Partial trace over `A` distributes over addition. -/
 theorem partialTraceA_add {n m : ℕ} (ρ σ : Op (n * m)) :
     partialTraceA (ρ + σ) = partialTraceA ρ + partialTraceA σ := by
   ext i j
   unfold partialTraceA
-  simp only [Matrix.of_apply, add_apply, Finset.sum_add_distrib]
+  simp only [Matrix.of_apply, Matrix.add_apply, Finset.sum_add_distrib]
 
 /-- Partial trace over `A` commutes with complex scalar multiplication. -/
 theorem partialTraceA_smul {n m : ℕ} (c : ℂ) (ρ : Op (n * m)) :
     partialTraceA (c • ρ) = c • partialTraceA ρ := by
   ext i j
   unfold partialTraceA
-  simp only [Matrix.of_apply, smul_apply, smul_eq_mul, Finset.mul_sum]
+  simp only [Matrix.of_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
 
 /-- Partial trace over `A` commutes with real scalar multiplication, with the
 scalar coerced to complex matrix entries. -/

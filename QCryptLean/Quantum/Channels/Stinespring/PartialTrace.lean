@@ -24,7 +24,7 @@ namespace Quantum.Channels
 lemma isCPTP_krausMapFintype {n m : ℕ} [NeZero n] [NeZero m]
     (kr : KrausRepresentation n m) :
     IsCPTP (⇑(krausMapFintype kr.operators)) := by
-  simpa [KrausRepresentation.applyOp, krausMapFintype] using kr.is_cptp
+  exact kr.is_cptp
 
 /-- The Bob marginal obtained by tracing out the environment of a Kraus channel is
 CPTP. -/
@@ -37,7 +37,7 @@ theorem isCPTP_partialTraceB_krausMapFintype
     (⇑(krausMapFintype kr.operators))
     (isCPTP_partialTraceB (n := B) (m := E))
     (isCPTP_krausMapFintype kr)
-  simpa [Function.comp] using hcomp
+  exact hcomp
 
 end Quantum.Channels
 

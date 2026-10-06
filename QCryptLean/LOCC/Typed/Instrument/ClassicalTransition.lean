@@ -275,7 +275,8 @@ theorem classicalReplacementKraus_complete (I : Instrument Hin Hout Outcome) :
       Real.mul_self_sqrt (I.classicalWeight_nonneg _ _)]
     convert congrArg (fun x : ℝ => (x : ℂ))
       (I.sum_classicalWeight i) using 1
-    simp [Matrix.sum_apply, Matrix.single_apply]
+    · simp [Matrix.sum_apply, Matrix.single_apply]
+    · exact Complex.ofReal_one.symm
   · simp only [Matrix.sum_apply, Matrix.one_apply, hij, if_false]
     apply Finset.sum_eq_zero
     intro y _

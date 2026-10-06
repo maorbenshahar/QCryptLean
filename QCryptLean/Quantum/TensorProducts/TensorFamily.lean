@@ -177,7 +177,7 @@ theorem tensorFamily_sum {ι : Fin n → Type*} [∀ k, Fintype (ι k)]
     (F : ∀ k, ι k → Matrix (Fin a) (Fin b) ℂ) :
     tensorFamily (fun k => ∑ i, F k i) = ∑ g : ∀ k, ι k, tensorFamily fun k => F k (g k) := by
   ext x y
-  simp only [tensorFamily_apply, sum_apply]
+  simp only [tensorFamily_apply, Matrix.sum_apply]
   exact Fintype.prod_sum fun k i =>
     F k i (finFunctionFinEquiv.symm x k) (finFunctionFinEquiv.symm y k)
 
@@ -185,7 +185,7 @@ theorem tensorFamily_sum {ι : Fin n → Type*} [∀ k, Fintype (ι k)]
 theorem tensorFamily_eq_zero {A : Fin n → Matrix (Fin a) (Fin b) ℂ} {k : Fin n} (hk : A k = 0) :
     tensorFamily A = 0 := by
   ext i j
-  exact Finset.prod_eq_zero (Finset.mem_univ k) (by rw [hk, zero_apply])
+  exact Finset.prod_eq_zero (Finset.mem_univ k) (by rw [hk, Matrix.zero_apply])
 
 /-- The tensor product of square families as a monoid homomorphism `(Fin n → Op d) →* Op (d ^ n)`,
 for the pointwise monoid structure on families. -/

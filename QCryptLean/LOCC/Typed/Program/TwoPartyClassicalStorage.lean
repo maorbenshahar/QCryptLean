@@ -208,7 +208,7 @@ theorem IsHonestClassical.graft
     {k : ∀ e, Program (B.system e) (C e)} (hk : ∀ e, (k e).IsHonestClassical) :
     (p.graft k).IsHonestClassical := by
   induction hp with
-  | done => simpa using hk ()
+  | done => exact hk ()
   | announced A next hA hnext ih =>
       rw [Program.graft_announced]
       exact .announced _ _ hA (fun y => ih y (fun e => hk ⟨y, e⟩))
@@ -229,7 +229,7 @@ theorem IsHonestClassical.denote
   | done =>
       intro e q q' hqq'
       rcases e with ⟨⟩
-      simpa [Program.denote_done, Matrix.reindexLinearEquiv_apply,
+      simpa [Program.denote_done, Matrix.coe_reindexLinearEquiv,
         Matrix.reindex_apply, Boundary.leafSpaceEquiv] using hrho q q' hqq'
   | announced A next hA hnext ih =>
       intro e q q' hqq'

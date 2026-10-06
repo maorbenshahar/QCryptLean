@@ -216,25 +216,21 @@ noncomputable def retainedAnalysisDefaultRawTailOutput
   let qAbort : FinalStage.abortSystem.total :=
     (TwoParty.pairEquiv Unit Unit).symm ((), ())
   let finalExit : (FinalStage.boundary ell).Exit := ⟨1, by
-    simpa [FinalStage.flagBoundary] using
-      (() : (Boundary.leaf FinalStage.abortSystem).Exit)⟩
+    exact (() : (Boundary.leaf FinalStage.abortSystem).Exit)⟩
   let finalSpace : (FinalStage.boundary ell).space := ⟨finalExit, by
-    simpa [finalExit, FinalStage.flagBoundary] using qAbort⟩
+    exact qAbort⟩
   (Boundary.graftSpaceEquiv _ _).symm ⟨preExit, finalSpace⟩
 
 /-- The round-grouped input dimension is nonzero for every retained size. -/
-@[implicit_reducible]
-def retainedAnalysisRoundDimNeZero (n : ℕ) : NeZero (4 ^ n) :=
+theorem retainedAnalysisRoundDimNeZero (n : ℕ) : NeZero (4 ^ n) :=
   ⟨pow_ne_zero _ (by decide)⟩
 
 /-- The Alice/Bob-block input dimension is nonzero for every retained size. -/
-@[implicit_reducible]
-def retainedAnalysisBlockDimNeZero (n : ℕ) : NeZero (2 ^ n * 2 ^ n) :=
+theorem retainedAnalysisBlockDimNeZero (n : ℕ) : NeZero (2 ^ n * 2 ^ n) :=
   ⟨Nat.mul_ne_zero (pow_ne_zero _ (by decide)) (pow_ne_zero _ (by decide))⟩
 
 /-- The explicit permutation-times-tail output dimension is nonzero. -/
-@[implicit_reducible]
-def retainedAnalysisOutputDimNeZero
+theorem retainedAnalysisOutputDimNeZero
     (nK mZ mX ell ellEV leakEC : ℕ) :
     NeZero (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC) := by
   letI : Nonempty (Equiv.Perm (Fin (nK + mZ + mX))) :=
@@ -338,8 +334,8 @@ theorem retainedAnalysisReal_isCPTP
       (retainedAnalysisOutputEquiv nK mZ mX ell ellEV leakEC)
   have hReindex := Quantum.Channels.reindexLinearEquiv_isCPTP
     (Equiv.roundGroupEquiv 2 2 (nK + mZ + mX))
-  simpa [retainedAnalysisReal, Function.comp_def] using
-    Quantum.Channels.cptp_comp _ _ hProgram hReindex
+  have h := Quantum.Channels.cptp_comp _ _ hProgram hReindex
+  exact h
 
 /-- The boundary-derived full-exit key resource is CPTP.
 

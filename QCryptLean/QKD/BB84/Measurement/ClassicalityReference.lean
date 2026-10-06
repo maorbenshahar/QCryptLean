@@ -32,15 +32,13 @@ attribute [local instance] storedRecordVectorDecidableEq
 
 /-- The physical input coordinate dimension is nonzero, derived from its explicit inhabited
 finite type rather than supplied by a caller. -/
-@[implicit_reducible]
-def weightedStreamInputCardNeZero (N : ℕ) :
+theorem weightedStreamInputCardNeZero (N : ℕ) :
     NeZero (Fintype.card (weightedStreamSystem Unit N).total) :=
   ⟨Fintype.card_ne_zero⟩
 
 /-- The terminal record-coordinate dimension is nonzero, derived from its explicit inhabited
 finite type rather than supplied by a caller. -/
-@[implicit_reducible]
-def weightedScheduleRecordCardNeZero (N : ℕ) :
+theorem weightedScheduleRecordCardNeZero (N : ℕ) :
     NeZero (Fintype.card
       ((Unit × (Fin N → StoredRecord)) ×
         (Unit × (Fin N → StoredRecord)))) :=
@@ -225,7 +223,8 @@ theorem weightedMeasurementSchedule_isClassicalOnFirst
     · exact Or.inl hAlice
   have hdiag := weightedMeasurementSchedule_honestRegistersDiagonal pA pB N
     (Matrix.of fun i j => rho (i, e) (j, e'))
-  simpa [reindexOp, Matrix.reindexLinearEquiv_apply, Matrix.reindex_apply,
-    Boundary.leafSpaceEquiv] using hdiag q q' hdiff
+  have hentry := hdiag q q' hdiff
+  simp only [reindexOp, Boundary.leafSpaceEquiv] at hentry
+  exact hentry
 
 end QKD.BB84.Measurement

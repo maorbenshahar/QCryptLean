@@ -224,7 +224,7 @@ lemma coherentStateKet_normalized {d : ℕ} [NeZero d]
     have hU := UnitaryGroup.star_mul_self g
     have h00 := congr_fun (congr_fun hU 0) 0
     simp only [Matrix.mul_apply, Matrix.star_apply, Matrix.one_apply_eq] at h00
-    convert h00 using 1
+    exact h00
   -- Key step: the sum over Fin(d^n) of products equals (∑_a h(a))^n = 1^n = 1
   -- by reindexing via finFunctionFinEquiv and using Fintype.prod_sum
   have hd_pos : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
@@ -247,7 +247,6 @@ lemma coherentStateKet_normalized {d : ℕ} [NeZero d]
   have hreindex := Equiv.sum_comp finFunctionFinEquiv.symm
       (fun f : Fin n → Fin d => ∏ j : Fin n,
         (starRingEnd ℂ) (gm (f j) 0) * gm (f j) 0)
-  simp only at hreindex
   rw [hreindex]
   -- Apply Fintype.prod_sum: ∑_f ∏_j h(f(j)) = ∏_j (∑_a h(a))
   rw [← Fintype.prod_sum (f := fun (_ : Fin n) (a : Fin d) =>
@@ -265,7 +264,7 @@ noncomputable def coherentSingleCopy {d : ℕ} [NeZero d]
       have hU := UnitaryGroup.star_mul_self g
       have h00 := congr_fun (congr_fun hU 0) 0
       simp only [Matrix.mul_apply, Matrix.star_apply, Matrix.one_apply_eq] at h00
-      convert h00 using 1)
+      exact h00)
 
 /-- The map `g ↦ coherentSingleCopy g` is measurable from `U(d)` to `DensityOp d`. -/
 lemma coherentSingleCopy_measurable {d : ℕ} [NeZero d] :

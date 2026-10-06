@@ -223,7 +223,7 @@ lemma diagonal_single_mul_self {n : ℕ} (i : Fin n) :
   rw [Matrix.diagonal_mul_diagonal]
   congr 1
   funext a
-  by_cases h : a = i <;> simp [Pi.single_apply, h]
+  by_cases h : a = i <;> simp [h]
 
 /-- The standard-basis diagonal projector is an idempotent element, in the form the
 square-root API consumes (`Matrix.PosSemidef.sqrt_eq_self_of_isIdempotentElem`). -/

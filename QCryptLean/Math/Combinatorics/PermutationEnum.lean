@@ -2,7 +2,7 @@ import Mathlib.Data.Fintype.Perm
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Logic.Equiv.Fin.Basic
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Data.Complex.Basic
 
 /-!

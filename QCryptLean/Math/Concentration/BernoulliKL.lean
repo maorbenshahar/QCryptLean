@@ -97,9 +97,8 @@ theorem log_le_pade_upper (x : ℝ) (hx : 0 ≤ x) :
     have h2 : HasDerivAt (fun t => Real.log (1 + t)) (1 / (1 + t)) t := by
       have := (Real.hasDerivAt_log (show (1 : ℝ) + t ≠ 0 by positivity)).comp t
         ((hasDerivAt_id t).const_add 1)
-      simpa using this
-    have := h1.sub h2
-    convert this using 1
+      simpa only [Function.comp_def, mul_one, one_div] using this
+    apply (h1.sub h2).congr_deriv
     field_simp
     ring
   have hmono : MonotoneOn g (Set.Ici (0 : ℝ)) := by

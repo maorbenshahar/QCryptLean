@@ -35,14 +35,14 @@ lemma symmetricProjectorPairedGen_is_projector (dA dR n : ℕ)
   let e := Matrix.reindexAlgEquiv ℂ ℂ (Equiv.roundGroupEquiv dA dR n)
   have heq : e (symmetricProjectorRep (dA * dR) n) =
       symmetricProjectorPairedGen dA dR n := by
-    simp only [e, Matrix.reindexAlgEquiv_apply, symmetricProjectorRep,
+    simp only [e, Matrix.coe_reindexAlgEquiv, symmetricProjectorRep,
       symmetricProjectorPairedGen, Matrix.reindex_smul, Matrix.reindex_sum,
       reindex_roundGroupEquiv_permRep]
   obtain ⟨hidp, hherm⟩ := symmetricProjectorRep_is_projector (dA * dR) n
   rw [← heq]
   constructor
   · rw [← map_mul, hidp]
-  · simp only [e, Matrix.reindexAlgEquiv_apply, Matrix.conjTranspose_reindex, hherm]
+  · simp only [e, Matrix.coe_reindexAlgEquiv, Matrix.conjTranspose_reindex, hherm]
 
 /-- The paired symmetric projector is Hermitian. -/
 lemma symmetricProjectorPairedGen_isHermitian (dA dR n : ℕ)
@@ -69,7 +69,7 @@ lemma symmetricProjectorPairedGen_trace_eq (dA dR n : ℕ)
   let e := Matrix.reindexAlgEquiv ℂ ℂ (Equiv.roundGroupEquiv dA dR n)
   have heq : e (symmetricProjectorRep (dA * dR) n) =
       symmetricProjectorPairedGen dA dR n := by
-    simp only [e, Matrix.reindexAlgEquiv_apply, symmetricProjectorRep,
+    simp only [e, Matrix.coe_reindexAlgEquiv, symmetricProjectorRep,
       symmetricProjectorPairedGen, Matrix.reindex_smul, Matrix.reindex_sum,
       reindex_roundGroupEquiv_permRep]
   rw [← heq, Matrix.trace_map, symmetricProjectorRep_trace]

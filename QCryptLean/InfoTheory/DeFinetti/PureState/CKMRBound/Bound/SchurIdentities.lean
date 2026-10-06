@@ -220,7 +220,8 @@ lemma ckmr_schur_identity_1 {d n : ℕ} [NeZero d] [NeZero n]
     have h_int : Integrable (fun g : unitaryGroup (Fin d) ℂ =>
         (↑((n - k + d - 1).choose (d - 1)) : ℝ) • (coherentStateDensityOp g (n - k)).toOp)
         (haarProbUnitary d) :=
-      (continuous_const.smul h_Pg_cont).integrable_of_hasCompactSupport
+      (h_Pg_cont.const_smul
+        (Nat.choose (n - k + d - 1) (d - 1) : ℝ)).integrable_of_hasCompactSupport
         (HasCompactSupport.of_compactSpace _)
     -- Interchange integral and CLM
     refine (M.integral_comp_comm h_int).trans ?_
@@ -450,7 +451,8 @@ lemma ckmr_schur_core_identity {d n : ℕ} [NeZero d] [NeZero n]
   have h_int : Integrable (fun g : unitaryGroup (Fin d) ℂ =>
       (↑((n + d - 1).choose (d - 1)) : ℝ) • (coherentStateDensityOp g n).toOp)
       (haarProbUnitary d) :=
-    (continuous_const.smul h_Pg_cont).integrable_of_hasCompactSupport
+    (h_Pg_cont.const_smul
+      (Nat.choose (n + d - 1) (d - 1) : ℝ)).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   -- Apply CLM.integral_comp_comm: ∫ M(f(g)) dg = M(∫ f(g) dg)
   refine (M.integral_comp_comm h_int).trans ?_
@@ -580,7 +582,8 @@ lemma ckmr_schur_identity_2' {d n : ℕ} [NeZero d] [NeZero n]
     · exact h_V_entry j b
   have h_int : Integrable (fun g => (↑((n - k + d - 1).choose (d - 1)) : ℝ) •
       ((coherentStateDensityOp g k).toOp * ckmrUnnorm Ψ k _hk g)) (haarProbUnitary d) :=
-    (continuous_const.smul (h_P_cont.mul h_A_cont)).integrable_of_hasCompactSupport
+    ((h_P_cont.mul h_A_cont).const_smul
+      (Nat.choose (n - k + d - 1) (d - 1) : ℝ)).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   rw [integral_conjTranspose h_int, ckmr_schur_identity_2 Ψ _hsym k _hk]
   -- RHS: (f • ρ_k)^† = f • ρ_k (since ρ_k is Hermitian and f is real)

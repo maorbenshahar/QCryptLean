@@ -770,7 +770,6 @@ lemma minFeasibleLambda_tensorMaxMixed_eq
   ext t
   exact isFeasible_tensorMaxMixed_iff ρEtensor ρE hblocks
 
-set_option linter.unusedDecidableInType false in
 /-- The CQState obtained by tensoring each outcome block with I/dR is again a CQState.
 Each block is `ρE(x) ⊗ I/dR`, and the total weight is unchanged. -/
 theorem CQState.tensorMaxMixed_exists {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X]
@@ -939,7 +938,6 @@ theorem CQState.purifiedDistance_tensorMaxMixed_le_extensionRadius
       exact_mod_cast Nat.zero_le dR
     simpa [SubDensityOp.trace, hsqrt_dim] using hfid
 
-set_option linter.unusedDecidableInType false in
 /-- Conditional min-entropy is unchanged when all blocks and the maximally mixed
 reference are tensored with the normalized maximally mixed register. -/
 theorem conditionalMinEntropyReal_tensorMaxMixed_maxMixed_eq
@@ -956,7 +954,6 @@ theorem conditionalMinEntropyReal_tensorMaxMixed_maxMixed_eq
   unfold conditionalMinEntropyReal
   rw [minFeasibleLambda_tensorMaxMixed_eq ρEtensor ρE hblocks]
 
-set_option linter.unusedDecidableInType false in
 /-- The extension radius is at most `1 - 1 / (2 * dR^2)` for nonzero reference
 dimension `dR`. -/
 theorem extensionRadius_le_one_sub_inv_two_dimR (dR : ℕ) [NeZero dR] :
@@ -1248,7 +1245,6 @@ theorem conditionalMinEntropyReal_marginal_freeRef_ge_extension_of_pos
   change -Real.log lamEV / Real.log 2 ≤ -Real.log lamE / Real.log 2
   exact div_le_div_of_nonneg_right (neg_le_neg hlog_le) hlog2_pos.le
 
-set_option linter.unusedDecidableInType false in
 /-! ## Decoupled-ancilla announce seam
 
 The penalty-free register-move lemma family for announcing an `x`-independent quantum
@@ -1680,8 +1676,8 @@ theorem smoothMinEntropy_le_condTensor_decoupled_ancilla
   have hbase := opLe_tensor_psd (ρbar.stateMap x).isHermitian
     ((posSemidefOp_implies_mathlib σE.toPosSemidefOp).smul (Complex.zero_le_real.mpr ht.1))
     (posSemidefOp_implies_mathlib τ.toPosSemidefOp) τ.isHermitian (ht.2 x) (fun _ => le_rfl)
-  simpa only [Op.tensor_smul_left] using hbase
-
+  simp only [Op.tensor_smul_left] at hbase
+  exact hbase
 
 /-- An extension inherits the marginal signed smooth entropy against maximally mixed references
 when the enlarged target ball is bounded above. -/

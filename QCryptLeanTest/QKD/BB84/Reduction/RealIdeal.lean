@@ -41,9 +41,8 @@ def impossibleQuotaEC : ECScheme 1 (@packedPESel 1 0 0) 0 :=
 /-- A nondegenerate Alice basis law with mass `1/3` on `X` and `2/3` on `Z`. -/
 noncomputable def biasedBasisLaw : PMF Basis :=
   PMF.map (fun b : Bool => if b then Basis.x else Basis.z)
-    (PMF.bernoulli ⟨(1 : ℝ) / 3, by positivity⟩ (by
-      change (1 : ℝ) / 3 ≤ 1
-      norm_num))
+    (ProbabilityTheory.bernoulliMeasure true false
+      ⟨(1 : ℝ) / 3, by constructor <;> norm_num⟩).toPMF
 
 /-- The zero-round, zero-quota configuration. -/
 noncomputable def zeroParameters : Parameters where

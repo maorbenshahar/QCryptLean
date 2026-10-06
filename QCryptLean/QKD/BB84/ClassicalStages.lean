@@ -106,7 +106,7 @@ theorem quotaSelectionContinuation_isHonestClassical
       simp [Measurement.lateSelectionLeaf, h]
     unfold Measurement.quotaSelectionContinuation
     split
-    · simpa only using isHonestClassical_castBoundary hleaf.symm
+    · exact isHonestClassical_castBoundary hleaf.symm
         (Measurement.selectedRecordContinuation (Sampling.selectedEmbedding omega h))
         (selectedRecordContinuation_isHonestClassical (Sampling.selectedEmbedding omega h))
     · contradiction
@@ -116,7 +116,7 @@ theorem quotaSelectionContinuation_isHonestClassical
     unfold Measurement.quotaSelectionContinuation
     split
     · contradiction
-    · simpa only using isHonestClassical_castBoundary hleaf.symm
+    · exact isHonestClassical_castBoundary hleaf.symm
         (Measurement.discardCompletedRecords N) (discardCompletedRecords_isHonestClassical N)
 
 /-- Late basis announcements, public shuffling, quota selection, and their dependent multipartite
@@ -161,7 +161,7 @@ theorem peAnnouncementLoop_isHonestClassical
     (hcont : ∀ a b, (cont a b).IsHonestClassical) :
     (peAnnouncementLoop n r idx cont).IsHonestClassical := by
   induction r with
-  | zero => simpa [peAnnouncementLoop] using hcont Fin.elim0 Fin.elim0
+  | zero => exact hcont Fin.elim0 Fin.elim0
   | succ r ih =>
       rw [peAnnouncementLoop_succ]
       refine .announced _ _

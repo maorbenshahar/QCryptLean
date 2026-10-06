@@ -264,7 +264,8 @@ lemma partialTraceB_pairedReference_marginal {a b : ℕ}
     (Matrix.reindex (finCongr (show a * (a * b ^ 2) = (a * b) * (a * b) by ring))
       (finCongr (show a * (a * b ^ 2) = (a * b) * (a * b) by ring)) τ.toOp)
   simp only [← Op.castDim_eq_reindex_finCongr, Op.castDim_cancel] at h
-  simpa only [Op.castDim_eq_reindex_finCongr] using h.symm
+  simp only [Op.castDim_eq_reindex_finCongr] at h
+  exact h.symm
 
 /-- Reindexing density operators is continuous. -/
 lemma continuous_densityOp_reindex {a b : ℕ} (e : Fin a ≃ Fin b) :

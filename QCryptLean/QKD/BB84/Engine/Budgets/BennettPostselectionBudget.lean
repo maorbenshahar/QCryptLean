@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import QCryptLean.QKD.BB84.SelectionData
 import QCryptLean.Math.ClassicalEntropy.Entropy
-import Mathlib.Data.Real.Sqrt
+import Mathlib.Analysis.Real.Sqrt
 
 /-!
 # The basic BB84 secrecy budget

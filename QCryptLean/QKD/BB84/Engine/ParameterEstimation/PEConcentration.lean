@@ -74,12 +74,12 @@ lemma tensorPowGen_preChannel_continuous
 /-- The per-component single-round marginal classifier is continuous. -/
 lemma componentAliceBobMarginal_continuous :
     Continuous (componentAliceBobMarginal) := by
-  simpa [componentAliceBobMarginal] using continuous_id
+  exact continuous_id
 
 /-- The per-component single-round marginal classifier is measurable. -/
 lemma componentAliceBobMarginal_measurable :
     Measurable (componentAliceBobMarginal) := by
-  simpa [componentAliceBobMarginal] using measurable_id
+  exact measurable_id
 
 open Math.Probability.SamplingConcentration Math.Concentration.Serfling
 

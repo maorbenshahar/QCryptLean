@@ -339,7 +339,7 @@ theorem measurement_monotonicity_with_support {n m : ℕ} [NeZero n] [NeZero m]
   -- Step 4: Support condition cascades through isometric embedding as kernel containment
   have h_ker := ker_sigma_sub_ker_rho_of_eigenvalue_support ρ σ h_support
   have h_ker' : ∀ v, σ'.toOp.mulVec v = 0 → ρ'.toOp.mulVec v = 0 := by
-    simpa [ρ', σ'] using kernel_containment_isometry_embed V hV ρ σ h_ker
+    exact kernel_containment_isometry_embed V hV ρ σ h_ker
   -- Step 5: measurementKLDiv equals projective KL on extended space
   have hρ'_toOp : ρ'.toOp = V * ρ.toOp * V.conjTranspose := rfl
   have hσ'_toOp : σ'.toOp = V * σ.toOp * V.conjTranspose := rfl
@@ -381,7 +381,7 @@ private lemma prob_zero_of_quantum_support_and_sigma_prob_zero {n m : ℕ} [NeZe
   let σ' := DensityOp.isometryEmbed V hV σ
   have h_ker := ker_sigma_sub_ker_rho_of_eigenvalue_support ρ σ h_q_supp
   have h_ker' : ∀ v, σ'.toOp.mulVec v = 0 → ρ'.toOp.mulVec v = 0 := by
-    simpa [ρ', σ'] using kernel_containment_isometry_embed V hV ρ σ h_ker
+    exact kernel_containment_isometry_embed V hV ρ σ h_ker
   have h_support' : ∀ j, InfoTheory.VonNeumannEntropy.eigenvaluesOf σ' j = 0 →
       diagonalOfRhoInSigmaBasis ρ' σ' j = 0 :=
     eigenvalue_support_of_ker_sub ρ' σ' h_ker'
