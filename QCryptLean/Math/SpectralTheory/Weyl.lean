@@ -37,94 +37,12 @@ then -A has eigenvalues -λₙ₋₁ ≥ -λₙ₋₂ ≥ ... ≥ -λ₀ (sorted
 So: eigenvalues(-A)[i] = -eigenvalues(A)[n-1-i] = -eigenvalues(A)[rev i]
 -/
 
-/-- Negation of a Hermitian matrix is Hermitian. -/
-lemma neg_isHermitian {n : Type*} [Fintype n]
-    {𝕜 : Type*} [RCLike 𝕜] (A : Matrix n n 𝕜) (hA : A.IsHermitian) :
-    (-A).IsHermitian := by
-  unfold IsHermitian
-  rw [conjTranspose_neg, hA.eq]
-
-/-! ### Polynomial Composition with -X
-
-Helper lemmas for relating characteristic polynomials of A and -A. -/
-
-open Polynomial in
-/-- Divisibility is preserved under polynomial composition. -/
-private lemma dvd_comp (a b c : Polynomial ℂ) (h : a ∣ b) : a.comp c ∣ b.comp c := by
-  obtain ⟨k, hk⟩ := h; use k.comp c; rw [hk, mul_comp]
-
-open Polynomial in
-/-- Key divisibility equivalence for composition with -X. -/
-private lemma dvd_comp_neg_X_iff (p : Polynomial ℂ) (z : ℂ) (k : ℕ) :
-    (X - C z) ^ k ∣ p.comp (-X) ↔ (X + C z) ^ k ∣ p := by
-  constructor
-  · intro h
-    have h_comp : (p.comp (-X)).comp (-X) = p := comp_neg_X_comp_neg_X p
-    have h_factor_comp : ((X - C z) ^ k).comp (-X) = (-1) ^ k * (X + C z) ^ k := by
-      rw [pow_comp, sub_comp, X_comp, C_comp]
-      have h_eq : (-X : Polynomial ℂ) - C z = -1 * (X + C z) := by ring
-      rw [h_eq, mul_pow]
-    have h_div : ((X - C z) ^ k).comp (-X) ∣ (p.comp (-X)).comp (-X) := dvd_comp _ _ (-X) h
-    rw [h_comp, h_factor_comp] at h_div
-    rcases h_div with ⟨q, hq⟩; use (-1)^k * q; rw [hq]; ring
-  · intro h
-    have h_factor_comp : ((X + C z) ^ k).comp (-X) = (-1) ^ k * (X - C z) ^ k := by
-      rw [pow_comp, add_comp, X_comp, C_comp]
-      have h_eq : (-X : Polynomial ℂ) + C z = -1 * (X - C z) := by ring
-      rw [h_eq, mul_pow]
-    have h_div : ((X + C z) ^ k).comp (-X) ∣ p.comp (-X) := dvd_comp _ _ (-X) h
-    rw [h_factor_comp] at h_div
-    rcases h_div with ⟨q, hq⟩; use (-1)^k * q; rw [hq]; ring
-
-open Polynomial in
-private lemma X_add_C_eq (z : ℂ) : X + C z = X - C (-z) := by simp [sub_eq_add_neg, C_neg]
-
-open Polynomial in
-private lemma comp_neg_X_ne_zero (p : Polynomial ℂ) (hp : p ≠ 0) : p.comp (-X) ≠ 0 := by
-  intro h; apply hp
-  have h1 : (p.comp (-X)).comp (-X) = (0 : Polynomial ℂ).comp (-X) := by rw [h]
-  simp only [comp_neg_X_comp_neg_X, zero_comp] at h1; exact h1
-
-open Polynomial in
-/-- Root multiplicity is preserved under composition with -X (with negated argument). -/
-private lemma rootMultiplicity_comp_neg_X (p : Polynomial ℂ) (z : ℂ) :
-    (p.comp (-X)).rootMultiplicity z = p.rootMultiplicity (-z) := by
-  by_cases hp : p = 0
-  · simp [hp, zero_comp, rootMultiplicity_zero]
-  have hp' : p.comp (-X) ≠ 0 := comp_neg_X_ne_zero p hp
-  by_cases h_root : p.IsRoot (-z)
-  · apply le_antisymm
-    · rw [rootMultiplicity_le_iff hp']
-      intro h_dvd
-      have h' := (dvd_comp_neg_X_iff p z _).mp h_dvd
-      rw [X_add_C_eq] at h'
-      exact pow_rootMultiplicity_not_dvd hp (-z) h'
-    · rw [rootMultiplicity_le_iff hp]
-      intro h_dvd
-      rw [← X_add_C_eq] at h_dvd
-      have h' := (dvd_comp_neg_X_iff p z _).mpr h_dvd
-      exact pow_rootMultiplicity_not_dvd hp' z h'
-  · have h_not_root_comp : ¬(p.comp (-X)).IsRoot z := by
-      simp only [IsRoot, eval_comp, eval_neg, eval_X]; exact h_root
-    rw [rootMultiplicity_eq_zero h_not_root_comp, rootMultiplicity_eq_zero h_root]
-
-open Polynomial in
-/-- Ring homomorphism for composition with -X. -/
-private noncomputable def compNegXHom : Polynomial ℂ →+* Polynomial ℂ where
-  toFun p := p.comp (-X)
-  map_one' := by simp [one_comp]
-  map_mul' := fun a b => by simp only [mul_comp]
-  map_zero' := by simp [zero_comp]
-  map_add' := fun a b => by simp only [add_comp]
-
 open Polynomial in
 /-- Determinant commutes with composition by -X. -/
 private lemma det_map_comp_neg_X {m : Type*} [DecidableEq m] [Fintype m]
     (M : Matrix m m (Polynomial ℂ)) :
     (M.map (fun p => p.comp (-X))).det = M.det.comp (-X) := by
-  have h : M.map (fun p => p.comp (-X)) = compNegXHom.mapMatrix M := by
-    ext i j; simp [compNegXHom, RingHom.mapMatrix]
-  rw [h, ← RingHom.map_det]; simp [compNegXHom]
+  exact (RingHom.map_det (Polynomial.compRingHom (-X)) M).symm
 
 open Polynomial in
 /-- Characteristic polynomial of -A relates to that of A via composition with -X. -/
@@ -631,12 +549,12 @@ lemma weyl_inequality_lower_bound {n : ℕ} [NeZero n] (A B : Matrix (Fin n) (Fi
   have h_j_lt : j < n := by simp only [h_card_eq] at hj ⊢; omega
   have h_i_lt : i.val < n := by simp only [h_card_eq] at hj ⊢; omega
   -- Establish Hermitian properties for negated matrices
-  have h_negA : (-A).IsHermitian := neg_isHermitian A hA
-  have h_negB : (-B).IsHermitian := neg_isHermitian B hB
+  have h_negA : (-A).IsHermitian := hA.neg
+  have h_negB : (-B).IsHermitian := hB.neg
   have h_neg_sum : -(A + B) = (-A) + (-B) := by simp only [neg_add]
-  have h_negAB : ((-A) + (-B)).IsHermitian := by rw [← h_neg_sum]; exact neg_isHermitian (A + B) hAB
+  have h_negAB : ((-A) + (-B)).IsHermitian := by rw [← h_neg_sum]; exact hAB.neg
   -- Create the correct Hermitian proof for -(A+B)
-  have h_negAB' : (-(A + B)).IsHermitian := neg_isHermitian (A + B) hAB
+  have h_negAB' : (-(A + B)).IsHermitian := hAB.neg
   -- Define k = n - 1 - i (the complementary index)
   have h_k_val : n - 1 - i.val < n := by omega
   let k : Fin (Fintype.card (Fin n)) := ⟨n - 1 - i.val, by simp only [h_card_eq]; exact h_k_val⟩
@@ -867,7 +785,7 @@ lemma weyl_eigenvalue_sum_bound {n : ℕ} [NeZero n]
     have h_BA_eq_neg : B - A = -(A - B) := by simp [sub_eq_add_neg]
     have hBA : (B - A).IsHermitian := by
       rw [h_BA_eq_neg]
-      exact neg_isHermitian (A - B) hAB
+      exact hAB.neg
     -- By the same Ky Fan argument as h_pos_bound applied to (B, A):
     -- ∑ max(0, λᵢ(B) - λᵢ(A)) ≤ ∑ max(0, eigenvalues of (B-A))
     -- The RHS equals ∑ max(0, -μᵢ(A-B)) by the eigenvalue negation relationship:

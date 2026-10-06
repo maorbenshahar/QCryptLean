@@ -69,7 +69,6 @@ lemma traceNorm_continuous {n : ℕ} [NeZero n] :
     change traceNorm A ≤ (NNReal.sqrt n : ℝ) * ‖A‖
     simpa using traceNorm_le_sqrt_natCast_mul_norm A
   have hq_cont : Continuous q := by
-    change Continuous (fun A : Op n => (NNReal.sqrt n : ℝ) * ‖A‖)
     exact continuous_const.mul continuous_norm
   exact
     (Seminorm.continuous_of_le hq_cont hp_le : Continuous (traceNormSeminorm n))

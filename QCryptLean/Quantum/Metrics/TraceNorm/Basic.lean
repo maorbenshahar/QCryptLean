@@ -553,19 +553,6 @@ lemma hermitian_trace_sq_eq_sum_eigenvalues_sq {n : ℕ} [NeZero n]
         simp only [sq, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
           mul_zero, sub_zero]
 
-/-- For nonnegative reals, the sum of squares is at most the square of the sum. -/
-lemma sum_sq_le_sq_sum_of_nonneg {ι : Type*} [Fintype ι]
-    (f : ι → ℝ) (hf : ∀ i, 0 ≤ f i) :
-    ∑ i, f i ^ 2 ≤ (∑ i, f i) ^ 2 := by
-  calc ∑ i, f i ^ 2
-      = ∑ i, f i * f i := by congr 1; ext i; ring
-    _ ≤ ∑ i, f i * (∑ j, f j) := by
-        apply Finset.sum_le_sum; intro i _
-        apply mul_le_mul_of_nonneg_left _ (hf i)
-        exact Finset.single_le_sum (fun j _ => hf j) (Finset.mem_univ i)
-    _ = (∑ i, f i) * (∑ j, f j) := by rw [← Finset.sum_mul]
-    _ = (∑ i, f i) ^ 2 := by rw [sq]
-
 /-- Algebraic decomposition:
     `A - BAB = (A - BA) + (A - AB) - (I-B)A(I-B)`. -/
 lemma a_minus_bab_decomp {m : ℕ} (A B : Op m) :

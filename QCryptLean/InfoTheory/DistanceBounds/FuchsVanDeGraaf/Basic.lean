@@ -736,9 +736,9 @@ lemma traceDistance_sq_eq_one_sub_fidelityPureSq_pure_pure {n : ℕ} [NeZero n]
             rw [max_eq_left (le_of_lt hx), max_eq_right (neg_pos.mpr hx).le]; ring)]
       rw [Finset.sum_add_distrib]
     have h_pos_sq : ∑ i, (max 0 (ev i)) ^ 2 ≤ pos_sum ^ 2 :=
-      sum_sq_le_sq_sum_of_nonneg _ (fun i => le_max_left 0 (ev i))
+      Finset.sum_sq_le_sq_sum_of_nonneg (s := Finset.univ) (fun i _ => le_max_left 0 (ev i))
     have h_neg_sq : ∑ i, (max 0 (-ev i)) ^ 2 ≤ neg_sum ^ 2 :=
-      sum_sq_le_sq_sum_of_nonneg _ (fun i => le_max_left 0 (-ev i))
+      Finset.sum_sq_le_sq_sum_of_nonneg (s := Finset.univ) (fun i _ => le_max_left 0 (-ev i))
     rw [← h_pos_neg_eq] at h_neg_sq
     linarith [h_split]
   -- Step 5: Combine: 2(1-F²) ≤ 2·D², so 1-F² ≤ D²

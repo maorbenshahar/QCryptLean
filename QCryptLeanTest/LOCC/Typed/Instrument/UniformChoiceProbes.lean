@@ -79,16 +79,11 @@ theorem nonHermitian_not_selfAdjoint : nonHermitianᴴ ≠ nonHermitian := by
 /-- A fixed observed seed branch carries exactly one quarter of the retained population. -/
 theorem finFour_rawBranch_weight (r : Fin 4) :
     rawUniformBranch family r () nonHermitian 0 0 = (1 / 4 : ℂ) := by
-  simp only [rawUniformBranch, family, twoHidden, basisProjector, matrixConjLinear,
-    uniformChoiceKraus, finFour_scale, one_div, smul_of, nonHermitian, Fin.isValue,
-    LinearMap.coe_mk, AddHom.coe_mk, Matrix.sum_apply, Matrix.mul_apply, of_apply,
-    Pi.smul_apply, smul_eq_mul, mul_ite, mul_one, mul_zero, Matrix.add_apply, ite_mul,
-    zero_mul, Fin.sum_univ_two, and_self, zero_ne_one, false_and, not_false_eq_true,
-    single_apply_of_ne, add_zero, ite_self, conjTranspose_apply, RCLike.star_def,
-    Finset.sum_ite_irrel, single_apply_same, one_ne_zero, and_false, zero_add,
-    Finset.sum_const_zero, Finset.sum_ite_eq, ↓reduceIte, map_inv₀, map_zero]
-  norm_num [map_ofNat]
-  exact Finset.mem_univ _
+  simp only [rawUniformBranch, uniformChoiceKraus, finFour_scale]
+  change (∑ t : Fin 2,
+    matrixConjLinear ((1 / 2 : ℂ) • basisProjector t) nonHermitian) 0 0 = _
+  norm_num [matrixConjLinear, basisProjector, nonHermitian, Matrix.sum_apply,
+    Matrix.mul_apply, Fin.sum_univ_two, map_ofNat]
 
 /-- The dephasing member destroys the off-diagonal part of the same non-Hermitian witness. -/
 theorem finFour_rawBranch_offDiagonal (r : Fin 4) :

@@ -16,7 +16,7 @@ inductive Party | alice | bob
 instance : Fintype Party := ⟨{.alice, .bob}, fun p => by cases p <;> decide⟩
 
 /-- A two-party typed multipartite system with the supplied Alice and Bob register types. -/
-def system (AliceRegister BobRegister : Type)
+@[implicit_reducible] def system (AliceRegister BobRegister : Type)
     [Nonempty AliceRegister] [Fintype AliceRegister] [DecidableEq AliceRegister]
     [Nonempty BobRegister] [Fintype BobRegister] [DecidableEq BobRegister] : MultipartiteSystem
       Party where

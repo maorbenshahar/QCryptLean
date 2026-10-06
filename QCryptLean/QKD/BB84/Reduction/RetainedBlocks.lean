@@ -453,7 +453,6 @@ theorem reindex_retainedAnalysisSiftedState {n : ℕ}
     refine (localKrausLift_alice_apply (FinalStage.rawSystem n) kappa
       i.divNat i.modNat j.modNat j.divNat).trans ?_
     simp [Quantum.TensorProducts.Op.tensor, Matrix.reindex_apply, Matrix.one_apply]
-    rfl
   have hliftB : Matrix.reindex eB eA kb =
       Quantum.TensorProducts.Op.tensor (1 : Quantum.Operators.Op (2 ^ n)) kappa := by
     ext i j

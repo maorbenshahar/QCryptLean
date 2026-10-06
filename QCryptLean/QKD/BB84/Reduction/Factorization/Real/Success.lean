@@ -69,16 +69,11 @@ private theorem successfulCompleteContinuation_output_apply
                 (@Sampling.packedPESel nK mZ mX)) : ℂ)⁻¹ *
                 (∑ qB : Measurement.SelectedLocalRecord N (nK + mZ + mX),
                   ∑ qA : Measurement.SelectedLocalRecord N (nK + mZ + mX),
-                    @ite ℂ
-                      (x .alice = QKD.BB84.selectedBitsToRaw qA ∧
-                        x .bob = QKD.BB84.selectedBitsToRaw qB)
-                      (@instDecidableAnd _ _
-                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
-                          (x .alice) (QKD.BB84.selectedBitsToRaw qA))
-                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
-                          (x .bob) (QKD.BB84.selectedBitsToRaw qB)))
-                      (sigma ((TwoParty.pairEquiv _ _).symm (qA, qB))
-                        ((TwoParty.pairEquiv _ _).symm (qA, qB))) 0)
+                    if x .alice = QKD.BB84.selectedBitsToRaw qA ∧
+                        x .bob = QKD.BB84.selectedBitsToRaw qB then
+                      sigma ((TwoParty.pairEquiv _ _).symm (qA, qB))
+                        ((TwoParty.pairEquiv _ _).symm (qA, qB))
+                    else 0)
             else 0
       else 0 := by
   unfold QKD.BB84.successfulCompleteContinuation
@@ -218,20 +213,15 @@ private theorem program_denote_success_raw_formula
                 (@Sampling.packedPESel nK mZ mX)) : ℂ)⁻¹ *
                 (∑ qB : Measurement.SelectedLocalRecord N (nK + mZ + mX),
                   ∑ qA : Measurement.SelectedLocalRecord N (nK + mZ + mX),
-                    @ite ℂ
-                      (x .alice = QKD.BB84.selectedBitsToRaw qA ∧
-                        x .bob = QKD.BB84.selectedBitsToRaw qB)
-                      (@instDecidableAnd _ _
-                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
-                          (x .alice) (QKD.BB84.selectedBitsToRaw qA))
-                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
-                          (x .bob) (QKD.BB84.selectedBitsToRaw qB)))
-                      ((Measurement.weightedLatePublicSelectionProgram
+                    if x .alice = QKD.BB84.selectedBitsToRaw qA ∧
+                        x .bob = QKD.BB84.selectedBitsToRaw qB then
+                      (Measurement.weightedLatePublicSelectionProgram
                         pA pB N nK mZ mX).denote rho
                         (Measurement.lateSelectionSuccessAt N nK mZ mX
                           omega hquota (qA, qB))
                         (Measurement.lateSelectionSuccessAt N nK mZ mX
-                          omega hquota (qA, qB))) 0)
+                          omega hquota (qA, qB))
+                    else 0)
             else 0
       else 0 := by
   rw [program_denote_success_eq_continuation]
@@ -323,20 +313,15 @@ private theorem weightedLatePublicSelection_selectedBits_sum
     (x : (FinalStage.rawSystem (nK + mZ + mX)).total) :
     (∑ qB : Measurement.SelectedLocalRecord N (nK + mZ + mX),
       ∑ qA : Measurement.SelectedLocalRecord N (nK + mZ + mX),
-        @ite ℂ
-          (x .alice = QKD.BB84.selectedBitsToRaw qA ∧
-            x .bob = QKD.BB84.selectedBitsToRaw qB)
-          (@instDecidableAnd _ _
-            ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
-              (x .alice) (QKD.BB84.selectedBitsToRaw qA))
-            ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
-              (x .bob) (QKD.BB84.selectedBitsToRaw qB)))
-          ((Measurement.weightedLatePublicSelectionProgram
+        if x .alice = QKD.BB84.selectedBitsToRaw qA ∧
+            x .bob = QKD.BB84.selectedBitsToRaw qB then
+          (Measurement.weightedLatePublicSelectionProgram
             pA pB N nK mZ mX).denote rho
             (Measurement.lateSelectionSuccessAt N nK mZ mX
               omega hquota (qA, qB))
             (Measurement.lateSelectionSuccessAt N nK mZ mX
-              omega hquota (qA, qB))) 0) =
+              omega hquota (qA, qB))
+        else 0) =
       (Fintype.card (Shuffle omega.a omega.b) : ℂ)⁻¹ *
         ((Sampling.basisStringLaw N pA omega.a).toReal : ℂ) *
         ((Sampling.basisStringLaw N pB omega.b).toReal : ℂ) *
@@ -750,7 +735,8 @@ private theorem reconstruction_success
             (successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC omega hquota q) =
           Pi.single (reconstructionSuccessInput N nK mZ mX ell ellEV leakEC S pi q)
             (Instrument.weightedChoiceScale K omega) := by
-      exact reconstructionSuccessKraus_row N nK mZ mX ell ellEV leakEC pA pB S pi eta0 q
+      unfold reconstructionKraus
+      apply reconstructionSuccessKraus_row
     rw [Finset.sum_eq_single eta0]
     · refine (matrixConjLinear_apply_of_row_eq_single _ sigma (hrows qa) (hrows qb)).trans ?_
       calc
@@ -874,7 +860,6 @@ private theorem retainedMid_success
       unfold comparisonPreToRetainedControlEquiv
         comparisonSelectedToRoundEquiv comparisonPreOutputEquiv
       simp
-      rfl
     change (coordinateLinear (comparisonPreInputEquiv N)
         (comparisonPreOutputEquiv N (nK + mZ + mX))
         (comparisonPreInstrument N nK mZ mX pA pB hN).channel)
@@ -1053,25 +1038,14 @@ private theorem retainedAnalysisReal_success
     have hrow (y : ComparisonPreInput n) :
         kp (e x) (selectedPairNumeralEquiv n y) = knative () y := by
       rcases y with ⟨yA, yB⟩
-      suffices h :
-          kappa (x .alice) ((retainedBitCoordinateEquiv n) yA) *
-              kappa (x .bob) ((retainedBitCoordinateEquiv n) yB) =
-            kappa ((retainedBitCoordinateEquiv n) ((retainedBitCoordinateEquiv n).symm (x .alice)))
-                ((retainedBitCoordinateEquiv n) yA) *
-              kappa ((retainedBitCoordinateEquiv n) ((retainedBitCoordinateEquiv n).symm (x .bob)))
-                ((retainedBitCoordinateEquiv n) yB) by
-        simpa [kp, kappa, e, knative, uA, uB,
-          retainedAnalysisBlockInputEquiv, TwoParty.pairEquiv,
-          selectedPairNumeralEquiv, nativeSiftPairKraus,
-          nativeSiftMeasurementRow, retainedBitCoordinateEquiv,
-          Instrument.computationalMeasurement,
-          Instrument.nondemolitionReadout,
-          Instrument.nondemolitionReadoutKraus,
-          Quantum.TensorProducts.Op.tensor] using h
-      exact congrArg₂ (fun (a b : Fin (2 ^ n)) => kappa a ((retainedBitCoordinateEquiv n) yA) *
-        kappa b ((retainedBitCoordinateEquiv n) yB))
-        ((retainedBitCoordinateEquiv n).apply_symm_apply (x .alice)).symm
-        ((retainedBitCoordinateEquiv n).apply_symm_apply (x .bob)).symm
+      simp [kp, kappa, e, knative, uA, uB,
+        retainedAnalysisBlockInputEquiv, TwoParty.pairEquiv,
+        selectedPairNumeralEquiv, nativeSiftPairKraus,
+        nativeSiftMeasurementRow, retainedBitCoordinateEquiv,
+        Instrument.computationalMeasurement,
+        Instrument.nondemolitionReadout,
+        Instrument.nondemolitionReadoutKraus,
+        Quantum.TensorProducts.Op.tensor]
     rw [mul_mul_conjTranspose_apply, mul_mul_conjTranspose_apply]
     rw [← Equiv.sum_comp (selectedPairNumeralEquiv n)]
     apply Finset.sum_congr rfl

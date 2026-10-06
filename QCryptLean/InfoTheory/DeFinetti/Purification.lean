@@ -73,9 +73,6 @@ private lemma tensor_one_continuous {n k : ℕ} :
     Continuous (fun A : Op n => A ⊗ (1 : Op k)) := by
   apply continuous_matrix
   intro i j
-  change Continuous (fun A : Op n =>
-    A (finProdFinEquiv.symm i).1 (finProdFinEquiv.symm j).1 *
-      (1 : Op k) (finProdFinEquiv.symm i).2 (finProdFinEquiv.symm j).2)
   exact (continuous_apply_apply _ _).mul continuous_const
 
 /-- The positive semidefinite square root of a density operator.

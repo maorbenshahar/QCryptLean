@@ -388,7 +388,6 @@ private theorem retainedMid_failure_trace
             Sum.inr j) := by
       unfold comparisonPreToRetainedControlEquiv comparisonPreOutputEquiv
       simp
-      rfl
     change (coordinateLinear (comparisonPreInputEquiv N)
         (comparisonPreOutputEquiv N (nK + mZ + mX))
         (comparisonPreInstrument N nK mZ mX pA pB hN).channel)

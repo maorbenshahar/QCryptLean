@@ -56,10 +56,8 @@ theorem bb84RealPassAgreeKraus_bellTwirl_intertwining
   by_cases hd : bb84SiftedKeyStringsDiffer peSel ec idx.2 = true
   · simp [bb84RealPassAgreeKraus, bb84PEAnnounceOutcomeReindex,
       bellStringRelabelEquiv, hgate, hd]
-  · simp only [bb84RealPassAgreeKraus, hd, Bool.false_eq_true, ↓reduceIte,
-      bb84PEAnnounceOutcomeReindex, bellStringRelabelEquiv, Equiv.prodCongr_apply,
-      Equiv.coe_refl, Function.Involutive.coe_toPerm, Prod.map_snd, hgate]
-    exact hbase
+  · simpa [bb84RealPassAgreeKraus, bb84PEAnnounceOutcomeReindex,
+      bellStringRelabelEquiv, hgate, hd] using! hbase
 
 /-- The real differ Kraus family intertwines Bell twirling and output relabelling. -/
 theorem bb84RealPassDifferKraus_bellTwirl_intertwining
@@ -84,10 +82,8 @@ theorem bb84RealPassDifferKraus_bellTwirl_intertwining
   have hbase := retainedSiftedPEAnnouncePassBranchKraus_bellTwirl_intertwining
     n m ℓ ℓEV eveDim peSel xSel leakEC ec δ Q h πsyn hsyn hdec idx
   by_cases hd : bb84SiftedKeyStringsDiffer peSel ec idx.2 = true
-  · simp only [bb84RealPassDifferKraus, hd, ↓reduceIte, bb84PEAnnounceOutcomeReindex,
-      bellStringRelabelEquiv, Equiv.prodCongr_apply, Equiv.coe_refl,
-      Function.Involutive.coe_toPerm, Prod.map_snd, hgate]
-    exact hbase
+  · simpa [bb84RealPassDifferKraus, bb84PEAnnounceOutcomeReindex,
+      bellStringRelabelEquiv, hgate, hd] using! hbase
   · simp [bb84RealPassDifferKraus, bb84PEAnnounceOutcomeReindex,
       bellStringRelabelEquiv, hgate, hd]
 

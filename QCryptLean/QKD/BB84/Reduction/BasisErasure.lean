@@ -27,13 +27,9 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
     (σ : Op (weightedSelectedRecordSystem N n).total) (x : (FinalStage.rawSystem n).total) :
     (QKD.BB84.selectedBitsToRawProgram N n).denote σ ⟨(), x⟩ ⟨(), x⟩ =
       ∑ qB : SelectedLocalRecord N n, ∑ qA : SelectedLocalRecord N n,
-        @ite ℂ
-          (x .alice = QKD.BB84.selectedBitsToRaw qA ∧ x .bob = QKD.BB84.selectedBitsToRaw qB)
-          (@instDecidableAnd _ _
-            ((inferInstance : DecidableEq (Fin (2 ^ n))) (x .alice) (selectedBitsToRaw qA))
-            ((inferInstance : DecidableEq (Fin (2 ^ n))) (x .bob) (selectedBitsToRaw qB)))
-          (σ ((TwoParty.pairEquiv _ _).symm (qA, qB))
-            ((TwoParty.pairEquiv _ _).symm (qA, qB))) 0 := by
+        if x .alice = QKD.BB84.selectedBitsToRaw qA ∧ x .bob = QKD.BB84.selectedBitsToRaw qB then
+          σ ((TwoParty.pairEquiv _ _).symm (qA, qB)) ((TwoParty.pairEquiv _ _).symm (qA, qB))
+        else 0 := by
   have hx : x = (TwoParty.pairEquiv _ _).symm (x .alice, x .bob) := by
     funext i
     cases i <;> rfl

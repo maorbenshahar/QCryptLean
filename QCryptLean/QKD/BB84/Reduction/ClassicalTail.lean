@@ -1042,12 +1042,7 @@ theorem rawClassicalTailProgram_output_apply
   split_ifs with hq
   · simp only [← hq, and_self]
     refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun st _ => ?_
-    by_cases hp : rawClassicalTailOutputPoint n m ell ellEV peSel xSel leakEC ec delta Q x st =
-        (Boundary.graftSpaceEquiv
-          (classicalPreDecisionBoundary n m ell ellEV peSel leakEC)
-          (fun _ => FinalStage.boundary ell)).symm ⟨e, a⟩
-    · exact (ite_eq_left hp).trans (ite_eq_left hp).symm
-    · exact (ite_eq_right hp).trans (ite_eq_right hp).symm
+    congr 1
   · apply Finset.sum_eq_zero
     intro x _
     apply Finset.sum_eq_zero

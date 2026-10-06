@@ -98,12 +98,13 @@ theorem lifted_preserves_unequal_spectator_entry :
     (constantAction.liftedOperation () unequalSpectatorUnit)
         (outputAt 0 (spectatorCoordinate 0))
         (outputAt 0 (spectatorCoordinate 1)) = 1 := by
+  have h01 : inputAt 0 (spectatorCoordinate 0) ≠ inputAt 1 (spectatorCoordinate 0) := by
+    intro h
+    exact (Fin.zero_ne_one : (0 : Fin 2) ≠ 1)
+      (congrArg Prod.fst ((inputSystem.splitAt .alice).symm.injective h))
   rw [constantAction_entry]
   simp only [unequalSpectatorUnit, Fin.sum_univ_two, Matrix.single_apply]
-  simp only [and_self, ↓reduceIte, inputAt, Fin.isValue, EmbeddingLike.apply_eq_iff_eq,
-    add_eq_left, ite_eq_right_iff, one_ne_zero, imp_false]
-  intro h
-  exact (Fin.zero_ne_one : (0 : Fin 2) ≠ 1) (congrArg Prod.fst h.1)
+  simp [h01]
 
 /-- Unequal actor output keys force zero without imposing equality on the spectators. -/
 theorem lifted_unequal_output_keys_zero
@@ -134,4 +135,3 @@ theorem lifted_manyToOne_sums_input_contributions :
   norm_num [hne, hne.symm]
 
 end QKD.BB84.FinalStage.LocalLawProbes
-

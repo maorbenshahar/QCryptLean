@@ -53,10 +53,8 @@ theorem keeping {A B Outcome : Type} [Fintype A] [DecidableEq A]
   simp only [Instrument.operation, LinearMap.sum_apply] at hop_entry ⊢
   by_cases hp : p.2 = o
   · by_cases hq : q.2 = o
-    · simp only [matrixConjLinear, LinearMap.coe_mk, AddHom.coe_mk, Matrix.sum_apply,
-        Matrix.mul_apply, Matrix.conjTranspose_apply, RCLike.star_def, Instrument.keeping,
-        Matrix.of_apply, hp, ↓reduceIte, hq] at hop_entry ⊢
-      exact hop_entry
+    · simpa [Instrument.keeping, matrixConjLinear, Matrix.sum_apply, Matrix.mul_apply,
+        Matrix.conjTranspose_apply, hp, hq] using! hop_entry
     · simp [Instrument.keeping, matrixConjLinear, Matrix.sum_apply, Matrix.mul_apply,
         Matrix.conjTranspose_apply, hq]
   · simp [Instrument.keeping, matrixConjLinear, Matrix.sum_apply, Matrix.mul_apply,

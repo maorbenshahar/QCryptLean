@@ -167,7 +167,7 @@ theorem graftSpaceEquiv_successCompleteOutputEmbedding
       ⟨Measurement.lateSelectionExit N nK mZ mX omega,
         successContinuationSpaceEquiv
           N nK mZ mX ell ellEV leakEC omega homega q⟩ := by
-  exact Equiv.apply_symm_apply _ _
+  apply Equiv.apply_symm_apply
 
 /-- The inverse graft map on the literal successful fibre is exactly the successful complete-output
 embedding after the explicit child-space transport.  This is an implementation coordinate

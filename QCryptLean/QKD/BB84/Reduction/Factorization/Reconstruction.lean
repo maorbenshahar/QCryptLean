@@ -181,8 +181,6 @@ def reconstructionSuccessKraus
   fun y x =>
     let q := (retainedAnalysisOutputEquiv nK mZ mX ell ellEV leakEC).symm x.1
     let data := retainedAnalysisOutputDataEquiv nK mZ mX ell ellEV leakEC q
-    let : Decidable (x.2 = Sum.inl S) :=
-      (inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) x.2 (Sum.inl S)
     if x.2 = Sum.inl S ∧ data.1 = pi ∧
         y = successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC omega.1
           (selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi omega) data.2 then
@@ -726,8 +724,6 @@ theorem reconstructionSuccessKraus_row
         (Instrument.weightedChoiceScale (totalSelectedControlKernel N nK mZ mX pA pB
           (Math.FiniteEmbedding.joinSubsetPerm S pi)) omega.1) := by
   funext x
-  let : Decidable (x.2 = Sum.inl S) :=
-    (inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) x.2 (Sum.inl S)
   rw [Pi.single_apply]
   simp only [reconstructionSuccessKraus, reconstructionSuccessInput]
   refine if_congr ?_ rfl rfl

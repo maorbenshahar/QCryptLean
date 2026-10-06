@@ -33,7 +33,7 @@ open TypedLOCC
 open Measurement Sampling
 
 /-- Ambient classical control for a retained subset or a shortage label. -/
-def ComparisonControl (N n : ℕ) : Type :=
+@[implicit_reducible] def ComparisonControl (N n : ℕ) : Type :=
   Set.powersetCard (Fin N) n ⊕ Fin n
 
 deriving instance Fintype, DecidableEq for ComparisonControl
@@ -128,12 +128,12 @@ def comparisonPreSuccessKraus
     Matrix (ComparisonPreOutput N (nK + mZ + mX))
       (ComparisonPreInput N) ℂ :=
   fun q a =>
-    @ite ℂ (q.2 = Sum.inl S)
-      ((inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) q.2 (Sum.inl S))
-      (comparisonPreSuccessScale N nK mZ mX pA pB *
+    if q.2 = Sum.inl S then
+      comparisonPreSuccessScale N nK mZ mX pA pB *
         (selectedInputMarginalInstrument
           (increasingSubsetEmbedding S)).kraus () t
-            ((selectedPairNumeralEquiv (nK + mZ + mX)).symm q.1) a) 0
+            ((selectedPairNumeralEquiv (nK + mZ + mX)).symm q.1) a
+    else 0
 
 /-- Square-root amplitude of the shortage branch. -/
 def comparisonPreFailureScale

@@ -379,20 +379,8 @@ private theorem succKraus_column
         Instrument.weightedChoiceScale (totalSelectedControlKernel N nK mZ mX pA pB
           (Math.FiniteEmbedding.joinSubsetPerm S pi)) om.1
       else 0) := by
-  let D := retainedAnalysisOutputDataEquiv nK mZ mX ell ellEV leakEC
-  let E := retainedAnalysisOutputEquiv nK mZ mX ell ellEV leakEC
-  let embed := successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC om.1
-    (selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi om)
-  have hd : D (E.symm (E (D.symm (pi, u)))) = (pi, u) :=
-    (congrArg D (E.symm_apply_apply _)).trans (D.apply_symm_apply _)
-  unfold reconstructionSuccessKraus
-  dsimp only
-  refine ite_congr (propext ⟨?_, ?_⟩) (fun _ => rfl) (fun _ => rfl)
-  · intro h
-    exact h.2.2.trans (congrArg embed (congrArg Prod.snd hd))
-  · intro h
-    exact ⟨rfl, congrArg Prod.fst hd,
-      h.trans (congrArg embed (congrArg Prod.snd hd)).symm⟩
+  simp only [reconstructionSuccessKraus, inputPoint, Equiv.symm_apply_apply,
+    Equiv.apply_symm_apply, true_and]
 
 /-- One supported success Kraus matrix has a single nonzero entry in every fibre row. -/
 private theorem succKraus_row
@@ -410,8 +398,6 @@ private theorem succKraus_row
         Instrument.weightedChoiceScale (totalSelectedControlKernel N nK mZ mX pA pB
           (Math.FiniteEmbedding.joinSubsetPerm S pi)) om.1
       else 0) := by
-  let : Decidable (x.2 = Sum.inl S) :=
-    (inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) x.2 (Sum.inl S)
   simp only [reconstructionSuccessKraus, inputPoint]
   refine if_congr ?_ rfl rfl
   constructor
@@ -455,27 +441,14 @@ private theorem failKraus_apply
     (y : ReconstructionOutput N nK mZ mX ell ellEV leakEC)
     (x : ReconstructionInput N nK mZ mX ell ellEV leakEC) :
     reconstructionShortageKraus N nK mZ mX ell ellEV leakEC pA pB j t om y x =
-      @ite ℂ
-        (shortageCompleteOutput N nK mZ mX ell ellEV leakEC om.1
+      (if shortageCompleteOutput N nK mZ mX ell ellEV leakEC om.1
             (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j om) = y ∧
-            (t, Sum.inr j) = x)
-        (@instDecidableAnd _ _
-          ((inferInstance : DecidableEq (ReconstructionOutput N nK mZ mX ell ellEV leakEC))
-            (shortageCompleteOutput N nK mZ mX ell ellEV leakEC om.1
-              (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j om)) y)
-          ((inferInstance : DecidableEq (ReconstructionInput N nK mZ mX ell ellEV leakEC))
-            (t, Sum.inr j) x))
-        (Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j) om.1)
-        0 := by
+            (t, Sum.inr j) = x then
+        Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j) om.1
+      else 0) := by
   unfold reconstructionShortageKraus
   refine (Matrix.smul_apply _ _ _ _).trans ?_
-  refine (congrArg (fun z : ℂ => _ • z)
-    (Matrix.single_apply _
-      ((t, Sum.inr j) : ReconstructionInput N nK mZ mX ell ellEV leakEC) (1 : ℂ) y x)).trans ?_
-  simp only [smul_eq_mul, mul_ite, mul_one, mul_zero]
-  split <;> rename_i h
-  · exact (ite_eq_left h).symm
-  · exact (ite_eq_right h).symm
+  simp only [Matrix.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
 
 /-- The reconstruction channel expanded into its explicit Kraus family. -/
 private theorem postChannel_eq_krausSum
@@ -846,8 +819,6 @@ private theorem succControlBlock :
     simp only [reconstructionInputEquiv, Equiv.symm_trans_apply,
       Equiv.symm_apply_apply, Equiv.prodCongr_symm, Equiv.prodCongr_apply,
       Equiv.refl_symm, Equiv.coe_refl, Prod.map_apply, id_eq]
-    exact congrArg (fun c : ComparisonControl 0 0 => (k, c))
-      ((Fintype.equivFin (ComparisonControl 0 0)).symm_apply_apply _)
   have hblock : (Matrix.of fun i j =>
       successInput
         (finProdFinEquiv (i,
