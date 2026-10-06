@@ -1,7 +1,8 @@
 name = "QCryptLean"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["QCryptLean", "QCryptLeanTest"]
+defaultTargets = ["QCryptLean"]
+testDriver = "QCryptLeanTest"
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -17,7 +18,7 @@ rev = "v4.28.0"
 [[lean_lib]]
 name = "QCryptLean"
 
-# Regression tests and worked examples, mirroring the library layout.
+# Regression tests and worked examples, mirroring the library layout; built by `lake test`.
 [[lean_lib]]
 name = "QCryptLeanTest"
 globs = ["QCryptLeanTest.+"]

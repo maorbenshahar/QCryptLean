@@ -1,0 +1,34 @@
+name: Build and documentation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# Deploying the API documentation to GitHub Pages needs `id-token` and `pages`.
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+# A newer push supersedes a running build of the same branch or pull request.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the project
+        uses: actions/checkout@v7
+
+      # Fetches the Mathlib cache, then runs `lake build` and `lake test`.
+      - name: Build the library and the tests
+        uses: leanprover/lean-action@v1
+
+      # On pushes to main, runs doc-gen4 and deploys the result to
+      # https://maorbenshahar.github.io/QCryptLean/docs/
+      - name: Build and deploy the API documentation
+        uses: leanprover-community/docgen-action@main
