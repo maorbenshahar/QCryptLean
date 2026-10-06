@@ -103,7 +103,6 @@ theorem continuation_accept
     (seed : KeyHashSeed n ell peSel) (syn : Fin (2 ^ leakEC)) :
     continuation n ell peSel leakEC ec seed syn 0 =
       acceptContinuation n ell peSel leakEC ec seed syn 0 := by
-  simp only [continuation]
   rfl
 
 theorem continuation_abort
@@ -111,7 +110,6 @@ theorem continuation_abort
     (ec : ECScheme n peSel leakEC)
     (seed : KeyHashSeed n ell peSel) (syn : Fin (2 ^ leakEC)) :
     continuation n ell peSel leakEC ec seed syn 1 = discardKeys n := by
-  simp only [continuation]
   rfl
 
 /-! ## Arbitrary-operator local key classicality -/

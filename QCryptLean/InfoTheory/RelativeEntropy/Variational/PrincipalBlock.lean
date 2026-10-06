@@ -18,7 +18,6 @@ order inequalities for inverse, `rpow`, and logarithm expressions arising in var
 - `toBlocks₁₁CLM`: continuous linear map extracting the `₁₁` principal block
 
 ## Main statements
-- `posDef_toBlocks₁₁`: the `₁₁` block of a positive-definite block matrix is positive definite
 - `inv_toBlocks₁₁_le_toBlocks₁₁_inv`: inverse comparison between a principal block and the full
 inverse
 - `toBlocks₁₁_rpow_le_rpow_toBlocks₁₁`: operator concavity of `rpow` on the `₁₁` block
@@ -113,31 +112,6 @@ lemma toBlocks₁₁_one_add_smul {n m : Type*} [Fintype n] [Fintype m]
     simp [Matrix.toBlocks₁₁]
   · simp [Matrix.toBlocks₁₁, hij]
 
-set_option linter.unusedFintypeInType false in
-set_option linter.unusedDecidableInType false in
-/-- The `₁₁` principal block of a positive-definite block matrix is positive definite. -/
-lemma posDef_toBlocks₁₁ {n m : Type*}
-    [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
-    {M : Matrix (n ⊕ m) (n ⊕ m) ℂ} (hM : M.PosDef) :
-    M.toBlocks₁₁.PosDef := by
-  refine Matrix.PosDef.of_dotProduct_mulVec_pos ?_ ?_
-  · simpa using congr_arg Matrix.toBlocks₁₁ hM.isHermitian.eq
-  · intro x hx
-    have hx' : (Sum.elim x 0 : n ⊕ m → ℂ) ≠ 0 := by
-      intro hx0
-      apply hx
-      ext i
-      exact congr_fun hx0 (Sum.inl i)
-    have hxM := hM.dotProduct_mulVec_pos hx'
-    rw [← Matrix.fromBlocks_toBlocks M, Matrix.fromBlocks_mulVec] at hxM
-    have hxM' :
-        0 <
-          (Sum.elim (star x) 0 : n ⊕ m → ℂ) ⬝ᵥ
-            Sum.elim (M.toBlocks₁₁ *ᵥ x) (M.toBlocks₂₁ *ᵥ x) := by
-      simpa [Function.star_sumElim] using hxM
-    rw [sumElim_dotProduct_sumElim] at hxM'
-    simpa using hxM'
-
 /-- The inverse of a positive-definite principal block is bounded by the
 corresponding principal block of the full inverse. -/
 lemma inv_toBlocks₁₁_le_toBlocks₁₁_inv {n m : Type*}
@@ -154,8 +128,7 @@ lemma inv_toBlocks₁₁_le_toBlocks₁₁_inv {n m : Type*}
     simpa [A, B, Matrix.toBlocks₂₁, Matrix.toBlocks₁₂, Matrix.conjTranspose_apply] using h.symm
   have hM_eq : M = Matrix.fromBlocks A B B.conjTranspose D := by
     rw [← Matrix.fromBlocks_toBlocks M, hB]
-  have hA : A.PosDef := by
-    simpa [A] using posDef_toBlocks₁₁ (M := M) hM
+  have hA : A.PosDef := hM.submatrix Sum.inl_injective
   letI : Invertible A := hA.isUnit.invertible
   letI : Invertible M := hM.isUnit.invertible
   letI : Invertible (Matrix.fromBlocks A B B.conjTranspose D) := by
@@ -268,7 +241,7 @@ lemma toBlocks₁₁_cfcₙ_rpowIntegrand₀₁_le {n m : Type*}
       cfcₙ (Real.rpowIntegrand₀₁ p t) M.toBlocks₁₁ := by
   have hM_nonneg : 0 ≤ M := Matrix.nonneg_iff_posSemidef.mpr hM.posSemidef
   have hM11_nonneg : 0 ≤ M.toBlocks₁₁ :=
-    Matrix.nonneg_iff_posSemidef.mpr (posDef_toBlocks₁₁ hM).posSemidef
+    Matrix.nonneg_iff_posSemidef.mpr (hM.submatrix Sum.inl_injective).posSemidef
   have hShift_pd : (1 + (t⁻¹ : ℝ) • M).PosDef :=
     Matrix.PosDef.one.add_posSemidef (hM.smul (inv_pos.mpr ht)).posSemidef
   -- Principal-block inverse comparison for the shifted matrix `1 + t⁻¹ • M`.
@@ -294,7 +267,7 @@ lemma toBlocks₁₁_rpow_le_rpow_toBlocks₁₁ {n m : Type*}
   let q : NNReal := ⟨p, hp.1.le⟩
   have hq : q ∈ Set.Ioo (0 : NNReal) (1 : NNReal) := hp
   have hM_nonneg : 0 ≤ M := Matrix.nonneg_iff_posSemidef.mpr hM.posSemidef
-  have hM11_pd : M.toBlocks₁₁.PosDef := posDef_toBlocks₁₁ hM
+  have hM11_pd : M.toBlocks₁₁.PosDef := hM.submatrix Sum.inl_injective
   have hM11_nonneg : 0 ≤ M.toBlocks₁₁ := Matrix.nonneg_iff_posSemidef.mpr hM11_pd.posSemidef
   -- Löwner's integral representation in the product C⋆-algebra, at the pair `(M, M₁₁)`:
   -- `(M, M₁₁) ^ q = ∫_{t > 0} cfcₙ (rpowIntegrand₀₁ q t) (M, M₁₁) dμ`.
@@ -344,7 +317,7 @@ lemma toBlocks₁₁_log_le_log_toBlocks₁₁ {n m : Type*}
     {M : Matrix (n ⊕ m) (n ⊕ m) ℂ} (hM : M.PosDef) :
     (CFC.log M).toBlocks₁₁ ≤ CFC.log M.toBlocks₁₁ := by
   have hM_nonneg : 0 ≤ M := Matrix.nonneg_iff_posSemidef.mpr hM.posSemidef
-  have hM11_pd : M.toBlocks₁₁.PosDef := posDef_toBlocks₁₁ hM
+  have hM11_pd : M.toBlocks₁₁.PosDef := hM.submatrix Sum.inl_injective
   have hM11_nonneg : 0 ≤ M.toBlocks₁₁ := Matrix.nonneg_iff_posSemidef.mpr hM11_pd.posSemidef
   have hTendM :
       Filter.Tendsto (fun p : ℝ => (p⁻¹ : ℝ) • (M ^ p - 1))

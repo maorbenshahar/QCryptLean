@@ -365,8 +365,7 @@ theorem twirlMap_selfAdjoint (dA dR n : ℕ) [NeZero dR] (A B : Op (dA ^ n * dR 
       ∫ U, (K U * Aᴴ * (K U)ᴴ * B).trace ∂(haarProbUnitary dR) := by
     rw [← htrMulB]
     change trMulB (∫ U, K U * Aᴴ * (K U)ᴴ ∂(haarProbUnitary dR)) = _
-    refine (trMulB.integral_comp_comm hfIntAH).symm.trans ?_
-    rfl
+    exact (trMulB.integral_comp_comm hfIntAH).symm
   -- Step 3: cyclicity — move `K(U)` from the left of the product to the right.
   have hcyc : ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
       (K U * Aᴴ * (K U)ᴴ * B).trace = (Aᴴ * ((K U)ᴴ * B * K U)).trace := by
