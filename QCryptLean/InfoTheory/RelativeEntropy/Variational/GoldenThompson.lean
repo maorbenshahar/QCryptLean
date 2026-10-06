@@ -76,14 +76,14 @@ lemma norm_exp_le_exp_norm_matrix {N : ℕ}
     (X : Matrix (Fin N) (Fin N) ℂ) :
     open scoped Matrix.Norms.Operator in
     ‖NormedSpace.exp X‖ ≤ Real.exp ‖X‖ := by
-  letI := Matrix.linftyOpNormedRing (n := Fin N) (α := ℂ)
-  letI := Matrix.linftyOpNormedAlgebra (n := Fin N) (R := ℂ) (α := ℂ)
+  let := Matrix.linftyOpNormedRing (n := Fin N) (α := ℂ)
+  let := Matrix.linftyOpNormedAlgebra (n := Fin N) (R := ℂ) (α := ℂ)
   by_cases hN : N = 0
   · subst hN
     simp only [ge_iff_le]
     exact (Real.exp_pos _).le
-  · haveI : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
-    haveI : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
+  · have : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
+    have : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
     have hexp := NormedSpace.expSeries_hasSum_exp (𝕂 := ℂ) X
     have hns := NormedSpace.norm_expSeries_summable (𝕂 := ℂ) X
     have h1 : ‖NormedSpace.exp X‖ ≤ ∑' n, ‖(NormedSpace.expSeries ℂ _ n) (fun _ => X)‖ :=
@@ -202,11 +202,11 @@ lemma norm_exp_sub_one_sub_le
     ‖NormedSpace.exp Z - 1 - Z‖ ≤ Real.exp ‖Z‖ - 1 - ‖Z‖ := by
   by_cases hN : N = 0
   · subst hN
-    haveI : IsEmpty (Fin 0) := Fin.isEmpty
+    have : IsEmpty (Fin 0) := Fin.isEmpty
     have hZ : Z = 0 := Subsingleton.elim Z 0
     simp [hZ]
-  · haveI : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
-    haveI : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
+  · have : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
+    have : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
     -- the exponential series of `Z` (resp. of `‖Z‖`) with its first two terms `1 + Z` removed
     have htailZ :
         HasSum (fun n : ℕ => (NormedSpace.expSeries ℂ _ (n + 2)) (fun _ => Z))
@@ -254,13 +254,13 @@ lemma norm_exp_mul_exp_sub_exp_add_le
   set nSum := ‖X‖ + ‖Y‖
   by_cases hN : N = 0
   · subst hN
-    haveI : IsEmpty (Fin 0) := Fin.isEmpty
+    have : IsEmpty (Fin 0) := Fin.isEmpty
     have hX : X = 0 := Subsingleton.elim X 0
     have hY : Y = 0 := Subsingleton.elim Y 0
     simp only [hX, hY, add_zero, NormedSpace.exp_zero, one_mul, sub_self, norm_zero]
     positivity
-  · haveI : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
-    haveI : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
+  · have : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
+    have : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
     have decomp : NormedSpace.exp X * NormedSpace.exp Y - NormedSpace.exp (X + Y) =
         (NormedSpace.exp X - 1) * (NormedSpace.exp Y - 1) +
         (NormedSpace.exp X - 1 - X) + (NormedSpace.exp Y - 1 - Y) -
@@ -425,8 +425,8 @@ lemma lie_trotter_norm_estimate
         NormedSpace.exp (A + B) = 0 from h ▸ norm_zero.le
     ext i
     exact Fin.elim0 i
-  · haveI : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
-    haveI : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
+  · have : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
+    have : NormOneClass (Matrix (Fin N) (Fin N) ℂ) := Matrix.linfty_opNormOneClass
     obtain ⟨K, hK_nn, hK_bound⟩ := lie_trotter_error_bound A B
     set nA := ‖A‖ with nA_def
     set nB := ‖B‖ with nB_def
@@ -648,7 +648,7 @@ lemma golden_thompson_diagonal {N : ℕ}
     (hσ_pd : ∀ i, 0 < InfoTheory.VonNeumannEntropy.eigenvaluesOf σ i) :
     ∑ i, Real.exp ((densityOpPerturbedLogMatrix_isHermitian σ h).eigenvalues i) ≤
     ∑ j, (σ.toOp j j).re * Real.exp (h j) := by
-  letI : NeZero N := neZero_of_densityOp σ
+  let : NeZero N := neZero_of_densityOp σ
   have lhs_eq_trace : ∑ i, Real.exp ((densityOpPerturbedLogMatrix_isHermitian σ h).eigenvalues i) =
       (NormedSpace.exp (densityOpPerturbedLogMatrix σ h)).trace.re := by
     rw [hermitian_exp_trace_eq (densityOpPerturbedLogMatrix_isHermitian σ h)]

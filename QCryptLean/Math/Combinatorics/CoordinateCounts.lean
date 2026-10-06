@@ -211,6 +211,6 @@ lemma sum_ite_forall_subtype_prod {I O R : Type*} [CommSemiring R]
   have hno (i : {i // ¬s i}) (k : O) : (∀ h : s i, P ⟨i, h⟩ k) := by
     intro h
     exact (i.property h).elim
-  simp only [hyes, hno, implies_true, if_true, hw, Finset.prod_const_one, mul_one]
+  simp only [hyes, hno, implies_true, ite_true, hw, Finset.prod_const_one, mul_one]
 
 end Fintype

@@ -54,26 +54,7 @@ theorem testLiftedOperation_eq_local
             (y, ((testSystem.splitAtSet .alice (Fin 2)) q').2))))
         ((testSystem.splitAtSet .alice (Fin 2)) q).1
         ((testSystem.splitAtSet .alice (Fin 2)) q').1 := by
-  let rhoqq : Op (testSystem.reg .alice) :=
-    rho.submatrix
-      (fun x => (testSystem.splitAt .alice).symm
-        (x, ((testSystem.splitAtSet .alice (Fin 2)) q).2))
-      (fun y => (testSystem.splitAt .alice).symm
-        (y, ((testSystem.splitAtSet .alice (Fin 2)) q').2))
-  have hsum (g : testSystem.total → ℂ) :
-      (∑ x, g x) =
-        ∑ p : testSystem.reg .alice × testSystem.rest .alice,
-          g ((testSystem.splitAt .alice).symm p) := by
-    exact (Equiv.sum_comp (testSystem.splitAt .alice).symm g).symm
-  change ((L.liftAt testSystem .alice).operation o rho) q q' = _
-  simp only [Instrument.liftAt, Instrument.operation, matrixConjLinear,
-    LinearMap.coe_sum, LinearMap.coe_mk, AddHom.coe_mk, Finset.sum_apply,
-    Matrix.sum_apply, Matrix.mul_apply, localKrausLift_apply, ite_mul,
-    zero_mul, Matrix.conjTranspose_apply, RCLike.star_def]
-  simp_rw [hsum]
-  simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
-  simp [apply_ite]
-  rfl
+  exact Instrument.liftAt_operation_apply (R := testSystem) .alice L o rho q q'
 
 /-- The private computational measurement has the expected branch formula on arbitrary operators,
 while its two spectator coordinates remain unrelated. -/
@@ -99,8 +80,12 @@ theorem testPrivateAction_channel_entry
     ((∑ o : Fin 2, testPrivateAction.liftedOperation o) rho)
         (outputAt a s) (outputAt a' s') =
       if a = a' then rho (inputAt a s) (inputAt a' s') else 0 := by
-  simp only [LinearMap.sum_apply, Matrix.sum_apply]
-  simp_rw [testPrivateAction_entry]
+  let L : Fin 2 → Op testSystem.total →ₗ[ℂ] Op testPrivateAction.out.total :=
+    fun o => testPrivateAction.liftedOperation o
+  change (∑ o, L o) rho (outputAt a s) (outputAt a' s') = _
+  rw [LinearMap.sum_apply]
+  refine (Matrix.sum_apply _ _ Finset.univ (fun o => L o rho)).trans ?_
+  refine (Finset.sum_congr rfl (fun o _ => testPrivateAction_entry o a a' s s' rho)).trans ?_
   by_cases h : a = a'
   · subst a'
     simp

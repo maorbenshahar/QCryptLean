@@ -98,10 +98,13 @@ def permutationStage
   (alicePermutationAnnouncement n peSel xSel).then fun π =>
     (bobSiftUnitAnnouncement n peSel xSel π).then fun _ =>
       cast (by
-        simp only [bobSiftUnitAnnouncement, PrivateAction.asUnitAnnouncement_out,
-          bobSiftPermutationPrivate, alicePermutationAnnouncement,
-          PrivateAction.out_ofInstrument, AnnouncedAction.out_ofInstrument,
-          FinalStage.rawSystem, TwoParty.set_alice, TwoParty.set_bob]) (k π)
+        apply congrArg (fun R => Program R (B π))
+        change FinalStage.rawSystem n =
+          (((FinalStage.rawSystem n).set .alice (Fin (2 ^ n))).set .bob (Fin (2 ^ n)))
+        rw [show (FinalStage.rawSystem n).set .alice (Fin (2 ^ n)) =
+          FinalStage.rawSystem n from TwoParty.set_alice _ _ _,
+          show (FinalStage.rawSystem n).set .bob (Fin (2 ^ n)) =
+            FinalStage.rawSystem n from TwoParty.set_bob _ _ _]) (k π)
 
 /-- Alice's action exposes exactly the sampled permutation to public control flow. -/
 @[simp] theorem alicePermutationAnnouncement_announce
@@ -125,12 +128,14 @@ theorem alicePermutationAnnouncement_liftedOperation_apply
             (QKD.BB84.Model.siftPermHalf n peSel xSel π)) rho) q q' := by
   change ((alicePermutationInstrument n peSel xSel).liftAt
     (FinalStage.rawSystem n) .alice).operation (π, ()) rho q q' = _
-  rw [Instrument.liftAt_operation_apply]
+  refine (Instrument.liftAt_operation_apply (R := FinalStage.rawSystem n) .alice
+    (alicePermutationInstrument n peSel xSel) (π, ()) rho q q').trans ?_
   unfold alicePermutationInstrument
   refine (congrFun (congrFun (LinearMap.congr_fun
     (Instrument.uniformChoice_operation (fun π => siftPermutationInstrument n peSel xSel π)
       π ()) _) _) _).trans ?_
-  simp only [LinearMap.smul_apply, Matrix.smul_apply, smul_eq_mul]
+  change (Fintype.card (Equiv.Perm (Fin n)) : ℂ)⁻¹ *
+    (siftPermutationInstrument n peSel xSel π).operation () _ _ _ = _
   apply congrArg (fun z : ℂ => (Fintype.card (Equiv.Perm (Fin n)) : ℂ)⁻¹ * z)
   calc
     _ = ((siftPermutationInstrument n peSel xSel π).liftAt
@@ -138,8 +143,10 @@ theorem alicePermutationAnnouncement_liftedOperation_apply
       (Instrument.liftAt_operation_apply .alice
         (siftPermutationInstrument n peSel xSel π) () rho q q').symm
     _ = _ := by
-      simp [siftPermutationInstrument, Instrument.operation, Instrument.liftAt,
-        Instrument.ofFine]
+      let K := localKrausLift (FinalStage.rawSystem n) .alice (Fin (2 ^ n))
+        (Model.siftPermHalf n peSel xSel π)
+      change ((∑ _ : Unit, matrixConjLinear K) rho) q q' = _
+      rw [Fintype.sum_unique]
 
 /-- Bob's action contributes exactly the unique public value. -/
 @[simp] theorem bobSiftUnitAnnouncement_announce
@@ -161,8 +168,10 @@ theorem bobSiftUnitAnnouncement_liftedOperation_apply
           (QKD.BB84.Model.siftPermHalf n peSel xSel π)) rho) q q' := by
   change ((siftPermutationInstrument n peSel xSel π).liftAt
     ((alicePermutationAnnouncement n peSel xSel).out π) .bob).operation () rho q q' = _
-  simp [siftPermutationInstrument, Instrument.operation, Instrument.liftAt,
-    Instrument.ofFine]
+  let K := localKrausLift ((alicePermutationAnnouncement n peSel xSel).out π) .bob
+    (Fin (2 ^ n)) (Model.siftPermHalf n peSel xSel π)
+  change ((∑ _ : Unit, matrixConjLinear K) rho) q q' = _
+  rw [Fintype.sum_unique]
 
 /-! ## Private raw-register measurements -/
 

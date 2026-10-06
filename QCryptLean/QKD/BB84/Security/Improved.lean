@@ -207,7 +207,7 @@ theorem realIdealDistance_le_improvedBudgetAt {epsilonAEP εPA β dev : ℝ}
       linarith only [hnorm]
     exact hone.trans (p.one_le_improvedBudgetAt_of_sifted_eq_zero hn
       h.smoothing_pos.le h.epsPA_pos.le)
-  · haveI : NeZero p.sifted := ⟨hn⟩
+  · have : NeZero p.sifted := ⟨hn⟩
     exact p.realIdealDistance_le_modelDistance.trans (p.modelDistance_le_improvedBudgetAt h)
 
 /-- The configured experiment is fully interface-secure at the free-`ε_PA`, free-`β`, free-`dev`
@@ -284,7 +284,7 @@ theorem realIdealDistance_le_improvedBudget {epsilonAEP : ℝ}
     rw [← p.improvedBudgetAt_eq_improvedBudget]
     exact hone.trans (p.one_le_improvedBudgetAt_of_sifted_eq_zero hn
       h.smoothing_pos.le (Real.exp_pos _).le)
-  · haveI : NeZero p.sifted := ⟨hn⟩
+  · have : NeZero p.sifted := ⟨hn⟩
     exact p.realIdealDistance_le_modelDistance.trans (p.modelDistance_le_improvedBudget h)
 
 /-- The configured experiment is fully interface-secure at the improved finite-key budget.

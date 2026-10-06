@@ -76,7 +76,7 @@ theorem twirlIntegrand_integrable (dA dR n : ℕ) [NeZero dR]
     MeasureTheory.Integrable (fun U : Matrix.unitaryGroup (Fin dR) ℂ =>
       (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n)) * T *
         (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n))ᴴ) (haarProbUnitary dR) := by
-  haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
+  have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
     haarProbUnitary_isProbability dR
   exact (twirlIntegrand_continuous dA dR n T).integrable_of_hasCompactSupport
     (HasCompactSupport.of_compactSpace _)
@@ -139,7 +139,7 @@ private lemma twirlMap_kernel_conj_eq_self (dA dR n : ℕ) [NeZero dR] (T : Op (
     (V : Matrix.unitaryGroup (Fin dR) ℂ) :
     (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (V : Op dR) n)) * twirlMap dA dR n T *
       (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (V : Op dR) n))ᴴ = twirlMap dA dR n T := by
-  haveI : (haarProbUnitary dR).IsMulLeftInvariant := by
+  have : (haarProbUnitary dR).IsMulLeftInvariant := by
     unfold haarProbUnitary haarOnUnitary; infer_instance
   set K : Matrix.unitaryGroup (Fin dR) ℂ → Op (dA ^ n * dR ^ n) := fun U =>
     Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n) with hK
@@ -181,7 +181,7 @@ Immediate from range invariance (`twirlMap_kernel_conj_eq_self`): the outer twir
 total mass `1`. -/
 theorem twirlMap_idempotent (dA dR n : ℕ) [NeZero dR] (T : Op (dA ^ n * dR ^ n)) :
     twirlMap dA dR n (twirlMap dA dR n T) = twirlMap dA dR n T := by
-  haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
+  have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
     haarProbUnitary_isProbability dR
   have hOuter : twirlMap dA dR n (twirlMap dA dR n T) =
       ∫ V : Matrix.unitaryGroup (Fin dR) ℂ,
@@ -203,7 +203,7 @@ theorem twirlMap_eq_iff_commute (dA dR n : ℕ) [NeZero dR] (T : Op (dA ^ n * dR
     twirlMap dA dR n T = T ↔
       ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
         Commute (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n)) T := by
-  haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
+  have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
     haarProbUnitary_isProbability dR
   set K : Matrix.unitaryGroup (Fin dR) ℂ → Op (dA ^ n * dR ^ n) := fun U =>
     Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n) with hK
@@ -243,17 +243,17 @@ and, moreover, its Haar measure is invariant under inversion). -/
 private instance haarOnUnitary_isInvInvariant (d : ℕ) [NeZero d] :
     MeasureTheory.Measure.IsInvInvariant (haarOnUnitary d) := by
   set μ : MeasureTheory.Measure (Matrix.unitaryGroup (Fin d) ℂ) := haarOnUnitary d with hμdef
-  haveI hμRI : μ.IsMulRightInvariant := haarOnUnitary_isMulRightInvariant d
-  haveI hHaarμ : MeasureTheory.Measure.IsHaarMeasure μ := by
+  have hμRI : μ.IsMulRightInvariant := haarOnUnitary_isMulRightInvariant d
+  have hHaarμ : MeasureTheory.Measure.IsHaarMeasure μ := by
     rw [hμdef]; unfold haarOnUnitary; infer_instance
-  haveI hInvMeas :
+  have hInvMeas :
       Measurable (Inv.inv : Matrix.unitaryGroup (Fin d) ℂ → Matrix.unitaryGroup (Fin d) ℂ) := by
     fun_prop
-  haveI hμFin : MeasureTheory.IsFiniteMeasure μ := ⟨haarOnUnitary_finite d⟩
+  have hμFin : MeasureTheory.IsFiniteMeasure μ := ⟨haarOnUnitary_finite d⟩
   set ν : MeasureTheory.Measure (Matrix.unitaryGroup (Fin d) ℂ) := μ.inv with hνdef
   refine ⟨?_⟩
   change ν = μ
-  haveI hνLI : ν.IsMulLeftInvariant := by
+  have hνLI : ν.IsMulLeftInvariant := by
     refine ⟨fun h => ?_⟩
     rw [hνdef, MeasureTheory.Measure.inv_def,
       MeasureTheory.Measure.map_map (by fun_prop) hInvMeas]
@@ -262,9 +262,9 @@ private instance haarOnUnitary_isInvInvariant (d : ℕ) [NeZero d] :
       funext x; simp [_root_.mul_inv_rev]
     rw [hcomm, ← MeasureTheory.Measure.map_map hInvMeas (by fun_prop),
       MeasureTheory.map_mul_right_eq_self μ h⁻¹]
-  haveI hνFin : MeasureTheory.IsFiniteMeasure ν := by
+  have hνFin : MeasureTheory.IsFiniteMeasure ν := by
     rw [hνdef, MeasureTheory.Measure.inv_def]; exact μ.isFiniteMeasure_map _
-  haveI hνFinC : MeasureTheory.IsFiniteMeasureOnCompacts ν := inferInstance
+  have hνFinC : MeasureTheory.IsFiniteMeasureOnCompacts ν := inferInstance
   have hsmul : ν = MeasureTheory.Measure.haarScalarFactor ν μ • μ :=
     MeasureTheory.Measure.isMulInvariant_eq_smul_of_compactSpace ν μ
   have hmass : ν Set.univ = μ Set.univ := by
@@ -290,12 +290,13 @@ private instance haarOnUnitary_isInvInvariant (d : ℕ) [NeZero d] :
 an inversion-invariant measure is inversion-invariant. -/
 private instance haarProbUnitary_isInvInvariant (d : ℕ) [NeZero d] :
     MeasureTheory.Measure.IsInvInvariant (haarProbUnitary d) := by
-  haveI hInv : MeasureTheory.Measure.IsInvInvariant (haarOnUnitary d) :=
+  have hInv : MeasureTheory.Measure.IsInvInvariant (haarOnUnitary d) :=
     haarOnUnitary_isInvInvariant d
   refine ⟨?_⟩
   change ((haarOnUnitary d Set.univ)⁻¹ • haarOnUnitary d).inv =
     (haarOnUnitary d Set.univ)⁻¹ • haarOnUnitary d
-  rw [MeasureTheory.Measure.inv_def, MeasureTheory.Measure.map_smul,
+  rw [MeasureTheory.Measure.inv_def,
+    MeasureTheory.Measure.map_smul _ measurable_inv.aemeasurable,
     ← MeasureTheory.Measure.inv_def, MeasureTheory.Measure.inv_eq_self]
 
 /-! ## E1a: `twirlMap` is self-adjoint for the Hilbert–Schmidt pairing -/
@@ -333,7 +334,7 @@ Uses `twirlKernel_conjTranspose` to show `(twirlMap A)ᴴ = twirlMap Aᴴ`, trac
 resulting integral with `twirlMap B`. -/
 theorem twirlMap_selfAdjoint (dA dR n : ℕ) [NeZero dR] (A B : Op (dA ^ n * dR ^ n)) :
     ((twirlMap dA dR n A)ᴴ * B).trace = (Aᴴ * twirlMap dA dR n B).trace := by
-  haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
+  have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
     haarProbUnitary_isProbability dR
   set K : Matrix.unitaryGroup (Fin dR) ℂ → Op (dA ^ n * dR ^ n) := fun U =>
     Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n) with hK
@@ -482,14 +483,14 @@ private lemma tensorOneLeft_mulVec_thetaKet (dA dR n : ℕ) [NeZero dA] [NeZero 
     intro a'
     by_cases haa : a = a'
     · subst haa
-      simp only [if_true, one_mul]
+      simp only [ite_true, one_mul]
       rw [Finset.sum_eq_single (embDigit dA dR n hdim a)]
       · rw [thetaKet_apply_eq_embDigit]
         simp
       · intro r' _ hr'
         rw [thetaKet_apply_eq_embDigit]
         simp only [Equiv.symm_apply_apply]
-        rw [if_neg hr']
+        rw [ite_eq_right hr']
         ring
       · intro h; exact absurd (Finset.mem_univ _) h
     · simp [haa]
@@ -522,7 +523,7 @@ private lemma tensorOneRight_mulVec_thetaKet (dA dR n : ℕ) [NeZero dA] [NeZero
   · intro r' _ hr'
     rw [thetaKet_apply_eq_embDigit]
     simp only [Equiv.symm_apply_apply]
-    rw [if_neg (Ne.symm hr')]
+    rw [ite_eq_right (Ne.symm hr')]
     ring
   · intro h; exact absurd (Finset.mem_univ _) h
 
@@ -573,11 +574,11 @@ theorem ricochet_permutationRepresentation_thetaKet (dA dR n : ℕ) [NeZero dA] 
     simp only [Matrix.of_apply, show (σ⁻¹).symm = σ from rfl]
     by_cases h : a' = a0
     · simp [h, (hcondIff a').mpr h]
-    · rw [if_neg h, if_neg]
+    · rw [ite_eq_right h, ite_eq_right]
       intro hc; exact h ((hcondIff a').mp hc)
   simp_rw [hentry, ite_mul, one_mul, zero_mul]
   rw [Finset.sum_ite_eq' Finset.univ a0]
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   -- The `Rⁿ`-side closed form matches the collapsed value.
   have hcondIff2 :
       (finFunctionFinEquiv.symm r =
@@ -602,8 +603,8 @@ theorem ricochet_permutationRepresentation_thetaKet (dA dR n : ℕ) [NeZero dA] 
   unfold permutationRepresentation
   simp only [Matrix.of_apply]
   by_cases h : r = embDigit dA dR n hdim a0
-  · rw [if_pos h, if_pos ((hcondIff2).mpr h)]
-  · rw [if_neg h, if_neg]
+  · rw [ite_eq_left h, ite_eq_left ((hcondIff2).mpr h)]
+  · rw [ite_eq_right h, ite_eq_right]
     intro hc; exact h ((hcondIff2).mp hc)
 
 /-- **Step-7, Identity 2 (turnkey bilinear identity).** `⟨Θ|(M⊗1)|Θ⟩ = Tr M`: reindexing the
@@ -641,16 +642,16 @@ theorem thetaKet_tensor_one_bilinear (dA dR n : ℕ) [NeZero dA] [NeZero dR]
         M a a := by
     intro a
     rw [Finset.sum_eq_single (embDigit dA dR n hdim a)]
-    · simp only [if_true, one_mul]
+    · simp only [ite_true, one_mul]
       rw [Finset.sum_eq_single a]
       · simp
       · intro a' _ ha'
         have hne : embDigit dA dR n hdim a ≠ embDigit dA dR n hdim a' := fun hcontra =>
           ha' (embDigit_injective dA dR n hdim hcontra).symm
-        rw [if_neg hne, mul_zero]
+        rw [ite_eq_right hne, mul_zero]
       · intro h; exact absurd (Finset.mem_univ _) h
     · intro r' _ hr'
-      rw [if_neg hr', zero_mul]
+      rw [ite_eq_right hr', zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
   simp_rw [hinner]
   simp [Matrix.trace, Matrix.diag]

@@ -229,10 +229,10 @@ theorem bb84_siftedLocal_le_phaseBinomialPassSum {n : ℕ}
     intro ω
     refine Finset.prod_congr rfl (fun i _ => ?_)
     by_cases hi : sel i = true
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       have hx : (peSel i && xSel i) = true := by simpa [hsel] using hi
       simp [bb84SiftedBorn, hx]
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
   calc bb84SiftedLocalAcceptProbabilityOnComponent n peSel xSel Q δ σ
          = ∑ ω : Fin n → Fin signalDim,
           if bb84SiftedLocalPETestPassed peSel xSel δ Q ω then
@@ -250,8 +250,8 @@ theorem bb84_siftedLocal_le_phaseBinomialPassSum {n : ℕ}
         · intro ω
           refine Finset.prod_nonneg (fun i _ => ?_)
           by_cases hi : sel i = true
-          · rw [if_pos hi]; exact densityOp_diag_re_nonneg _ (ω i)
-          · rw [if_neg hi]; exact bb84SiftedBorn_nonneg (peSel i) (xSel i) σ (ω i)
+          · rw [ite_eq_left hi]; exact densityOp_diag_re_nonneg _ (ω i)
+          · rw [ite_eq_right hi]; exact bb84SiftedBorn_nonneg (peSel i) (xSel i) σ (ω i)
         · intro ω hω
           rw [hcount ω, hcard]
           simp only [bb84SiftedLocalPETestPassed, Bool.and_eq_true, decide_eq_true_eq] at hω

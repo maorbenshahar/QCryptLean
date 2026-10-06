@@ -227,8 +227,16 @@ theorem Op.tensorProdFin_eq_tensorFamilyPi (k : ℕ) (dim : Fin k → ℕ) (f : 
       tensorFamilyPi_one
     exact ((congrArg (Op.castDim _) hone).trans (Op.castDim_one _)).symm
   | succ k ih =>
-    rw [Op.tensorProdFin_succ, ih, tensorFamilyPi_castSucc, tensorRect_square,
+    change Op.tensorProdFin (k + 1) dim f =
+      Op.castDim (show (∏ j, dim (Fin.rev j)) = ∏ j, dim j from
+        Fintype.prod_equiv Fin.revPerm _ _ fun _ => rfl)
+          (tensorFamilyPi (a := fun j => dim (Fin.rev j))
+            (b := fun j => dim (Fin.rev j)) fun j => f (Fin.rev j))
+    rw [Op.tensorProdFin_succ]
+    have htail := ih (fun j => dim j.succ) (fun j => f j.succ)
+    rw [tensorFamilyPi_castSucc, tensorRect_square,
       ← Op.castDim_eq_reindex_finCongr, apply_eq_castDim f (Fin.rev_last k)]
+    rw [htail]
     conv_rhs =>
       arg 2
       arg 2
@@ -238,10 +246,6 @@ theorem Op.tensorProdFin_eq_tensorFamilyPi (k : ℕ) (dim : Fin k → ℕ) (f : 
     conv_rhs =>
       arg 2
       tactic => exact Op.tensor_castDim_left _ _ _
-    simp only [Op.castDim_trans]
-    conv_rhs =>
-      arg 2
-      tactic => exact Op.tensor_castDim_right _ _ _
     simp only [Op.castDim_trans]
     rfl
 

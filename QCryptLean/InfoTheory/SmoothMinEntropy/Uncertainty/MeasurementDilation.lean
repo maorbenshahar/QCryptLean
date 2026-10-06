@@ -139,7 +139,7 @@ lets a projector serve as its own square root in the rank-1 case. -/
 lemma proj_idem (P : RankOneProjectiveBasis d) (x : Fin d) :
     P.proj x * P.proj x = P.proj x := by
   unfold proj
-  rw [ketbra_mul_ketbra, P.orthonormal x x, if_pos rfl, one_smul]
+  rw [ketbra_mul_ketbra, P.orthonormal x x, ite_eq_left rfl, one_smul]
 
 /-- **Orthonormality in trace form:** `Tr(|x⟩⟨x'|) = ⟨x'|x⟩ = δ_{x,x'}`. -/
 lemma trace_vec_ketbra (P : RankOneProjectiveBasis d) (x x' : Fin d) :
@@ -154,7 +154,7 @@ lemma trace_vec_ketbra (P : RankOneProjectiveBasis d) (x x' : Fin d) :
 
 /-- The rank-1 projectors are unit-trace: `Tr |x⟩⟨x| = 1`. -/
 @[simp] lemma proj_trace (P : RankOneProjectiveBasis d) (x : Fin d) : (P.proj x).trace = 1 := by
-  rw [proj, P.trace_vec_ketbra x x, if_pos rfl]
+  rw [proj, P.trace_vec_ketbra x x, ite_eq_left rfl]
 
 end RankOneProjectiveBasis
 
@@ -214,7 +214,7 @@ theorem dilationIso_isometry (P : RankOneProjectiveBasis d) :
     apply Finset.sum_congr rfl
     intro x _
     ring
-  simp_rw [hinner, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp_rw [hinner, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hproj : ∀ i : Fin d,
       (P.vec i).vec c * star ((P.vec i).vec c') = (P.vec i * (P.vec i).dag) c c' := by
     intro i
@@ -307,7 +307,7 @@ lemma sum_normSq_overlap_eq_one (P Q : RankOneProjectiveBasis d) (x : Fin d) :
     simp_rw [P.normSq_overlap_eq_trace_proj_mul Q x]
     rw [← Matrix.trace_sum, ← Matrix.mul_sum]
     simp only [proj]
-    rw [Q.complete, Matrix.mul_one, P.trace_vec_ketbra x x, if_pos rfl]
+    rw [Q.complete, Matrix.mul_one, P.trace_vec_ketbra x x, ite_eq_left rfl]
   exact_mod_cast hC
 
 /-- **The overlap constant is positive:** `0 < c`. Two orthonormal bases of a nonzero-dimensional
@@ -644,7 +644,7 @@ lemma sum_ite_mul_sum_prod_eq {ι : Type*} [Fintype ι] [DecidableEq ι]
     intro x3 x4 x5
     by_cases h : x = x3 <;> simp [h]; ring
   simp only [hpt]
-  simp only [← Finset.mul_sum, ← Finset.sum_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true,
+  simp only [← Finset.mul_sum, ← Finset.sum_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
     mul_assoc]
 
 /-- **A single-variable factor splits off a double sum.** -/
@@ -696,7 +696,7 @@ lemma braKetBlock_castDim_one_tensor {d dB : ℕ} (Q : RankOneProjectiveBasis d)
   simp only [Finset.mul_sum]
   by_cases hzz : z = z'
   · subst hzz; simp only [mul_assoc]
-  · simp only [if_neg hzz, zero_mul]
+  · simp only [ite_eq_right hzz, zero_mul]
 
 /-- Conjugate transpose of an outer product swaps the ket and bra: `(|ψ⟩⟨φ|)ᴴ = |φ⟩⟨ψ|`. -/
 lemma ketbra_conjTranspose {n : ℕ} (ψ φ : Ket n) : (ψ * φ.dag)ᴴ = φ * ψ.dag := by
@@ -767,7 +767,7 @@ theorem measConjTraceMap_one_tensor_reference_eq {d dB : ℕ} [NeZero d]
   rw [measTraceWrap_smul]
   simp_rw [reindex_finset_sum_rect, partialTraceB_finset_sum, measTraceWrap_smul, key,
     smul_smul, mul_ite, mul_one, mul_zero, ite_smul, zero_smul]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true, mul_ite, mul_one, mul_zero,
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true, mul_ite, mul_one, mul_zero,
     ite_smul, zero_smul]
   rw [smul_smul, ← RankOneProjectiveBasis.proj]
   congr 1
@@ -881,9 +881,9 @@ lemma sum_braKetBlock_qq_opLe {d dB : ℕ} (Q : RankOneProjectiveBasis d) (σ : 
     rw [hPQ, Finset.sum_mul]
     refine Finset.sum_congr rfl (fun z _ => ?_)
     rw [Finset.mul_sum, Finset.sum_eq_single z]
-    · rw [ketbra_mul_ketbra, qq_orthonormal, if_pos rfl, one_smul]
+    · rw [ketbra_mul_ketbra, qq_orthonormal, ite_eq_left rfl, one_smul]
     · intro z' _ hz'
-      rw [ketbra_mul_ketbra, qq_orthonormal, if_neg (fun h => hz' h.symm), zero_smul]
+      rw [ketbra_mul_ketbra, qq_orthonormal, ite_eq_right (fun h => hz' h.symm), zero_smul]
     · intro h; exact absurd (Finset.mem_univ z) h
   have hPQherm : PQᴴ = PQ := by
     rw [hPQ, Matrix.conjTranspose_sum]
@@ -913,8 +913,8 @@ lemma sum_braKetBlock_qq_opLe {d dB : ℕ} (Q : RankOneProjectiveBasis d) (σ : 
       funext P
       simp only [leftBlockVector, Ket.tensor_vec, Quantum.Operators.stdKet_apply]
       by_cases h : (finProdFinEquiv.symm P).1 = k
-      · rw [if_pos h, if_pos h.symm, one_mul]
-      · rw [if_neg h, if_neg (fun he => h he.symm), zero_mul]
+      · rw [ite_eq_left h, ite_eq_left h.symm, one_mul]
+      · rw [ite_eq_right h, ite_eq_right (fun he => h he.symm), zero_mul]
     simp_rw [hterm]
     rw [← Complex.re_sum, ← Matrix.trace_sum, ← Finset.sum_mul, ← Op.tensor_finsetSum_left,
       stdKet_complete]

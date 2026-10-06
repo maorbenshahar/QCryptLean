@@ -38,7 +38,7 @@ lemma sum_tr_SMzSsq_le_seed_avg_collision_sum
               (S * (ρ.stateMap x').toOp * S)).trace.re
            else 0) := by
   by_cases hSeed : Nonempty Seed
-  · haveI := hSeed
+  · have := hSeed
     let E : Seed → Z → Op n := fun s z =>
       ∑ x : X, if H.hash s x = z then (ρ.stateMap x).toOp else 0
     let A : Seed → Z → Op n := fun s z => S * E s z * S
@@ -105,7 +105,7 @@ lemma sum_tr_SMzSsq_le_seed_avg_collision_sum
     exact le_of_eq (by
       simpa [Matrix.one_mul, Matrix.mul_one, hA_eq s, R] using hCollision)
   · rw [not_nonempty_iff] at hSeed
-    haveI := hSeed
+    have := hSeed
     have hMz : ∀ z : Z, extractorWeightedOp H ρ z = 0 := by
       intro z
       unfold extractorWeightedOp

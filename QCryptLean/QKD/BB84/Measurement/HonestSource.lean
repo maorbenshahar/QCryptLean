@@ -168,7 +168,7 @@ private theorem pairBornWeight_z_left (σ : Op (Bit × Bit)) (θB : Basis) (x y 
   -- the Z-basis row of Alice's outcome `x` is the indicator of `x`; collapse its two sums
   simp only [pairBornWeight, Fintype.sum_prod_type, basisUnitary_z_apply, apply_ite star,
     star_zero, ite_mul, mul_ite, one_mul, zero_mul, mul_zero, Finset.sum_ite_eq, Finset.mem_univ,
-    if_true, Finset.sum_const_zero, Finset.sum_ite_irrel]
+    ite_true, Finset.sum_const_zero, Finset.sum_ite_irrel]
 
 /-- A Z-basis measurement of Bob's half selects his bit-`y` block of `σ`. -/
 private theorem pairBornWeight_z_right (σ : Op (Bit × Bit)) (θA : Basis) (x y : Bit) :
@@ -177,7 +177,7 @@ private theorem pairBornWeight_z_right (σ : Op (Bit × Bit)) (θA : Basis) (x y
   -- the Z-basis row of Bob's outcome `y` is the indicator of `y`; collapse its two sums
   simp only [pairBornWeight, Fintype.sum_prod_type, basisUnitary_z_apply, apply_ite star,
     star_zero, ite_mul, mul_ite, zero_mul, mul_zero, mul_one, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true, Finset.sum_const_zero, Finset.sum_ite_irrel]
+    Finset.mem_univ, ite_true, Finset.sum_const_zero, Finset.sum_ite_irrel]
 
 /-- Every X-basis amplitude has modulus squared `1/2`. -/
 private theorem basisUnitary_x_mul_mul_star (x j : Bit) (c : ℂ) :
@@ -200,7 +200,7 @@ theorem pairBornWeight_honestPair (q : ℝ) (θA θB : Basis) (x y : Bit) :
     pairBornWeight (honestPair q) θA θB x y = (honestRoundLaw q θA θB x y : ℂ) := by
   -- Z–Z: the computational diagonal of the honest pair
   have hzz : pairBornWeight (honestPair q) .z .z x y = (honestPairWeight q x y : ℂ) := by
-    rw [pairBornWeight_z_z, honestPair_apply, if_pos rfl, honestPairWeight]
+    rw [pairBornWeight_z_z, honestPair_apply, ite_eq_left rfl, honestPairWeight]
     split_ifs <;> push_cast <;> rfl
   cases θA <;> cases θB
   · rw [hzz, honestRoundLaw_self]
@@ -211,7 +211,7 @@ theorem pairBornWeight_honestPair (q : ℝ) (θA θB : Basis) (x y : Bit) :
       fin_cases x <;> simp [honestPair_apply] <;> ring
     rw [pairBornWeight_z_left]
     simp only [Fin.sum_univ_two, h01.1, h01.2, mul_zero, zero_mul, add_zero, zero_add,
-      basisUnitary_x_mul_mul_star, honestRoundLaw, reduceCtorEq, if_false]
+      basisUnitary_x_mul_mul_star, honestRoundLaw, reduceCtorEq, ite_false]
     push_cast
     linear_combination hdiag / 2
   · -- X–Z: Bob's outcome selects his bit-`y` block, which is diagonal with trace `1/2`
@@ -221,7 +221,7 @@ theorem pairBornWeight_honestPair (q : ℝ) (θA θB : Basis) (x y : Bit) :
       fin_cases y <;> simp [honestPair_apply] <;> ring
     rw [pairBornWeight_z_right]
     simp only [Fin.sum_univ_two, h01.1, h01.2, mul_zero, zero_mul, add_zero, zero_add,
-      basisUnitary_x_mul_mul_star, honestRoundLaw, reduceCtorEq, if_false]
+      basisUnitary_x_mul_mul_star, honestRoundLaw, reduceCtorEq, ite_false]
     push_cast
     linear_combination hdiag / 2
   · -- X–X: `H ⊗ H` fixes the honest pair, so the X–X weights are the Z–Z weights

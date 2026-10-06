@@ -338,7 +338,7 @@ theorem schurOrthogonal_entry {G : Type*} [Group G] [Fintype G] {d : ℕ} [NeZer
     by_cases hij : j = i
     · subst hij
       simp
-    · rw [if_neg hij]
+    · rw [ite_eq_right hij]
       exact Finset.sum_eq_zero fun a _ => by
         have hna : ¬ (j = a ∧ i = a) := fun h => hij (h.1.trans h.2.symm)
         simp [hna]
@@ -348,27 +348,27 @@ theorem schurOrthogonal_entry {G : Type*} [Group G] [Fintype G] {d : ℕ} [NeZer
     have h1 : ∀ g : G, (π g * E * (π g)ᴴ).trace = E.trace := fun g =>
       by rw [Matrix.trace_mul_cycle, hπ.2 g, one_mul]
     by_cases hij : j = i
-    · rw [if_pos hij, Finset.sum_congr rfl fun g (_ : g ∈ Finset.univ) => h1 g, htrE,
-        if_pos hij, Finset.sum_const, Finset.card_univ, nsmul_eq_mul', one_mul]
-    · rw [if_neg hij, Finset.sum_congr rfl fun g (_ : g ∈ Finset.univ) => h1 g, htrE,
-        if_neg hij]
+    · rw [ite_eq_left hij, Finset.sum_congr rfl fun g (_ : g ∈ Finset.univ) => h1 g, htrE,
+        ite_eq_left hij, Finset.sum_const, Finset.card_univ, nsmul_eq_mul', one_mul]
+    · rw [ite_eq_right hij, Finset.sum_congr rfl fun g (_ : g ∈ Finset.univ) => h1 g, htrE,
+        ite_eq_right hij]
       exact Finset.sum_const_zero
   have hcval : c * (d : ℂ) = (if j = i then ((Fintype.card G : ℕ) : ℂ) else 0) := by
     rw [← htrS, hc, Matrix.trace_smul, Matrix.trace_one, smul_eq_mul, Fintype.card_fin]
   -- So `c / |G| = δ_{ji} / d`
   have hscale : ((Fintype.card G : ℕ) : ℂ)⁻¹ * c = if j = i then (1 / (d : ℂ)) else 0 := by
     by_cases hij : j = i
-    · rw [if_pos hij]
+    · rw [ite_eq_left hij]
       -- hcval : c · d = |G|; goal: |G|⁻¹ · c = 1/d
       have hc2 : c = ((Fintype.card G : ℕ) : ℂ) / (d : ℂ) := by
         rw [eq_div_iff hd0]
-        rw [if_pos hij] at hcval
+        rw [ite_eq_left hij] at hcval
         exact hcval
       rw [hc2, div_eq_mul_inv, ← mul_assoc, inv_mul_cancel₀ hc0, one_mul, one_div]
     · have hc0' : c = 0 := by
-        rw [if_neg hij] at hcval
+        rw [ite_eq_right hij] at hcval
         exact (mul_eq_zero.1 hcval).resolve_right hd0
-      rw [if_neg hij, hc0', mul_zero]
+      rw [ite_eq_right hij, hc0', mul_zero]
   -- Read off the `(k, l)` entry of `S = c • 1`
   have hentry : ∀ g : G, (π g * E * (π g)ᴴ) k l = π g k j * star (π g l i) := by
     intro g
@@ -384,9 +384,9 @@ theorem schurOrthogonal_entry {G : Type*} [Group G] [Fintype G] {d : ℕ} [NeZer
     rw [hS, Matrix.sum_apply]
     exact Finset.sum_congr rfl fun g _ => hentry g
   by_cases hkl : k = l
-  · rw [← hsum, hc, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply, if_pos hkl,
+  · rw [← hsum, hc, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply, ite_eq_left hkl,
       mul_one, mul_one, hscale]
-  · rw [← hsum, hc, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply, if_neg hkl,
+  · rw [← hsum, hc, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply, ite_eq_right hkl,
       mul_zero, mul_zero, mul_zero]
 
 /-- **Trace of the self-twirl of an irreducible representation** — the `π₁ = π₂` case of the
@@ -420,8 +420,8 @@ theorem groupTwirlProjectorPair_trace_self_irreducible {G : Type*} [Group G] [Fi
     intro j l
     rw [schurOrthogonal_entry π hπ hirr j l j l]
     by_cases hjeql : j = l
-    · rw [if_pos hjeql, if_pos hjeql, mul_one]
-    · rw [if_neg hjeql, if_neg hjeql, mul_zero]
+    · rw [ite_eq_left hjeql, ite_eq_left hjeql, mul_one]
+    · rw [ite_eq_right hjeql, ite_eq_right hjeql, mul_zero]
   -- Move the group sum inward (below the two index sums)
   have hreorder : ∑ g : G, ∑ j : Fin d, ∑ l : Fin d, π g j j * star (π g l l)
       = ∑ j : Fin d, ∑ l : Fin d, ∑ g : G, π g j j * star (π g l l) := by
@@ -438,9 +438,9 @@ theorem groupTwirlProjectorPair_trace_self_irreducible {G : Type*} [Group G] [Fi
   have hinner : ∀ j : Fin d, ∑ l : Fin d, (if j = l then (1 / (d : ℂ)) else 0) = 1 / (d : ℂ) := by
     intro j
     rw [Finset.sum_eq_single j]
-    · rw [if_pos rfl]
+    · rw [ite_eq_left rfl]
     · intro l _ hl
-      rw [if_neg (Ne.symm hl)]
+      rw [ite_eq_right (Ne.symm hl)]
     · intro hc
       exact absurd (Finset.mem_univ j) hc
   have hsum2 : ∑ j : Fin d, ∑ l : Fin d, (if j = l then (1 / (d : ℂ)) else 0) = 1 := by
@@ -526,7 +526,7 @@ theorem IsIrreduciblyEquivalentGen_of_intertwiner_ne_zero {G : Type*} [Group G]
     exact Complex.conj_mul' (Λ k i)
   have hcii : ∀ i : Fin d', (Λᴴ * Λ) i i = c := by
     intro i
-    rw [hc, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply, if_pos rfl, mul_one]
+    rw [hc, Matrix.smul_apply, smul_eq_mul, Matrix.one_apply, ite_eq_left rfl, mul_one]
   -- `c` is the real number `s := Σ_k ‖Λ k l‖² > 0` (the `l`-th column contains the entry `Λ k l`)
   obtain ⟨s, hs_ge, hsc⟩ : ∃ s : ℝ, 0 ≤ s ∧ c = (s : ℂ) :=
     ⟨∑ k : Fin d, ‖Λ k l‖ ^ 2, Finset.sum_nonneg fun k _ => sq_nonneg (‖Λ k l‖),
@@ -678,10 +678,10 @@ theorem groupTwirlProjection_irreducible {G : Type*} [Group G] [Fintype G] {d : 
   refine ⟨hproj.1, hproj.2, ?_⟩
   by_cases he : IsIrreduciblyEquivalent π₁ π₂
   · -- Equivalent case: the trace reduces to the self-twirl of the irreducible `π₂`
-    rw [if_pos he, groupTwirlProjectorPair_trace_equiv he,
+    rw [ite_eq_left he, groupTwirlProjectorPair_trace_equiv he,
       groupTwirlProjectorPair_trace_self_irreducible π₂ hπ₂ hirr₂]
   · -- Non-equivalent case: the twirl projection has trace zero (Schur)
-    rw [if_neg he]
+    rw [ite_eq_right he]
     apply groupTwirlProjectorPair_trace_zero_of_not_equiv π₁ π₂ hπ₁ hπ₂ hirr₁ hirr₂
     rintro ⟨h, W, hW, hconj⟩
     exact he ⟨W, hW, by simpa only [Op.castDim_eq] using hconj⟩
@@ -713,10 +713,10 @@ theorem groupTwirlProjector_trace_isotypic {G : Type*} [Group G] [Fintype G] {d 
     intro i i'
     by_cases h : i = i'
     · subst h
-      rw [if_pos rfl]
-      haveI : NeZero (δ i) := ⟨Nat.ne_of_gt (hpos i)⟩
+      rw [ite_eq_left rfl]
+      have : NeZero (δ i) := ⟨Nat.ne_of_gt (hpos i)⟩
       exact groupTwirlProjectorPair_trace_self_irreducible (πi i) (hπi i).1 (hπi i).2
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       exact groupTwirlProjectorPair_trace_zero_of_not_equiv (πi i) (πi i') (hπi i).1
         (hπi i').1 (hπi i).2 (hπi i').2 (hne i i' h)
   -- Pushing `m_i · m_{i'}` next to the character inner product
@@ -750,9 +750,9 @@ theorem groupTwirlProjector_trace_isotypic {G : Type*} [Group G] [Fintype G] {d 
         refine Finset.sum_congr rfl fun i _ => ?_
         -- Only the summand `i' = i` survives: the pair-twirl trace is `δ_{i i'}`
         rw [Finset.sum_eq_single i]
-        · rw [hcase i i, if_pos rfl, mul_one, pow_two]
+        · rw [hcase i i, ite_eq_left rfl, mul_one, pow_two]
         · intro i' _ hi'
-          rw [hcase i i', if_neg (Ne.symm hi'), mul_zero]
+          rw [hcase i i', ite_eq_right (Ne.symm hi'), mul_zero]
         · intro hc
           exact absurd (Finset.mem_univ i) hc
 

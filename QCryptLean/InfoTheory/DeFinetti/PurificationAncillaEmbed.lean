@@ -101,7 +101,7 @@ lemma padOpAncillaB_apply_lift {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂)
   simp only [padOpAncillaB, Matrix.of_apply, Equiv.symm_apply_apply]
   have hp : (Fin.castLE h k).val < m₁ := k.is_lt
   have hq : (Fin.castLE h l).val < m₁ := l.is_lt
-  rw [dif_pos hp, dif_pos hq]
+  rw [dite_eq_left hp, dite_eq_left hq]
   congr 2
 
 /-- Variant of `padOpAncillaB_apply_lift` taking the index hypotheses directly. -/
@@ -115,14 +115,14 @@ lemma padOpAncillaB_apply_lift' {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂) (ρ : Op
       (finProdFinEquiv ((finProdFinEquiv.symm j).1,
         ⟨(finProdFinEquiv.symm j).2.val, hj⟩)) := by
   simp only [padOpAncillaB, Matrix.of_apply]
-  rw [dif_pos hi, dif_pos hj]
+  rw [dite_eq_left hi, dite_eq_left hj]
 
 lemma padOpAncillaB_apply_zero_left {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂)
     (ρ : Op (n * m₁)) (i j : Fin (n * m₂))
     (hi : ¬ (finProdFinEquiv.symm i).2.val < m₁) :
     padOpAncillaB h ρ i j = 0 := by
   simp only [padOpAncillaB, Matrix.of_apply]
-  rw [dif_neg hi]
+  rw [dite_eq_right hi]
 
 lemma padOpAncillaB_apply_zero_right {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂)
     (ρ : Op (n * m₁)) (i j : Fin (n * m₂))
@@ -130,8 +130,8 @@ lemma padOpAncillaB_apply_zero_right {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂)
     padOpAncillaB h ρ i j = 0 := by
   simp only [padOpAncillaB, Matrix.of_apply]
   by_cases hi : (finProdFinEquiv.symm i).2.val < m₁
-  · rw [dif_pos hi, dif_neg hj]
-  · rw [dif_neg hi]
+  · rw [dite_eq_left hi, dite_eq_right hj]
+  · rw [dite_eq_right hi]
 
 /-- Padding preserves Hermiticity. -/
 lemma padOpAncillaB_isHermitian {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂)
@@ -142,19 +142,19 @@ lemma padOpAncillaB_isHermitian {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂)
   simp only [padOpAncillaB, Matrix.of_apply]
   by_cases hi : (finProdFinEquiv.symm i).2.val < m₁
   · by_cases hj : (finProdFinEquiv.symm j).2.val < m₁
-    · rw [dif_pos hj, dif_pos hi, dif_pos hi, dif_pos hj]
+    · rw [dite_eq_left hj, dite_eq_left hi, dite_eq_left hi, dite_eq_left hj]
       have hh := congrFun (congrFun hρ
         (finProdFinEquiv ((finProdFinEquiv.symm i).1,
           ⟨(finProdFinEquiv.symm i).2.val, hi⟩)))
         (finProdFinEquiv ((finProdFinEquiv.symm j).1,
           ⟨(finProdFinEquiv.symm j).2.val, hj⟩))
       simpa [Matrix.conjTranspose, Matrix.transpose] using hh
-    · rw [dif_pos hi, dif_neg hj, dif_neg hj]
+    · rw [dite_eq_left hi, dite_eq_right hj, dite_eq_right hj]
       simp
-  · rw [dif_neg hi]
+  · rw [dite_eq_right hi]
     by_cases hj : (finProdFinEquiv.symm j).2.val < m₁
-    · rw [dif_pos hj, dif_neg hi]; simp
-    · rw [dif_neg hj]; simp
+    · rw [dite_eq_left hj, dite_eq_right hi]; simp
+    · rw [dite_eq_right hj]; simp
 
 /-- Padding preserves the trace. -/
 lemma padOpAncillaB_trace {n m₁ m₂ : ℕ} (h : m₁ ≤ m₂) (ρ : Op (n * m₁)) :
@@ -389,11 +389,11 @@ lemma padDensityOpAncillaB_continuous {n m₁ m₂ : ℕ}
   simp only [padOpAncillaB, Matrix.of_apply]
   by_cases hi : (finProdFinEquiv.symm i).2.val < m₁
   · by_cases hj : (finProdFinEquiv.symm j).2.val < m₁
-    · simp only [dif_pos hi, dif_pos hj]
+    · simp only [dite_eq_left hi, dite_eq_left hj]
       exact (continuous_apply _).comp ((continuous_apply _).comp continuous_induced_dom)
-    · simp only [dif_pos hi, dif_neg hj]
+    · simp only [dite_eq_left hi, dite_eq_right hj]
       exact continuous_const
-  · simp only [dif_neg hi]
+  · simp only [dite_eq_right hi]
     exact continuous_const
 
 /-! ### Strong measurability of the per-σ purification function -/
@@ -406,25 +406,25 @@ lemma padDensityOpAncillaB_purification_tensorPow_stronglyMeasurable
     MeasureTheory.StronglyMeasurable
       (fun σ : DensityOp d =>
         padDensityOpAncillaB h (purificationDensityOp (σ.tensorPowGen n))) := by
-  haveI : NeZero (d ^ n) := Nat.instNeZeroHPow
-  haveI : NeZero (d ^ n * d ^ n) := instNeZeroNatHMul
+  have : NeZero (d ^ n) := Nat.instNeZeroHPow
+  have : NeZero (d ^ n * d ^ n) := instNeZeroNatHMul
   have hcont : Continuous (fun σ : DensityOp d =>
       padDensityOpAncillaB h (purificationDensityOp (σ.tensorPowGen n))) :=
     (padDensityOpAncillaB_continuous h).comp
       (purificationDensityOp_continuous.comp tensorPowGen_continuous)
   have hind : Topology.IsInducing
       (fun ρ : DensityOp (d ^ n * m₂) => ρ.toOp) := Topology.IsInducing.mk rfl
-  haveI : TopologicalSpace.PseudoMetrizableSpace (Op (d ^ n * m₂)) :=
+  have : TopologicalSpace.PseudoMetrizableSpace (Op (d ^ n * m₂)) :=
     show TopologicalSpace.PseudoMetrizableSpace
         (Fin (d ^ n * m₂) → Fin (d ^ n * m₂) → ℂ) from inferInstance
-  haveI : SecondCountableTopology (Op (d ^ n * m₂)) :=
+  have : SecondCountableTopology (Op (d ^ n * m₂)) :=
     show SecondCountableTopology
         (Fin (d ^ n * m₂) → Fin (d ^ n * m₂) → ℂ) from inferInstance
-  haveI : TopologicalSpace.PseudoMetrizableSpace (DensityOp (d ^ n * m₂)) :=
+  have : TopologicalSpace.PseudoMetrizableSpace (DensityOp (d ^ n * m₂)) :=
     hind.pseudoMetrizableSpace
-  haveI : SecondCountableTopology (DensityOp (d ^ n * m₂)) :=
+  have : SecondCountableTopology (DensityOp (d ^ n * m₂)) :=
     hind.secondCountableTopology
-  haveI : SecondCountableTopologyEither (DensityOp d) (DensityOp (d ^ n * m₂)) :=
+  have : SecondCountableTopologyEither (DensityOp d) (DensityOp (d ^ n * m₂)) :=
     secondCountableTopologyEither_of_right _ _
   exact hcont.stronglyMeasurable
 
@@ -432,7 +432,7 @@ lemma padDensityOpAncillaB_purification_tensorPow_stronglyMeasurable
 lemma densityOp_purification_exists_of_rank_le {m r : ℕ} [NeZero m] [NeZero r]
     (ρ : DensityOp m) (hr : Matrix.rank ρ.toOp ≤ r) :
     ∃ ψ : DensityOp (m * r), ψ.IsPure ∧ partialTraceB ψ.toOp = ρ.toOp := by
-  haveI : NeZero (Matrix.rank ρ.toOp) := ⟨(densityOp_rank_pos ρ).ne'⟩
+  have : NeZero (Matrix.rank ρ.toOp) := ⟨(densityOp_rank_pos ρ).ne'⟩
   obtain ⟨ψ, hpure, hmarg⟩ := densityOp_purification_exists_at_rank ρ
   refine ⟨padDensityOpAncillaB hr ψ, padDensityOpAncillaB_isPure hr hpure, ?_⟩
   exact (padDensityOpAncillaB_partialTraceB hr ψ).trans hmarg

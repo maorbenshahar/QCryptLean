@@ -80,14 +80,14 @@ every `Z`-side ball member and its measurement image are nonzero (`hne`). Both a
 a normalized `ρ_AB` and `ε < 1` in `measDilation_smooth_core`. -/
 theorem measDilation_smooth_core_of_regular {d dB : ℕ} [NeZero d] [NeZero dB]
     (P Q : RankOneProjectiveBasis d) (ρAB : SubDensityOp (d * dB)) {ε : ℝ} (hε : 0 ≤ ε)
-    (hbddX : BddAbove (setOf (isInSmoothBipartiteMinSet ε (xMeasuredMarginal P ρAB))))
+    (hbddX : BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε (xMeasuredMarginal P ρAB))))
     (hne : ∀ τ : SubDensityOp (d * (d * d * dB)),
       purifiedDistance (zDilatedState Q ρAB) τ ≤ ε →
       τ.toOp ≠ 0 ∧ (measDilateTransport P Q τ).toOp ≠ 0) :
     smoothBipartiteMinEntropyOptReal ε (zDilatedState Q ρAB) ≤
       smoothBipartiteMinEntropyOptReal ε (xMeasuredMarginal P ρAB) - P.preparationQuality Q := by
   rw [show smoothBipartiteMinEntropyOptReal ε (zDilatedState Q ρAB)
-        = sSup (setOf (isInSmoothBipartiteMinSet ε (zDilatedState Q ρAB))) from rfl]
+        = sSup (Set.ofPred (isInSmoothBipartiteMinSet ε (zDilatedState Q ρAB))) from rfl]
   apply csSup_le (smoothBipartiteMinSet_nonempty hε (zDilatedState Q ρAB))
   rintro hZval ⟨τ, hdist, rfl⟩
   obtain ⟨hτ, hΞτ⟩ := hne τ hdist

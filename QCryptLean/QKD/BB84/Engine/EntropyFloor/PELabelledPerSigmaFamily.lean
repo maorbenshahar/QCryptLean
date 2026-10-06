@@ -115,7 +115,7 @@ theorem bb84_peLabelledF_blocks_integrable {n m : ℕ} [NeZero n] [NeZero (4 ^ n
           ((bb84PELabelledPairedHaarPerSigmaFamily (m := m)
             eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp)
         (deFinetti_haarMeasure (signalDim * signalDim)).measure := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   intro x
   exact tensorLeftKernel_blocks_integrable
     (fun ψ => bb84PairedHaarPerSigmaFamily eveDim pre hpre peSel xSel Q δ ψ)
@@ -150,7 +150,7 @@ theorem bb84_peLabelledRhoEtilde_eq_haar_integral_blocks {n m : ℕ} [NeZero n] 
           ((bb84PELabelledPairedHaarPerSigmaFamily (m := m)
             eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp i j
           ∂(deFinetti_haarMeasure (signalDim * signalDim)).measure := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   intro x i j
   exact tensorLeftKernel_blocks_integral_eq
     (bb84EnVRhoEtilde eveDim pre hpre peSel xSel Q δ)
@@ -172,7 +172,7 @@ theorem bb84PELabelledPairedHaarPerSigmaFamily_blocks_continuous {n m : ℕ} [Ne
         (fun ψ : DensityOp (signalDim * signalDim) =>
           ((bb84PELabelledPairedHaarPerSigmaFamily (m := m)
             eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp) := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   intro x
   exact tensorLeftKernel_blocks_continuous
     (fun ψ => bb84PairedHaarPerSigmaFamily eveDim pre hpre peSel xSel Q δ ψ)
@@ -195,7 +195,7 @@ theorem bb84_peLabelledRhoEtilde_acceptWeight_eq_ckrMixture {n m : ℕ} [NeZero 
       ∑ ω : Fin n → Fin signalDim,
         ((bb84SiftedLocalPEAcceptedPostMeasurementCQState eveDim pre hpre peSel xSel
             (Quantum.Channels.ckrMixtureMeasure signalDim) Q δ).stateMap ω).trace := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   rw [show ∑ x : Fin n → Fin signalDim,
         ((bb84PELabelledEnVRhoEtilde (m := m) eveDim pre hpre peSel xSel Q δ).stateMap x).trace =
       ∑ x : Fin n → Fin signalDim,

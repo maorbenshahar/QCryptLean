@@ -113,7 +113,7 @@ theorem kw_nonhermitian_reduction_ancilla {n m k : ℕ} [NeZero n] [NeZero m] [N
       traceNorm (mapTensorId Φ ρ) ≤ B)
     (X : Op (n * k)) (hX : traceNorm X ≤ 1) :
     traceNorm (mapTensorId Φ X) ≤ B := by
-  haveI : NeZero (k + k) := ⟨by have := NeZero.pos k; omega⟩
+  have : NeZero (k + k) := ⟨by have := NeZero.pos k; omega⟩
   by_cases hH : X.IsHermitian
   · exact kw_hermitian_bound (k := k) Φ B hB (kw_psd_ancilla_lift (k := k) Φ B hB hPSD) X hH hX
   · -- Non-Hermitian case: Hermitianizing dilation on the doubled ancilla `k + k`.

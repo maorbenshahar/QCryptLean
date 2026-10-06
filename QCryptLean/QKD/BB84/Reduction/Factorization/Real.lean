@@ -56,9 +56,9 @@ private theorem reconstruction_rawControlDiagonal
   let G := Boundary.graftSpaceEquiv
     (Measurement.lateSelectionBoundary N nK mZ mX)
     (QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC)
-  let y := G.symm
+  let y : ReconstructionOutput N nK mZ mX ell ellEV leakEC := G.symm
     ⟨(QKD.BB84.lateSelectionExitEquiv N nK mZ mX).symm omega, a⟩
-  let z := G.symm
+  let z : ReconstructionOutput N nK mZ mX ell ellEV leakEC := G.symm
     ⟨(QKD.BB84.lateSelectionExitEquiv N nK mZ mX).symm omega', b⟩
   let rawOf (q : (QKD.BB84.boundary N nK mZ mX ell ellEV leakEC).space) :=
     QKD.BB84.lateSelectionExitEquiv N nK mZ mX
@@ -161,7 +161,11 @@ private theorem reconstruction_rawControlDiagonal
     simp [sigma, Matrix.reindex_apply]
   -- Split the channel into its success and shortage branches; each has a zero `(y, z)` entry.
   unfold reconstruction
-  rw [hmid, coordinateLinear_reindex_apply, reconstructionInstrument_channel_apply,
+  rw [hmid]
+  refine (coordinateLinear_reindex_apply EPost
+    (Fintype.equivFin (QKD.BB84.boundary N nK mZ mX ell ellEV leakEC).space)
+    (reconstructionInstrument N nK mZ mX ell ellEV leakEC pA pB).channel sigma y z).trans ?_
+  rw [reconstructionInstrument_channel_apply,
     Matrix.add_apply, Matrix.sum_apply, Matrix.sum_apply,
     Finset.sum_eq_zero fun a _ => matrixConjLinear_apply_eq_zero _ sigma _ _
       (hsuccess a.1 a.2.1 a.2.2), zero_add]
@@ -245,7 +249,14 @@ theorem coordinates_real_eq_retainedFactorizedReal
             Matrix.reindex (Fintype.equivFin (weightedStreamSystem Unit N).total)
               (Fintype.equivFin (weightedStreamSystem Unit N).total) rho := by
         ext i j
-        simp [reindexOp, comparisonPreInputEquiv, Matrix.reindex_apply]
+        change rho
+          ((weightedScheduleUnitInputEquiv N).symm ((weightedScheduleUnitInputEquiv N)
+            ((Fintype.equivFin _).symm i)))
+          ((weightedScheduleUnitInputEquiv N).symm ((weightedScheduleUnitInputEquiv N)
+            ((Fintype.equivFin _).symm j))) = _
+        exact congrArg₂ rho
+          ((weightedScheduleUnitInputEquiv N).symm_apply_apply _)
+          ((weightedScheduleUnitInputEquiv N).symm_apply_apply _)
       rw [hinput] at hs
       exact hs
   · let y := G.symm
@@ -283,9 +294,10 @@ theorem coordinates_real_eq_retainedFactorizedReal
         _ = omega' := hrawZ
     -- Distinct raw controls: the program's real map is block diagonal in its public exits, and no
     -- reconstruction branch connects the two exits.
-    have hleft := (QKD.BB84.protocol pA pB N nK mZ mX ell ellEV leakEC
+    have hleft : (QKD.BB84.protocol pA pB N nK mZ mX ell ellEV leakEC
+        ec delta Q).real rho y z = 0 :=
+      (QKD.BB84.protocol pA pB N nK mZ mX ell ellEV leakEC
         ec delta Q).real_isExitBlockDiagonal rho y.1 z.1 y.2 z.2 hexit
-    rw [Sigma.eta, Sigma.eta] at hleft
     exact hleft.trans (reconstruction_rawControlDiagonal pA pB N nK mZ mX
       ell ellEV leakEC mid omega omega' hcontrol a b).symm
 

@@ -106,8 +106,10 @@ def acceptContinuation
     (seed : KeyHashSeed n ℓ peSel) (syn : Fin (2 ^ leakEC))
     (flag : Fin 2) : Program (rawSystem n) (.leaf (keySystem ℓ)) :=
   cast (by
-    simp only [bobKeyAction, aliceKeyAction, PrivateAction.out_ofInstrument,
-      rawSystem, TwoParty.set_alice, TwoParty.set_bob])
+    apply congrArg (fun R => Program (rawSystem n) (.leaf R))
+    change ((system (Fin (2 ^ n)) (Fin (2 ^ n))).set .alice (Fin (2 ^ ℓ))).set
+      .bob (Fin (2 ^ ℓ)) = keySystem ℓ
+    rw [TwoParty.set_alice, TwoParty.set_bob])
     ((aliceKeyAction n ℓ peSel seed flag).then
       (bobKeyAction n ℓ peSel leakEC ec seed syn flag).run)
 
@@ -128,8 +130,9 @@ def discardBobRaw (n : ℕ) :
 /-- Abort both raw registers directly, without first manufacturing zero-valued key registers. -/
 def discardKeys (n : ℕ) : Program (rawSystem n) (.leaf abortSystem) :=
   cast (by
-    simp only [discardBobRaw, discardAliceRaw, PrivateAction.out_ofInstrument,
-      rawSystem, TwoParty.set_alice, TwoParty.set_bob])
+    apply congrArg (fun R => Program (rawSystem n) (.leaf R))
+    change ((system (Fin (2 ^ n)) (Fin (2 ^ n))).set .alice Unit).set .bob Unit = abortSystem
+    rw [TwoParty.set_alice, TwoParty.set_bob])
     ((discardAliceRaw n).then (discardBobRaw n).run)
 
 /-! ## Heterogeneous final stage -/
@@ -207,11 +210,11 @@ theorem system_eq (ℓ : ℕ) (e : (boundary ℓ).Exit) :
   unfold flagBoundary
   split
   · rename_i h
-    rw [if_pos h]
+    rw [ite_eq_left h]
     intro leaf
     rfl
   · rename_i h
-    rw [if_neg h]
+    rw [ite_eq_right h]
     intro leaf
     rfl
 

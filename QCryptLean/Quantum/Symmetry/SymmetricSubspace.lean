@@ -173,9 +173,9 @@ theorem permRep_conj_entry {d n : ℕ} [NeZero d] (τ : Equiv.Perm (Fin n))
     intro l
     simp only [Matrix.mul_apply, permutationRepresentation, Matrix.of_apply]
     rw [Finset.sum_eq_single i']
-    · rw [if_pos hi'_inv, one_mul]
+    · rw [ite_eq_left hi'_inv, one_mul]
     · intro k _ hk
-      rw [if_neg fun h => hk (e.symm.injective (by
+      rw [ite_eq_right fun h => hk (e.symm.injective (by
         rw [hi'_inv] at h
         exact funext fun x => by
           have := congr_fun h (τ x); simp [Function.comp] at this; exact this.symm))]
@@ -191,9 +191,9 @@ theorem permRep_conj_entry {d n : ℕ} [NeZero d] (τ : Equiv.Perm (Fin n))
   simp only [permutationRepresentation, Matrix.of_apply]
   rw [show ⇑(τ⁻¹ : Equiv.Perm (Fin n)).symm = ⇑τ from by ext x; simp [Equiv.Perm.inv_def]]
   rw [Finset.sum_eq_single j']
-  · rw [if_pos hej', mul_one]
+  · rw [ite_eq_left hej', mul_one]
   · intro l _ hl
-    rw [if_neg (fun h => hl (e.symm.injective (h.trans hej'.symm)))]
+    rw [ite_eq_right (fun h => hl (e.symm.injective (h.trans hej'.symm)))]
     ring
   · intro h; exact absurd (Finset.mem_univ j') h
 
@@ -239,11 +239,11 @@ theorem _root_.Quantum.TensorProducts.permutationRepresentation_mulVec_tensorFam
   funext i
   rw [mulVec, dotProduct, Finset.sum_eq_single (e (e.symm i ∘ σ))]
   · simp only [permutationRepresentation, Matrix.of_apply, tensorFamilyVec_apply]
-    rw [if_pos (by funext k; simp [e]), one_mul]
+    rw [ite_eq_left (by funext k; simp [e]), one_mul]
     exact Fintype.prod_equiv σ _ _ fun k => by simp [e]
   · intro j _ hj
     simp only [permutationRepresentation, Matrix.of_apply]
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     intro h
     exact hj (e.symm.injective (by rw [Equiv.symm_apply_apply, h]; funext k; simp [e]))
   · exact fun h => absurd (Finset.mem_univ _) h
@@ -664,7 +664,7 @@ theorem symmetrize_contracts_distance {d n : ℕ} [NeZero d] [NeZero n]
     (ρ σ : DensityOp (d ^ n)) :
     Quantum.Metrics.traceDistance (symmetrize ρ).toOp (symmetrize σ).toOp ≤
     Quantum.Metrics.traceDistance ρ.toOp σ.toOp := by
-  haveI hdn : NeZero (d ^ n) :=
+  have hdn : NeZero (d ^ n) :=
     ⟨(Nat.pow_pos (NeZero.pos d)).ne'⟩
   set U := Math.RepresentationTheory.permutationRepresentation d n
   rw [Quantum.Metrics.traceDistance_densityOp_eq_traceNormHermitian,

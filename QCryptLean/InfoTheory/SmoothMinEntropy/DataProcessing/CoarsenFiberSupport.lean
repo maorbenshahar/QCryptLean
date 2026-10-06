@@ -78,11 +78,11 @@ lemma fidelityGen_fiberSlice_ge_of_fiberSupport
     fidelityGen ρ.toJointDensity ρ'.toJointDensity ≤
       fidelityGen (CQState.fiberSlice f₀ ρ).toJointDensity
         (CQState.fiberSlice f₀ ρ').toJointDensity := by
-  haveI : NeZero (Fintype.card (Y × F)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card (Y × F)) :=
+  have : NeZero (Fintype.card (Y × F)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card (Y × F)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
-  haveI : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
   -- The Uhlmann fidelities agree exactly.
   have hfid : Quantum.Metrics.fidelity ρ.toJointDensity.toPosSemidefOp
         ρ'.toJointDensity.toPosSemidefOp =
@@ -131,11 +131,11 @@ lemma purifiedDistance_fiberSlice_le_of_fiberSupport
     (hsupp : ∀ p : Y × F, p.2 ≠ f₀ → ρ.stateMap p = 0) :
     CQState.purifiedDistance (CQState.fiberSlice f₀ ρ) (CQState.fiberSlice f₀ ρ') ≤
       CQState.purifiedDistance ρ ρ' := by
-  haveI : NeZero (Fintype.card (Y × F)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card (Y × F)) :=
+  have : NeZero (Fintype.card (Y × F)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card (Y × F)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
-  haveI : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   exact purifiedDistance_le_of_fidelityGen_ge _ _ _ _
     (fidelityGen_fiberSlice_ge_of_fiberSupport ρ ρ' f₀ hsupp)
@@ -219,7 +219,7 @@ theorem smoothMinEntropyReal_coarsen_prodFst_ge_of_fiberSupport
       CQState.purifiedDistance (CQState.fiberSlice f₀ ρ) τ ≤ ε →
         η ≤ ∑ y : Y, (τ.stateMap y).trace := fun τ hτ =>
     CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower hρ_lower hτ
-  have hbdd : BddAbove (setOf (isInSmoothedSetReal ε (CQState.fiberSlice f₀ ρ) σ)) :=
+  have hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε (CQState.fiberSlice f₀ ρ) σ)) :=
     smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη_pos
       (CQState.fiberSlice f₀ ρ) σ hfloor
   unfold smoothMinEntropyReal

@@ -78,7 +78,7 @@ lemma ckmr_gamma_identity {d n : ℕ} [NeZero d] [NeZero n]
   set haar := haarProbUnitary d
   set dim_nk : ℝ := ↑((n - k + d - 1).choose (d - 1))
   set f_ratio : ℝ := dim_nk / ↑((n + d - 1).choose (d - 1))
-  haveI : IsProbabilityMeasure haar := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure haar := haarProbUnitary_isProbability d
   -- Continuity (needed for integrability)
   have h_P_cont : Continuous (fun g : unitaryGroup (Fin d) ℂ =>
       (coherentStateDensityOp g k).toOp) :=
@@ -197,7 +197,7 @@ lemma ckmr_gamma_integral_form {d n : ℕ} [NeZero d] [NeZero n]
     -- Step 4: nonneg real smul of PSD is PSD
     exact h_conj.smul (by positivity : (0 : ℝ) ≤ ↑(Nat.choose (n - k + d - 1) (d - 1)))
   · -- Integrable: continuous on compact space → integrable w.r.t. probability measure
-    haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+    have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
     apply (Continuous.integrable_of_hasCompactSupport · (HasCompactSupport.of_compactSpace _))
     apply Continuous.const_smul
       (c := (Nat.choose (n - k + d - 1) (d - 1) : ℝ))

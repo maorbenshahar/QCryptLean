@@ -58,8 +58,8 @@ theorem fidelity_le_fidelity_cptp_image
     fidelity A B ≤ fidelity A' B' := by
   -- Step 1: Minimal Stinespring dilation of Φ.
   obtain ⟨envDim, henv, hme, dil, _⟩ := minimal_stinespring_exists Φ hCP hTP
-  haveI : NeZero envDim := henv
-  haveI : NeZero (m * envDim) := hme
+  have : NeZero envDim := henv
+  have : NeZero (m * envDim) := hme
   have hVV : dil.isometry.conjTranspose * dil.isometry = 1 := dil.isometry_adj_mul
   have hrec : ∀ X : Op n,
       Φ X = partialTraceB (dil.isometry * X * dil.isometry.conjTranspose) :=

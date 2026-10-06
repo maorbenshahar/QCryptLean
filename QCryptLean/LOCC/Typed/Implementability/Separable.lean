@@ -129,8 +129,8 @@ theorem exitKraus_mul_famKraus_partyKraus {R : MultipartiteSystem P} {B : Bounda
     B.exitKraus e * famKraus b.partyKraus = p.kraus b.1 := by
   rcases b with ⟨b, h⟩
   subst e
-  rw [famKraus_partyKraus_eq]
-  rfl
+  exact congrArg (B.exitKraus b.exit * ·)
+    (famKraus_partyKraus_eq (⟨b, rfl⟩ : p.ExitBranch b.exit))
 
 /-- The Gram matrix of a transported exit-fibre product matrix is the Gram matrix of the
 underlying path Kraus matrix. -/

@@ -109,7 +109,7 @@ theorem realIdealDistance_le_basicBudget {epsilonAEP : ℝ}
       Nat.cast_one, one_mul, mul_one]
     have hc : 0 ≤ (2 : ℝ) ^ (-(p.tagLength : ℝ)) := by positivity
     linarith [h.smoothing_pos]
-  · haveI : NeZero p.sifted := ⟨hn⟩
+  · have : NeZero p.sifted := ⟨hn⟩
     exact p.realIdealDistance_le_modelDistance.trans (p.modelDistance_le_basicBudget h)
 
 /-- The configured experiment is fully interface-secure at the standard finite-key budget.

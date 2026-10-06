@@ -63,7 +63,7 @@ private lemma cqState_nonempty_of_weight_pos
     Nonempty α := by
   classical
   by_contra hne
-  haveI : IsEmpty α := not_nonempty_iff.mp hne
+  have : IsEmpty α := not_nonempty_iff.mp hne
   have hsum : (∑ x : α, (ρ.stateMap x).trace) = 0 := by
     simp
   linarith
@@ -172,7 +172,7 @@ theorem conditionalMinEntropyReal_maxMixed_left_isometry_embed_le_add_dimPenalty
   by_cases hlam1_pos : 0 < lam1
   · have hweight₁ : 0 < ∑ x : Xcl, (ρ.stateMap x).trace :=
       cqState_weight_pos_of_minFeasibleLambda_pos ρ σ₁ hlam1_pos
-    haveI : Nonempty Xcl := cqState_nonempty_of_weight_pos ρ hweight₁
+    have : Nonempty Xcl := cqState_nonempty_of_weight_pos ρ hweight₁
     let K := kronIdLeftIso (dH := dE) V
     have hK_iso :
         Kᴴ * K = (1 : Matrix (Fin (dE * dR₁)) (Fin (dE * dR₁)) ℂ) := by
@@ -317,7 +317,7 @@ theorem conditionalMinEntropyReal_maxMixed_left_isometry_embed_le_add_dimPenalty
   by_cases hlam1_pos : 0 < lam1
   · have hweight₁ : 0 < ∑ x : Xcl, (ρ.stateMap x).trace :=
       cqState_weight_pos_of_minFeasibleLambda_pos ρ σ₁ hlam1_pos
-    haveI : Nonempty Xcl := cqState_nonempty_of_weight_pos ρ hweight₁
+    have : Nonempty Xcl := cqState_nonempty_of_weight_pos ρ hweight₁
     have hweight_eq :
         (∑ x : Xcl, (ρ_embed.stateMap x).trace) =
           ∑ x : Xcl, (ρ.stateMap x).trace :=
@@ -464,8 +464,8 @@ theorem smoothMinEntropy_embedded_maxMixed_le_ambient_maxMixed_add_dimPenalty
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR₂))) +
         ENNReal.ofReal (Real.log (dR₂ : ℝ) / Real.log 2 -
           Real.log (dR₁ : ℝ) / Real.log 2) := by
-  haveI : NeZero (dE * dR₁) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI : NeZero (dE * dR₂) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
+  have : NeZero (dE * dR₁) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
+  have : NeZero (dE * dR₂) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   let K := kronIdLeftIso (dH := dE) V
   have hK : Kᴴ * K = 1 := kronIdLeftIso_left_iso (dH := dE) V hV_iso
   apply smoothMinEntropy_le_add_of_transport
@@ -531,7 +531,7 @@ theorem smoothedSetReal_maxMixed_left_isometry_embed_candidate_transfer
           (ρ.stateMap x).toOp *
           (kronIdLeftIso (dH := dE) V)ᴴ)
     (hbdd_ambient :
-      BddAbove (setOf (isInSmoothedSetReal ε ρ_embed
+      BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_embed
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR₂))))))
     {h : ℝ}
     (hh : isInSmoothedSetReal ε ρ
@@ -605,9 +605,9 @@ theorem smoothedSetReal_maxMixed_left_isometry_embed_not_bddAbove
           (ρ.stateMap x).toOp *
           (kronIdLeftIso (dH := dE) V)ᴴ)
     (hnot_source :
-      ¬ BddAbove (setOf (isInSmoothedSetReal ε ρ
+      ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR₁)))))) :
-    ¬ BddAbove (setOf (isInSmoothedSetReal ε ρ_embed
+    ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_embed
       (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR₂))))) := by
   intro hbdd_ambient
   apply hnot_source
@@ -626,9 +626,9 @@ theorem smoothedSetReal_eq_empty_of_neg
     {d : ℕ} [NeZero d]
     {ε : ℝ} (ρ : CQState Xcl d) (σ : SubDensityOp d)
     (hε : ε < 0) :
-    setOf (isInSmoothedSetReal ε ρ σ) = ∅ := by
-  haveI : NeZero (Fintype.card Xcl) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card Xcl) :=
+    Set.ofPred (isInSmoothedSetReal ε ρ σ) = ∅ := by
+  have : NeZero (Fintype.card Xcl) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card Xcl) :=
     ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
   ext h
   constructor
@@ -658,9 +658,9 @@ theorem smoothedSetReal_maxMixed_left_isometry_embed_not_bddAbove_source_of_ambi
           (ρ.stateMap x).toOp *
           (kronIdLeftIso (dH := dE) V)ᴴ)
     (hnot_ambient :
-      ¬ BddAbove (setOf (isInSmoothedSetReal ε ρ_embed
+      ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_embed
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR₂)))))) :
-    ¬ BddAbove (setOf (isInSmoothedSetReal ε ρ
+    ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ
       (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR₁))))) := by
   have hε_nonneg : 0 ≤ ε := by
     by_contra hε_nonneg
@@ -716,9 +716,9 @@ theorem smoothMinEntropyReal_embedded_maxMixed_le_ambient_maxMixed_add_dimPenalt
     dsimp [penalty]
     exact log_dim_penalty_nonneg_of_le hdim
   by_cases hε_nonneg : 0 ≤ ε
-  · by_cases hbdd_source : BddAbove (setOf (isInSmoothedSetReal ε ρ σ₁))
-    · by_cases hbdd_ambient : BddAbove (setOf (isInSmoothedSetReal ε ρ_embed σ₂))
-      · change sSup (setOf (isInSmoothedSetReal ε ρ σ₁)) ≤
+  · by_cases hbdd_source : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ₁))
+    · by_cases hbdd_ambient : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_embed σ₂))
+      · change sSup (Set.ofPred (isInSmoothedSetReal ε ρ σ₁)) ≤
           smoothMinEntropyReal ε ρ_embed σ₂ + penalty
         apply csSup_le
         · exact ⟨conditionalMinEntropyReal ρ σ₁, ρ, rfl, by
@@ -731,7 +731,7 @@ theorem smoothMinEntropyReal_embedded_maxMixed_le_ambient_maxMixed_add_dimPenalt
             (by simpa [σ₂] using hbdd_ambient)
             (by simpa [σ₁] using hh)
       · have hnot_source :
-            ¬ BddAbove (setOf (isInSmoothedSetReal ε ρ σ₁)) := by
+            ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ₁)) := by
           simpa [σ₁, σ₂] using
             smoothedSetReal_maxMixed_left_isometry_embed_not_bddAbove_source_of_ambient
               Xcl (dE := dE) (dR₁ := dR₁) (dR₂ := dR₂)
@@ -739,26 +739,26 @@ theorem smoothMinEntropyReal_embedded_maxMixed_le_ambient_maxMixed_add_dimPenalt
               (by simpa [σ₂] using hbdd_ambient)
         exact (hnot_source hbdd_source).elim
     · have hnot_ambient :
-          ¬ BddAbove (setOf (isInSmoothedSetReal ε ρ_embed σ₂)) := by
+          ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_embed σ₂)) := by
         simpa [σ₁, σ₂] using
           smoothedSetReal_maxMixed_left_isometry_embed_not_bddAbove
             Xcl (dE := dE) (dR₁ := dR₁) (dR₂ := dR₂)
             hdim ε ρ V hV_iso ρ_embed h_embed
             (by simpa [σ₁] using hbdd_source)
-      change sSup (setOf (isInSmoothedSetReal ε ρ σ₁)) ≤
-        sSup (setOf (isInSmoothedSetReal ε ρ_embed σ₂)) + penalty
-      rw [show sSup (setOf (isInSmoothedSetReal ε ρ σ₁)) =
+      change sSup (Set.ofPred (isInSmoothedSetReal ε ρ σ₁)) ≤
+        sSup (Set.ofPred (isInSmoothedSetReal ε ρ_embed σ₂)) + penalty
+      rw [show sSup (Set.ofPred (isInSmoothedSetReal ε ρ σ₁)) =
             sSup (∅ : Set ℝ) from csSup_of_not_bddAbove hbdd_source,
-          show sSup (setOf (isInSmoothedSetReal ε ρ_embed σ₂)) =
+          show sSup (Set.ofPred (isInSmoothedSetReal ε ρ_embed σ₂)) =
             sSup (∅ : Set ℝ) from csSup_of_not_bddAbove hnot_ambient]
       have hsSup_empty : sSup (∅ : Set ℝ) = 0 := by simp
       simpa [hsSup_empty] using hpen_nonneg
   · have hε_neg : ε < 0 := lt_of_not_ge hε_nonneg
-    change sSup (setOf (isInSmoothedSetReal ε ρ σ₁)) ≤
-      sSup (setOf (isInSmoothedSetReal ε ρ_embed σ₂)) + penalty
-    have hsource_empty : setOf (isInSmoothedSetReal ε ρ σ₁) = ∅ :=
+    change sSup (Set.ofPred (isInSmoothedSetReal ε ρ σ₁)) ≤
+      sSup (Set.ofPred (isInSmoothedSetReal ε ρ_embed σ₂)) + penalty
+    have hsource_empty : Set.ofPred (isInSmoothedSetReal ε ρ σ₁) = ∅ :=
       smoothedSetReal_eq_empty_of_neg ρ σ₁ hε_neg
-    have hambient_empty : setOf (isInSmoothedSetReal ε ρ_embed σ₂) = ∅ :=
+    have hambient_empty : Set.ofPred (isInSmoothedSetReal ε ρ_embed σ₂) = ∅ :=
       smoothedSetReal_eq_empty_of_neg ρ_embed σ₂ hε_neg
     rw [hsource_empty, hambient_empty]
     have hsSup_empty : sSup (∅ : Set ℝ) = 0 := by simp
@@ -778,7 +778,7 @@ theorem conditionalMinEntropyReal_maxMixed_traceDist_dimPenalty_embed
     (hMetric :
       CQState.purifiedDistance ρ_bell (cqStateLeftIsometryEmbed V hV_iso ρ_coll) ≤ ε)
     (hbdd :
-      BddAbove (setOf (isInSmoothedSetReal ε ρ_bell
+      BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_bell
         (DensityOp.toSubDensityOp (DensityOp.maxMixed dR₂)))))
     (hscale : ∀ {t : ℝ},
       isFeasible ρ_coll

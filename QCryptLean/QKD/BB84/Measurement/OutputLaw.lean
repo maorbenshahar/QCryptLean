@@ -98,8 +98,8 @@ theorem weightedMeasurementScheduleAux_output_apply
     -- The fixed-basis branch is conjugation by the single row `basisUnitary θ x`.
     have hbranch :
         (fixedBasisMeasurement θ).operation x = matrixConjLinear (fixedBasisKraus θ x) := by
-      simp only [Instrument.operation, fixedBasisMeasurement, Instrument.ofFine,
-        Finset.univ_unique, Finset.sum_singleton]
+      change (∑ _ : Unit, matrixConjLinear (fixedBasisKraus θ x)) = _
+      exact Fintype.sum_unique _
     have hentry : (matrixConjLinear (fixedBasisKraus θ x) sigma) () () =
         ∑ j : Bit, ∑ k : Bit, basisUnitary θ x j * sigma j k * star (basisUnitary θ x k) := by
       rw [matrixConjLinear_apply, Finset.sum_comm]
@@ -109,13 +109,13 @@ theorem weightedMeasurementScheduleAux_output_apply
       hbranch, hentry]
   by_cases hrecords : rA = rA' ∧ rB = rB'
   · rcases hrecords with ⟨rfl, rfl⟩
-    rw [if_pos ⟨rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl⟩]
     induction N generalizing F with
     | zero =>
         -- No rounds: the only input coordinate is the pair of empty strings `Fin.elim0`, the one
         -- the empty remaining stream carries.
         have hempty (x : Fin 0 → Bit) : x = fun i => Fin.elim0 i := funext fun i => Fin.elim0 i
-        letI : Unique ((Fin 0 → Bit) × (Fin 0 → Bit)) :=
+        let : Unique ((Fin 0 → Bit) × (Fin 0 → Bit)) :=
           { default := ((fun i => Fin.elim0 i), fun i => Fin.elim0 i)
             uniq := fun x => Prod.ext (hempty x.1) (hempty x.2) }
         -- Both laws and the Kraus row are empty products, and the conjugation reads the single
@@ -180,6 +180,9 @@ theorem weightedMeasurementScheduleAux_output_apply
             (fB := (fB, rB 0)) (fB' := (fB', rB 0))
             (Fin.tail rA) (Fin.tail rB)
           exact h
+        let rhoPair : ((F × (Fin (n + 1) → Bit)) × (F × (Fin (n + 1) → Bit))) →
+            ((F × (Fin (n + 1) → Bit)) × (F × (Fin (n + 1) → Bit))) → ℂ :=
+          reindexOp (weightedStreamPairEquiv F (n + 1)) rho
         have hstep (observedA observedB : Record)
             (tailA tailA' tailB tailB' : Fin n → Bit) :
             weightedScheduleInputBlock (F × StoredRecord) n
@@ -187,25 +190,25 @@ theorem weightedMeasurementScheduleAux_output_apply
                 (fA, rA 0) (fA', rA 0) (fB, rB 0) (fB', rB 0)
                 (tailA, tailB) (tailA', tailB') =
               ((weightedMeasureAndRecord pB).operation observedB
-                (fun j k =>
+                (Matrix.of fun j k =>
                   ((weightedMeasureAndRecord pA).operation observedA
-                    (fun l m => rho
-                      ((MultipartiteSystem.pairEquiv _).symm
-                        ((fA, Fin.cons l tailA), (fB, Fin.cons j tailB)))
-                      ((MultipartiteSystem.pairEquiv _).symm
-                        ((fA', Fin.cons m tailA'), (fB', Fin.cons k tailB'))))
+                    (Matrix.of fun l m => rhoPair
+                      ((fA, Fin.cons l tailA), (fB, Fin.cons j tailB))
+                      ((fA', Fin.cons m tailA'), (fB', Fin.cons k tailB')))
                     (rA 0) (rA 0)))
                 (rB 0) (rB 0)) := by
-          change ((weightedStreamBobAction pA pB F n).liftedOperation observedB
-            ((weightedStreamAliceAction pA F n).liftedOperation observedA rho))
-              ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                ((TwoParty.pairEquiv _ _).symm (((fA, rA 0), tailA), ((fB, rB 0), tailB))))
-              ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                ((TwoParty.pairEquiv _ _).symm (((fA', rA 0), tailA'), ((fB', rB 0), tailB')))) = _
-          simp only [← Equiv.cast_symm, Equiv.cast_apply,
-            weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n]
-          rw [weightedStreamBobAction_liftedOperation_apply pA pB F n,
-            weightedStreamStep_operation_apply]
+          refine (congrArg₂
+            ((weightedStreamBobAction pA pB F n).liftedOperation observedB
+              ((weightedStreamAliceAction pA F n).liftedOperation observedA rho))
+            (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+              ((fA, rA 0), tailA) ((fB, rB 0), tailB))
+            (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+              ((fA', rA 0), tailA') ((fB', rB 0), tailB'))).trans ?_
+          refine (weightedStreamBobAction_liftedOperation_apply pA pB F n observedB
+            ((weightedStreamAliceAction pA F n).liftedOperation observedA rho)
+            ((fA, rA 0), tailA) ((fA', rA 0), tailA')
+            ((fB, rB 0), tailB) ((fB', rB 0), tailB')).trans ?_
+          rw [weightedStreamStep_operation_apply]
           apply congrArg (fun sigma : Op Bit =>
             ((weightedMeasureAndRecord pB).operation observedB sigma)
               (rB 0) (rB 0))
@@ -314,8 +317,7 @@ theorem weightedMeasurementScheduleAux_output_apply
               rfl
             have hblk (P Q : (Fin (n + 1) → Bit) × (Fin (n + 1) → Bit)) :
                 weightedScheduleInputBlock F (n + 1) rho fA fA' fB fB' P Q =
-                  rho ((MultipartiteSystem.pairEquiv _).symm ((fA, P.1), (fB, P.2)))
-                    ((MultipartiteSystem.pairEquiv _).symm ((fA', Q.1), (fB', Q.2))) :=
+                  rhoPair ((fA, P.1), (fB, P.2)) ((fA', Q.1), (fB', Q.2)) :=
               rfl
             -- Off the recorded head branches the head operation, hence the tail block, vanishes.
             have hblk_zero (observedA observedB : Record)
@@ -325,7 +327,8 @@ theorem weightedMeasurementScheduleAux_output_apply
                   (fA, rA 0) (fA', rA 0) (fB, rB 0) (fB', rB 0) = 0 := by
               ext ⟨tailA, tailB⟩ ⟨tailA', tailB'⟩
               rw [hstep, Matrix.zero_apply]
-              rcases hne with hne | hne <;> simp [weightedOperationApply, Ne.symm hne]
+              rcases hne with hne | hne <;>
+                simp [weightedOperationApply, Matrix.of_apply, Ne.symm hne]
             rw [Fintype.sum_eq_single (rA 0).2 fun observedA hne =>
                 Fintype.sum_eq_zero _ fun observedB => by
                   rw [hblk_zero observedA observedB (Or.inl hne), map_zero, Matrix.zero_apply,
@@ -340,8 +343,12 @@ theorem weightedMeasurementScheduleAux_output_apply
             rw [Finset.mul_sum, Finset.mul_sum]
             refine Finset.sum_congr rfl fun tailRow _ => ?_
             -- Evaluate Bob's and then Alice's head measurement at the recorded branch,
-            rw [hstep, weightedOperationApply, if_pos ⟨rfl, rfl⟩]
-            simp only [weightedOperationApply, and_self, ite_true]
+            generalize fixedBasisPairKraus (Fin.tail rA) (Fin.tail rB) = Ktail at *
+            generalize fixedBasisPairKraus rA rB = Kall at *
+            change Unit → ((Fin n → Bit) × (Fin n → Bit)) → ℂ at Ktail
+            change Unit → ((Fin (n + 1) → Bit) × (Fin (n + 1) → Bit)) → ℂ at Kall
+            rw [hstep, weightedOperationApply, ite_eq_left ⟨rfl, rfl⟩]
+            simp only [weightedOperationApply, Matrix.of_apply, and_self, ite_true]
             -- split the head factors off the `n + 1` Kraus row and read the `n + 1` block,
             simp only [hK, hblk, star_mul']
             -- and distribute both sides into sums over the four head bits.
@@ -349,7 +356,7 @@ theorem weightedMeasurementScheduleAux_output_apply
             refine Finset.sum_congr rfl fun bobRow _ => Finset.sum_congr rfl fun bobCol _ =>
               Finset.sum_congr rfl fun aliceRow _ => Finset.sum_congr rfl fun aliceCol _ => ?_
             ring
-  · rw [if_neg hrecords]
+  · rw [ite_eq_right hrecords]
     exact weightedMeasurementScheduleAux_recordsDiagonal pA pB F N rho
       fA fA' fB fB' rA rA' rB rB' (not_and_or.mp hrecords)
 

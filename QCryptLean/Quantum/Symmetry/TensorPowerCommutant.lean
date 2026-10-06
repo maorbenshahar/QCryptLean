@@ -76,14 +76,14 @@ def repCommutant {d : ℕ} {G : Type*} (W : G → UnitaryOp d) : Submodule ℂ (
   carrier := {M | ∀ g : G, M * (W g).toOp = (W g).toOp * M}
   add_mem' := by
     intro a b ha hb g
-    simp only [Set.mem_setOf_eq] at ha hb ⊢
+    simp only [Set.mem_ofPred_eq] at ha hb ⊢
     rw [add_mul, mul_add, ha g, hb g]
   zero_mem' := by
     intro g
     simp only [zero_mul, mul_zero]
   smul_mem' := by
     intro c M hM g
-    simp only [Set.mem_setOf_eq] at hM ⊢
+    simp only [Set.mem_ofPred_eq] at hM ⊢
     rw [smul_mul_assoc, mul_smul_comm, hM g]
 
 /-- The **commutant dimension** `dim_ℂ (repCommutant W)`, a natural number determined entirely by

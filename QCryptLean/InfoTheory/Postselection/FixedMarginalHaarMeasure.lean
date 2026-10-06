@@ -75,7 +75,7 @@ private lemma fmTheta_partialTraceB_eq_one (dA dB : ℕ) [NeZero dA] [NeZero dB]
     · intro k _ hk
       simp [hk]
     · intro h; exact absurd (Finset.mem_univ _) h
-  · rw [if_neg hij]
+  · rw [ite_eq_right hij]
     apply Finset.sum_eq_zero
     intro k _
     have hne : Fin.castLE (fmDimLe dA dB) i ≠ Fin.castLE (fmDimLe dA dB) j :=
@@ -310,7 +310,7 @@ def fixedMarginalHaarMeasure (σA : DensityOp dA) (hσA : σA.toOp.PosDef) :
 private lemma fixedMarginalSingleRoundState_partialTraceB_eq (σA : DensityOp dA)
     (hσA : σA.toOp.PosDef) (U : Matrix.unitaryGroup (Fin (dA * dB ^ 2)) ℂ) :
     DensityOp.partialTraceB (fixedMarginalSingleRoundState σA hσA U) = σA := by
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   apply DensityOp.ext
   change partialTraceB (partialTraceB
@@ -393,8 +393,8 @@ private lemma fixedMarginalSingleRoundState_partialTraceB_eq (σA : DensityOp dA
               (finProdFinEquiv (i, a)) (finProdFinEquiv (j, a)) := by
           refine Finset.sum_congr rfl fun a _ => ?_
           rw [Finset.sum_eq_single a]
-          · rw [if_pos rfl, mul_one]
-          · intro c _ hc; rw [if_neg hc, mul_zero]
+          · rw [ite_eq_left rfl, mul_one]
+          · intro c _ hc; rw [ite_eq_right hc, mul_zero]
           · intro h; exact absurd (Finset.mem_univ a) h
       _ = partialTraceB (fmTheta dA dB * (fmTheta dA dB).dag) i j := rfl
       _ = (1 : Op dA) i j := by rw [fmTheta_partialTraceB_eq_one]
@@ -407,16 +407,16 @@ private lemma fixedMarginalSingleRoundState_partialTraceB_eq (σA : DensityOp dA
     identity `fixedMarginalSingleRoundState_partialTraceB_eq`, true for every `U`. -/
 theorem fixedMarginalHaarMeasure_isFixedMarginal (σA : DensityOp dA) (hσA : σA.toOp.PosDef) :
     IsFixedMarginalMeasure σA (fixedMarginalHaarMeasure σA hσA : DensityMeasure (dA * dB)) := by
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
   change ∀ᵐ σ ∂(fixedMarginalHaarMeasure σA hσA).measure, DensityOp.partialTraceB σ = σA
   change ∀ᵐ σ ∂(Measure.map (fixedMarginalSingleRoundState σA hσA)
     (haarProbUnitary (dA * dB ^ 2))), DensityOp.partialTraceB σ = σA
-  haveI hT2 : T2Space (DensityOp dA) :=
+  have hT2 : T2Space (DensityOp dA) :=
     Topology.IsEmbedding.t2Space ⟨⟨rfl⟩, fun _ _ h => DensityOp.ext h⟩
   have h_meas : MeasurableSet
-      (setOf (fun σ : DensityOp (dA * dB) => DensityOp.partialTraceB σ = σA)) :=
+      (Set.ofPred (fun σ : DensityOp (dA * dB) => DensityOp.partialTraceB σ = σA)) :=
     (isClosed_eq (partialTraceB_continuous_general) continuous_const).measurableSet
   refine (MeasureTheory.ae_map_iff
     (fixedMarginalSingleRoundState_measurable σA hσA).aemeasurable h_meas).mpr ?_

@@ -278,8 +278,8 @@ private lemma purifiedDistance_smulCQ_le_sqrt_weight
   classical
   let τ : CQState X n := smulCQ c hc_nn hc_le ρ
   let w : ℝ := ∑ x : X, (ρ.stateMap x).trace
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   have hw_nn : 0 ≤ w :=
     Finset.sum_nonneg (fun x _ => (ρ.stateMap x).trace_nonneg)
@@ -377,11 +377,11 @@ private noncomputable def maxMixedAt
               c hc_nn hc_le
           else (0 : SubDensityOp n)).trace) = c := by
       rw [Finset.sum_eq_single x₀]
-      · simp only [if_true, SubDensityOp.smul_trace]
+      · simp only [ite_true, SubDensityOp.smul_trace]
         rw [toSubDensityOp_trace]
         ring
       · intro b _ hbne
-        simp only [if_neg hbne]
+        simp only [ite_eq_right hbne]
         exact hzero_trace
       · intro h
         exact (h (Finset.mem_univ x₀)).elim
@@ -394,7 +394,7 @@ private lemma maxMixedAt_stateMap_at {X : Type*} [Fintype X] [DecidableEq X]
   change (if x₀ = x₀ then
       SubDensityOp.smul (DensityOp.toSubDensityOp (DensityOp.maxMixed n)) c hc_nn hc_le
     else (0 : SubDensityOp n)) = _
-  rw [if_pos rfl]
+  rw [ite_eq_left rfl]
 
 private lemma maxMixedAt_stateMap_off {X : Type*} [Fintype X] [DecidableEq X]
     {n : ℕ} [NeZero n] (x₀ : X) (c : ℝ) (hc_nn : 0 ≤ c) (hc_le : c ≤ 1)
@@ -403,7 +403,7 @@ private lemma maxMixedAt_stateMap_off {X : Type*} [Fintype X] [DecidableEq X]
   change (if x = x₀ then
       SubDensityOp.smul (DensityOp.toSubDensityOp (DensityOp.maxMixed n)) c hc_nn hc_le
     else (0 : SubDensityOp n)) = _
-  rw [if_neg hx]
+  rw [ite_eq_right hx]
 
 private lemma sum_maxMixedAt_stateMap_trace
     {X : Type*} [Fintype X] [DecidableEq X] {n : ℕ} [NeZero n]
@@ -472,8 +472,8 @@ private lemma purifiedDistance_zero_maxMixedAt_le
     CQState.purifiedDistance ρ (maxMixedAt n x₀ c hc_nn hc_le) ≤
       Real.sqrt (2 * c) := by
   classical
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   -- Strategy: ρ has all blocks zero, so ρ ≤_PSD maxMixedAt blockwise.
   -- Apply the trace-gap purifiedDistance bound from (maxMixedAt, ρ) direction,
@@ -515,7 +515,7 @@ theorem exists_gt_smoothedSetReal_of_posDef_of_weight_le_eps_sq
     (hε_pos : 0 < ε)
     (hweight_le : (∑ x : X, (ρ.stateMap x).trace) ≤ ε ^ 2)
     (a : ℝ) :
-    ∃ h ∈ setOf (isInSmoothedSetReal ε ρ σ), a < h := by
+    ∃ h ∈ Set.ofPred (isInSmoothedSetReal ε ρ σ), a < h := by
   classical
   set w : ℝ := ∑ x : X, (ρ.stateMap x).trace with hw_def
   have hw_nn : 0 ≤ w := Finset.sum_nonneg (fun x _ => (ρ.stateMap x).trace_nonneg)
@@ -644,7 +644,7 @@ theorem smoothedSetReal_not_bddAbove_of_weight_le_eps_sq_of_posDef
     (ρ : CQState X n) (σ : SubDensityOp n) (hσ_pd : σ.toOp.PosDef) (ε : ℝ)
     (hε_pos : 0 < ε)
     (hweight_le : (∑ x : X, (ρ.stateMap x).trace) ≤ ε ^ 2) :
-    ¬ BddAbove (setOf (isInSmoothedSetReal ε ρ σ)) := by
+    ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)) := by
   rw [not_bddAbove_iff]
   intro a
   exact exists_gt_smoothedSetReal_of_posDef_of_weight_le_eps_sq ρ σ hσ_pd ε hε_pos hweight_le a
@@ -659,9 +659,9 @@ theorem smoothedSetReal_maxMixed_not_bddAbove_of_weight_eq
       (∑ x : X, (ρn.stateMap x).trace) =
         ∑ x : X, (ρm.stateMap x).trace)
     (hnot :
-      ¬ BddAbove (setOf (isInSmoothedSetReal ε ρn
+      ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρn
         (DensityOp.toSubDensityOp (DensityOp.maxMixed n))))) :
-    ¬ BddAbove (setOf (isInSmoothedSetReal ε ρm
+    ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρm
       (DensityOp.toSubDensityOp (DensityOp.maxMixed m)))) := by
   rcases lt_or_eq_of_le hε_nn with hε_pos | hε_eq
   · -- Strict `ε > 0` branch.
@@ -687,8 +687,8 @@ theorem smoothedSetReal_maxMixed_not_bddAbove_of_weight_eq
       (DensityOp.toSubDensityOp (DensityOp.maxMixed n)), ?_⟩
     intro h hh
     rcases hh with ⟨ρn', hh_eq, hd⟩
-    haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-    haveI : NeZero (n * Fintype.card X) :=
+    have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+    have : NeZero (n * Fintype.card X) :=
       ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
     have hP_nn : 0 ≤ CQState.purifiedDistance ρn ρn' := by
       unfold CQState.purifiedDistance
@@ -717,9 +717,9 @@ theorem smoothedSetReal_extension_maxMixed_not_bddAbove_of_marginal
     (ε : ℝ)
     (hε_nn : 0 ≤ ε)
     (hnot :
-      ¬ BddAbove (setOf (isInSmoothedSetReal ε ρE
+      ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρE
         (DensityOp.toSubDensityOp (DensityOp.maxMixed dE))))) :
-    ¬ BddAbove (setOf (isInSmoothedSetReal ε ρER
+    ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρER
       (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR))))) := by
   have hweight :
       (∑ x : X, (ρE.stateMap x).trace) =

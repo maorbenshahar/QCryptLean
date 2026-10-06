@@ -47,7 +47,7 @@ theorem mismatchAbortExit_retainsMetadata :
     let e := lateSelectionExit 1 1 0 0 mismatchControl
     e.1 = mismatchControl.a ∧ e.2.1 = mismatchControl.b ∧
       e.2.2.1 = mismatchControl.order := by
-  simp [lateSelectionExit, mismatchControl]
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- Boundary idealization at an abort exit preserves an arbitrary within-exit row/column entry.
 The two local coordinates may differ, so abort does not silently dephase within-exit residual

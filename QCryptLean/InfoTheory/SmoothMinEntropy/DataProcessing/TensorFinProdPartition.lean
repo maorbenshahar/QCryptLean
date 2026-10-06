@@ -153,9 +153,9 @@ theorem SubDensityOp.tensorFinProd_append {d a b : ℕ} [NeZero d]
     SubDensityOp.castDim (pow_add d a b).symm
       ((SubDensityOp.tensorFinProd a f1).tensor (SubDensityOp.tensorFinProd b f2)) =
       SubDensityOp.tensorFinProd (a + b) (Fin.append f1 f2) := by
-  haveI : NeZero (d ^ a) := NeZero.pow
-  haveI : NeZero (d ^ b) := NeZero.pow
-  haveI : NeZero (d ^ (a + b)) := NeZero.pow
+  have : NeZero (d ^ a) := NeZero.pow
+  have : NeZero (d ^ b) := NeZero.pow
+  have : NeZero (d ^ (a + b)) := NeZero.pow
   set h0 : d ^ a * d ^ b = d ^ (a + b) := (pow_add d a b).symm with hh0
   apply SubDensityOp.ext
   ext I J

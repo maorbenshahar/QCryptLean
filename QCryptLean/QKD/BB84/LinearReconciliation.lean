@@ -56,7 +56,7 @@ theorem exists_decode_eq_of_hammingDist_le (n : ℕ) (peSel : Fin n → Bool) (t
   have hrep (e : KeyBitString n peSel) (he : e ∈ T) :
       rep (syn e) ∈ T ∧ syn (rep (syn e)) = syn e := by
     have h : ∃ f ∈ T, syn f = syn e := ⟨e, he, rfl⟩
-    simpa only [rep, dif_pos h] using h.choose_spec
+    simpa only [rep, dite_eq_left h] using h.choose_spec
   refine ⟨coset syn rep, coset_isTranslationEquivariant _ _, ?_⟩
   intro a b hab
   apply (coset_decode_eq_iff syn rep a b).mpr
@@ -95,7 +95,7 @@ private lemma exists_decodesWhp_coset_of_ball_compl_le (n : ℕ) (q : ℝ)
   have hrep (e : KeyBitString n peSel) (he : e ∈ T) :
       rep (syn e) ∈ T ∧ syn (rep (syn e)) = syn e := by
     have h : ∃ f ∈ T, syn f = syn e := ⟨e, he, rfl⟩
-    simpa only [rep, dif_pos h] using h.choose_spec
+    simpa only [rep, dite_eq_left h] using h.choose_spec
   refine ⟨coset syn rep, fun a => ?_,
     coset_isTranslationEquivariant _ _⟩
   rw [coset_failure_mass]

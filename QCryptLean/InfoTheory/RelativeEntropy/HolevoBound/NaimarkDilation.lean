@@ -50,12 +50,12 @@ lemma naimarkProjector_idem (n m : ℕ) [NeZero m] (y : Fin m) :
   ext i j
   simp only [Matrix.mul_apply, naimarkProjector]
   by_cases h : i.modNat = y ∧ j.modNat = y ∧ i.divNat = j.divNat
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     obtain ⟨hi, hj, hdiv⟩ := h
     rw [Finset.sum_eq_single (i.divNat.mkDivMod y)]
-    · rw [if_pos ⟨hi, Fin.modNat_mkDivMod i.divNat y,
+    · rw [ite_eq_left ⟨hi, Fin.modNat_mkDivMod i.divNat y,
             (Fin.divNat_mkDivMod i.divNat y).symm⟩,
-          if_pos ⟨Fin.modNat_mkDivMod i.divNat y, hj,
+          ite_eq_left ⟨Fin.modNat_mkDivMod i.divNat y, hj,
             by rw [Fin.divNat_mkDivMod, hdiv]⟩]
       simp
     · intro b _ hb
@@ -64,7 +64,7 @@ lemma naimarkProjector_idem (n m : ℕ) [NeZero m] (y : Fin m) :
       obtain ⟨⟨_, hbm, hbd⟩, _⟩ := hc
       exact hb (by rw [← Fin.divNat_mkDivMod_modNat b, hbm, hbd])
     · simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero; intro k _
     apply ite_and_mul_ite_and_zero
     by_contra hc; push Not at hc
@@ -154,9 +154,9 @@ private lemma povm_sqrt_inner_sum {n m : ℕ}
     letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
     ∑ p : Fin n, star (CFC.sqrt (M.elements y) p a) *
       CFC.sqrt (M.elements y) p b = (M.elements y) a b := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   have h1 : ∑ p : Fin n, star (CFC.sqrt (M.elements y) p a) *
       CFC.sqrt (M.elements y) p b =
       ((CFC.sqrt (M.elements y))ᴴ * CFC.sqrt (M.elements y)) a b := by
@@ -173,9 +173,9 @@ private lemma povm_sqrt_inner_sum {n m : ℕ}
 lemma naimarkIsometry_isometry {n m : ℕ} [NeZero n] [NeZero m]
     (M : InfoTheory.Measurement.POVM n m) :
     (naimarkIsometry M).conjTranspose * (naimarkIsometry M) = 1 := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   ext a b
   simp only [naimarkIsometry, Matrix.conjTranspose_apply, Matrix.mul_apply, Matrix.one_apply]
   -- Reindex: Fin(n*m) → Fin m × Fin n
@@ -205,9 +205,9 @@ private lemma naimark_block_extract {n m : ℕ} [NeZero n] [NeZero m]
     (M : InfoTheory.Measurement.POVM n m) (y : Fin m) :
     (naimarkIsometry M).conjTranspose * naimarkProjector n m y *
       naimarkIsometry M = M.elements y := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   ext a b
   simp only [naimarkIsometry, naimarkProjector,
     Matrix.mul_apply, Matrix.conjTranspose_apply]
@@ -332,7 +332,7 @@ theorem measurement_monotonicity_with_support {n m : ℕ} [NeZero n] [NeZero m]
   -- Step 1: Get Naimark dilation
   obtain ⟨V, P, hV, hP_proj, hP_herm, hP_ortho, hP_complete, hP_prob⟩ := naimark_dilation M
   -- Step 2: NeZero instance for extended space
-  haveI : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
+  have : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
   -- Step 3: Construct extended density operators
   let ρ' := DensityOp.isometryEmbed V hV ρ
   let σ' := DensityOp.isometryEmbed V hV σ
@@ -376,7 +376,7 @@ private lemma prob_zero_of_quantum_support_and_sigma_prob_zero {n m : ℕ} [NeZe
         diagonalOfRhoInSigmaBasis ρ σ i = 0)
     (y : Fin m) (hy_σ : M.prob σ y = 0) : M.prob ρ y = 0 := by
   obtain ⟨V, P, hV, hP_proj, hP_herm, hP_ortho, hP_complete, hP_prob⟩ := naimark_dilation M
-  haveI : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
+  have : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
   let ρ' := DensityOp.isometryEmbed V hV ρ
   let σ' := DensityOp.isometryEmbed V hV σ
   have h_ker := ker_sigma_sub_ker_rho_of_eigenvalue_support ρ σ h_q_supp

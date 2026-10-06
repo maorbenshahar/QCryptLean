@@ -158,9 +158,9 @@ def discardCompletedRecords (N : ℕ) :
     Program (weightedStreamSystem (finishAcc Unit N) 0)
       (.leaf lateSelectionAbortSystem) :=
   cast (by
-    simp only [discardCompletedAliceAction, discardCompletedBobAction,
-      PrivateAction.out_ofInstrument, weightedStreamSystem, lateSelectionAbortSystem,
-      TwoParty.set_alice, TwoParty.set_bob])
+    apply congrArg (fun R => Program (weightedStreamSystem (finishAcc Unit N) 0) (.leaf R))
+    change ((weightedStreamSystem (finishAcc Unit N) 0).set .alice Unit).set .bob Unit = _
+    rw [weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob])
     ((discardCompletedAliceAction N).then (discardCompletedBobAction N).run)
 
 /-- Quota-dependent terminal boundary for one fully public raw control. -/
@@ -200,11 +200,12 @@ noncomputable def latePublicSelectionProgram (N nK mZ mX : ℕ) :
     (completedBasisBobAnnouncement N a).then fun b =>
       (shuffleAnnouncement N a b).then fun order =>
         cast (by
-          simp only [shuffleAnnouncement, completedBasisBobAnnouncement,
-            completedBasisAliceAnnouncement, AnnouncedAction.out_ofInstrument,
-            weightedStreamSystem, MultipartiteSystem.set_self,
-            TwoParty.set_alice, TwoParty.set_bob, CompletedLocalRecord]
-          rfl)
+          apply congrArg (fun R => Program R (lateSelectionLeaf N nK mZ mX ⟨a, b, order⟩))
+          change weightedStreamSystem (finishAcc Unit N) 0 =
+            (((weightedStreamSystem (finishAcc Unit N) 0).set .alice
+              (CompletedLocalRecord N)).set .bob (CompletedLocalRecord N)).set .alice
+              (CompletedLocalRecord N)
+          rw [weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob, TwoParty.set_alice])
           (quotaSelectionContinuation N nK mZ mX ⟨a, b, order⟩)
 
 /-- The physical destructive weighted measurement schedule grafted to late public basis/shuffle
@@ -229,9 +230,9 @@ def lateSelectionExit (N nK mZ mX : ℕ)
       (lateSelectionLeaf N nK mZ mX ⟨a, b, order⟩).Exit
   refine ⟨a, b, order, ?_⟩
   by_cases h : HasQuotas nK mZ mX ⟨a, b, order⟩
-  · rw [lateSelectionLeaf, if_pos h]
+  · rw [lateSelectionLeaf, ite_eq_left h]
     exact ()
-  · rw [lateSelectionLeaf, if_neg h]
+  · rw [lateSelectionLeaf, ite_eq_right h]
     exact ()
 
 /-- Embed a successful selected-record row into the complete late-public output space at the

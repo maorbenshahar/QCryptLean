@@ -1,3 +1,4 @@
+import Mathlib.Data.Nat.Choose.Bounds
 import QCryptLean.InfoTheory.DeFinetti.Measure
 import QCryptLean.InfoTheory.DeFinetti.Purification
 import QCryptLean.Quantum.Symmetry.SymmetricSubspace
@@ -22,8 +23,8 @@ restated in Nahar, Tupkary, Zhao, Lütkenhaus, Tan 2024, arXiv:2403.11851, Thm 1
   `ρ_n ≤ g_{n,d} · ∫ σ^{⊗n} dν`.
 
 The factor is **multiplicative**, never additive, and never divided by `2ⁿ`.  We use the
-elementary polynomial over-estimate `g_{n,d} ≤ (n+1)^{d²−1}` (`Nat.choose_add_le_pow_succ`,
-local `choose_add_le_pow_succ`) so the factor appearing here is `(n+1)^{d²−1}`.
+elementary polynomial over-estimate `g_{n,d} ≤ (n+1)^{d²−1}` (`Nat.choose_add_le_add_one_pow`),
+so the factor appearing here is `(n+1)^{d²−1}`.
 
 The symmetric-subspace dimension `C(n+d-1,d-1)` is `symmetricSubspace_dim`; the paired
 `d²`-dimensional version (the one that drives the purified postselection factor here) lives
@@ -100,25 +101,6 @@ private lemma projector_sub_psd_of_support {d : ℕ} [NeZero d]
   have h1A_dot := (Matrix.posSemidef_iff_dotProduct_mulVec.mp h1A).2 w
   rwa [Matrix.sub_mulVec, Matrix.one_mulVec, dotProduct_sub] at h1A_dot
 
-/-- Binomial bound `C(n+k, k) ≤ (n+1)^k`.  (Local copy of `choose_add_le_pow_succ` to avoid
-importing the BB84 layer, which sits above this de Finetti module.) -/
-private theorem choose_add_le_pow_succ (n k : ℕ) : Nat.choose (n + k) k ≤ (n + 1) ^ k := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have hid := Nat.add_one_mul_choose_eq (n + k) k
-    have hk : 0 < k + 1 := Nat.succ_pos k
-    change (n + k + 1).choose (k + 1) ≤ (n + 1) ^ (k + 1)
-    apply Nat.le_of_mul_le_mul_right _ hk
-    show (n + k + 1).choose (k + 1) * (k + 1) ≤ (n + 1) ^ (k + 1) * (k + 1)
-    rw [← hid, Nat.pow_add_one']
-    calc
-      (n + k + 1) * (n + k).choose k ≤ (n + k + 1) * (n + 1) ^ k :=
-        Nat.mul_le_mul_left _ ih
-      _ ≤ ((n + 1) * (k + 1)) * (n + 1) ^ k :=
-        Nat.mul_le_mul_right _ (by nlinarith [Nat.zero_le (n * k)])
-      _ = (n + 1) * (n + 1) ^ k * (k + 1) := by ring
-
 /-- **CKR postselection operator bound (open de Finetti content).**
 
 For a permutation-**symmetric** state `ρ : DensityOp (d^n)` — symmetric meaning its support
@@ -133,7 +115,7 @@ This is the Christandl–König–Renner postselection inequality (arXiv:0809.30
 :319–:328)),
 restated as Theorem 1/2 of Nahar, Tupkary, Zhao, Lütkenhaus, Tan (arXiv:2403.11851).  The factor is
 multiplicative: the exact CKR factor is `g_{n,d} = C(n+d²−1, d²−1)`, here over-estimated by
-`(n+1)^{d²−1}` via `choose_add_le_pow_succ`.
+`(n+1)^{d²−1}` via `Nat.choose_add_le_add_one_pow`.
 
 The genuine open content is the construction of `ν` (the universal de Finetti / Haar
 measure) and the symmetric-subspace domination; the `d=4` marginal engine
@@ -182,7 +164,7 @@ theorem deFinetti_postselection_op_le {d : ℕ} [NeZero d] (n : ℕ) [NeZero n] 
     rw [ht_def, hP_def, symmetricSubspace_dim, hg_def]
     -- `C(n+d−1, d−1) ≤ (n+1)^(d²−1)`.
     have hd1 : (Nat.choose (n + d - 1) (d - 1) : ℝ) ≤ (n + 1 : ℝ) ^ (d - 1) := by
-      have h := choose_add_le_pow_succ n (d - 1)
+      have h := Nat.choose_add_le_add_one_pow n (d - 1)
       have hnd : n + (d - 1) = n + d - 1 := by
         have : 1 ≤ d := Nat.one_le_iff_ne_zero.mpr (NeZero.ne d)
         omega

@@ -49,7 +49,7 @@ lemma tensorFinProd_toOp_conj {d : ℕ} [NeZero d] (W : Op d) (m : ℕ)
       rw [conjTranspose_one, one_mul, mul_one]
       congr 1
   | succ k ih =>
-      haveI : NeZero (d ^ k) := NeZero.pow
+      have : NeZero (d ^ k) := NeZero.pow
       have hc : d * d ^ k = d ^ (k + 1) := by ring
       have ihk := ih (f ∘ Fin.succ) (g ∘ Fin.succ) (fun j => h j.succ)
       change (SubDensityOp.castDim hc ((g 0).tensor

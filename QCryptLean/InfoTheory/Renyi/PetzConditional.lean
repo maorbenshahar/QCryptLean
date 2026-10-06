@@ -253,8 +253,8 @@ private lemma sandwich_le_one {ν : ℝ} (hν0 : 0 < ν) (hν1 : ν ≤ 1)
   have hnorm1 : ‖T * star T‖ ≤ 1 :=
     (CStarAlgebra.norm_le_one_iff_of_nonneg _ hTTs_nonneg).mpr hstep
   have hnorm2 : ‖star T * T‖ ≤ 1 := by
-    rw [CStarRing.norm_star_mul_self, ← CStarRing.norm_self_mul_star]
-    exact hnorm1
+    exact ((CStarRing.norm_star_mul_self (x := T)).trans
+      (CStarRing.norm_self_mul_star (x := T)).symm).le.trans hnorm1
   rw [← hTT]
   exact (CStarAlgebra.norm_le_one_iff_of_nonneg _ hsTT_nonneg).mp hnorm2
 

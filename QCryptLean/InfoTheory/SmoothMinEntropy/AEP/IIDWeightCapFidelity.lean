@@ -126,9 +126,9 @@ theorem iidAEP_weightCap_trace_le_fidelity
         Fin (n ^ n_copies * Fintype.card (Fin n_copies → X)) :=
     (Equiv.prodCongr (Equiv.refl (Fin (n ^ n_copies)))
       (Fintype.equivFin (Fin n_copies → X))).trans finProdFinEquiv with he
-  haveI : Nonempty (Fin (n ^ n_copies)) := ⟨0⟩
-  haveI : Nonempty (Fin (n ^ n_copies + 1)) := ⟨0⟩
-  haveI : Nonempty ((Fin n_copies → X) × Fin (n ^ n_copies) × Fin (n ^ n_copies + 1)) :=
+  have : Nonempty (Fin (n ^ n_copies)) := ⟨0⟩
+  have : Nonempty (Fin (n ^ n_copies + 1)) := ⟨0⟩
+  have : Nonempty ((Fin n_copies → X) × Fin (n ^ n_copies) × Fin (n ^ n_copies + 1)) :=
     ⟨(Classical.arbitrary _, (0, 0))⟩
   -- The two embedded vector families over the label set
   -- `L = (block) × (eigenindex) × (cumulative-index ∪ {∞})`.

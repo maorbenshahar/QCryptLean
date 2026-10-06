@@ -1,9 +1,9 @@
 import QCryptLean.Math.SpectralTheory.Basic
 import Mathlib.Data.Matrix.Basic
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Data.Fin.Basic
 import Mathlib.LinearAlgebra.Matrix.Notation
@@ -574,7 +574,7 @@ lemma psd_diag_re_nonneg {n : ℕ} (M : Op n)
   have h1 : star (Pi.single i 1 : Fin n → ℂ) ⬝ᵥ M *ᵥ Pi.single i 1 = M i i := by
     simp only [dotProduct, Pi.star_apply, mulVec, Pi.single_apply, mul_boole]
     rw [Finset.sum_eq_single i]
-    · simp only [if_true, star_one, one_mul]
+    · simp only [ite_true, star_one, one_mul]
       rw [Finset.sum_eq_single i]
       · simp
       · intro j _ hj; simp [hj]

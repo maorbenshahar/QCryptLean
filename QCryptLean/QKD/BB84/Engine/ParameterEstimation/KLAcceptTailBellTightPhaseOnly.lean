@@ -127,8 +127,8 @@ theorem bb84_bellRhoEtilde_acceptSplit_phaseBadBranch_traceNorm_le_ofSourceCapDe
               ∂(deFinetti_haarMeasure 4).measure :
             Op (1 * (signalDim ^ n))).trace).re
       ≤ E := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hμP : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hμP : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
     (deFinetti_haarMeasure 4).isProbability
   -- The `Sᶜ` pointwise cap at the ABSTRACT phase-only source cap, on the widened bad set.
   have hbadB : ∀ φ ∈ ((fun φ' : DensityOp 4 => DensityOp.partialTraceB (bellWembed φ')) ⁻¹'

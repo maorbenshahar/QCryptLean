@@ -140,7 +140,7 @@ lemma card_ofFinEmb_fiber (N n : ℕ) (s : Set.powersetCard (Fin N) n) :
           apply Subtype.ext
           ext x
           simp only [Set.powersetCard.val_ofFinEmb, Finset.mem_map, Finset.mem_univ,
-            Function.Embedding.coeFn_mk, true_and]
+            true_and]
           constructor
           · rintro ⟨i, rfl⟩
             exact (e i).2

@@ -417,7 +417,7 @@ theorem iidAEP_smooth_assemblyReal
     [Nonempty (Fin n_copies → X)]
     (ε : ℝ) (_hε : 0 ≤ ε)
     (W : IIDAEPSpectralWitness X n n_copies)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε
       (iidAEPTensorState ρ n_copies)
       (iidAEPTensorReference σ n_copies))))
     (h_smooth :

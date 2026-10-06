@@ -203,8 +203,8 @@ theorem weightedStreamRoundProgram_denote_eq_online
       (onlineWeightedStreamRound pA pB F n).channel := by
   have hstream := weightedStreamBobAction_out pA pB F n
   have hround : (weightedMeasureBob pA pB).out = outputSystem := by
-    simp only [weightedMeasureBob, weightedMeasureAlice, weightedMeasureAliceWithSpectator,
-      PrivateAction.out_ofInstrument, inputSystem, TwoParty.set_alice, TwoParty.set_bob]
+    change (inputSystem.set .alice StoredRecord).set .bob StoredRecord = outputSystem
+    rw [TwoParty.set_alice, TwoParty.set_bob]
   apply LinearMap.ext
   intro rho
   ext q q'
@@ -284,18 +284,16 @@ theorem weightedStreamRoundProgram_denote_eq_online
         ((TwoParty.pairEquiv (streamRegister (F × StoredRecord) n)
           (streamRegister (F × StoredRecord) n)).symm
           (((fA, rA), tailA), ((fB, rB), tailB))) := by
-    apply (Boundary.leafSpaceEquiv
-      (weightedStreamSystem (F × StoredRecord) n)).injective
-    simpa using hleafq
+    exact (Equiv.eq_symm_apply (Boundary.leafSpaceEquiv
+      (weightedStreamSystem (F × StoredRecord) n))).2 hleafq
   have hq' : q' =
       (Boundary.leafSpaceEquiv
         (weightedStreamSystem (F × StoredRecord) n)).symm
         ((TwoParty.pairEquiv (streamRegister (F × StoredRecord) n)
           (streamRegister (F × StoredRecord) n)).symm
           (((fA', rA'), tailA'), ((fB', rB'), tailB'))) := by
-    apply (Boundary.leafSpaceEquiv
-      (weightedStreamSystem (F × StoredRecord) n)).injective
-    simpa using hleafq'
+    exact (Equiv.eq_symm_apply (Boundary.leafSpaceEquiv
+      (weightedStreamSystem (F × StoredRecord) n))).2 hleafq'
   rw [hq, hq']
   simp only [streamRoundOutputSplit_apply]
   simp only [Equiv.cast_apply, Boundary.leafSpaceEquiv_cast hstream.symm,
@@ -308,29 +306,64 @@ theorem weightedStreamRoundProgram_denote_eq_online
       (outputSystem.pairEquiv.symm (a, b)) = _
     rw [MultipartiteSystem.cast_pairEquiv_symm hround.symm]
     rfl
-  simp only [weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n]
-  rw [hroundCoord, hroundCoord]
-  rw [weightedStreamBobAction_liftedOperation_apply, weightedStreamStep_operation_apply]
+  have hstreamCoord (a b : streamRegister (F × StoredRecord) n) :
+      cast (congrArg MultipartiteSystem.total hstream.symm)
+        ((Boundary.leafSpaceEquiv (weightedStreamSystem (F × StoredRecord) n))
+          ((Boundary.leafSpaceEquiv (weightedStreamSystem (F × StoredRecord) n)).symm
+            ((TwoParty.pairEquiv _ _).symm (a, b)))) =
+        (weightedStreamBobAction pA pB F n).out.pairEquiv.symm (a, b) := by
+    exact (congrArg (cast (congrArg MultipartiteSystem.total hstream.symm))
+      ((Boundary.leafSpaceEquiv (weightedStreamSystem (F × StoredRecord) n)).apply_symm_apply
+        ((TwoParty.pairEquiv _ _).symm (a, b)))).trans
+      (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n a b)
+  refine (congrArg₂ ((weightedStreamBobAction pA pB F n).liftedOperation observedB
+    ((weightedStreamAliceAction pA F n).liftedOperation observedA rho))
+      (hstreamCoord ((fA, rA), tailA) ((fB, rB), tailB))
+      (hstreamCoord ((fA', rA'), tailA') ((fB', rB'), tailB'))).trans ?_
+  refine Eq.trans ?_ (congrArg₂ ((weightedMeasureBob pA pB).liftedOperation observedB
+    ((weightedMeasureAlice pA).liftedOperation observedA
+      (rho.submatrix
+        (fun a => (streamRoundInputSplit F n).symm (a, (fA, fB), tailA, tailB))
+        (fun a => (streamRoundInputSplit F n).symm (a, (fA', fB'), tailA', tailB')))))
+      (hroundCoord rA rB) (hroundCoord rA' rB')).symm
+  refine (weightedStreamBobAction_liftedOperation_apply pA pB F n observedB
+    ((weightedStreamAliceAction pA F n).liftedOperation observedA rho)
+    ((fA, rA), tailA) ((fA', rA'), tailA')
+    ((fB, rB), tailB) ((fB', rB'), tailB')).trans ?_
   change _ = ((weightedMeasureAndRecord pB).liftAt (weightedMeasureAlice pA).out .bob).operation
     observedB _
       (((weightedMeasureAlice pA).out.set .bob StoredRecord).pairEquiv.symm (rA, rB))
       (((weightedMeasureAlice pA).out.set .bob StoredRecord).pairEquiv.symm (rA', rB'))
-  rw [Instrument.liftAt_bob_operation_apply]
+  refine Eq.trans ?_ (Instrument.liftAt_bob_operation_apply (weightedMeasureAlice pA).out
+    (weightedMeasureAndRecord pB) observedB _ rA rA' rB rB').symm
+  refine (weightedStreamStep_operation_apply pB F n observedB _ fB fB' rB rB'
+    tailB tailB').trans ?_
   apply congrArg (fun sigma : Op Bit =>
     ((weightedMeasureAndRecord pB).operation observedB sigma) rB rB')
   funext j k
   simp only [Matrix.submatrix_apply]
-  rw [weightedStreamAliceAction_liftedOperation_apply, weightedStreamStep_operation_apply]
+  refine (weightedStreamAliceAction_liftedOperation_apply pA F n observedA rho
+    ((fA, rA), tailA) ((fA', rA'), tailA')
+    (fB, Fin.cons j tailB) (fB', Fin.cons k tailB')).trans ?_
+  refine (weightedStreamStep_operation_apply pA F n observedA _ fA fA' rA rA'
+    tailA tailA').trans ?_
   change _ = ((weightedMeasureAndRecord pA).liftAt inputSystem .alice).operation observedA _
     ((inputSystem.set .alice StoredRecord).pairEquiv.symm (rA, j))
     ((inputSystem.set .alice StoredRecord).pairEquiv.symm (rA', k))
-  rw [Instrument.liftAt_alice_operation_apply]
+  refine Eq.trans ?_ (Instrument.liftAt_alice_operation_apply inputSystem
+    (weightedMeasureAndRecord pA) observedA _ rA rA' j k).symm
   apply congrArg (fun sigma : Op Bit =>
     ((weightedMeasureAndRecord pA).operation observedA sigma) rA rA')
   funext l m
-  simp only [Matrix.submatrix_apply]
-  rw [streamRoundInputSplit_symm_apply, streamRoundInputSplit_symm_apply]
-  rfl
+  exact congrArg₂ rho
+    (congrArg (fun z : Bit × Bit => (TwoParty.pairEquiv
+      (streamRegister F (n + 1)) (streamRegister F (n + 1))).symm
+        ((fA, Fin.cons z.1 tailA), (fB, Fin.cons z.2 tailB)))
+      ((TwoParty.pairEquiv Bit Bit).apply_symm_apply (l, j))).symm
+    (congrArg (fun z : Bit × Bit => (TwoParty.pairEquiv
+      (streamRegister F (n + 1)) (streamRegister F (n + 1))).symm
+        ((fA', Fin.cons z.1 tailA'), (fB', Fin.cons z.2 tailB')))
+      ((TwoParty.pairEquiv Bit Bit).apply_symm_apply (m, k))).symm
 
 /-- Nonzero input dimension derived from the explicit inhabited stream multipartite system. -/
 theorem streamRoundInputCardNeZero (F : Type)
@@ -344,7 +377,7 @@ theorem streamRoundOutputCardNeZero (F : Type)
     NeZero (Fintype.card
       (Boundary.leaf (weightedStreamSystem (F × StoredRecord) n)).space) :=
   by
-    letI : Nonempty
+    let : Nonempty
         (Boundary.leaf (weightedStreamSystem (F × StoredRecord) n)).space :=
       Nonempty.map
         (Boundary.leafSpaceEquiv

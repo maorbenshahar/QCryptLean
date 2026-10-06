@@ -111,9 +111,9 @@ lemma symmetricProjectorPaired_trace_ne_zero (d n : ℕ) [NeZero d] [NeZero n] :
 lemma symmetricProjectorPaired_trace_eq (d n : ℕ) [NeZero d] [NeZero n] :
     (symmetricProjectorPaired d n).trace =
       (Nat.choose (n + (d ^ 2 - 1)) (d ^ 2 - 1) : ℂ) := by
-  haveI : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
-  haveI : NeZero ((d * d) ^ n) :=
+  have : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero ((d * d) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d))⟩
   simpa [pow_two] using symmetricProjectorPaired_trace (d := d) (n := n)
 
@@ -325,8 +325,8 @@ lemma pairedDeFinettiState_rank_le_polyDim
     (d n : ℕ) [NeZero d] [NeZero n] :
     Matrix.rank (pairedDeFinettiState d n).toOp ≤
       Nat.choose (n + d ^ 2 - 1) (d ^ 2 - 1) := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
-  haveI : NeZero (d ^ n * d ^ n) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n * d ^ n) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   set P := symmetricProjectorPaired d n with hP_def
   have h_toOp : (pairedDeFinettiState d n).toOp = (1 / P.trace) • P := by
     rw [pairedDeFinettiState_eq_of_neZero]; rfl
@@ -462,12 +462,19 @@ lemma ckr_psd_bound_paired_support {d n dimOut dimR : ℕ}
 
 private lemma ckrDeFinettiState_zero_toOp (d : ℕ) [NeZero d] :
     (ckrDeFinettiState d 0).toOp = (1 : Op (d ^ 0)) := by
-  ext i j
-  fin_cases i
-  fin_cases j
-  simp [ckrDeFinettiState, pairedDeFinettiState, DensityOp.castDim, DensityOp.trivial,
-    DensityOp.partialTraceB, PosSemidefOp.partialTraceB, partialTraceB]
-  rfl
+  have hpaired : (pairedDeFinettiState d 0).toOp = (1 : Op (1 * 1)) := by
+    let M : Op 1 := (pairedDeFinettiState d 0).toOp
+    have htrace : Matrix.trace M = 1 := (pairedDeFinettiState d 0).trace_one
+    have hentry : M 0 0 = 1 := (Fin.sum_univ_one fun i : Fin 1 => M i i).symm.trans htrace
+    change M = (1 : Op 1)
+    apply Matrix.ext
+    intro i j
+    have hi : i = 0 := Subsingleton.elim _ _
+    have hj : j = 0 := Subsingleton.elim _ _
+    subst i j
+    exact hentry
+  change partialTraceB (n := 1) (m := 1) (pairedDeFinettiState d 0).toOp = 1
+  exact (partialTraceB_dim1_op _).trans hpaired
 
 private lemma ckr_psd_bound_paired_core_zero {d dimOut dimR : ℕ}
     [NeZero d] [NeZero dimOut] [NeZero dimR]
@@ -484,8 +491,9 @@ private lemma ckr_psd_bound_paired_core_zero {d dimOut dimR : ℕ}
   have h_dom : (((1 : ℝ) : ℂ) • τ.partialTraceB.toOp - partialTraceB ρ).PosSemidef := by
     rw [Complex.ofReal_one, one_smul, hτ_ptrace]
     change ((1 : Op 1) - partialTraceB (n := 1) (m := 1) ρ).PosSemidef
-    rw [partialTraceB_dim1_op]
-    exact Quantum.Operators.psd_le_one_of_trace_le_one ρ hρ_psd hρ_trace
+    have hptrace : partialTraceB (n := 1) (m := 1) ρ = (ρ : Op 1) :=
+      partialTraceB_dim1_op ρ
+    exact hptrace.symm ▸ Quantum.Operators.psd_le_one_of_trace_le_one ρ hρ_psd hρ_trace
   simpa using
     traceNorm_mapTensorId_substate_bound Δ ρ hρ_psd τ hτ.isPure 1 one_pos h_dom
 
@@ -525,7 +533,7 @@ private lemma ckr_psd_bound_paired_square_ancilla {d n dimOut dimR : ℕ}
   by_cases hρ_zero : ρ = 0
   · rw [hρ_zero, mapTensorId_zero, traceNorm_zero]
     exact paired_ckr_bound_nonneg Δ τ
-  · haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  · have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
     have hρ_trace_pos : 0 < ρ.trace.re :=
       trace_re_pos_of_posSemidef_of_ne_zero hρ_psd hρ_zero
     obtain ⟨σ_norm, hσ_norm_eq⟩ :=
@@ -617,7 +625,7 @@ theorem ckr_per_operator_bound_paired_core {d n dimOut dimR : ℕ}
   by_cases hn : n = 0
   · subst n
     simpa using ckr_per_operator_bound_paired_core_zero Δ X hX_norm τ hΔ_conj hτ
-  · haveI : NeZero n := ⟨hn⟩
+  · have : NeZero n := ⟨hn⟩
     exact ckr_per_operator_bound_paired_core_of_neZero Δ X hX_norm τ hΔ_conj hΔ_cov hτ
 
 end Quantum.Channels

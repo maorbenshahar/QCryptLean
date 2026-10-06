@@ -856,7 +856,7 @@ theorem iidAEPSmoothRateReal_ge_of_blockFloor_le
     [Nonempty (Fin n_copies → X)]
     (ε : ℝ) (F : ℝ)
     (W : IIDAEPSpectralWitness X n n_copies)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε
       (iidAEPTensorState ρ n_copies)
       (iidAEPTensorReference σ n_copies))))
     (h_smooth :

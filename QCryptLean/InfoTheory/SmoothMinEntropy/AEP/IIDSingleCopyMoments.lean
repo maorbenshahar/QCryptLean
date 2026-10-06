@@ -342,8 +342,8 @@ private lemma singleCopy_entropyMoment_logBlock_eq
           * Real.log (singleCopyBlockEigenvalue ρ x a)
       = - vonNeumannEntropy (ρ.toJointDensityOp hρ_norm) := by
   classical
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   -- collapse the b-sum using ONB completeness `Σ_b overlap = 1`
   have hcollapse : ∀ x : X, ∀ a : Fin n,
       ∑ b : Fin n, singleCopyProbWeight ρ σ x a b
@@ -783,27 +783,27 @@ private lemma singleCopy_qOverp_block_le
         then (σ.toOp * singleCopyBlockProjector ρ x a).trace.re else 0 := by
     intro a
     rcases eq_or_lt_of_le (hev_nonneg a) with hp0 | hppos
-    · rw [if_neg (by rw [← hp0]; exact lt_irrefl 0)]
+    · rw [ite_eq_right (by rw [← hp0]; exact lt_irrefl 0)]
       refine Finset.sum_eq_zero (fun b _ => ?_)
       unfold singleCopyProbWeight
       rw [← hp0]; simp
-    · rw [if_pos hppos, singleCopy_traceBlock_eq_sum]
+    · rw [ite_eq_left hppos, singleCopy_traceBlock_eq_sum]
       refine Finset.sum_congr rfl (fun b _ => ?_)
       unfold singleCopyProbWeight
       have hpne : singleCopyBlockEigenvalue ρ x a ≠ 0 := hppos.ne'
       field_simp
   rw [Finset.sum_congr rfl (fun a _ => hinner a)]
   by_cases htr : 0 < (ρ.stateMap x).trace
-  · rw [if_pos htr]
+  · rw [ite_eq_left htr]
     calc ∑ a : Fin n, (if 0 < singleCopyBlockEigenvalue ρ x a
             then (σ.toOp * singleCopyBlockProjector ρ x a).trace.re else 0)
         ≤ ∑ a : Fin n, (σ.toOp * singleCopyBlockProjector ρ x a).trace.re := by
           refine Finset.sum_le_sum (fun a _ => ?_)
           by_cases h : 0 < singleCopyBlockEigenvalue ρ x a
-          · rw [if_pos h]
-          · rw [if_neg h]; exact hT_nonneg a
+          · rw [ite_eq_left h]
+          · rw [ite_eq_right h]; exact hT_nonneg a
       _ = 1 := hT_total
-  · rw [if_neg htr]
+  · rw [ite_eq_right htr]
     -- vanishing block: all eigenvalues are zero, so every summand is zero
     have htr0 : (ρ.stateMap x).trace = 0 :=
       le_antisymm (not_lt.mp htr) (ρ.stateMap x).trace_nonneg
@@ -821,7 +821,7 @@ private lemma singleCopy_qOverp_block_le
         (fun a _ => hev_nonneg a)).mp hsum0
       exact fun a => this a (Finset.mem_univ a)
     refine le_of_eq (Finset.sum_eq_zero (fun a _ => ?_))
-    rw [if_neg (by rw [hzero a]; exact lt_irrefl 0)]
+    rw [ite_eq_right (by rw [hzero a]; exact lt_irrefl 0)]
 
 /-- The `P`-expectation of `q_b/p_{x,a}` is bounded by the classical rank:
 

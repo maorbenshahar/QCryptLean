@@ -139,7 +139,7 @@ lemma singularValue_pow_sum_eq_trace {N : ℕ}
     intro i
     have hnn : 0 ≤ lam i := posSemidef_eigenvalues₀_nonneg hP ⟨(i : ℕ), hbnd i⟩
     rw [hlam] at hnn ⊢
-    simp only [sortedSingularValues, dif_pos (hbnd i), pow_mul, Real.sq_sqrt hnn]
+    simp only [sortedSingularValues, dite_eq_left (hbnd i), pow_mul, Real.sq_sqrt hnn]
   rw [Finset.sum_congr rfl (fun i _ => hsq i)]
   -- Reindex sorted → unsorted via `eigenPerm`; the complex power sum equals the trace.
   set e₀f := Math.LinearAlgebra.SubmoduleDim.eigenvalues₀Fin (Bᴴ * B) hP.1 with he₀f
@@ -185,10 +185,10 @@ lemma sortedSingularValues_antitone {N : ℕ} (B : Matrix (Fin N) (Fin N) ℂ) :
   unfold sortedSingularValues
   by_cases hj : j < Fintype.card (Fin N)
   · have hi : i < Fintype.card (Fin N) := lt_of_le_of_lt hij hj
-    rw [dif_pos hi, dif_pos hj]
+    rw [dite_eq_left hi, dite_eq_left hj]
     apply Real.sqrt_le_sqrt
     exact (conjTranspose_mul_posSemidef B).1.eigenvalues₀_antitone (by exact_mod_cast hij)
-  · rw [dif_neg hj]
+  · rw [dite_eq_right hj]
     split
     · exact Real.sqrt_nonneg _
     · exact le_refl 0
@@ -252,7 +252,7 @@ lemma max_subset_prod_eq_leading_prod {N : ℕ} (X : Matrix (Fin N) (Fin N) ℂ)
         = ∏ j : Fin k, sortedSingularValues X (j : ℕ) := by
       rw [Finset.prod_range fun i => sortedSingularValues X i]
     rw [hreindex, hlead]
-    apply Finset.prod_le_prod
+    apply Finset.prod_le_prod₀
     · exact fun j _ => sortedSingularValues_nonneg X _
     · intro j _
       exact sortedSingularValues_antitone X (j : ℕ) _ (le_val_orderEmbOfFin S hS j)
@@ -293,7 +293,7 @@ lemma max_subset_prod_eq_leading_prod {N : ℕ} (X : Matrix (Fin N) (Fin N) ℂ)
     symm
     apply Finset.prod_eq_zero (Finset.mem_range.mpr hkN)
     simp only [sortedSingularValues, Fintype.card_fin]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
 
 /-- **Adjoint pairing of `toEuclideanLin`** (the defining relation of the
 Hermitian transpose): for the Euclidean linear maps of a square matrix `X` and
@@ -359,7 +359,7 @@ lemma exists_rightSingularFrame {N : ℕ} (X : Matrix (Fin N) (Fin N) ℂ) :
     intro i
     have hsv : sortedSingularValues X (i : ℕ)
         = Real.sqrt (hP.1.eigenvalues₀ ⟨(i : ℕ), hbnd i⟩) := by
-      simp only [sortedSingularValues, dif_pos (hbnd i)]
+      simp only [sortedSingularValues, dite_eq_left (hbnd i)]
     rw [hsv, Real.sq_sqrt (posSemidef_eigenvalues₀_nonneg hP ⟨(i : ℕ), hbnd i⟩)]
     -- `eigenvalues (e j) = eigenvalues₀ (e.symm (e j)) = eigenvalues₀ j`.
     rw [Matrix.IsHermitian.eigenvalues, ← he, Equiv.symm_apply_apply]
@@ -522,7 +522,7 @@ theorem wedge_basis_image_orthonormal {N : ℕ} (X : Matrix (Fin N) (Fin N) ℂ)
     norm_cast
   -- The orthonormal wedge basis of the right singular frame `v`.
   have hON := wedge_of_orthonormal_is_orthonormal (k := k) v hv
-  haveI : Nonempty {S : Finset (Fin N) // S.card = k} := by
+  have : Nonempty {S : Finset (Fin N) // S.card = k} := by
     have hkcard : k ≤ (Finset.univ : Finset (Fin N)).card := by
       rw [Finset.card_univ, Fintype.card_fin]; exact hkN
     obtain ⟨S, _, hS⟩ := Finset.exists_subset_card_eq hkcard
@@ -560,8 +560,8 @@ theorem wedge_basis_image_orthonormal {N : ℕ} (X : Matrix (Fin N) (Fin N) ℂ)
         ext a b
         simp only [Matrix.of_apply, Matrix.diagonal_apply]
         by_cases hab : a = b
-        · subst hab; rw [if_pos rfl, hgdiag]
-        · rw [if_neg hab, hgortho _ _
+        · subst hab; rw [ite_eq_left rfl, hgdiag]
+        · rw [ite_eq_right hab, hgortho _ _
             (fun h => hab ((S.1.orderEmbOfFin S.2).injective h))]
       rw [hGdiag, Matrix.det_diagonal,
         show ∀ z : ℂ, RCLike.re z = z.re from fun _ => rfl,
@@ -608,11 +608,11 @@ private lemma exteriorPower_opNorm_eq_max_subset_prod_gt {N : ℕ} (X : Matrix (
   -- No `k`-subset of `Fin N` exists: a subset of `Fin N` has at most `N < k` elements.
   have hcard : ∀ S : Finset (Fin N), S.card ≠ k := fun S hS =>
     (card_finset_fin_le S).not_gt (hS ▸ hkN)
-  haveI : IsEmpty {S : Finset (Fin N) // S.card = k} := ⟨fun S => hcard S.1 S.2⟩
+  have : IsEmpty {S : Finset (Fin N) // S.card = k} := ⟨fun S => hcard S.1 S.2⟩
   -- The wedge space is `Subsingleton` (its `Module.Basis.exteriorPower` is empty-indexed).
-  haveI : IsEmpty (Set.powersetCard (Fin N) k) :=
+  have : IsEmpty (Set.powersetCard (Fin N) k) :=
     ⟨fun s => hcard s (Set.powersetCard.card_eq s)⟩
-  haveI : Subsingleton (⋀[ℂ]^k (EuclideanSpace ℂ (Fin N))) :=
+  have : Subsingleton (⋀[ℂ]^k (EuclideanSpace ℂ (Fin N))) :=
     not_nontrivial_iff_subsingleton.mp fun _ =>
       ((euclBasis N).exteriorPower k).index_nonempty.elim isEmptyElim
   -- An operator on a `Subsingleton` space has norm `0`, and so does the empty `iSup`.
@@ -631,7 +631,7 @@ private lemma exteriorPower_opNorm_eq_max_subset_prod_le {N : ℕ} (X : Matrix (
       = ⨆ (S : {S : Finset (Fin N) // S.card = k}),
           ∏ i ∈ (S : Finset (Fin N)), sortedSingularValues X i := by
   classical
-  haveI : Nonempty {S : Finset (Fin N) // S.card = k} := by
+  have : Nonempty {S : Finset (Fin N) // S.card = k} := by
     have hkcard : k ≤ (Finset.univ : Finset (Fin N)).card := (Finset.card_fin N).symm ▸ hkN
     obtain ⟨S, _, hS⟩ := Finset.exists_subset_card_eq hkcard
     exact ⟨⟨S, hS⟩⟩

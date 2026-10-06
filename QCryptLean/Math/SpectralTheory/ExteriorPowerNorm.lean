@@ -142,7 +142,7 @@ lemma exteriorPower_toCLM_pow (B : Matrix (Fin N) (Fin N) ℂ) (k m : ℕ) :
   -- have to be identified, as a direct `map_pow` along `Module.End.toContinuousLinearMap` would.
   refine ContinuousLinearMap.coeFn_injective ?_
   -- right side: `⇑(Tᵐ) = (⇑T)^[m]` for the continuous map `T`
-  refine Eq.trans ?_ (ContinuousLinearMap.coe_pow' _ m).symm
+  refine Eq.trans ?_ (FunLike.coe_pow_eq_iterate _ m).symm
   -- left side: compound-matrix functoriality, then `⇑(fᵐ) = (⇑f)^[m]` for the linear map `f`.
   simp only [exteriorPower_map_pow]
   exact Module.End.coe_pow (exteriorPower.map k (Matrix.toEuclideanLin B)) m
@@ -436,7 +436,7 @@ theorem wedge_of_orthonormal_is_orthonormal {N k : ℕ}
   by_cases hST : S = T
   · -- Diagonal: the Gram is the identity (`orderEmbOfFin` injective, `v` orthonormal).
     subst hST
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     rw [show (Matrix.of (fun a b : Fin k =>
         inner ℂ (v (S.1.orderEmbOfFin S.2 a)) (v (S.1.orderEmbOfFin S.2 b))))
           = (1 : Matrix (Fin k) (Fin k) ℂ) from ?_, Matrix.det_one]
@@ -445,9 +445,9 @@ theorem wedge_of_orthonormal_is_orthonormal {N k : ℕ}
     rw [(orthonormal_iff_ite.mp hv) _ _]
     by_cases hab : a = b
     · simp [hab]
-    · rw [if_neg hab, if_neg (fun h => hab ((S.1.orderEmbOfFin S.2).injective h))]
+    · rw [ite_eq_right hab, ite_eq_right (fun h => hab ((S.1.orderEmbOfFin S.2).injective h))]
   · -- Off-diagonal: `S ≠ T`, equal cardinality ⇒ a `T`-index lies outside `S` ⇒ zero column.
-    rw [if_neg hST]
+    rw [ite_eq_right hST]
     have hTnotsub : ¬ (T.1 ⊆ S.1) := by
       intro hsub
       exact hST (Subtype.ext (((Finset.eq_of_subset_of_card_le hsub (by rw [S.2, T.2])).symm)))

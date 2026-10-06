@@ -51,7 +51,7 @@ theorem registerExtendedMixtureFloor_linear_le_add
           (∑ x : Fin M.toProtocol.rawKeyDim, (ρ_good_ext.stateMap x).trace) ≤ εAT ∧
       K ≤ smoothMinEntropy εbar ρ_good_ext M.mixRef +
         ENNReal.ofReal (2 * Real.logb 2 (deFinettiPrefactor (dA ^ 2 * dB ^ 2) n : ℝ)) := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
   set g := deFinettiPrefactor (dA ^ 2 * dB ^ 2) n
   obtain ⟨ρ_good, hgood_eq, hle, hgap⟩ :=
     exists_goodBranchCQState_of_integrable_traceNormBound_subNormalized
@@ -168,10 +168,10 @@ theorem registerExtendedMixtureFloorReal_linear
           - (∑ x : Fin M.toProtocol.rawKeyDim, (ρ_good_ext.stateMap x).trace) ≤ εAT ∧
       k - 2 * Real.logb 2 (deFinettiPrefactor (dA ^ 2 * dB ^ 2) n : ℝ)
         ≤ smoothMinEntropyReal εbar ρ_good_ext M.mixRef := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI := M.condDim_neZero
-  haveI := M.toProtocol.rawKeyDim_neZero
-  haveI : Nonempty (Fin M.toProtocol.rawKeyDim) := ⟨(0 : Fin M.toProtocol.rawKeyDim)⟩
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have := M.condDim_neZero
+  have := M.toProtocol.rawKeyDim_neZero
+  have : Nonempty (Fin M.toProtocol.rawKeyDim) := ⟨(0 : Fin M.toProtocol.rawKeyDim)⟩
   set g := deFinettiPrefactor (dA ^ 2 * dB ^ 2) n with hg
   obtain ⟨ρ_good, hle, hgap, hfloor⟩ :=
   smoothMinEntropyReal_ge_goodBranch_of_deFinetti_postFilter_finiteSmoothFloor_subNormalized_linear
@@ -274,14 +274,14 @@ theorem postselection_linear_referenceBound_of_iidSecurityProof
             (mapTensorId (k := (dA * dB) ^ n) (M.toProtocol.roundDifferenceMap l')
               (deFinettiMixturePurification dA dB n μ).toOp) * Vᴴ) :
     referenceSecrecy M.toProtocol l' μ ≤ εPA + 2 * εbar + 2 * εAT := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (M.mixCondDim * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (M.mixCondDim * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero M.instNeZeroMixCondDim.out Fintype.card_ne_zero⟩
-  haveI := M.toProtocol.keyDim_neZero
-  haveI := M.toProtocol.annDim_neZero
-  haveI : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim) :=
+  have := M.toProtocol.keyDim_neZero
+  have := M.toProtocol.annDim_neZero
+  have : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim) :=
     ⟨Nat.mul_ne_zero M.toProtocol.keyDim_neZero.ne M.toProtocol.annDim_neZero.ne⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
   rw [M.referenceSecrecy_eq_seedKeyExtractor_traceDistanceGen μ M.mixCondDim
     M.instNeZeroMixCondDim (M.mixCQ μ h_int) l' H V hV hPA_realization]

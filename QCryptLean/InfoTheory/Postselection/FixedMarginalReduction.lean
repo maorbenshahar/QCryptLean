@@ -82,8 +82,8 @@ theorem roundwiseAliceMarginal_symmetrize
     (σ : DensityOp ((dA * dB) ^ n)) (σA : DensityOp dA)
     (hmarg : roundwiseAliceMarginal σ = σA.tensorPowGen n) :
     roundwiseAliceMarginal (symmetrize σ) = σA.tensorPowGen n := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
   set e := roundGroupEquiv dA dB n with he
   -- Per-permutation covariance of the round-wise Alice marginal.
   have hcov : ∀ π : Equiv.Perm (Fin n),
@@ -160,8 +160,8 @@ theorem deFinetti_fixedMarginal_traceNorm_le
       traceNorm (mapTensorId Δ ρ.toOp) ≤
         (deFinettiPrefactor (dA ^ 2 * dB ^ 2) n : ℝ) *
           traceNorm (mapTensorId Δ (deFinettiMixturePurification dA dB n μ).toOp) := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
   set g : ℝ := (deFinettiPrefactor (dA ^ 2 * dB ^ 2) n : ℝ) with hg_def
   -- the round-grouped marginal of `ρ` over the ancilla `Eⁿ`

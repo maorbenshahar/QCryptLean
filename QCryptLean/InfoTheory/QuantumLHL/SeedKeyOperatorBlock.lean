@@ -43,8 +43,8 @@ theorem quantum_seedKey_LHL_smooth_operatorBlock
           ((1 / 2) * traceNorm ρReal_resid + (1 / 2) * traceNorm ρIdeal_resid ≤ 2 * ε) ∧
             traceDistanceGen ρReal_acc ρIdeal_acc ≤
               (1 / 2) * Real.sqrt ((Fintype.card Z : ℝ) * 2 ^ (-k)) := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   obtain ⟨ρ', hρ'_dist, hρ'_k⟩ :=
     quantum_seedKey_LHL_smooth_hashing_witness H hH ρ σ hσ_pd ε hε k hk
@@ -152,7 +152,7 @@ theorem smoothMinEntropyReal_exists_approx_le
     (k : ℝ) (hk : k ≤ smoothMinEntropyReal ε ρ σ) :
     ∃ ρ' : CQState X n,
       CQState.purifiedDistance ρ ρ' ≤ ε ∧ k ≤ conditionalMinEntropyReal ρ' σ := by
-  by_cases hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ))
+  by_cases hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ))
   · -- The defining supremum is a genuine finite maximum.
     rcases eq_or_lt_of_le hk with heq | hlt
     · -- Boundary `k = H_min^ε`: the supremum is attained (compactness + continuity).

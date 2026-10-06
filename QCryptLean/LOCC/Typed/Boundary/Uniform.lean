@@ -116,9 +116,18 @@ uniform-system equivalence. -/
     Matrix.reindex (uniformSpaceEquiv S (.cons Y T)) (uniformSpaceEquiv S T)
         (publicInclKraus (fun _ : Y => uniform S T) y) =
       writeKraus (A := S.total) (B := Transcript T) Y y := by
-  ext p q
-  simp [Matrix.reindex_apply, publicInclKraus, sigmaInclKraus, writeKraus,
-    uniformSpaceEquiv, Prod.ext_iff, and_assoc, and_comm]
+  apply Matrix.ext
+  intro (p : S.total × Transcript (.cons Y T)) (q : S.total × Transcript T)
+  change (if publicSpaceEquiv (fun _ : Y => uniform S T)
+      ((uniformSpaceEquiv S (.cons Y T)).symm p) =
+        ⟨y, (uniformSpaceEquiv S T).symm q⟩ then (1 : ℂ) else 0) =
+    if p.1 = q.1 ∧ p.2.1 = y ∧ p.2.2 = q.2 then 1 else 0
+  apply if_congr ?_ rfl rfl
+  change (⟨p.2.1, (uniformSpaceEquiv S T).symm (p.1, p.2.2)⟩ :
+    Σ _ : Y, (uniform S T).space) = ⟨y, (uniformSpaceEquiv S T).symm q⟩ ↔ _
+  simp only [Sigma.mk.inj_iff, heq_eq_eq,
+    (uniformSpaceEquiv S T).symm.injective.eq_iff, Prod.ext_iff]
+  tauto
 
 end Boundary
 end TypedLOCC

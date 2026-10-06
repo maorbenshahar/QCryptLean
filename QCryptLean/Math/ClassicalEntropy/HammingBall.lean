@@ -55,10 +55,10 @@ theorem card_filter_hammingDist_eq_choose (x : ι → Bool) (j : ℕ) :
     ext i
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     by_cases hi : i ∈ S
-    · rw [if_pos hi]
+    · rw [ite_eq_left hi]
       simp only [hi, iff_true]
       cases x i <;> simp
-    · rw [if_neg hi]
+    · rw [ite_eq_right hi]
       simp only [hi, iff_false, ne_eq, not_not]
   rw [← Finset.card_univ (α := ι), ← Finset.card_powersetCard j Finset.univ]
   refine Finset.card_bij'
@@ -82,9 +82,9 @@ theorem card_filter_hammingDist_eq_choose (x : ι → Bool) (j : ℕ) :
     funext i
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     by_cases hxy : x i ≠ y i
-    · rw [if_pos hxy]
+    · rw [ite_eq_left hxy]
       cases hb : x i <;> cases hc : y i <;> simp_all
-    · rw [if_neg hxy]
+    · rw [ite_eq_right hxy]
       exact not_not.mp hxy
   · -- right inverse: recover `S` from the flip map's disagreement set
     intro S _
@@ -161,8 +161,8 @@ theorem sum_choose_le_two_pow_mul_binaryEntropyBits (n r : ℕ) (hr : 2 * r ≤ 
     have hcastsub : ((n : ℝ) - (r : ℝ)) = ((n - r : ℕ) : ℝ) := by rw [Nat.cast_sub hrn]
     have hentropy : (n : ℝ) * binaryEntropy p
         = -(r : ℝ) * Real.log p + -((n : ℝ) - (r : ℝ)) * Real.log (1 - p) := by
-      rw [binaryEntropy, entropyTerm, entropyTerm, if_neg (ne_of_gt hp_pos),
-        if_neg (by linarith : (1 : ℝ) - p ≠ 0)]
+      rw [binaryEntropy, entropyTerm, entropyTerm, ite_eq_right (ne_of_gt hp_pos),
+        ite_eq_right (by linarith : (1 : ℝ) - p ≠ 0)]
       rw [show (n : ℝ) * (-p * Real.log p + -(1 - p) * Real.log (1 - p))
             = -((n : ℝ) * p) * Real.log p + -((n : ℝ) * (1 - p)) * Real.log (1 - p) by ring,
         hnp, hnq]
@@ -275,7 +275,7 @@ theorem two_rpow_mul_binaryEntropyBits_eq {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) 
   have hbe : binaryEntropyBits p
       = (-p * Real.log p + -(1 - p) * Real.log (1 - p)) / Real.log 2 := by
     unfold binaryEntropyBits binaryEntropy entropyTerm
-    rw [if_neg hp0.ne', if_neg hp1'.ne']
+    rw [ite_eq_right hp0.ne', ite_eq_right hp1'.ne']
   rw [hbe, Real.rpow_def_of_pos (by norm_num : (0 : ℝ) < 2)]
   have hexp : Real.log 2 * (m * ((-p * Real.log p + -(1 - p) * Real.log (1 - p)) / Real.log 2))
       = -(m * p) * Real.log p + -(m * (1 - p)) * Real.log (1 - p) := by

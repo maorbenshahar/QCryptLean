@@ -226,8 +226,8 @@ lemma exists_hashDifference_eq_conj_of_partialTraceB_eq (r : ℕ) [NeZero r]
           (seedUniformOutputState (S := C.Seed) (Z := C.Key)
             (C.extendedRawKeyCQ r τ).quantumMarginal).toJointDensity.toOp =
         V * mapTensorId (M.toProtocol.roundDifferenceMap l') τ₀.toOp * Vᴴ := by
-  haveI := M.toProtocol.keyDim_neZero
-  haveI := M.toProtocol.annDim_neZero
+  have := M.toProtocol.keyDim_neZero
+  have := M.toProtocol.annDim_neZero
   obtain ⟨W, hW, hτW⟩ := exists_isometry_eq_idTensorRect_conj_of_partialTraceB_eq
     τ₀ τ h₀ hτ hmarg (Nat.le_mul_of_pos_right _ (NeZero.pos r))
   let E := tensorRect C.encode (1 : Op ((dA * dB) ^ n))
@@ -284,8 +284,8 @@ theorem exists_hashDifference_eq_conj (μ : DensityMeasure (dA * dB)) :
         V * M.toProtocol.referenceDifference l' μ * Vᴴ ∧
       ∀ x, partialTraceB (ρ_EnV.stateMap x).toOp =
         ((M.mixCQ_En μ (C.integrable μ)).stateMap x).toOp := by
-  haveI := M.toProtocol.keyDim_neZero
-  haveI := M.toProtocol.annDim_neZero
+  have := M.toProtocol.keyDim_neZero
+  have := M.toProtocol.annDim_neZero
   obtain ⟨τ, hτ, hmarg, hblocks⟩ := C.exists_isPure_extendedRawKeyCQ_partialTraceB_eq μ
   obtain ⟨V, hsupport, hfactor⟩ := C.exists_hashDifference_eq_conj_of_partialTraceB_eq
     (deFinettiPrefactor (dA ^ 2 * dB ^ 2) n)

@@ -145,7 +145,7 @@ lemma bb84_siftedPERoundProd_weight_eq_pairedHaar {n m : ℕ} [NeZero n] [NeZero
       ∑ x : Fin n → Fin signalDim,
         ((bb84PairedHaarPerSigmaFamily 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n)
             peSel xSel Q δ ψ).stateMap x).trace := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   have hA : ∑ z, ((bb84CoarsenKey (m := m) peSel xSel Q δ ψ).stateMap z).trace =
       ∑ x, ((bb84PairedHaarPerSigmaFamily 1 (bb84UnitRegisterEmbed n)
           (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ ψ).stateMap x).trace := by

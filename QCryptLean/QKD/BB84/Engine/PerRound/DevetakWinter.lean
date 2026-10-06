@@ -113,9 +113,10 @@ private lemma bb84SiftedKeyRoundCQ_stateMap_toOp_eq_aliceZProj_sandwich
     · intro h; have := congrArg Fin.val h; simpa [bb84AliceBitMap] using this
     · intro h; apply Fin.ext; simpa [bb84AliceBitMap] using h
   by_cases hk : bb84AliceBitMap k = z
-  · rw [if_pos hk, if_pos (hval.mp hk), one_mul, mul_one]
+  · rw [ite_eq_left hk, ite_eq_left (hval.mp hk), one_mul, mul_one]
     exact bb84RefereeSiftedSingleRoundRefBlock_false_toOp_entry ψ k r r'
-  · rw [if_neg hk, if_neg (fun h => hk (hval.mpr h)), Matrix.zero_apply, zero_mul, zero_mul]
+  · rw [ite_eq_right hk, ite_eq_right (fun h => hk (hval.mpr h)), Matrix.zero_apply, zero_mul,
+    zero_mul]
 
 /-- **`(1 ⊗ W)`-conjugation pushes through the Alice-`Z` projector sandwich.**  Since `P ⊗ 1`
 commutes with `1 ⊗ W`, the partial trace of the projector-sandwiched `(1 ⊗ W)`-conjugate equals the

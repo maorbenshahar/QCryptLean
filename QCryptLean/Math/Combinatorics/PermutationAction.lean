@@ -7,7 +7,7 @@ import Mathlib.Data.Fin.Basic
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Data.Sym.Card
 import Mathlib.Data.Finsupp.Multiset
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.GroupTheory.GroupAction.Quotient
 import Mathlib.Data.Fin.Tuple.Sort
@@ -118,7 +118,7 @@ theorem permutationRepresentation_mul (d n : ℕ) [NeZero d]
   set k₀ := e (e.symm j ∘ ⇑σ₂.symm)
   have hk₀ : e.symm k₀ = e.symm j ∘ ⇑σ₂.symm := by simp [k₀]
   rw [Finset.sum_eq_single k₀]
-  · rw [if_pos hk₀, mul_one, hk₀, comp_perm_mul_symm]
+  · rw [ite_eq_left hk₀, mul_one, hk₀, comp_perm_mul_symm]
   · intro k _ hk
     by_cases h : e.symm k = e.symm j ∘ ⇑σ₂.symm
     · exact absurd (e.symm.injective (h.trans hk₀.symm)) hk
@@ -334,7 +334,7 @@ theorem symmetricSubspace_dimension (d n : ℕ) [NeZero d] [NeZero n] :
     -- (n₁,...,nₐ) with n₁ + ... + nₐ = n and all nᵢ ≥ 0
     symDim = Nat.card {f : Fin d → ℕ // ∑ i, f i = n} := by
   simp only
-  haveI : Fintype {f : Fin d → ℕ // ∑ i, f i = n} :=
+  have : Fintype {f : Fin d → ℕ // ∑ i, f i = n} :=
     Fintype.ofEquiv (Sym (Fin d) n) (Sym.equivNatSumOfFintype (Fin d) n)
   rw [Nat.card_eq_fintype_card,
       ← Fintype.card_congr (Sym.equivNatSumOfFintype (Fin d) n),
@@ -546,9 +546,9 @@ theorem trace_mul_permutationRepresentation (d n : ℕ) [NeZero d]
   refine Finset.sum_congr rfl fun f _ => ?_
   rw [Equiv.symm_apply_apply]
   rw [Finset.sum_eq_single (e (f ∘ σ.symm))]
-  · rw [Equiv.symm_apply_apply, if_pos rfl, mul_one]
+  · rw [Equiv.symm_apply_apply, ite_eq_left rfl, mul_one]
   · intro j _ hj
-    rw [if_neg, mul_zero]
+    rw [ite_eq_right, mul_zero]
     intro hcontra; exact hj (by rw [← hcontra, Equiv.apply_symm_apply])
   · intro h; exact absurd (Finset.mem_univ _) h
 
@@ -692,7 +692,6 @@ noncomputable def permFunOrbitsEquivSym (d n : ℕ) :
   · intro q₁ q₂ h
     induction q₁ using Quotient.inductionOn with | h f =>
     induction q₂ using Quotient.inductionOn with | h g =>
-    simp only [Quotient.lift_mk] at h
     apply Quotient.sound
     exact (sym_of_fn_eq_iff_perm_fun_orbit_rel f g).mp h
   · intro s
@@ -723,7 +722,7 @@ lemma sum_permRep_trace_eq (d n : ℕ) [NeZero d] [NeZero n] :
       (permutationRepresentation d n σ).trace =
     (n.factorial : ℂ) * (Nat.choose (n + d - 1) (d - 1) : ℂ) := by
   simp_rw [permutationRepresentation_trace_eq_fixed_card]
-  letI : DecidableRel (MulAction.orbitRel (Equiv.Perm (Fin n)) (Fin n → Fin d)).r :=
+  let : DecidableRel (MulAction.orbitRel (Equiv.Perm (Fin n)) (Fin n → Fin d)).r :=
     permFunOrbitRelDecidable d n
   have burnside := MulAction.sum_card_fixedBy_eq_card_orbits_mul_card_group
     (Equiv.Perm (Fin n)) (Fin n → Fin d)
@@ -758,7 +757,7 @@ lemma card_permFunOrbits_eq_choose_of_fintype {β : Type*} [Fintype β] [Decidab
       Nat.choose (n + Fintype.card β - 1) (Fintype.card β - 1) := by
   set d := Fintype.card β with hd
   let e : β ≃ Fin d := Fintype.equivFin β
-  letI hdec : DecidableRel (MulAction.orbitRel (Equiv.Perm (Fin n)) (Fin n → Fin d)).r :=
+  let hdec : DecidableRel (MulAction.orbitRel (Equiv.Perm (Fin n)) (Fin n → Fin d)).r :=
     permFunOrbitRelDecidable d n
   rw [← card_permFunOrbits_eq_choose d n]
   apply Fintype.card_congr
@@ -820,7 +819,7 @@ lemma sum_card_fixedBy_perm_fun_eq_of_fintype {β : Type*} [Fintype β] [Decidab
     ∑ σ : Equiv.Perm (Fin n),
       (Finset.univ.filter (fun f : Fin n → β => f ∘ ⇑σ = f)).card =
       n.factorial * Nat.choose (n + Fintype.card β - 1) (Fintype.card β - 1) := by
-  letI : DecidableRel (MulAction.orbitRel (Equiv.Perm (Fin n)) (Fin n → β)).r := by
+  let : DecidableRel (MulAction.orbitRel (Equiv.Perm (Fin n)) (Fin n → β)).r := by
     intro f g
     simp only [MulAction.orbitRel_apply]
     rw [MulAction.mem_orbit_iff]

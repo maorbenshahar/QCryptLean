@@ -33,7 +33,7 @@ lemma integrable_purificationDensityOp_tensorPowGen {d n : ℕ} [NeZero d] [NeZe
     (μ : DensityMeasure d) :
     Integrable (fun σ : DensityOp d => (purificationDensityOp (σ.tensorPowGen n)).toOp)
       μ.measure := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   exact continuous_purificationDensityOp_tensorPowGen_toOp.integrable_of_compactSpace
 
 /-- Integrating the canonical IID purifications recovers the de Finetti mixture
@@ -91,9 +91,9 @@ lemma exists_isPure_partialTraceB_eq_integral_purificationDensityOp_tensorPowGen
     ∃ ψ : DensityOp ((d ^ n * d ^ n) * deFinettiPrefactor (d ^ 2) n),
       ψ.IsPure ∧ partialTraceB ψ.toOp =
         ∫ σ : DensityOp d, (purificationDensityOp (σ.tensorPowGen n)).toOp ∂μ.measure := by
-  haveI : NeZero (deFinettiPrefactor (d ^ 2) n) :=
+  have : NeZero (deFinettiPrefactor (d ^ 2) n) :=
     ⟨(deFinettiPrefactor_pos (d ^ 2) n).ne'⟩
-  haveI := μ.isProbability
+  have := μ.isProbability
   let ρ := DensityOp.integral μ.measure
     (fun σ : DensityOp d => purificationDensityOp (σ.tensorPowGen n))
     (integrable_purificationDensityOp_tensorPowGen μ)

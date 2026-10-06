@@ -6,7 +6,8 @@ import QCryptLean.Quantum.TensorProducts.Trace
 import QCryptLean.Math.Analysis.CompactSpaceIntegrable
 import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-import Mathlib.MeasureTheory.Measure.Dirac
+import Mathlib.MeasureTheory.Measure.Dirac.Def
+import Mathlib.MeasureTheory.Measure.Dirac.Basic
 import Mathlib.MeasureTheory.Measure.Haar.Basic
 import Mathlib.Topology.Instances.Matrix
 import Mathlib.Topology.Algebra.Star
@@ -125,7 +126,7 @@ def DensityMeasure.IsProductStateMeasure {d : ℕ} (μ : DensityMeasure d) : Pro
 lemma DensityMeasure.isProductStateMeasure_iff_measure_compl_zero
     {d : ℕ} (μ : DensityMeasure d) :
     μ.IsProductStateMeasure ↔
-      μ.measure (setOf (fun σ : DensityOp d => ¬ σ.IsPure)) = 0 :=
+      μ.measure (Set.ofPred (fun σ : DensityOp d => ¬ σ.IsPure)) = 0 :=
   MeasureTheory.ae_iff
 
 /-!
@@ -211,7 +212,7 @@ lemma finFunctionFinEquiv_prod_eq_append {d k p : ℕ}
     apply Finset.sum_congr rfl; intro i _
     simp only [Fin.natAdd, Fin.val_mk]
     have hi : ¬ (p + (i : ℕ)) < p := by omega
-    rw [dif_neg hi]
+    rw [dite_eq_right hi]
     have hsub : (p + (i : ℕ)) - p = (i : ℕ) := by omega
     simp only [hsub]
     have hval : (⟨(i : ℕ), by omega⟩ : Fin k) = i := by ext; rfl
@@ -359,12 +360,12 @@ theorem partialTraceToFirstK_tensorPowGen {d : ℕ} [NeZero d] (ρ : DensityOp d
     · apply Finset.prod_congr rfl; intro m _
       have hm : ((finCongr hpkn (Fin.castAdd k m) : Fin n) : ℕ) < n - k := by
         simp only [finCongr_apply, Fin.val_cast, Fin.val_castAdd]; exact m.isLt
-      rw [dif_pos hm, dif_pos hm]
+      rw [dite_eq_left hm, dite_eq_left hm]
       simp [finCongr_apply, Fin.val_castAdd]
     · apply Finset.prod_congr rfl; intro m _
       have hm : ¬ ((finCongr hpkn (Fin.natAdd p m) : Fin n) : ℕ) < n - k := by
         simp [finCongr, Fin.natAdd]; omega
-      rw [dif_neg hm, dif_neg hm]
+      rw [dite_eq_right hm, dite_eq_right hm]
       have hidx : (⟨p + (m : ℕ) - (n - k), by omega⟩ : Fin k) = m := by
         subst p
         apply Fin.ext
@@ -492,7 +493,7 @@ lemma partialTraceToFirst_measurable {d n : ℕ} [NeZero d] [NeZero n] [NeZero (
 states: it is continuous on the compact state space. -/
 lemma integrable_toOp_entry {d : ℕ} (i j : Fin d) (μ : DensityMeasure d) :
     MeasureTheory.Integrable (fun σ : DensityOp d => σ.toOp i j) μ.measure := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   exact ((continuous_apply j).comp
     ((continuous_apply i).comp DensityOp.continuous_toOp)).integrable_of_compactSpace
 
@@ -593,7 +594,7 @@ lemma pushforward_partialTraceB_exists {d : ℕ} [NeZero d]
         DensityOp.partialTraceB (integralSingleCopy ν) := by
   let f := (DensityOp.partialTraceB : DensityOp (d * d) → DensityOp d)
   have hf : Measurable f := partialTraceB_measurable
-  haveI := ν.isProbability
+  have := ν.isProbability
   let μ : DensityMeasure d :=
     { measure := Measure.map f ν.measure
       isProbability := by
@@ -634,7 +635,7 @@ lemma integrable_tensorPow_entry {d : ℕ} [NeZero d]
     (n : ℕ) [NeZero n] [NeZero (d ^ n)] (i j : Fin (d ^ n)) (μ : DensityMeasure d) :
     MeasureTheory.Integrable
       (fun σ : DensityOp d => (σ.tensorPowGen n).toOp i j) μ.measure := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   exact ((continuous_apply j).comp
     ((continuous_apply i).comp continuous_tensorPowGen_toOp)).integrable_of_compactSpace
 
@@ -718,7 +719,7 @@ private lemma integralTensorPower_trace {d : ℕ} [NeZero d]
   have h : ∀ σ : DensityOp d, ∑ i : Fin (d ^ n), (σ.tensorPowGen n).toOp i i = 1 :=
     fun σ => by change (σ.tensorPowGen n).toOp.trace = 1; exact (σ.tensorPowGen n).trace_one
   simp_rw [h]
-  haveI := μ.isProbability
+  have := μ.isProbability
   rw [MeasureTheory.integral_const]
   simp only [Measure.real, measure_univ, ENNReal.toReal_one, one_smul]
 
@@ -747,7 +748,7 @@ lemma integralTensorPower_toOp_eq_integral {d : ℕ} [NeZero d] (n : ℕ) [NeZer
     (μ : DensityMeasure d) :
     (integralTensorPower n μ).toOp
       = ∫ σ : DensityOp d, (σ.tensorPowGen n).toOp ∂μ.measure := by
-  haveI : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  have : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
   ext i j
   exact (matrix_integral_entry _ continuous_tensorPowGen_toOp.integrable_of_compactSpace i j).symm
 
@@ -756,7 +757,7 @@ lemma integralTensorPower_map {d m : ℕ} [NeZero d] (n : ℕ) [NeZero n]
     (μ : DensityMeasure d) (Ψ : Op (d ^ n) →ₗ[ℂ] Op m) :
     Ψ (integralTensorPower n μ).toOp =
       ∫ σ : DensityOp d, Ψ (σ.tensorPowGen n).toOp ∂μ.measure := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   rw [integralTensorPower_toOp_eq_integral]
   exact (Ψ.toContinuousLinearMap.integral_comp_comm
     continuous_tensorPowGen_toOp.integrable_of_compactSpace).symm
@@ -880,12 +881,12 @@ lemma deFinetti_haarMeasure_isProductStateMeasure (d : ℕ) [NeZero d] :
   -- continuous. With this we can apply `ae_map_iff`.
   have h_toOp : Continuous (fun σ : DensityOp d => σ.toOp) := continuous_induced_dom
   have h_closed : IsClosed
-      (setOf (fun σ : DensityOp d => σ.toOp * σ.toOp = σ.toOp)) :=
+      (Set.ofPred (fun σ : DensityOp d => σ.toOp * σ.toOp = σ.toOp)) :=
     isClosed_eq (h_toOp.mul h_toOp) h_toOp
   have h_meas : MeasurableSet
-      (setOf (fun σ : DensityOp d => σ.IsPure)) := by
-    have hset : setOf (fun σ : DensityOp d => σ.IsPure)
-        = setOf (fun σ : DensityOp d => σ.toOp * σ.toOp = σ.toOp) := rfl
+      (Set.ofPred (fun σ : DensityOp d => σ.IsPure)) := by
+    have hset : Set.ofPred (fun σ : DensityOp d => σ.IsPure)
+        = Set.ofPred (fun σ : DensityOp d => σ.toOp * σ.toOp = σ.toOp) := rfl
     rw [hset]; exact h_closed.measurableSet
   refine (MeasureTheory.ae_map_iff pureStateMap_measurable.aemeasurable h_meas).mpr ?_
   -- Pure-ness holds pointwise for every `U` in `unitaryGroup (Fin d) ℂ`.

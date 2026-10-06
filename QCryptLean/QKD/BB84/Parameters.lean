@@ -284,10 +284,10 @@ theorem acceptFlag_eq_zero_iff (as bs : p.TestBits)
         as bs = true ∧
       evTag = verificationTag p.sifted p.tagLength p.peSel evSeed
         (p.ec.decode (QKD.BB84.Model.bobKeyOf p.sifted p.peSel y) syn)
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp only [true_iff, ← p.peOK_iff]
     exact h
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     simp only [← p.peOK_iff]
     exact ⟨fun hone => absurd hone (by decide), fun hgood => absurd hgood h⟩
 

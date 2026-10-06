@@ -118,7 +118,7 @@ symmetrization-to-base lift requires.
 References: Renner (2005) §6.5; CKR (2009) §III. -/
 theorem bb84BellCKRDeFinettiPurification_isPairedPermInvariant (n : ℕ) [NeZero n] [NeZero (4 ^ n)] :
     IsPairedPermInvariant (bb84BellCKRDeFinettiPurification n) := by
-  haveI : NeZero ((4 : ℕ) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
+  have : NeZero ((4 : ℕ) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
   exact purificationDensityOp_isPairedPermInvariant (bb84BellDeFinettiDensity n)
     (bb84BellDeFinettiDensity_isPermutationInvariant n)
 
@@ -203,9 +203,9 @@ theorem bb84_EnV_bellSiftedTauEveRefConditionedLocalPE_partialTraceB_eq_ofMargin
           (bb84SiftedTauEveRefConditioned eveDim pre hpre peSel xSel (bb84EnVBellPurification V)
               ω).toOp) =
       (bb84SiftedTauEveRefConditioned eveDim pre hpre peSel xSel ρ₀ ω).toOp := by
-  haveI hVdv : NeZero V.dV := V.dV_neZero
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hR : NeZero (signalDim ^ n * V.dV) :=
+  have hVdv : NeZero V.dV := V.dV_neZero
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hR : NeZero (signalDim ^ n * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have hcancel : ∀ {p q : ℕ} (h : p = q) (x : Op p),
       (h.symm ▸ (h ▸ x : Op q) : Op p) = x := by
@@ -277,9 +277,9 @@ theorem bb84_EnV_bellRhoEV_partialTraceB_eq_forCoarsen {n : ℕ} [NeZero n] [NeZ
               (bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
                 (bb84EnVBellPurification V)).toCQState)).stateMap x).toOp) =
         ((bb84BellEnVRhoEtilde eveDim pre hpre peSel xSel Q δ).stateMap x).toOp := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hVdv : NeZero V.dV := V.dV_neZero
-  haveI hEnDim : NeZero (eveDim * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hVdv : NeZero V.dV := V.dV_neZero
+  have hEnDim : NeZero (eveDim * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   intro x
   rw [bellCastCQState_siftedLocalPEPassFilter
@@ -330,7 +330,7 @@ theorem bb84BellEnVRhoEtilde_acceptWeight_eq {n : ℕ} [NeZero n] [NeZero (4 ^ n
       bb84SiftedEveVisible_tauLocalPEAcceptedWeight 1 (bb84UnitRegisterEmbed n)
           (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ
         (bb84BellCKRDeFinettiPurification n) := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   -- Each filtered τ-block's trace is the trace of its `Eⁿ`-marginal, hence a function of
   -- `τ.partialTraceB` alone.
   have hmarg : ∀ (τ : DensityOp ((signalDim ^ n) * (signalDim ^ n)))

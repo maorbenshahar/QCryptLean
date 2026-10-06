@@ -105,7 +105,7 @@ lemma ofReal_neg_logb_le_conditionalMinEntropy {X : Type*} [Fintype X] {n : ℕ}
     csInf_le (minFeasibleLambda_bddBelow ρ σ) hfeas
   rw [conditionalMinEntropy]
   by_cases hpos : 0 < minFeasibleLambda ρ σ
-  · rw [if_pos hpos]
+  · rw [ite_eq_left hpos]
     refine ENNReal.ofReal_le_ofReal ?_
     have hmono : Real.logb 2 (minFeasibleLambda ρ σ) ≤ Real.logb 2 t :=
       Real.logb_le_logb_of_le one_lt_two hpos hlam_le
@@ -247,7 +247,7 @@ theorem conditionalMinEntropy_mixture_le_superposition_add_logb_card
       hmixPos hsupPos
     have hlogNonneg : 0 ≤ Real.logb 2 (D.support.card : ℝ) :=
       Real.logb_nonneg one_lt_two (by exact_mod_cast hJ)
-    rw [conditionalMinEntropy, conditionalMinEntropy, if_pos hmixPos, if_pos hsupPos]
+    rw [conditionalMinEntropy, conditionalMinEntropy, ite_eq_left hmixPos, ite_eq_left hsupPos]
     calc ENNReal.ofReal (conditionalMinEntropyReal D.mixture σ)
         ≤ ENNReal.ofReal (conditionalMinEntropyReal D.superposition σ +
             Real.logb 2 (D.support.card : ℝ)) := by

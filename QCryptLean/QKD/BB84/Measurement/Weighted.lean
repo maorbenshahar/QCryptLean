@@ -52,7 +52,7 @@ theorem weightedMeasureAndRecord_operation_storedDiagonal
     (stored stored' : StoredRecord) (hne : stored ≠ stored') :
     ((weightedMeasureAndRecord p).operation observed rho) stored stored' = 0 := by
   unfold weightedMeasureAndRecord
-  rw [Instrument.keeping_operation_apply, if_neg]
+  rw [Instrument.keeping_operation_apply, ite_eq_right]
   intro hboth
   apply hne
   exact Prod.ext (Subsingleton.elim _ _) (hboth.1.trans hboth.2.symm)
@@ -81,10 +81,12 @@ def weightedMeasureBob (pA pB : PMF Basis) : PrivateAction (weightedMeasureAlice
 
 /-- One physical round with separate local basis laws: Alice, then Bob, then termination. -/
 def weightedSingleQubitRoundProgram (pA pB : PMF Basis) :
-    Program inputSystem (.leaf outputSystem) :=
-  cast (by
-    simp only [weightedMeasureBob, weightedMeasureAlice, weightedMeasureAliceWithSpectator,
-      PrivateAction.out_ofInstrument, inputSystem, TwoParty.set_alice, TwoParty.set_bob])
+    Program inputSystem (.leaf outputSystem) := by
+  have h : (weightedMeasureBob pA pB).out = outputSystem := by
+    change ((system Bit Bit).set .alice StoredRecord).set .bob StoredRecord =
+      system StoredRecord StoredRecord
+    rw [TwoParty.set_alice, TwoParty.set_bob]
+  exact cast (congrArg (fun R => Program inputSystem (.leaf R)) h)
     ((weightedMeasureAlice pA).then ((weightedMeasureBob pA pB).then .done))
 
 /-- Exact lifted Alice branch operation for arbitrary PMF, spectator, and input operator.
@@ -117,9 +119,17 @@ theorem weightedMeasureAliceWithSpectator_liftedOperation_apply
       simp [aliceInputAt, aliceOutputAt, MultipartiteSystem.splitAt, TwoParty.pairEquiv]
   change (((weightedMeasureAndRecord p).liftAt (system Bit S) .alice).operation observed rho)
     (aliceOutputAt stored s) (aliceOutputAt stored' s') = _
-  rw [Instrument.liftAt_operation_apply (R := system Bit S) .alice
-    (weightedMeasureAndRecord p)]
+  refine (Instrument.liftAt_operation_apply (R := system Bit S) .alice
+    (weightedMeasureAndRecord p) observed rho (aliceOutputAt stored s)
+      (aliceOutputAt stored' s')).trans ?_
   rw [hout_fst stored s, hout_fst stored' s']
+  change (weightedMeasureAndRecord p).operation observed
+    (rho.submatrix
+      (fun x : Bit => ((system Bit S).splitAt .alice).symm
+        (x, (((system Bit S).splitAtSet .alice StoredRecord) (aliceOutputAt stored s)).2))
+      (fun y : Bit => ((system Bit S).splitAt .alice).symm
+        (y, (((system Bit S).splitAtSet .alice StoredRecord) (aliceOutputAt stored' s')).2)))
+    stored stored' = _
   simp_rw [hrestore]
   unfold weightedMeasureAndRecord
   have hkeep := Instrument.keeping_operation_apply
@@ -128,11 +138,15 @@ theorem weightedMeasureAliceWithSpectator_liftedOperation_apply
     stored.1 stored'.1 stored.2 stored'.2
   refine hkeep.trans ?_
   by_cases hstored : stored.2 = observed ∧ stored'.2 = observed
-  · rw [if_pos hstored, if_pos hstored]
+  · rw [ite_eq_left hstored, ite_eq_left hstored]
     rw [Instrument.weightedChoice_operation]
-    simp [fixedBasisMeasurement, Instrument.operation,
-      Instrument.ofFine, matrixConjLinear, fixedBasisKraus,
-      Matrix.mul_apply, TwoParty.system]
+    change ((p observed.1).toReal : ℂ) *
+      (∑ _ : Unit, fixedBasisKraus observed.1 observed.2 *
+        rho.submatrix (fun x => aliceInputAt x s) (fun y => aliceInputAt y s') *
+          (fixedBasisKraus observed.1 observed.2)ᴴ) stored.1 stored'.1 = _
+    simp only [Finset.univ_unique, Finset.sum_singleton,
+      Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.submatrix_apply,
+      fixedBasisKraus, Fin.sum_univ_two]
     ring
   · simp [hstored]
 
@@ -147,13 +161,13 @@ theorem weightedMeasureAliceWithSpectator_sum_isRecordDiagonal
       ((∑ observed : Record,
           (weightedMeasureAliceWithSpectator p S).liftedOperation observed) rho) := by
   intro stored stored' s s' hne
-  simp only [LinearMap.sum_apply, Matrix.sum_apply]
-  simp_rw [weightedMeasureAliceWithSpectator_liftedOperation_apply]
+  change (∑ observed : Record, (weightedMeasureAliceWithSpectator p S).liftedOperation
+    observed rho (aliceOutputAt stored s) (aliceOutputAt stored' s')) = 0
   apply Finset.sum_eq_zero
   intro observed _
-  rw [if_neg]
-  intro hboth
-  exact hne (hboth.1.trans hboth.2.symm)
+  exact (weightedMeasureAliceWithSpectator_liftedOperation_apply
+    p observed rho stored stored' s s').trans
+      (ite_eq_right fun hboth => hne (hboth.1.trans hboth.2.symm))
 
 /-- At the uniform PMF, weighted recording has the existing branch operations. -/
 theorem weightedMeasureAndRecord_uniform_operation (observed : Record) :
@@ -168,7 +182,7 @@ theorem weightedMeasureAndRecord_uniform_operation (observed : Record) :
   rw [Instrument.keeping_operation_apply,
     Instrument.keeping_operation_apply]
   by_cases hstored : record = observed ∧ record' = observed
-  · rw [if_pos hstored, if_pos hstored,
+  · rw [ite_eq_left hstored, ite_eq_left hstored,
       Instrument.weightedChoice_uniform_operation]
   · simp [hstored]
 

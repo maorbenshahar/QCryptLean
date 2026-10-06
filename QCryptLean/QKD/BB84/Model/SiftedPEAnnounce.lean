@@ -239,7 +239,7 @@ private lemma retainedSiftedPEAnnounceIdealKeyAndAbortBranchKraus_pass_sum
   rw [Fintype.sum_prod_type, Finset.sum_comm]
   refine Finset.sum_congr rfl fun st _ => ?_
   by_cases h : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω
-  · simp only [h, if_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin]
+  · simp only [h, ite_true, Finset.sum_const, Finset.card_univ, Fintype.card_fin]
     rw [Finset.smul_sum]
     refine Finset.sum_congr rfl fun r _ => ?_
     rw [Matrix.smul_single, nsmul_eq_mul]
@@ -630,15 +630,15 @@ lemma retainedSiftedPEAnnouncePassBranchKraus_adjoint_mul
         else 0 := by
     ext a b
     by_cases h : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp [retainedSiftedPEAnnouncePassBranchKraus, h, Matrix.kroneckerMap,
         Matrix.single_apply, Matrix.one_apply, finProdFinEquiv_symm_apply,
         sum_single_finProdFinEquiv_apply]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       simp [retainedSiftedPEAnnouncePassBranchKraus, h]
   rw [hK]
   by_cases h : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     rw [matrix_single_sum_conjTranspose_mul_of_injective]
     · simp [h]
     · intro r r' hr
@@ -680,15 +680,15 @@ private lemma retainedSiftedPEAnnounceFailBranchKraus_adjoint_mul
         else 0 := by
     ext a b
     by_cases h : ¬ bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp [retainedSiftedPEAnnounceFailBranchKraus, h, Matrix.kroneckerMap,
         Matrix.single_apply, Matrix.one_apply, finProdFinEquiv_symm_apply,
         sum_single_finProdFinEquiv_apply]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       simp [retainedSiftedPEAnnounceFailBranchKraus, h]
   rw [hK]
   by_cases h : ¬ bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     rw [matrix_single_sum_conjTranspose_mul_of_injective]
     · simp [h]
     · intro r r' hr
@@ -927,15 +927,15 @@ lemma retainedSiftedPEAnnounceIdealPassKraus_adjoint_mul
         else 0 := by
     ext a b
     by_cases h : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp [retainedSiftedPEAnnounceIdealPassKraus, h, Matrix.kroneckerMap,
         Matrix.single_apply, Matrix.one_apply, finProdFinEquiv_symm_apply,
         sum_single_finProdFinEquiv_apply]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       simp [retainedSiftedPEAnnounceIdealPassKraus, h]
   rw [hK]
   by_cases h : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     rw [matrix_single_sum_conjTranspose_mul_of_injective]
     · simp [h]
     · intro r r' hr
@@ -1300,9 +1300,15 @@ private lemma symPermAnnounceCorrectionMap_bb84SiftedPEAnnounceLinear (n m ℓ �
     symPermAnnounceCorrectionMap n m ℓ ℓEV peSel leakEC π
         (bb84SiftedPEAnnounceLinear n m ℓ ℓEV peSel leakEC perm A) =
       bb84SiftedPEAnnounceLinear n m ℓ ℓEV peSel leakEC (perm * π) A := by
-  unfold symPermAnnounceCorrectionMap symPermAnnounceCorrectionUnitary
-    bb84SiftedPEAnnounceLinear
-  simp only [LinearMap.coe_mk, AddHom.coe_mk]
+  let hdim := bb84PEAnnounceBaseOutputDim_tensor_eq n m ℓ ℓEV peSel leakEC
+  change Op.castDim hdim (Op.tensor
+    (1 : Op (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC))
+    (permAnnounceRightMulUnitary n π)) *
+      Op.castDim hdim (Op.tensor A (permAnnounceProjector n perm)) *
+        (Op.castDim hdim (Op.tensor
+          (1 : Op (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC))
+          (permAnnounceRightMulUnitary n π)))ᴴ =
+    Op.castDim hdim (Op.tensor A (permAnnounceProjector n (perm * π)))
   rw [Op.castDim_conjTranspose]
   rw [Op.castDim_mul, Op.castDim_mul]
   rw [Op.tensor_conjTranspose, conjTranspose_one]
@@ -1361,7 +1367,7 @@ private noncomputable def symPermAnnounceCorrectionMapEveVisible (n m ℓ ℓEV 
 private theorem symPermAnnounceCorrectionMapEveVisible_isCPTP (n m ℓ ℓEV eveDim : ℕ)
     [NeZero eveDim] (peSel : Fin n → Bool) (leakEC : ℕ) (π : Equiv.Perm (Fin n)) :
     IsCPTP (⇑(symPermAnnounceCorrectionMapEveVisible n m ℓ ℓEV eveDim peSel leakEC π)) := by
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num)) (pow_ne_zero _ (by norm_num)))
       (NeZero.ne _)⟩
   simpa [symPermAnnounceCorrectionMapEveVisible, mapTensorIdLinear] using
@@ -1380,7 +1386,7 @@ private theorem announceLinearEveVisible_sum_right_mul_eq_correction_map (n m �
         (∑ π : Equiv.Perm (Fin n),
           bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV eveDim peSel leakEC π (F π)) := by
   classical
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num)) (pow_ne_zero _ (by norm_num)))
       (NeZero.ne _)⟩
   ext p q
@@ -1551,8 +1557,7 @@ theorem bb84SymChannels_permCov (n m ℓ ℓEV : ℕ) [NeZero n] [NeZero (4 ^ n)
       (((bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec Q
             δ).idealProtocolMap (eveDim := 1)).comp (bb84SiftedConjChannel n 1 peSel xSel)) σ ρ
     unfold bb84SymRealChannel bb84SymIdealChannel
-    simp only [LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.sum_apply,
-      LinearMap.comp_apply]
+    simp only [LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.sum_apply]
     rw [map_sub, map_smul, map_smul]
     exact
       congrArg₂

@@ -81,11 +81,10 @@ theorem rotateThree_measuredReferenceBlock_chronology
         rotateThree W x s t =
       let h : (QKD.BB84.Reduction.bobSiftUnitAnnouncement 3
           (fun _ => false) (fun _ => false) rotateThree).out () = FinalStage.rawSystem 3 := by
-        simp only [QKD.BB84.Reduction.bobSiftUnitAnnouncement,
-          PrivateAction.asUnitAnnouncement_out, QKD.BB84.Reduction.bobSiftPermutationPrivate,
-          QKD.BB84.Reduction.alicePermutationAnnouncement, PrivateAction.out_ofInstrument,
-          AnnouncedAction.out_ofInstrument, FinalStage.rawSystem, TwoParty.set_alice,
-          TwoParty.set_bob]
+        change ((FinalStage.rawSystem 3).set .alice (Fin (2 ^ 3))).set .bob (Fin (2 ^ 3)) = _
+        exact (congrArg (fun R : MultipartiteSystem Party => R.set .bob (Fin (2 ^ 3)))
+          (TwoParty.set_alice (Fin (2 ^ 3)) (Fin (2 ^ 3)) (Fin (2 ^ 3)))).trans
+          (TwoParty.set_bob (Fin (2 ^ 3)) (Fin (2 ^ 3)) (Fin (2 ^ 3)))
       let rho := retainedAnalysisProgramInputReferenceBlock W s t
       let KA := localKrausLift (FinalStage.rawSystem 3) .alice (Fin (2 ^ 3))
         (QKD.BB84.Model.siftPermHalf 3 (fun _ => false) (fun _ => false) rotateThree)
@@ -163,7 +162,7 @@ theorem acceptedAtKeys_ne : acceptedAtKeys (0, 0) ≠ acceptedAtKeys (0, 1) := b
 /-- The theorem's complete-point branch is zero for equal public exits carrying unequal keys. -/
 theorem acceptedAtKeys_offDiagonal_branch (z : ℂ) :
     (if acceptedAtKeys (0, 0) = acceptedAtKeys (0, 1) then z else 0) = 0 := by
-  rw [if_neg acceptedAtKeys_ne]
+  rw [ite_eq_right acceptedAtKeys_ne]
 
 /-- A complete two-round output with a supplied actual announced permutation. -/
 def twoRoundOutputAt (pi : Equiv.Perm (Fin 2)) :
@@ -184,7 +183,7 @@ theorem twoRoundOutputAt_ne :
 theorem twoRoundOutputAt_crossPermutation_branch (z : ℂ) :
     (if twoRoundOutputAt (Equiv.refl (Fin 2)) =
         twoRoundOutputAt (Equiv.swap 0 1) then z else 0) = 0 := by
-  rw [if_neg twoRoundOutputAt_ne]
+  rw [ite_eq_right twoRoundOutputAt_ne]
 
 /-- The unique zero-round raw point. -/
 def zeroRawPoint : (FinalStage.rawSystem 0).total :=
@@ -238,4 +237,3 @@ theorem asymmetricRoundReferenceUnit_regrouped :
   simp [asymmetricRoundReferenceUnit, Matrix.single_apply]
 
 end QKD.BB84.Reduction.RetainedBlocksAudit
-

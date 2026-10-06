@@ -224,7 +224,7 @@ private theorem vonNeumannEntropy_tensorPowGen_aux {d : ℕ} [NeZero d] (n : ℕ
   | zero =>
     -- Base case: tensorPowGen 0 = castDim trivial, entropy of trivial is 0
     simp only [DensityOp.tensorPowGen]
-    haveI : NeZero (d ^ 0) := ⟨by simp⟩
+    have : NeZero (d ^ 0) := ⟨by simp⟩
     have hcast := @vonNeumannEntropy_castDim 1 (d ^ 0) (NeZero.one) _
       (by simp : 1 = d ^ 0) DensityOp.trivial
     rw [hcast]
@@ -234,9 +234,9 @@ private theorem vonNeumannEntropy_tensorPowGen_aux {d : ℕ} [NeZero d] (n : ℕ
     -- Inductive case: tensorPowGen (k+1) = castDim (ρ.tensor (ρ.tensorPowGen k))
     simp only [DensityOp.tensorPowGen]
     -- Need NeZero (d ^ k) for the inductive hypothesis
-    haveI hk : NeZero (d ^ k) := ⟨pow_ne_zero k (NeZero.ne d)⟩
-    haveI hdk : NeZero (d * d ^ k) := ⟨by simp [NeZero.ne d]⟩
-    haveI hsucc : NeZero (d ^ (k + 1)) := ⟨pow_ne_zero (k + 1) (NeZero.ne d)⟩
+    have hk : NeZero (d ^ k) := ⟨pow_ne_zero k (NeZero.ne d)⟩
+    have hdk : NeZero (d * d ^ k) := ⟨by simp [NeZero.ne d]⟩
+    have hsucc : NeZero (d ^ (k + 1)) := ⟨pow_ne_zero (k + 1) (NeZero.ne d)⟩
     have hcast := @vonNeumannEntropy_castDim (d * d ^ k) (d ^ (k + 1)) hdk hsucc
       (by ring : d * d ^ k = d ^ (k + 1)) (ρ.tensor (ρ.tensorPowGen k))
     rw [hcast]
@@ -480,7 +480,7 @@ theorem schmidt_same_nonzero_eigenvalues {n m : ℕ} [NeZero n] [NeZero m]
   6. Use eigenvalueSpectrum_entropy_eq to relate eigenvaluesOf to Hermitian eigenvalues
   -/
   -- Step 1: Extract the ket from the pure state
-  haveI : NeZero (n * m) := ⟨Nat.mul_pos (NeZero.pos n) (NeZero.pos m) |>.ne'⟩
+  have : NeZero (n * m) := ⟨Nat.mul_pos (NeZero.pos n) (NeZero.pos m) |>.ne'⟩
   let ψ := ρ.pureKetOf hpure
   -- Step 2: Form the coefficient matrix
   let C := coefficientMatrix ψ

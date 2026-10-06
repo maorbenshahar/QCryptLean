@@ -194,9 +194,12 @@ theorem weightedStreamStep_kraus_apply (p : PMF Basis) (F : Type)
         (Real.sqrt (p observed.1).toReal : ℂ) *
           basisUnitary observed.1 observed.2 (xs 0)
       else 0 := by
-  simp [weightedStreamStep, streamInputSplit, streamOutputSplit,
-    Instrument.onFactorKraus_apply, weightedMeasureAndRecord_kraus_apply]
-  by_cases h : fOut = fIn ∧ tailOut = Fin.tail xs <;> simp [h]
+  refine (Instrument.onFactorKraus_apply (streamInputSplit F n) (streamOutputSplit F n)
+    (weightedMeasureAndRecord p) observed () ((fOut, stored), tailOut) (fIn, xs)).trans ?_
+  change (if (fOut, tailOut) = (fIn, Fin.tail xs) then
+    (weightedMeasureAndRecord p).kraus observed () stored (xs 0) else 0) = _
+  rw [weightedMeasureAndRecord_kraus_apply]
+  split_ifs <;> simp_all
 
 /-- Exact arbitrary-operator operation of one weighted destructive stream-head step.
 
@@ -255,8 +258,11 @@ def weightedStreamBobAction (pA pB : PMF Basis)
 @[simp] theorem weightedStreamBobAction_out (pA pB : PMF Basis)
     (F : Type) [Nonempty F] [Fintype F] [DecidableEq F] (n : ℕ) :
     (weightedStreamBobAction pA pB F n).out = weightedStreamSystem (F × StoredRecord) n := by
-  simp only [weightedStreamBobAction, weightedStreamAliceAction, PrivateAction.out_ofInstrument,
-    weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob]
+  change ((system (streamRegister F (n + 1)) (streamRegister F (n + 1))).set
+    .alice (streamRegister (F × StoredRecord) n)).set .bob
+      (streamRegister (F × StoredRecord) n) = _
+  rw [TwoParty.set_alice, TwoParty.set_bob]
+  rfl
 
 /-- Transport from the next stream system preserves Alice's and Bob's output coordinates. -/
 @[simp] theorem weightedStreamBobAction_out_cast_pairEquiv_symm (pA pB : PMF Basis)

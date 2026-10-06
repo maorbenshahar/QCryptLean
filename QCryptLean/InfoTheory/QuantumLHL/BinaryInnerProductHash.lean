@@ -287,7 +287,7 @@ lemma sum_collisionCount_le (T : Finset (I → Fin 2)) (e : I → Fin 2) :
       intro y _
       by_cases h : y = e
       · subst y
-        simp only [ne_eq, not_true_eq_false, false_and, if_false, Finset.sum_const_zero]
+        simp only [ne_eq, not_true_eq_false, false_and, ite_false, Finset.sum_const_zero]
         positivity
       · simpa only [h, ne_eq, not_false_eq_true, true_and] using
           (sum_binaryInnerProductSyndrome_collision (m := m) y e h).le
@@ -324,7 +324,7 @@ lemma exists_binaryInnerProductSyndrome_separating (T : Finset (I → Fin 2))
   classical
   obtain ⟨A, hA⟩ := exists_binaryInnerProductSyndrome_collision_le (m := m) T
     (fun e => if e = 0 then 1 else 0) (fun e => by positivity) (by simp)
-  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true] at hA
+  simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true] at hA
   refine ⟨A, fun e he hs => ?_⟩
   by_contra hne
   have hcount := one_le_collisionCount (binaryInnerProductSyndrome A) T 0 e he hne

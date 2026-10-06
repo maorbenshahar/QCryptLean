@@ -358,7 +358,7 @@ theorem leafIdeal_coordinate_entry (e : B.Exit) (rho : Op (B.system e).total)
   simp_rw [SharedKeyReplacement.kraus_sandwich_apply]
   by_cases h : a = b ∧ a' = b' ∧ a = a'
   · rcases h with ⟨rfl, rfl, rfl⟩
-    rw [if_pos ⟨rfl, rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl, rfl⟩]
     simp only [and_self]
     rw [Finset.sum_eq_single a]
     · simp [Matrix.submatrix_apply, Finset.mul_sum]
@@ -366,14 +366,14 @@ theorem leafIdeal_coordinate_entry (e : B.Exit) (rho : Op (B.system e).total)
       have hne' : a ≠ fresh := fun h => hne h.symm
       simp [hne']
     · simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro fresh _
     apply Finset.sum_eq_zero
     intro oldA _
     apply Finset.sum_eq_zero
     intro oldB _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hf
     exact h ⟨hf.1.trans hf.2.1.symm, hf.2.2.1.trans hf.2.2.2.symm,
       hf.1.trans hf.2.2.1.symm⟩
@@ -418,7 +418,7 @@ theorem ambientKraus_apply_eq_zero_of_exit_ne
         L.leafIdealKraus q.1 q.2 z y) = 0 := by
     apply Finset.sum_eq_zero
     intro z _
-    rw [if_neg, zero_mul]
+    rw [ite_eq_right, zero_mul]
     intro heq
     exact h (congrArg Sigma.fst heq)
   rw [hleft, zero_mul]
@@ -510,9 +510,9 @@ theorem leafIdeal_abort (e : B.Exit) (h : L.disposition e = .abort)
   have hKey : (L.disposition e).Key = Unit := by
     simpa [Disposition.Key] using congrArg Disposition.Key h
   let keyEquiv : (L.disposition e).Key ≃ Unit := Equiv.cast hKey
-  letI : Subsingleton (L.disposition e).Key :=
+  let : Subsingleton (L.disposition e).Key :=
     ⟨fun x y => keyEquiv.injective (Subsingleton.elim _ _)⟩
-  letI : Unique (L.disposition e).Key :=
+  let : Unique (L.disposition e).Key :=
     { default := keyEquiv.symm ()
       uniq := fun x => Subsingleton.elim _ _ }
   ext a b

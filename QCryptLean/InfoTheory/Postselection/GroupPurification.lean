@@ -158,7 +158,7 @@ lemma pairedGroupAction_mul_groupPairedTwirlProjector
     (π : G → Op d) (hπ : IsUnitaryRep π) (v : Fin n → G) :
     Op.tensor (tensorFamily fun k => π (v k)) (tensorFamily fun k => entryConj (π (v k))) *
       groupPairedTwirlProjector n π = groupPairedTwirlProjector n π := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   rw [groupPairedTwirlProjector_eq_sum, mul_smul_comm, Finset.mul_sum]
   congr 1
   simp_rw [Op.tensor_mul, tensorFamily_mul]
@@ -194,7 +194,7 @@ lemma groupPairedTwirlProjector_commute_symmetricProjectorPaired {G : Type*} [Gr
     {d n : ℕ} [NeZero d] [NeZero n] (π : G → Op d) :
     groupPairedTwirlProjector n π * symmetricProjectorPaired d n =
       symmetricProjectorPaired d n * groupPairedTwirlProjector n π := by
-  haveI : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
   -- both projectors, pulled back to the flat register `(ℂ^{d·d})^{⊗n}`
   have hQ' : groupPairedTwirlProjector n π =
       Matrix.reindex (interleavingEquivGen d d n).symm (interleavingEquivGen d d n).symm
@@ -252,7 +252,7 @@ theorem purificationDensityOp_groupTwirlSupported {G : Type*} [Group G] [Fintype
     (ρ : DensityOp (d ^ n)) (hiid : IsIIDGroupInvariant π ρ) :
     groupPairedTwirlProjector n π * (purificationDensityOp ρ).toOp *
       groupPairedTwirlProjector n π = (purificationDensityOp ρ).toOp := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   -- left-invariance: average the per-round-pattern left-invariance over `Gⁿ`
   have hQleft : groupPairedTwirlProjector n π * (purificationDensityOp ρ).toOp
       = (purificationDensityOp ρ).toOp := by
@@ -285,7 +285,7 @@ theorem groupPurification {G : Type*} [Group G] [Fintype G] {d n : ℕ} [NeZero 
       groupPairedTwirlProjector n π * Ψ.toOp * groupPairedTwirlProjector n π = Ψ.toOp ∧
       symmetricProjectorPaired d n * Ψ.toOp * symmetricProjectorPaired d n = Ψ.toOp := by
   -- The canonical purification `Ψ_ρ = (√ρ ⊗ 1)|Ω⟩⟨Ω|(√ρ ⊗ 1)†`
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   refine ⟨purificationDensityOp ρ, purificationDensityOp_isPure ρ, ?_, ?_, ?_⟩
   · -- Partial trace recovers `ρ` (the canonical purification's marginal)
     exact congrArg (fun τ : DensityOp (d ^ n) => τ.toOp)

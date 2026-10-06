@@ -132,7 +132,7 @@ theorem ckrTensorTraceNorm_precomp_permuteSignal_pairedPermInvariant_eq_aux
       ckrTensorTraceNorm Δ τ := by
   unfold ckrTensorTraceNorm
   let U : Op (4 ^ n) := permutationRepresentation 4 n π
-  haveI : NeZero (dimOut * (4 ^ n)) :=
+  have : NeZero (dimOut * (4 ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have hUU : Uᴴ * U = 1 := (permutationRepresentation_unitary 4 n π).1
   have hUU' : U * Uᴴ = 1 := (permutationRepresentation_unitary 4 n π).2

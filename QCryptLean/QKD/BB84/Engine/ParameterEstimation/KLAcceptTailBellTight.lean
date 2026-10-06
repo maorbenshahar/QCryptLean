@@ -47,7 +47,7 @@ theorem bb84_bellPeLabelledEnVRhoEtilde_eq_haar_integral_blocks
           ((bb84PELabelledPairedHaarPerSigmaFamily (m := m) 1 (bb84UnitRegisterEmbed n)
               (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ
             (bellWembed φ)).stateMap x).toOp i j ∂(deFinetti_haarMeasure 4).measure := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   intro x i j
   exact tensorLeftKernel_blocks_integral_eq
     (bb84BellEnVRhoEtilde 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q

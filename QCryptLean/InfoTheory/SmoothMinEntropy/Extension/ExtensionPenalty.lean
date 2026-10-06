@@ -141,7 +141,7 @@ theorem minFeasibleLambda_extension_maxMixed_le_dimR_sq
     dsimp [c]
     exact sq_nonneg _
   have hsub :
-      c • setOf (isFeasible ρE σE) ⊆ setOf (isFeasible ρER σER) := by
+      c • Set.ofPred (isFeasible ρE σE) ⊆ Set.ofPred (isFeasible ρER σER) := by
     rintro u ⟨t, ht, rfl⟩
     have ht_lift :
         isFeasible ρER
@@ -150,25 +150,25 @@ theorem minFeasibleLambda_extension_maxMixed_le_dimR_sq
       isFeasible_extension_maxMixed_of_isFeasible ρER ρE hblocks
         (by simpa [σE] using ht)
     simpa [σER, c, smul_eq_mul] using ht_lift
-  have hscaled_nonempty : (c • setOf (isFeasible ρE σE) : Set ℝ).Nonempty := by
+  have hscaled_nonempty : (c • Set.ofPred (isFeasible ρE σE) : Set ℝ).Nonempty := by
     obtain ⟨t, ht⟩ := hfeasE
     exact ⟨c • t, ⟨t, by simpa [σE] using ht, rfl⟩⟩
   have hle_scaled :
-      sInf (setOf (isFeasible ρER σER)) ≤
-        sInf (c • setOf (isFeasible ρE σE) : Set ℝ) :=
+      sInf (Set.ofPred (isFeasible ρER σER)) ≤
+        sInf (c • Set.ofPred (isFeasible ρE σE) : Set ℝ) :=
     csInf_le_csInf (minFeasibleLambda_bddBelow ρER σER) hscaled_nonempty hsub
   have hscaled_inf :
-      sInf (c • setOf (isFeasible ρE σE) : Set ℝ) =
-        c * sInf (setOf (isFeasible ρE σE)) := by
+      sInf (c • Set.ofPred (isFeasible ρE σE) : Set ℝ) =
+        c * sInf (Set.ofPred (isFeasible ρE σE)) := by
     simpa [smul_eq_mul] using
-      Real.sInf_smul_of_nonneg hc_nonneg (setOf (isFeasible ρE σE))
+      Real.sInf_smul_of_nonneg hc_nonneg (Set.ofPred (isFeasible ρE σE))
   calc
     minFeasibleLambda ρER
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR)))
-        = sInf (setOf (isFeasible ρER σER)) := by
+        = sInf (Set.ofPred (isFeasible ρER σER)) := by
           simp [minFeasibleLambda, σER]
-    _ ≤ sInf (c • setOf (isFeasible ρE σE) : Set ℝ) := hle_scaled
-    _ = c * sInf (setOf (isFeasible ρE σE)) := hscaled_inf
+    _ ≤ sInf (c • Set.ofPred (isFeasible ρE σE) : Set ℝ) := hle_scaled
+    _ = c * sInf (Set.ofPred (isFeasible ρE σE)) := hscaled_inf
     _ = (dR : ℝ) ^ 2 *
         minFeasibleLambda ρE
           (DensityOp.toSubDensityOp (DensityOp.maxMixed dE)) := by
@@ -498,12 +498,12 @@ lemma minFeasibleLambda_marginal_maxMixed_le_extension
   let σE : SubDensityOp dE :=
     DensityOp.toSubDensityOp (DensityOp.maxMixed dE)
   unfold minFeasibleLambda
-  have hsub : setOf (isFeasible ρER σER) ⊆ setOf (isFeasible ρE σE) := by
+  have hsub : Set.ofPred (isFeasible ρER σER) ⊆ Set.ofPred (isFeasible ρE σE) := by
     intro t ht
     exact isFeasible_marginal_maxMixed_of_isFeasible_extension ρER ρE hblocks
       (by simpa [σER] using ht)
   obtain ⟨t, ht⟩ := hfeasER
-  have hne : (setOf (isFeasible ρER σER)).Nonempty :=
+  have hne : (Set.ofPred (isFeasible ρER σER)).Nonempty :=
     ⟨t, by simpa [σER] using ht⟩
   exact csInf_le_csInf (minFeasibleLambda_bddBelow ρE σE) hne hsub
 
@@ -913,8 +913,8 @@ theorem CQState.purifiedDistance_tensorMaxMixed_le_extensionRadius
     CQState.purifiedDistance ρER ρEtensor ≤
       extensionRadius dR := by
   unfold CQState.purifiedDistance
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero ((dE * dR) * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero ((dE * dR) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   apply purifiedDistance_le_extensionRadius_of_inv_dim_le_fidelityGen
   apply inv_dim_le_fidelityGen_of_trace_div_dim_le_fidelity
@@ -1114,40 +1114,40 @@ theorem minFeasibleLambda_extension_freeRef_le
       partialTraceB (ρEV.stateMap x).toOp = (ρE.stateMap x).toOp) :
     minFeasibleLambda ρEV (σE.tensorMaxMixed dV) ≤
       (dV : ℝ) ^ 2 * minFeasibleLambda ρE σE := by
-  by_cases hfeasE : (setOf (isFeasible ρE σE)).Nonempty
+  by_cases hfeasE : (Set.ofPred (isFeasible ρE σE)).Nonempty
   · let c : ℝ := (dV : ℝ) ^ 2
     have hc_nonneg : 0 ≤ c := sq_nonneg _
     have hsub :
-        c • setOf (isFeasible ρE σE) ⊆ setOf (isFeasible ρEV (σE.tensorMaxMixed dV)) := by
+        c • Set.ofPred (isFeasible ρE σE) ⊆ Set.ofPred (isFeasible ρEV (σE.tensorMaxMixed dV)) := by
       rintro u ⟨s, hs, rfl⟩
       have ht_lift :
           isFeasible ρEV (σE.tensorMaxMixed dV) ((dV : ℝ) ^ 2 * s) :=
         isFeasible_extension_freeRef_of_isFeasible ρEV ρE σE hblocks hs
       simpa [c, smul_eq_mul] using ht_lift
     have hscaled_nonempty :
-        (c • setOf (isFeasible ρE σE) : Set ℝ).Nonempty := by
+        (c • Set.ofPred (isFeasible ρE σE) : Set ℝ).Nonempty := by
       obtain ⟨s, hs⟩ := hfeasE
       exact ⟨c • s, ⟨s, hs, rfl⟩⟩
     have hle_scaled :
-        sInf (setOf (isFeasible ρEV (σE.tensorMaxMixed dV))) ≤
-          sInf (c • setOf (isFeasible ρE σE) : Set ℝ) :=
+        sInf (Set.ofPred (isFeasible ρEV (σE.tensorMaxMixed dV))) ≤
+          sInf (c • Set.ofPred (isFeasible ρE σE) : Set ℝ) :=
       csInf_le_csInf (minFeasibleLambda_bddBelow ρEV (σE.tensorMaxMixed dV))
         hscaled_nonempty hsub
     have hscaled_inf :
-        sInf (c • setOf (isFeasible ρE σE) : Set ℝ) =
-          c * sInf (setOf (isFeasible ρE σE)) := by
+        sInf (c • Set.ofPred (isFeasible ρE σE) : Set ℝ) =
+          c * sInf (Set.ofPred (isFeasible ρE σE)) := by
       simpa [smul_eq_mul] using
-        Real.sInf_smul_of_nonneg hc_nonneg (setOf (isFeasible ρE σE))
+        Real.sInf_smul_of_nonneg hc_nonneg (Set.ofPred (isFeasible ρE σE))
     calc
       minFeasibleLambda ρEV (σE.tensorMaxMixed dV)
-          = sInf (setOf (isFeasible ρEV (σE.tensorMaxMixed dV))) := rfl
-      _ ≤ sInf (c • setOf (isFeasible ρE σE) : Set ℝ) := hle_scaled
-      _ = c * sInf (setOf (isFeasible ρE σE)) := hscaled_inf
+          = sInf (Set.ofPred (isFeasible ρEV (σE.tensorMaxMixed dV))) := rfl
+      _ ≤ sInf (c • Set.ofPred (isFeasible ρE σE) : Set ℝ) := hle_scaled
+      _ = c * sInf (Set.ofPred (isFeasible ρE σE)) := hscaled_inf
       _ = (dV : ℝ) ^ 2 * minFeasibleLambda ρE σE := rfl
   · -- `E` feasible set empty: both `minFeasibleLambda`s are the `sInf ∅ = 0` sentinel.
-    have hE_empty : setOf (isFeasible ρE σE) = ∅ :=
+    have hE_empty : Set.ofPred (isFeasible ρE σE) = ∅ :=
       Set.not_nonempty_iff_eq_empty.mp hfeasE
-    have hEV_empty : setOf (isFeasible ρEV (σE.tensorMaxMixed dV)) = ∅ := by
+    have hEV_empty : Set.ofPred (isFeasible ρEV (σE.tensorMaxMixed dV)) = ∅ := by
       apply Set.not_nonempty_iff_eq_empty.mp
       rintro ⟨t, ht⟩
       have hfeasEt : isFeasible ρE σE t :=
@@ -1172,11 +1172,11 @@ theorem minFeasibleLambda_marginal_freeRef_le_extension
       minFeasibleLambda ρEV (σE.tensorMaxMixed dV) := by
   unfold minFeasibleLambda
   have hsub :
-      setOf (isFeasible ρEV (σE.tensorMaxMixed dV)) ⊆ setOf (isFeasible ρE σE) := by
+      Set.ofPred (isFeasible ρEV (σE.tensorMaxMixed dV)) ⊆ Set.ofPred (isFeasible ρE σE) := by
     intro t ht
     exact isFeasible_marginal_freeRef_of_isFeasible_extension ρEV ρE σE hblocks ht
   obtain ⟨t, ht⟩ := hfeasEV
-  have hne : (setOf (isFeasible ρEV (σE.tensorMaxMixed dV))).Nonempty := ⟨t, ht⟩
+  have hne : (Set.ofPred (isFeasible ρEV (σE.tensorMaxMixed dV))).Nonempty := ⟨t, ht⟩
   exact csInf_le_csInf (minFeasibleLambda_bddBelow ρE σE) hne hsub
 
 /-- Unsmoothed free-reference register-extension penalty (Nahar et al. B17), away from the
@@ -1383,7 +1383,7 @@ private noncomputable def CQState.tensorRightSub {X : Type*} [Fintype X] {dE dτ
         = (∑ x : X, (ρ.stateMap x).trace) * τ.trace := by
       simp_rw [SubDensityOp.tensor_trace]; rw [← Finset.sum_mul]
     rw [hsum]
-    exact mul_le_one₀ ρ.weight_le_one τ.trace_nonneg τ.trace_le_one
+    exact (mul_le_of_le_one_left τ.trace_nonneg ρ.weight_le_one).trans τ.trace_le_one
 
 @[simp] private lemma CQState.tensorRightSub_stateMap {X : Type*} [Fintype X] {dE dτ : ℕ}
     (ρ : CQState X dE) (τ : SubDensityOp dτ) (x : X) :
@@ -1425,9 +1425,9 @@ private lemma isFeasible_of_isFeasible_tensorRightSub {X : Type*} [Fintype X] {d
 private lemma minFeasibleLambda_eq_zero_of_not_feasible {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) (h : ¬ hasFeasibleLambda ρ σ) :
     minFeasibleLambda ρ σ = 0 := by
-  have hempty : setOf (isFeasible ρ σ) = ∅ := by
+  have hempty : Set.ofPred (isFeasible ρ σ) = ∅ := by
     ext t
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     exact fun ht => h ⟨t, ht⟩
   rw [minFeasibleLambda, hempty, Real.sInf_empty]
 
@@ -1509,9 +1509,9 @@ private lemma CQState.purifiedDistance_tensorRightSub_le
     (ρ σ : CQState X dE) (τ : SubDensityOp dτ) :
     CQState.purifiedDistance (ρ.tensorRightSub τ) (σ.tensorRightSub τ) ≤
       CQState.purifiedDistance ρ σ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
-  haveI : NeZero ((dE * dτ) * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
+  have : NeZero ((dE * dτ) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne (dE * dτ)) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   apply purifiedDistance_le_of_fidelityGen_ge
@@ -1569,7 +1569,7 @@ theorem smoothMinEntropy_extension_maxMixed_ge_marginal
     smoothMinEntropy ε ρE (DensityOp.toSubDensityOp (DensityOp.maxMixed dE)) ≤
       smoothMinEntropy (ε + extensionRadius dR) ρER
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR))) := by
-  haveI : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
+  have : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   apply smoothMinEntropy_le_of_transport
   intro τ hd
   obtain ⟨ρtensor, hρtensor⟩ := CQState.tensorMaxMixed_exists (X := X) (dE := dE) dR ρE
@@ -1595,7 +1595,7 @@ theorem smoothMinEntropy_marginal_maxMixed_ge_extension
     smoothMinEntropy ε ρER
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR))) ≤
       smoothMinEntropy ε ρE (DensityOp.toSubDensityOp (DensityOp.maxMixed dE)) := by
-  haveI : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
+  have : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   apply smoothMinEntropy_le_of_transport
   intro τ hd
   refine ⟨τ.partialTraceB, ?_, fun _ ht =>
@@ -1614,7 +1614,7 @@ theorem smoothMinEntropy_tensorMaxMixed_maxMixed_eq
     smoothMinEntropy ε ρEtensor
         (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR))) =
       smoothMinEntropy ε ρE (DensityOp.toSubDensityOp (DensityOp.maxMixed dE)) := by
-  haveI : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
+  have : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   apply le_antisymm
   · apply smoothMinEntropy_marginal_maxMixed_ge_extension ρEtensor ρE _ ε
     intro x
@@ -1638,7 +1638,7 @@ theorem smoothMinEntropy_extension_freeRef_ge_marginal_sub_twice_log_dim_sameRad
     smoothMinEntropy ε ρE σE ≤
       smoothMinEntropy ε ρEV (σE.tensorMaxMixed dV) +
         ENNReal.ofReal ((2 : ℝ) * Real.log (dV : ℝ) / Real.log 2) := by
-  haveI : NeZero (dE * dV) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dV)⟩
+  have : NeZero (dE * dV) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dV)⟩
   apply smoothMinEntropy_le_add_of_transport
   intro τ hd
   have hmarg := CQState.partialTraceB_eq_of_stateMap_toOp ρEV ρE hblocks
@@ -1688,7 +1688,7 @@ theorem smoothMinEntropyReal_extension_maxMixed_ge_marginal_of_bddAbove
     (hblocks : ∀ x : X,
       partialTraceB (ρER.stateMap x).toOp = (ρE.stateMap x).toOp)
     (ε : ℝ) (hε_nn : 0 ≤ ε)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal (ε + extensionRadius dR) ρER
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal (ε + extensionRadius dR) ρER
       (DensityOp.toSubDensityOp (DensityOp.maxMixed (dE * dR)))))) :
     smoothMinEntropyReal ε ρE
         (DensityOp.toSubDensityOp (DensityOp.maxMixed dE)) ≤
@@ -1775,7 +1775,7 @@ theorem smoothMinEntropyReal_marginal_maxMixed_ge_extension
     DensityOp.toSubDensityOp (DensityOp.maxMixed dE)
   by_cases hε_nn : 0 ≤ ε
   · unfold smoothMinEntropyReal
-    by_cases hbddE : BddAbove (setOf (isInSmoothedSetReal ε ρE σE))
+    by_cases hbddE : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρE σE))
     · apply csSup_le
       · exact ⟨conditionalMinEntropyReal ρER σER, ρER, rfl, by
           rw [CQState.purifiedDistance_self_zero]
@@ -1794,7 +1794,7 @@ theorem smoothMinEntropyReal_marginal_maxMixed_ge_extension
             hdER
         have hmem :
             conditionalMinEntropyReal ρEtilde σE ∈
-              setOf (isInSmoothedSetReal ε ρE σE) :=
+              Set.ofPred (isInSmoothedSetReal ε ρE σE) :=
           ⟨ρEtilde, rfl, hdist⟩
         have hblocks_tilde : ∀ x : X,
             partialTraceB (ρERtilde.stateMap x).toOp =
@@ -1809,17 +1809,17 @@ theorem smoothMinEntropyReal_marginal_maxMixed_ge_extension
               ρERtilde ρEtilde hblocks_tilde
         exact le_trans hH (le_csSup hbddE hmem)
     · have hnotER :
-          ¬ BddAbove (setOf (isInSmoothedSetReal ε ρER σER)) := by
+          ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρER σER)) := by
         simpa [σER, σE] using
           smoothedSetReal_extension_maxMixed_not_bddAbove_of_marginal
             ρER ρE hblocks ε hε_nn (by simpa [σE] using hbddE)
-      rw [show sSup (setOf (isInSmoothedSetReal ε ρER σER)) =
+      rw [show sSup (Set.ofPred (isInSmoothedSetReal ε ρER σER)) =
           sSup (∅ : Set ℝ) from csSup_of_not_bddAbove hnotER,
-        show sSup (setOf (isInSmoothedSetReal ε ρE σE)) =
+        show sSup (Set.ofPred (isInSmoothedSetReal ε ρE σE)) =
           sSup (∅ : Set ℝ) from csSup_of_not_bddAbove hbddE]
   · have hε_lt : ε < 0 := lt_of_not_ge hε_nn
     unfold smoothMinEntropyReal
-    have hleft_empty : setOf (isInSmoothedSetReal ε ρER σER) = ∅ := by
+    have hleft_empty : Set.ofPred (isInSmoothedSetReal ε ρER σER) = ∅ := by
       ext v
       constructor
       · intro hv
@@ -1830,7 +1830,7 @@ theorem smoothMinEntropyReal_marginal_maxMixed_ge_extension
         linarith
       · intro hv
         cases hv
-    have hright_empty : setOf (isInSmoothedSetReal ε ρE σE) = ∅ := by
+    have hright_empty : Set.ofPred (isInSmoothedSetReal ε ρE σE) = ∅ := by
       ext v
       constructor
       · intro hv
@@ -1869,8 +1869,8 @@ theorem smoothMinEntropyReal_extension_maxMixed_ge_marginal_sub_twice_log_dim_sa
     Real.log_nonneg (by exact_mod_cast NeZero.one_le)
   have hpenalty_nn : 0 ≤ penalty := by
     rw [hpenalty]; positivity
-  set A := setOf (isInSmoothedSetReal ε ρE σE) with hA
-  set B := setOf (isInSmoothedSetReal ε ρEtensor σER) with hB
+  set A := Set.ofPred (isInSmoothedSetReal ε ρE σE) with hA
+  set B := Set.ofPred (isInSmoothedSetReal ε ρEtensor σER) with hB
   have hA_ne : A.Nonempty := ⟨conditionalMinEntropyReal ρE σE, ρE, rfl, by
     rw [CQState.purifiedDistance_self_zero]; exact hε_nn⟩
   have h_AB : ∀ a ∈ A, ∃ b ∈ B, a - penalty ≤ b := by
@@ -1945,14 +1945,14 @@ theorem smoothMinEntropyReal_extension_freeRef_ge_marginal_sub_twice_log_dim_sam
         (2 : ℝ) * Real.log (dV : ℝ) / Real.log 2 ≤
       smoothMinEntropyReal ε ρEV (σE.tensorMaxMixed dV) := by
   classical
-  haveI : NeZero (dE * dV) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dV)⟩
+  have : NeZero (dE * dV) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dV)⟩
   set penalty : ℝ := (2 : ℝ) * Real.log (dV : ℝ) / Real.log 2 with hpenalty
   have hlog2 : 0 < Real.log 2 := Real.log_pos one_lt_two
   have hlogdV_nn : 0 ≤ Real.log (dV : ℝ) :=
     Real.log_nonneg (by exact_mod_cast NeZero.one_le)
   have hpenalty_nn : 0 ≤ penalty := by rw [hpenalty]; positivity
-  set A := setOf (isInSmoothedSetReal ε ρE σE) with hA
-  set B := setOf (isInSmoothedSetReal ε ρEV (σE.tensorMaxMixed dV)) with hB
+  set A := Set.ofPred (isInSmoothedSetReal ε ρE σE) with hA
+  set B := Set.ofPred (isInSmoothedSetReal ε ρEV (σE.tensorMaxMixed dV)) with hB
   have hA_ne : A.Nonempty := ⟨conditionalMinEntropyReal ρE σE, ρE, rfl, by
     rw [CQState.purifiedDistance_self_zero]; exact hε_nn⟩
   have hmarg : ρEV.partialTraceB = ρE :=
@@ -1966,7 +1966,7 @@ theorem smoothMinEntropyReal_extension_freeRef_ge_marginal_sub_twice_log_dim_sam
       ⟨ρ'EV, rfl, hdEV⟩, ?_⟩
     by_cases hposE : 0 < minFeasibleLambda ρ' σE
     · -- `λ_E > 0` forces `λ_EV > 0`: apply the unsmoothed free-reference penalty.
-      have hsetE_ne : (setOf (isFeasible ρ' σE)).Nonempty := by
+      have hsetE_ne : (Set.ofPred (isFeasible ρ' σE)).Nonempty := by
         by_contra hempty
         rw [Set.not_nonempty_iff_eq_empty] at hempty
         have : minFeasibleLambda ρ' σE = 0 := by
@@ -2021,7 +2021,7 @@ theorem smoothMinEntropyReal_extension_freeRef_ge_marginal_sub_twice_log_dim_sam
         · exact conditionalMinEntropyReal_marginal_freeRef_ge_extension_of_pos
             ρtilde ρtildeE σE hblocks_tilde hfeasEV hposE
         · -- EV feasible set empty: `b = conditionalMinEntropyReal ρtilde (...) = 0 ≤ a`.
-          have hEV_empty : setOf (isFeasible ρtilde (σE.tensorMaxMixed dV)) = ∅ := by
+          have hEV_empty : Set.ofPred (isFeasible ρtilde (σE.tensorMaxMixed dV)) = ∅ := by
             apply Set.not_nonempty_iff_eq_empty.mp
             rintro ⟨t, ht⟩; exact hfeasEV ⟨t, ht⟩
           have hb0 : conditionalMinEntropyReal ρtilde (σE.tensorMaxMixed dV) = 0 := by
@@ -2029,7 +2029,7 @@ theorem smoothMinEntropyReal_extension_freeRef_ge_marginal_sub_twice_log_dim_sam
             rw [hEV_empty, Real.sInf_empty, Real.log_zero, neg_zero, zero_div]
           rw [hb0]
           exfalso
-          have hE_empty : setOf (isFeasible ρtildeE σE) = ∅ := by
+          have hE_empty : Set.ofPred (isFeasible ρtildeE σE) = ∅ := by
             apply Set.not_nonempty_iff_eq_empty.mp
             rintro ⟨t, ht⟩
             exact hfeasEV ⟨(dV : ℝ) ^ 2 * t,
@@ -2080,7 +2080,7 @@ theorem smoothMinEntropyReal_le_condTensor_decoupled_ancilla
     (σE : SubDensityOp dE) (τ : SubDensityOp dτ)
     (hproduct : ∀ x : X, (ρEV.stateMap x).toOp = ((ρE.stateMap x).tensor τ).toOp)
     (hτ_weight : 0 < τ.trace)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρEV (SubDensityOp.tensor σE τ)))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρEV (SubDensityOp.tensor σE τ)))) :
     smoothMinEntropyReal ε ρE σE ≤ smoothMinEntropyReal ε ρEV (SubDensityOp.tensor σE τ) := by
   have hρEV_eq : ρEV = ρE.tensorRightSub τ := by
     obtain ⟨m, w⟩ := ρEV
@@ -2088,8 +2088,8 @@ theorem smoothMinEntropyReal_le_condTensor_decoupled_ancilla
     funext x
     exact SubDensityOp.ext (hproduct x)
   subst hρEV_eq
-  have key : ∀ a ∈ setOf (isInSmoothedSetReal ε ρE σE),
-      ∃ b ∈ setOf (isInSmoothedSetReal ε (ρE.tensorRightSub τ) (SubDensityOp.tensor σE τ)),
+  have key : ∀ a ∈ Set.ofPred (isInSmoothedSetReal ε ρE σE),
+      ∃ b ∈ Set.ofPred (isInSmoothedSetReal ε (ρE.tensorRightSub τ) (SubDensityOp.tensor σE τ)),
         a - 0 ≤ b := by
     intro a ha
     obtain ⟨blockbar, rfl, hd⟩ := ha

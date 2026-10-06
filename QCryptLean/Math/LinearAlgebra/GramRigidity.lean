@@ -1,4 +1,4 @@
-import Mathlib.Data.Complex.BigOperators
+import Mathlib.Basic.Complex.BigOperators
 
 /-!
 # Rank-one Gram rigidity

@@ -32,7 +32,7 @@ open scoped Matrix BigOperators ComplexOrder
 
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup Matrix.frobeniusNormedSpace
 
-universe u v
+universe u
 
 noncomputable section
 
@@ -79,7 +79,7 @@ structure MeasureThenHash (M : RawKeyMeasurement dA dB n) (l' : ℕ) where
   /-- The public hash-seed alphabet. -/
   Seed : Type u
   /-- The hashed-key alphabet. -/
-  Key : Type v
+  Key : Type u
   /-- The seed alphabet is finite. -/
   [seedFintype : Fintype Seed]
   /-- Seed equality is decidable. -/
@@ -156,7 +156,7 @@ lemma continuous_rawKeyCQ_stateMap_toOp (x : Fin M.toProtocol.rawKeyDim) :
 include C in
 /-- Continuous instrument blocks are integrable for every probability measure on IID states. -/
 lemma integrable (μ : DensityMeasure (dA * dB)) : M.Integrable μ := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   exact fun x => (C.continuous_rawKeyCQ_stateMap_toOp x).integrable_of_compactSpace
 
 /-- Discarding the IID purifying register does not change the accept mass. -/

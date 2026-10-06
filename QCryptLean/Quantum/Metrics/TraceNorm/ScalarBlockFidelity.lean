@@ -111,9 +111,9 @@ def scalarBlockPosSemidefOp {n : ℕ}
 lemma sqrtPosSemidefOp_posSemidef {n : ℕ} (A : PosSemidefOp n) :
     (sqrtPosSemidefOp A).PosSemidef := by
   unfold sqrtPosSemidefOp
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   exact (CFC.sqrt_nonneg (a := A.toOp)).posSemidef
 
 /-- Square root of a PSD operator with a one-dimensional scalar block. -/
@@ -122,9 +122,9 @@ lemma sqrtPosSemidefOp_scalarBlock {n : ℕ}
     sqrtPosSemidefOp (scalarBlockPosSemidefOp A a ha) =
       scalarBlockMatrix (sqrtPosSemidefOp A) (Real.sqrt a) := by
   unfold sqrtPosSemidefOp
-  letI : PartialOrder (Op (n + 1)) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op (n + 1)) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op (n + 1)) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op (n + 1)) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op (n + 1)) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op (n + 1)) := Matrix.instNonnegSpectrumClass
   refine CFC.sqrt_unique
     (a := (scalarBlockPosSemidefOp A a ha).toOp)
     (b := scalarBlockMatrix (CFC.sqrt A.toOp) (Real.sqrt a)) ?_ ?_

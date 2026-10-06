@@ -16,7 +16,7 @@ the `1 ⊗ M`-only form is FALSE (dim 2 vs 32 at `(dA,dR,n)=(2,2,2)`). The proof
 `T = ∑_{a,b} E_{ab} ⊗ T_{ab}` in `A`-side matrix units and shows each block `T_{ab}` lands in
 `Com(𝒮)` by squeezing the commutation relation between `E_{0a} ⊗ 1` and `E_{b0} ⊗ 1`.
 
-Notation: `setOf` (which delaborates to
+Notation: `Set.ofPred` (which delaborates to
 `{T | …}`) is used instead of the `{T : … | …}` set-builder notation, since `open
 Quantum.Operators` brings the Dirac ket `|i:n⟩` notation, whose `|` token (followed by a binder
 `:`) makes the set-builder form unparseable here. The two forms produce identical `Set` terms.
@@ -58,7 +58,7 @@ private lemma tensor_expansion (T : Op (dA ^ n * dR ^ n)) :
   rw [Matrix.sum_apply]
   simp only [Matrix.sum_apply, tensor_apply_pair, blkOp, Matrix.of_apply, Matrix.single_apply]
   simp only [ite_and, ite_mul, one_mul, zero_mul, Finset.sum_ite_irrel, Finset.sum_const_zero,
-    Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 omit [NeZero dA] [NeZero dR] [NeZero n] in
 /-- A product of operators, evaluated at a pair of blocked indices, expands as a double sum over
@@ -83,7 +83,7 @@ private lemma blk_commute (T : Op (dA ^ n * dR ^ n)) (S : Op (dR ^ n))
   rw [mul_apply_pair, mul_apply_pair] at hEntry
   simp only [tensor_apply_pair, Matrix.one_apply, ite_mul, mul_ite, one_mul, zero_mul,
     mul_zero, Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at hEntry
+    Finset.mem_univ, ite_true] at hEntry
   rw [Matrix.mul_apply, Matrix.mul_apply]
   simp only [blkOp, Matrix.of_apply]
   exact hEntry

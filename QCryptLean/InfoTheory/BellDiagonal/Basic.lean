@@ -163,7 +163,7 @@ For a density operator ρ with eigendecomposition ρ = U Λ U†:
 lemma bellStatesVec_normalized (i : Fin 4) :
     (bellStatesVec i).dag * (bellStatesVec i) = 1 := by
   have h := bellStates_orthonormal i i
-  simp only [if_true] at h
+  simp only [ite_true] at h
   unfold bellStatesVec
   exact h
 

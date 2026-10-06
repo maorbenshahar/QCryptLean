@@ -73,7 +73,7 @@ def comparisonPreToRetainedControlEquiv (N n : ℕ) :
 /-- The complete comparison-control dimension is nonzero for every `N,n`. -/
 theorem comparisonControlCardNeZero (N n : ℕ) :
     NeZero (Fintype.card (ComparisonControl N n)) := by
-  letI : Nonempty (ComparisonControl N n) := comparisonControlNonempty N n
+  let : Nonempty (ComparisonControl N n) := comparisonControlNonempty N n
   exact ⟨Fintype.card_ne_zero⟩
 
 attribute [local instance] comparisonControlCardNeZero
@@ -181,6 +181,8 @@ def reconstructionSuccessKraus
   fun y x =>
     let q := (retainedAnalysisOutputEquiv nK mZ mX ell ellEV leakEC).symm x.1
     let data := retainedAnalysisOutputDataEquiv nK mZ mX ell ellEV leakEC q
+    let : Decidable (x.2 = Sum.inl S) :=
+      (inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) x.2 (Sum.inl S)
     if x.2 = Sum.inl S ∧ data.1 = pi ∧
         y = successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC omega.1
           (selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi omega) data.2 then
@@ -224,7 +226,7 @@ private theorem reconstructionSuccessKraus_apply_of_control_ne
     (y : ReconstructionOutput N nK mZ mX ell ellEV leakEC)
     (x : ReconstructionInput N nK mZ mX ell ellEV leakEC) (hx : x.2 ≠ Sum.inl S) :
     reconstructionSuccessKraus N nK mZ mX ell ellEV leakEC pA pB S pi omega y x = 0 :=
-  if_neg fun h => hx h.1
+  ite_eq_right fun h => hx h.1
 
 /-- The ambient reconstruction Kraus family resolves the identity on every control sector. -/
 theorem reconstructionKraus_complete
@@ -326,10 +328,23 @@ theorem reconstructionKraus_complete
                 N nK mZ mX ell ellEV leakEC omega.1
                   (selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi omega) q
               rw [Fintype.sum_eq_single y0]
-              · simpa [reconstructionSuccessKraus, E, D, y0] using
-                  Instrument.weightedChoiceScale_star_mul
+              · have hd : D (E.symm (E (D.symm (pi, q)))) = (pi, q) :=
+                  (congrArg D (E.symm_apply_apply (D.symm (pi, q)))).trans
+                    (D.apply_symm_apply (pi, q))
+                have hk : reconstructionSuccessKraus
+                    N nK mZ mX ell ellEV leakEC pA pB S pi omega y0
+                      (E (D.symm (pi, q)), Sum.inl S) =
+                    Instrument.weightedChoiceScale
+                      (totalSelectedControlKernel N nK mZ mX pA pB
+                        (Math.FiniteEmbedding.joinSubsetPerm S pi)) omega.1 :=
+                  ite_eq_left ⟨rfl, congrArg Prod.fst hd,
+                    congrArg (successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC
+                      omega.1 (selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi omega))
+                      (congrArg Prod.snd hd).symm⟩
+                exact (congrArg (fun z : ℂ => star z * z) hk).trans
+                  (Instrument.weightedChoiceScale_star_mul
                     (totalSelectedControlKernel N nK mZ mX pA pB
-                      (Math.FiniteEmbedding.joinSubsetPerm S pi)) omega.1
+                      (Math.FiniteEmbedding.joinSubsetPerm S pi)) omega.1)
               · intro y hy
                 simp [reconstructionSuccessKraus, E, D, y0, hy]
             calc
@@ -393,7 +408,7 @@ theorem reconstructionKraus_complete
             congrArg Prod.snd hdata⟩
         rw [hfailure_sum_zero_on_success (E (D.symm (pi, q))) S
           (E (D.symm (pj, t)), Sum.inl T)]
-        simp only [add_zero, Matrix.one_apply, if_neg hinput]
+        simp only [add_zero, Matrix.one_apply, ite_eq_right hinput]
         rw [Fintype.sum_eq_single S]
         · rw [Fintype.sum_eq_single pi]
           · apply Finset.sum_eq_zero
@@ -462,7 +477,8 @@ theorem reconstructionKraus_complete
         rw [hz]
         simp
       ]
-      simp
+      simp only [zero_add]
+      exact (Matrix.one_apply_ne fun h => Sum.inl_ne_inr (congrArg Prod.snd h)).symm
   | inr j =>
     cases d with
     | inl S =>
@@ -512,7 +528,8 @@ theorem reconstructionKraus_complete
           exact smul_zero _
         rw [hz, mul_zero]
       ]
-      simp
+      simp only [zero_add]
+      exact (Matrix.one_apply_ne fun h => Sum.inr_ne_inl (congrArg Prod.snd h)).symm
     | inr k =>
       rw [show (∑ U, ∑ pi, ∑ omega, ∑ y,
           star (reconstructionSuccessKraus
@@ -573,8 +590,10 @@ theorem reconstructionKraus_complete
                       (r, Sum.inr j) = 0 := by
                   unfold reconstructionShortageKraus
                   refine (Matrix.smul_apply _ _ _ _).trans ?_
-                  rw [Matrix.single_apply_of_row_ne hrow]
-                  exact smul_zero _
+                  exact (congrArg (fun z : ℂ => _ • z)
+                    (Matrix.single_apply_of_row_ne hrow
+                      ((r, Sum.inr j) : ReconstructionInput N nK mZ mX ell ellEV leakEC)
+                      (r, Sum.inr j) (1 : ℂ))).trans (smul_zero _)
                 rw [hz]
                 simp
             calc
@@ -618,7 +637,7 @@ theorem reconstructionKraus_complete
           rw [hfailure_col_zero l t omega y (r, Sum.inr j) hcol]
           simp
       · simp only [zero_add, Matrix.one_apply]
-        refine Eq.trans ?_ (if_neg hinput).symm
+        refine Eq.trans ?_ (ite_eq_right hinput).symm
         rw [Fintype.sum_eq_single j]
         · rw [Fintype.sum_eq_single r]
           · apply Finset.sum_eq_zero
@@ -636,8 +655,10 @@ theorem reconstructionKraus_complete
                     (r, Sum.inr j) = 0 := by
                 unfold reconstructionShortageKraus
                 refine (Matrix.smul_apply _ _ _ _).trans ?_
-                rw [Matrix.single_apply_of_row_ne hrow]
-                exact smul_zero _
+                exact (congrArg (fun z : ℂ => _ • z)
+                  (Matrix.single_apply_of_row_ne hrow
+                    ((r, Sum.inr j) : ReconstructionInput N nK mZ mX ell ellEV leakEC)
+                    (r, Sum.inr j) (1 : ℂ))).trans (smul_zero _)
               rw [hz]
               simp
           · intro t htr
@@ -705,6 +726,8 @@ theorem reconstructionSuccessKraus_row
         (Instrument.weightedChoiceScale (totalSelectedControlKernel N nK mZ mX pA pB
           (Math.FiniteEmbedding.joinSubsetPerm S pi)) omega.1) := by
   funext x
+  let : Decidable (x.2 = Sum.inl S) :=
+    (inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) x.2 (Sum.inl S)
   rw [Pi.single_apply]
   simp only [reconstructionSuccessKraus, reconstructionSuccessInput]
   refine if_congr ?_ rfl rfl
@@ -733,7 +756,7 @@ theorem reconstructionSuccessKraus_row_eq_zero
     reconstructionSuccessKraus N nK mZ mX ell ellEV leakEC pA pB S pi omega y = 0 := by
   funext x
   simp only [reconstructionSuccessKraus]
-  rw [if_neg]
+  rw [ite_eq_right]
   · rfl
   rintro ⟨-, -, h⟩
   exact hy ⟨_, h.symm⟩
@@ -935,14 +958,14 @@ private theorem retainedFactor_mapTensorIdLinear_diamondNorm_le
     Quantum.Channels.diamondNorm
         (Quantum.Channels.mapTensorIdLinear (k := c) Phi) ≤
       Quantum.Channels.diamondNorm Phi := by
-  letI : NeZero (a * c) :=
+  let : NeZero (a * c) :=
     ⟨Nat.mul_ne_zero (NeZero.out) (NeZero.out)⟩
-  letI : NeZero (b * c) :=
+  let : NeZero (b * c) :=
     ⟨Nat.mul_ne_zero (NeZero.out) (NeZero.out)⟩
   refine Quantum.Channels.diamondNorm_le_of_forall _ _ fun W hW => ?_
   let k := a * c
-  letI : NeZero k := inferInstance
-  letI : NeZero (c * k) :=
+  let : NeZero k := inferInstance
+  let : NeZero (c * k) :=
     ⟨Nat.mul_ne_zero (NeZero.out) (NeZero.out)⟩
   rw [retainedFactorMapTensorId_reassoc Phi W]
   rw [Quantum.Metrics.traceNorm_submatrix_equiv]

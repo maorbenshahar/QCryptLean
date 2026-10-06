@@ -218,7 +218,7 @@ theorem vonNeumannEntropy_concave_unitary_average {n : ℕ} [NeZero n]
   -- Handle k = 0: hw_sum gives 0 = 1, contradiction
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · simp only [Finset.univ_eq_empty, Finset.sum_empty] at hw_sum; norm_num at hw_sum
-  · haveI : NeZero k := ⟨Nat.pos_iff_ne_zero.mp hk⟩
+  · have : NeZero k := ⟨Nat.pos_iff_ne_zero.mp hk⟩
     -- Construct UnitaryOp for each unitary matrix
     have hU_left : ∀ i, (unitaries i).conjTranspose *
         (unitaries i) = 1 :=

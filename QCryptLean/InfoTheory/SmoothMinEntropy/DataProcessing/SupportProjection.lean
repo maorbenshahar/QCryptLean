@@ -359,8 +359,8 @@ lemma supportProjectionCPM_purifiedDistance_le_of_fixed
     (hc_fixed : c.supportProjectionCPM P hP = c) :
     CQState.purifiedDistance c (ρ.supportProjectionCPM P hP) ≤
       CQState.purifiedDistance c ρ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   -- Each center block is fixed by the projector sandwich.
   have hc_block : ∀ x : X, P * (c.stateMap x).toOp * P = (c.stateMap x).toOp := by

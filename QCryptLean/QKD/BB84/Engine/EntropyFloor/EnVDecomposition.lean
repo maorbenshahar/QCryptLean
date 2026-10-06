@@ -103,9 +103,9 @@ theorem bb84_sifted_unitRegisterEmbed_stateMap_eq_tensorFinProd
                 (fun a => bb84SiftedSingleRoundRefBlock ψ (peSel (Fin.rev a)) (xSel (Fin.rev a))
                   (ω (Fin.rev a))))
        else 0) := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   by_cases hpe : bb84SiftedLocalPETestPassed peSel xSel δ Q ω
-  · rw [if_pos hpe]
+  · rw [ite_eq_left hpe]
     have hfam : (bb84PairedHaarPerSigmaFamily 1 (bb84UnitRegisterEmbed n)
         (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ ψ).stateMap ω =
         bb84SiftedTauEveRefConditioned 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n)
@@ -117,12 +117,12 @@ theorem bb84_sifted_unitRegisterEmbed_stateMap_eq_tensorFinProd
             (densityOp_reindex (interleavingEquiv signalDim n).symm
               (ψ.tensorPowGen n))).toCQState.stateMap ω
         else (0 : SubDensityOp _)) = _
-      rw [if_pos hpe]
+      rw [ite_eq_left hpe]
       rfl
     rw [hfam, bb84_siftedUnitRegisterEmbed_tauConditioned_eq_tensorFinProd]
-  · rw [if_neg hpe]
+  · rw [ite_eq_right hpe]
     change (if bb84SiftedLocalPETestPassed peSel xSel δ Q ω then _ else (0 : SubDensityOp _)) = 0
-    rw [if_neg hpe]
+    rw [ite_eq_right hpe]
 
 /-! ## The key-round fibre sum at an arbitrary key-round count
 
@@ -146,8 +146,8 @@ theorem bb84SiftedKeyRoundCQ_tensorPower_stateMap_eq_fiberSumCount {N : ℕ}
           (SubDensityOp.tensorFinProd N
             (fun i => bb84RefereeSiftedSingleRoundRefBlock ψ false (k i))).toOp
         else 0) := by
-  haveI : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI : NeZero (signalDim ^ N) := NeZero.pow
+  have : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have : NeZero (signalDim ^ N) := NeZero.pow
   rw [InfoTheory.SmoothMinEntropy.CQState.tensorPower_stateMap_toOp]
   ext A B
   rw [Matrix.sum_apply]
@@ -168,21 +168,21 @@ theorem bb84SiftedKeyRoundCQ_tensorPower_stateMap_eq_fiberSumCount {N : ℕ}
     apply Finset.sum_congr rfl
     intro k' _
     by_cases hk : bb84AliceBitMap k' = z i
-    · rw [if_pos hk, if_pos hk]; rfl
-    · rw [if_neg hk, if_neg hk, Matrix.zero_apply]
+    · rw [ite_eq_left hk, ite_eq_left hk]; rfl
+    · rw [ite_eq_right hk, ite_eq_right hk, Matrix.zero_apply]
   simp_rw [hkey]
   rw [Finset.prod_univ_sum, Fintype.piFinset_univ]
   apply Finset.sum_congr rfl
   intro k _
   by_cases hk : (fun i => bb84AliceBitMap (k i)) = z
-  · rw [if_pos hk, SubDensityOp.tensorFinProd_toOp_entry_prod_rev]
+  · rw [ite_eq_left hk, SubDensityOp.tensorFinProd_toOp_entry_prod_rev]
     apply Finset.prod_congr rfl
     intro i _
-    rw [if_pos (congrFun hk i)]
-  · rw [if_neg hk, Matrix.zero_apply]
+    rw [ite_eq_left (congrFun hk i)]
+  · rw [ite_eq_right hk, Matrix.zero_apply]
     obtain ⟨i, hi⟩ : ∃ i, bb84AliceBitMap (k i) ≠ z i := by
       by_contra hcon; push Not at hcon; exact hk (funext hcon)
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (by rw [if_neg hi])
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (by rw [ite_eq_right hi])
 
 /-! ## L3 — the coarsen-key split of the trivial-attack per-σ family block
 
@@ -229,11 +229,11 @@ lemma bb84_sifted_unitRegisterEmbed_reindexBlock {n m : ℕ} [NeZero n] [NeZero 
               (fun j => bb84SiftedSingleRoundRefBlock ψ true (xSel (bb84PERoundIdx peSel j))
                 (ω (bb84PERoundIdx peSel j)))))
       else 0) := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero signalDim := ⟨by norm_num [signalDim]⟩
   rw [bb84_sifted_unitRegisterEmbed_stateMap_eq_tensorFinProd]
   by_cases hpe : bb84SiftedLocalPETestPassed peSel xSel δ Q ω
-  · rw [if_pos hpe, if_pos hpe]
+  · rw [ite_eq_left hpe, ite_eq_left hpe]
     -- Cancel the two register casts (`4ⁿ → eveDim·4ⁿ → 4ⁿ` is the identity).
     rw [SubDensityOp.castDim_cancel,
       SubDensityOp.tensorFinProd_sortSplit (hn := bb84KeyRoundCount_add' n m)]
@@ -272,7 +272,8 @@ lemma bb84_sifted_unitRegisterEmbed_reindexBlock {n m : ℕ} [NeZero n] [NeZero 
               bb84PERoundIdx peSel j from rfl,
         bb84PERoundIdx_isPE peSel hcount j]
     rw [hkey, hpeBlk]
-  · rw [if_neg hpe, if_neg hpe, SubDensityOp.castDim_zero, bb84_subDensityOp_reindex_zero]
+  · rw [ite_eq_right hpe, ite_eq_right hpe, SubDensityOp.castDim_zero,
+    bb84_subDensityOp_reindex_zero]
 
 /-- **The coarsen-key operation at a general test-set size `m`.**  Cast away the trivial-attack
 Eve register, sort the de-Finetti reference register so the key rounds lead (`reindexQ` by the
@@ -320,8 +321,8 @@ theorem bb84_sifted_unitRegisterEmbed_coarsenKey_eq {n m : ℕ} [NeZero n] [NeZe
       bb84CastCQState (by rw [← pow_add, bb84KeyRoundCount_add'])
         (CQState.tensor ((bb84SiftedKeyRoundCQ ψ).tensorPower (bb84KeyRoundCount n m))
           (bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ)) := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hd : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hd : NeZero signalDim := ⟨by norm_num [signalDim]⟩
   apply CQState.ext_stateMap
   funext zp
   obtain ⟨z, p⟩ := zp
@@ -402,7 +403,7 @@ theorem bb84_sifted_unitRegisterEmbed_coarsenKey_eq {n m : ℕ} [NeZero n] [NeZe
         else 0 := by
     intro kk
     rw [Finset.sum_eq_single p
-      (fun q _ hq => if_neg (fun hcon => hq (congrArg Prod.snd hcon)))
+      (fun q _ hq => ite_eq_right (fun hcon => hq (congrArg Prod.snd hcon)))
       (fun h => absurd (Finset.mem_univ p) h)]
     simp only [Prod.mk.injEq, and_true]
   simp_rw [hq]
@@ -421,9 +422,9 @@ theorem bb84_sifted_unitRegisterEmbed_coarsenKey_eq {n m : ℕ} [NeZero n] [NeZe
           SubDensityOp.tensorFinProd (n - bb84KeyRoundCount n m)
             (fun k => bb84SiftedSingleRoundRefBlock ψ true
               (xSel (bb84PERoundIdx peSel k)) (p k)) from by
-        simp only [bb84SiftedPERoundProd, hpass, if_true]]
+        simp only [bb84SiftedPERoundProd, hpass, ite_true]]
     -- LHS: drop the PE-pass `if`, factor out the (kk-independent) PE entry, apply (E).
-    simp_rw [if_pos hpass]
+    simp_rw [ite_eq_left hpass]
     rw [show (∑ kk : Fin (bb84KeyRoundCount n m) → Fin signalDim,
           if (fun k => bb84AliceBitMap (kk k)) = z then
             (SubDensityOp.tensorFinProd (bb84KeyRoundCount n m)
@@ -460,8 +461,8 @@ theorem bb84_sifted_unitRegisterEmbed_coarsenKey_eq {n m : ℕ} [NeZero n] [NeZe
             ((bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).stateMap p) from rfl,
       bb84_subDensityOp_tensor_toOp_apply]
     rw [show (bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).stateMap p = 0 from by
-        simp only [bb84SiftedPERoundProd]; exact if_neg hpass]
-    simp only [if_neg hpass, bb84_subDensityOp_zero_toOp, Matrix.zero_apply, mul_zero,
+        simp only [bb84SiftedPERoundProd]; exact ite_eq_right hpass]
+    simp only [ite_eq_right hpass, bb84_subDensityOp_zero_toOp, Matrix.zero_apply, mul_zero,
       Finset.sum_const_zero, ite_self]
 
 /-! ## The conditioning-side PE-announce key CQ constructor

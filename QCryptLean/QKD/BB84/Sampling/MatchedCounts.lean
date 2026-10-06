@@ -143,11 +143,11 @@ private theorem sum_ite_lt_eq_sum_range_map {α : Type*} [Fintype α] (μ : PMF 
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun x _ => ?_
   by_cases hx : c x < q
-  · rw [if_pos hx, Finset.sum_eq_single_of_mem (c x) (mem_range.mpr hx)]
+  · rw [ite_eq_left hx, Finset.sum_eq_single_of_mem (c x) (mem_range.mpr hx)]
     · simp
     · intro k _ hk
       simp [hk]
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     refine (Finset.sum_eq_zero fun k hk => ?_).symm
     have hne : k ≠ c x := fun h => hx (h ▸ mem_range.mp hk)
     simp [hne]
@@ -290,8 +290,8 @@ theorem rawControlLaw_map_card_matchedZ_apply (N : ℕ) (pA pB : PMF Basis) (k :
   refine Finset.sum_congr rfl fun omega _ => ?_
   rw [matchedZ_eq_filter]
   by_cases h : k = #{i | omega.a i = Basis.z ∧ omega.b i = Basis.z}
-  · rw [if_pos h, if_pos h.symm]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_left h, ite_eq_left h.symm]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
 /-- **The matched-X count is binomial** with success probability `matchedProb pA pB .x`. -/
 theorem rawControlLaw_map_card_matchedX_apply (N : ℕ) (pA pB : PMF Basis) (k : ℕ) :
@@ -301,8 +301,8 @@ theorem rawControlLaw_map_card_matchedX_apply (N : ℕ) (pA pB : PMF Basis) (k :
   refine Finset.sum_congr rfl fun omega _ => ?_
   rw [matchedX_eq_filter]
   by_cases h : k = #{i | omega.a i = Basis.x ∧ omega.b i = Basis.x}
-  · rw [if_pos h, if_pos h.symm]
-  · rw [if_neg h, if_neg (Ne.symm h)]
+  · rw [ite_eq_left h, ite_eq_left h.symm]
+  · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
 
 /-! ## Exact success and failure masses -/
 
@@ -356,7 +356,7 @@ theorem selectionFailureMass_eq_one_of_lt {N nK mZ mX : ℕ} (pA pB : PMF Basis)
     (h : N < nK + mZ + mX) : selectionFailureMass N nK mZ mX pA pB = 1 := by
   have hsuccess : selectionSuccessMass N nK mZ mX pA pB = 0 := by
     rw [selectionSuccessMass]
-    refine Finset.sum_eq_zero fun omega _ => if_neg fun hq => ?_
+    refine Finset.sum_eq_zero fun omega _ => ite_eq_right fun hq => ?_
     rw [hasQuotas_iff] at hq
     have hpart := matchedBasis_partition_card omega.a omega.b
     have hle : (Matched omega.a omega.b).card ≤ N := by

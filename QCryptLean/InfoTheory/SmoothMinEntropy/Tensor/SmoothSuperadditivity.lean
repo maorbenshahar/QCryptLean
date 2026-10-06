@@ -146,8 +146,8 @@ lemma minFeasibleLambda_tensor_le {X X' : Type*} [Fintype X] [Fintype X']
   set lam2 := minFeasibleLambda ρ' σ' with hlam2_def
   have hlam1_nn : 0 ≤ lam1 := minFeasibleLambda_nonneg _ _
   have hlam2_nn : 0 ≤ lam2 := minFeasibleLambda_nonneg _ _
-  have hS_ne : (setOf (isFeasible ρ σ)).Nonempty := hfeas
-  have hS'_ne : (setOf (isFeasible ρ' σ')).Nonempty := hfeas'
+  have hS_ne : (Set.ofPred (isFeasible ρ σ)).Nonempty := hfeas
+  have hS'_ne : (Set.ofPred (isFeasible ρ' σ')).Nonempty := hfeas'
   apply le_of_forall_pos_le_add
   intro ε hε
   -- Pick a small `d > 0` with `d * (lam1 + lam2 + 1) ≤ ε`.
@@ -367,7 +367,7 @@ lemma tensor_toJointDensity_purifiedDistance_eq
           (SubDensityOp.tensor ρ.toJointDensity ρ'.toJointDensity))
         (SubDensityOp.castDim h_dim
           (SubDensityOp.tensor τ.toJointDensity τ'.toJointDensity)) := by
-  haveI : NeZero (n * n' * Fintype.card (X × X')) := by
+  have : NeZero (n * n' * Fintype.card (X × X')) := by
     refine ⟨Nat.mul_ne_zero (NeZero.ne (n * n')) ?_⟩
     exact Fintype.card_ne_zero
   obtain ⟨e, h_eq⟩ := exists_tensor_toJointDensity_reindex_eq (X := X) (X' := X')
@@ -509,7 +509,7 @@ theorem smoothMinEntropyReal_tensor_superadditivity
       ∑ p : X × X', ((CQState.tensor ρ ρ').stateMap p).trace = 1 := by
     rw [CQState.tensor_sum_trace, hρnorm, hρ'norm]; ring
   have hbdd_tensor :
-      BddAbove (setOf (isInSmoothedSetReal (ε + ε') (CQState.tensor ρ ρ')
+      BddAbove (Set.ofPred (isInSmoothedSetReal (ε + ε') (CQState.tensor ρ ρ')
         (SubDensityOp.tensor σ σ'))) :=
     smoothMinEntropyReal_bddAbove (ε + ε') hε_lt
       (CQState.tensor ρ ρ') hρρ'_norm (SubDensityOp.tensor σ σ')

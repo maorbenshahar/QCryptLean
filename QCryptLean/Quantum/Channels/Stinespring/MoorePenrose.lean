@@ -101,7 +101,7 @@ theorem psd_exists_moorePenrose_pinv
     by_cases h : lam i = 0
     · simp [h]
     · have hne : (lam i : ℂ) ≠ 0 := fun heq => h ((RCLike.ofReal_eq_zero (K := ℂ)).mp heq)
-      simp only [h, if_false, Pi.star_apply, RCLike.star_def, map_inv₀]
+      simp only [h, ite_false, Pi.star_apply, RCLike.star_def, map_inv₀]
       rw [Complex.conj_ofReal]
   -- Hermiticity of `U * A * Uᴴ` when A is Hermitian.
   have hConjHerm : ∀ A : Op n, A.IsHermitian →

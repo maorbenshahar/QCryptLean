@@ -2,7 +2,7 @@ import QCryptLean.InfoTheory.VonNeumannEntropy.Defs
 import QCryptLean.InfoTheory.Measurement.POVM
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 import Mathlib.Analysis.Matrix.Order
-import Mathlib.Data.ENNReal.Real
+import Mathlib.Basic.ENNReal.Real
 
 /-!
 # Quantum Relative Entropy — eigenbasis extraction, Klein's inequality
@@ -1321,7 +1321,7 @@ theorem relativeEntropy_eq_ofReal_of_support {n : ℕ} [NeZero n] (ρ σ : Densi
         diagonalOfRhoInSigmaBasis ρ σ i = 0) :
     relativeEntropy ρ σ = ENNReal.ofReal (relativeEntropyReal ρ σ) := by
   -- Unfold the definition and discharge the if-condition.
-  simp only [relativeEntropy, if_pos h_support]
+  simp only [relativeEntropy, ite_eq_left h_support]
 
 /-- When σ has full rank (all eigenvalues positive), the support condition holds trivially
     (no eigenvalue equals 0), so the ENNReal relative entropy equals ofReal of the ℝ version. -/
@@ -1338,7 +1338,7 @@ theorem relativeEntropy_eq_top {n : ℕ} [NeZero n] (ρ σ : DensityOp n)
     (h_not_support : ¬ ∀ i, InfoTheory.VonNeumannEntropy.eigenvaluesOf σ i = 0 →
         diagonalOfRhoInSigmaBasis ρ σ i = 0) :
     relativeEntropy ρ σ = ⊤ := by
-  simp only [relativeEntropy, if_neg h_not_support]
+  simp only [relativeEntropy, ite_eq_right h_not_support]
 
 /-!
 ## Basis-independent support characterization
@@ -1390,7 +1390,7 @@ theorem eigenvalue_support_of_ker_sub {n : ℕ} [NeZero n] (ρ σ : DensityOp n)
     ext k
     simp only [Matrix.mulVec, dotProduct, Matrix.diagonal_apply, Pi.zero_apply,
                Pi.single_apply, mul_ite, mul_one, mul_zero,
-               Finset.sum_ite_eq', Finset.mem_univ, if_true]
+               Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     split_ifs with hkl
     · exact_mod_cast (show InfoTheory.VonNeumannEntropy.eigenvaluesOf σ k = 0 from hkl ▸ hl)
     · rfl
@@ -1407,7 +1407,7 @@ theorem eigenvalue_support_of_ker_sub {n : ℕ} [NeZero n] (ρ σ : DensityOp n)
   have h_entry_eq : (eigenbasisOf σ * ρ.toOp * (eigenbasisOf σ)†) l l =
       ((eigenbasisOf σ * ρ.toOp * (eigenbasisOf σ)†).mulVec (Pi.single l 1)) l := by
     simp only [Matrix.mulVec, dotProduct, Pi.single_apply, mul_ite, mul_one, mul_zero,
-               Finset.sum_ite_eq', Finset.mem_univ, if_true]
+               Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [h_entry_eq, h_mulvec_zero]
   simp
 

@@ -92,8 +92,10 @@ def erasePreparedAction : PrivateAction coherentPrepareAction.out :=
 intermediate branch. -/
 def coherentThenEraseProgram : Program unitUnitSystem (.leaf unitUnitSystem) :=
   cast (by
-    simp only [erasePreparedAction, coherentPrepareAction, PrivateAction.out_ofInstrument,
-      unitUnitSystem, TwoParty.set_alice])
+    apply congrArg (fun R => Program unitUnitSystem (.leaf R))
+    change ((TwoParty.system Unit Unit).set .alice (Fin 2)).set .alice Unit =
+      TwoParty.system Unit Unit
+    rw [TwoParty.set_alice, TwoParty.set_alice])
     (Program.priv coherentPrepareAction (Program.priv erasePreparedAction Program.done))
 
 /-- The scalar input operator with entry one. -/
@@ -125,8 +127,6 @@ theorem unitInput_diagonal : unitUnitSystem.HonestRegistersDiagonal unitInput :=
 theorem coherentPrepareAction_offDiagonal :
     (coherentPrepareAction.liftedOperation () unitInput)
         bitOutputZero bitOutputOne = (1 / 2 : ℂ) := by
-  unfold coherentPrepareAction
-  rw [PrivateAction.liftedOperation_ofInstrument_eq_liftAt_operation]
   refine (Instrument.liftAt_alice_operation_apply unitUnitSystem coherentPrepareInstrument
     () unitInput (0 : Fin 2) (1 : Fin 2) () ()).trans ?_
   have hsub (f g : Unit → unitUnitSystem.total) :
@@ -146,8 +146,10 @@ theorem coherentPrepareAction_offDiagonal :
       exact Real.sq_sqrt (by norm_num)
     rw [h]
     norm_num
-  simp [coherentPrepareInstrument, Instrument.operation, Instrument.ofFine,
-    matrixConjLinear, coherentPrepareKraus, Matrix.mul_apply, hsqrt]
+  change (∑ _ : Unit, (coherentPrepareKraus * (1 : Matrix Unit Unit ℂ) *
+    coherentPrepareKrausᴴ) 0 1) = _
+  rw [Fintype.sum_unique]
+  simp [coherentPrepareKraus, Matrix.mul_apply, hsqrt]
 
 /-- The first action does not preserve honest-register diagonality. -/
 theorem coherentPrepareAction_not_preserving :
@@ -186,8 +188,9 @@ theorem coherentThenErase_rejected :
     cases hBC
     exact id
   have hout : erasePreparedAction.out = unitUnitSystem := by
-    simp only [erasePreparedAction, coherentPrepareAction, PrivateAction.out_ofInstrument,
-      unitUnitSystem, TwoParty.set_alice]
+    change ((TwoParty.system Unit Unit).set .alice (Fin 2)).set .alice Unit =
+      TwoParty.system Unit Unit
+    rw [TwoParty.set_alice, TwoParty.set_alice]
   have hp := hcast (congrArg Boundary.leaf hout)
     (Program.priv coherentPrepareAction (Program.priv erasePreparedAction Program.done)) h
   exact coherentPrepareAction_not_preserving ((Program.isHonestClassical_priv_iff _ _).mp hp).1
@@ -222,7 +225,7 @@ theorem zeroRound_zeroQuota_success :
         ((QKD.BB84.lateSelectionExitEquiv 0 0 0 0).symm emptyControl)) then
       QKD.BB84.rawClassicalTailBoundary 0 0 0 0 (@packedPESel 0 0 0) 0
     else .leaf lateSelectionAbortSystem) = _
-  rw [Equiv.apply_symm_apply, if_pos h]
+  rw [Equiv.apply_symm_apply, ite_eq_left h]
 
 /-- A positive quota at zero rounds selects the actual key-free shortage boundary. -/
 theorem zeroRound_positiveQuota_shortage :
@@ -235,7 +238,7 @@ theorem zeroRound_positiveQuota_shortage :
         ((QKD.BB84.lateSelectionExitEquiv 0 1 0 0).symm emptyControl)) then
       QKD.BB84.rawClassicalTailBoundary 1 0 0 0 (@packedPESel 1 0 0) 0
     else .leaf lateSelectionAbortSystem) = _
-  rw [Equiv.apply_symm_apply, if_neg h]
+  rw [Equiv.apply_symm_apply, ite_eq_right h]
 
 /-- One mismatched round retains its announced raw metadata and has no positive key quota. -/
 def mismatchControl : RawControl 1 :=
@@ -251,7 +254,7 @@ theorem mismatchExit_metadata :
     let e := lateSelectionExit 1 1 0 0 mismatchControl
     e.1 = mismatchControl.a ∧ e.2.1 = mismatchControl.b ∧
       e.2.2.1 = mismatchControl.order := by
-  simp [lateSelectionExit, mismatchControl]
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- Equal two-round Z strings with their increasing matched order. -/
 def twoZControl : RawControl 2 := defaultRawControl 2
@@ -270,7 +273,7 @@ theorem twoZControl_success :
         ((QKD.BB84.lateSelectionExitEquiv 2 1 0 0).symm twoZControl)) then
       QKD.BB84.rawClassicalTailBoundary 1 0 0 0 (@packedPESel 1 0 0) 0
     else .leaf lateSelectionAbortSystem) = _
-  rw [Equiv.apply_symm_apply, if_pos twoZControl_hasStrictQuota]
+  rw [Equiv.apply_symm_apply, ite_eq_left twoZControl_hasStrictQuota]
 
 /-- A nondegenerate basis law: probability `1/3` selects `X`, while `2/3` selects `Z`. -/
 noncomputable def biasedBasisLaw : PMF Basis :=

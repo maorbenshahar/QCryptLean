@@ -384,8 +384,8 @@ private theorem bellTwirl_conj_diag (n : ℕ) (M : Op (4 ^ n)) (i j : Fin (4 ^ n
   simp_rw [hentry]
   rw [← Finset.sum_mul, smul_eq_mul, ← mul_assoc, charOrthoN]
   by_cases hij : i = j
-  · rw [if_pos hij, if_pos hij, one_mul]
-  · rw [if_neg hij, if_neg hij, zero_mul]
+  · rw [ite_eq_left hij, ite_eq_left hij, one_mul]
+  · rw [ite_eq_right hij, ite_eq_right hij, zero_mul]
 
 /-- **IID-`G`-invariance ⟺ joint-Bell-basis diagonality** (Nahar et al. §2.1 dephasing
 equation).
@@ -410,14 +410,14 @@ theorem iidBellDiagonal_iff_bellBasis_diagonal {n : ℕ} (ρ : Op (4 ^ n)) :
   · intro h i j hij
     have hd := bellTwirl_conj_diag n ρ i j
     rw [h] at hd
-    rw [hd, if_neg hij]
+    rw [hd, ite_eq_right hij]
   · intro h
     have key : W * bb84BellTwirl n ρ * Wᴴ = W * ρ * Wᴴ := by
       ext i j
       rw [bellTwirl_conj_diag]
       by_cases hij : i = j
-      · rw [if_pos hij, hij]
-      · rw [if_neg hij]; exact (h i j hij).symm
+      · rw [ite_eq_left hij, hij]
+      · rw [ite_eq_right hij]; exact (h i j hij).symm
     calc bb84BellTwirl n ρ = Wᴴ * (W * bb84BellTwirl n ρ * Wᴴ) * W := (expand _).symm
       _ = Wᴴ * (W * ρ * Wᴴ) * W := by rw [key]
       _ = ρ := expand _
@@ -430,7 +430,7 @@ theorem iidBellDiagonal_iff_bellBasis_diagonal {n : ℕ} (ρ : Op (4 ^ n)) :
 `Tr(symmetricProjector 4 n)`. -/
 theorem symmetricProjector_four_trace (n : ℕ) [NeZero n] :
     (symmetricProjector 4 n).trace = (Nat.choose (n + 3) 3 : ℂ) := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   rw [symmetricProjector_trace 4 n]
   norm_num
 
@@ -438,7 +438,7 @@ theorem symmetricProjector_four_trace (n : ℕ) [NeZero n] :
 `P = P† · P`). -/
 theorem symmetricProjector_four_posSemidef (n : ℕ) [NeZero n] :
     (symmetricProjector 4 n).PosSemidef := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   obtain ⟨hidem, hherm⟩ := symmetricProjector_is_projector 4 n
   have h := Matrix.posSemidef_conjTranspose_mul_self (symmetricProjector 4 n)
   rwa [hherm, hidem] at h
@@ -486,7 +486,7 @@ private theorem bb84BellTwirl_isIIDBellDiagonal_local (n : ℕ) (M : Op (4 ^ n))
     IsIIDBellDiagonal (bb84BellTwirl n M) := by
   rw [iidBellDiagonal_iff_bellBasis_diagonal]
   intro i j hij
-  rw [bellTwirl_conj_diag, if_neg hij]
+  rw [bellTwirl_conj_diag, ite_eq_right hij]
 
 /-- The single-block Bell de Finetti reference is jointly Bell-diagonal (it is a Bell twirl
 output, hence a twirl fixed point). -/
@@ -547,8 +547,8 @@ theorem twirl_symProj_diag (n : ℕ) [NeZero n] :
   ext i j
   rw [bellTwirl_conj_diag, bellRot_conj_symProj, Matrix.diagonal_apply]
   by_cases hij : i = j
-  · rw [if_pos hij, if_pos hij, hij]
-  · rw [if_neg hij, if_neg hij]
+  · rw [ite_eq_left hij, ite_eq_left hij, hij]
+  · rw [ite_eq_right hij, ite_eq_right hij]
 
 /-- **Every joint-Bell-basis diagonal entry of the symmetric projector is a strictly positive
 real.**
@@ -607,8 +607,8 @@ theorem bb84BellDeFinettiDensity_posDef (n : ℕ) [NeZero n] :
     ext i j
     simp only [Matrix.smul_apply, Matrix.diagonal_apply, hDg, smul_eq_mul]
     by_cases hij : i = j
-    · rw [if_pos hij, if_pos hij, hij]
-    · rw [if_neg hij, if_neg hij, mul_zero]
+    · rw [ite_eq_left hij, ite_eq_left hij, hij]
+    · rw [ite_eq_right hij, ite_eq_right hij, mul_zero]
   have hDpd : (Matrix.diagonal Dg).PosDef := by
     apply Matrix.PosDef.diagonal
     intro i
@@ -635,8 +635,8 @@ private theorem rho_conj_diag (n : ℕ) (ρ : Op (4 ^ n)) (hρ : IsIIDBellDiagon
   ext i j
   rw [Matrix.diagonal_apply]
   by_cases hij : i = j
-  · rw [if_pos hij, hij]
-  · rw [if_neg hij]
+  · rw [ite_eq_left hij, hij]
+  · rw [ite_eq_right hij]
     exact (iidBellDiagonal_iff_bellBasis_diagonal ρ).mp hρ i j hij
 
 /-- **The per-Bell-type bound** (the whole arithmetic content of the domination): the joint-Bell
@@ -723,7 +723,7 @@ private theorem domination_per_index (n : ℕ) [NeZero n] (ρ : Op (4 ^ n))
     have hexp : ∀ σ : Equiv.Perm (Fin n),
         M (pidx σ) (pidx σ) = ∑ k, (if pidx σ = k then M k k else 0) := by
       intro σ
-      rw [Finset.sum_ite_eq Finset.univ (pidx σ) (fun k => M k k), if_pos (Finset.mem_univ _)]
+      rw [Finset.sum_ite_eq Finset.univ (pidx σ) (fun k => M k k), ite_eq_left (Finset.mem_univ _)]
     simp_rw [hexp]
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl
@@ -874,11 +874,12 @@ private theorem bellDoublingCopy_conjTranspose_mul :
           = (if I = finProdFinEquiv (j, j) then (1 : ℂ) else 0) from by split <;> simp]
   simp_rw [hstar]
   rw [Finset.sum_eq_single (finProdFinEquiv (j, j))]
-  · rw [if_pos rfl, one_mul]
+  · rw [ite_eq_left rfl, one_mul]
     by_cases hjj : j = j'
     · subst hjj; simp
-    · rw [if_neg (fun h => hjj (congrArg Prod.fst (finProdFinEquiv.injective h))), if_neg hjj]
-  · intro I _ hI; rw [if_neg hI, zero_mul]
+    · rw [ite_eq_right (fun h => hjj (congrArg Prod.fst (finProdFinEquiv.injective h))),
+      ite_eq_right hjj]
+  · intro I _ hI; rw [ite_eq_right hI, zero_mul]
   · intro h; exact (h (Finset.mem_univ _)).elim
 
 /-- `(Vᴴ)_{i c} = (β_c).vec i`. -/
@@ -907,7 +908,7 @@ theorem bellDoublingIsometry_isometry :
 /-- **Bell-doubling**: `W|β_c⟩ = |β_c⟩ ⊗ |β_c⟩`. -/
 theorem bellDoublingIsometry_bellDouble (c : Fin 4) :
     bellDoublingIsometry *ᵥ (bellKet c).vec = (Ket.tensor (bellKet c) (bellKet c)).vec := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   -- V *ᵥ |β_c⟩ = e_c (Bell orthonormality)
   have hV : bellSinglePairRotation *ᵥ (bellKet c).vec = (fun i => if i = c then (1 : ℂ) else 0) :=
       by
@@ -941,9 +942,9 @@ theorem bellDoublingIsometry_bellDouble (c : Fin 4) :
   funext I
   rw [Matrix.mulVec, dotProduct]
   rw [Finset.sum_eq_single (finProdFinEquiv (c, c))]
-  · rw [if_pos rfl, mul_one, Op_tensor_apply_finProd, Ket.tensor_vec]
+  · rw [ite_eq_left rfl, mul_one, Op_tensor_apply_finProd, Ket.tensor_vec]
     simp only [Equiv.symm_apply_apply, bellSPR_conjTranspose_apply]
-  · intro J _ hJ; rw [if_neg hJ, mul_zero]
+  · intro J _ hJ; rw [ite_eq_right hJ, mul_zero]
   · intro h; exact (h (Finset.mem_univ _)).elim
 
 /-- Closed form of the `COPY`-sandwich entry:
@@ -967,7 +968,7 @@ private theorem bellDoublingCopy_sandwich_apply (σ : Op 4) (I J : Fin (4 * 4)) 
 private theorem bellDoublingCopy_sandwich_partialTraceB (σ : Op 4) :
     partialTraceB (bellDoublingCopy * σ * (bellDoublingCopy)ᴴ)
       = Matrix.diagonal (fun c => σ c c) := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   ext i j
   rw [partialTraceB, Matrix.of_apply, Matrix.diagonal_apply]
   simp_rw [bellDoublingCopy_sandwich_apply]
@@ -990,7 +991,7 @@ private theorem bellDoublingCopy_sandwich_partialTraceB (σ : Op 4) :
   -- now Σ_k Σ_a Σ_b [a=i∧a=k] σ_{a,b} [b=j∧b=k]
   by_cases hij : i = j
   · subst hij
-    rw [if_pos rfl, Finset.sum_eq_single i]
+    rw [ite_eq_left rfl, Finset.sum_eq_single i]
     · rw [Finset.sum_eq_single i]
       · rw [Finset.sum_eq_single i]
         · simp
@@ -1003,7 +1004,7 @@ private theorem bellDoublingCopy_sandwich_partialTraceB (σ : Op 4) :
       have hne : ¬ (a = i ∧ a = k) := fun h => hk (h.1 ▸ h.2).symm
       simp [hne]
     · intro h; exact (h (Finset.mem_univ _)).elim
-  · rw [if_neg hij, Finset.sum_eq_zero]
+  · rw [ite_eq_right hij, Finset.sum_eq_zero]
     intro k _
     rw [Finset.sum_eq_zero]; intro a _; rw [Finset.sum_eq_zero]; intro b _
     by_cases ha : a = i ∧ a = k
@@ -1016,7 +1017,7 @@ private theorem bellDoublingCopy_sandwich_partialTraceB (σ : Op 4) :
 `partialTraceB (W · ρ · Wᴴ) = bb84BellTwirl 1 ρ`. -/
 theorem bellDoublingIsometry_partialTraceB (ρ : Op 4) :
     partialTraceB (bellDoublingIsometry * ρ * (bellDoublingIsometry)ᴴ) = bb84BellTwirl 1 ρ := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   set V := bellSinglePairRotation with hVdef
   have hVV : Vᴴ * V = 1 := bellSPR_unitary
   have hVV' : V * Vᴴ = 1 := mul_eq_one_comm.mpr hVV

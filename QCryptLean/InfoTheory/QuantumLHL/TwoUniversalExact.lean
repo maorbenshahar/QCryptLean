@@ -45,7 +45,7 @@ def QuantumHashFamily.IsUniversal2Star {S X Z : Type*} [Fintype S] [Fintype Z]
 lemma QuantumHashFamily.IsUniversal2Star.isUniversal {S X Z : Type*} [Fintype S]
     [Fintype Z] [DecidableEq Z] {H : QuantumHashFamily S X Z}
     (h : H.IsUniversal2Star) : H.isUniversal := by
-  haveI : Nonempty Z := H.outputNonempty
+  have : Nonempty Z := H.outputNonempty
   intro x x' hxx'
   have hZ_pos : 0 < (Fintype.card Z : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card Z)
@@ -97,8 +97,8 @@ lemma QuantumHashFamily.IsUniversal2Star.centred_second_moment {S X Z : Type*}
           (Wᴴ * W).trace.re)
       = (1 - 1 / (Fintype.card Z : ℝ)) *
           ∑ x : X, (((V x)ᴴ) * (V x)).trace.re := by
-  haveI : Nonempty Z := H.outputNonempty
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty Z := H.outputNonempty
+  have : Nonempty S := H.seedNonempty
   simp only []
   set c : ℝ := 1 / (Fintype.card Z : ℝ) with hc_def
   have hS_pos : 0 < (Fintype.card S : ℝ) := by
@@ -171,13 +171,13 @@ lemma QuantumHashFamily.IsUniversal2Star.centred_second_moment {S X Z : Type*}
           (Finset.univ.filter (fun s : S => H.hash s x = H.hash s x))
             = (Finset.univ : Finset S) :=
         Finset.filter_true_of_mem (fun _ _ => rfl)
-      rw [hfilter, Finset.card_univ, if_pos rfl]
+      rw [hfilter, Finset.card_univ, ite_eq_left rfl]
       rw [show (1 / (Fintype.card S : ℝ)) *
               (((Fintype.card S : ℝ) - (Fintype.card S : ℝ) * c) * K x x)
             = ((1 / (Fintype.card S : ℝ)) * (Fintype.card S : ℝ)) * (1 - c) * K x x from by
         ring]
       rw [one_div_mul_cancel hS_ne, one_mul]
-    · rw [if_neg hxx']
+    · rw [ite_eq_right hxx']
       have hex := h2 x x' hxx'
       have hcardR :
           ((Finset.univ.filter (fun s : S => H.hash s x = H.hash s x')).card : ℝ)

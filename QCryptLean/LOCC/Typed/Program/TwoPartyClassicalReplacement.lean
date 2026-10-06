@@ -82,7 +82,7 @@ theorem sum_localClassicalWeight {R : MultipartiteSystem P}
     _ = 1 := by
       have h := congrArg (fun M => M a a) A.complete
       simp only [Matrix.sum_apply, Matrix.mul_apply,
-        Matrix.conjTranspose_apply, Matrix.one_apply, if_pos] at h
+        Matrix.conjTranspose_apply, Matrix.one_apply, ite_eq_left] at h
       have hre := congrArg Complex.re h
       simp only [Complex.re_sum, Complex.one_re] at hre
       simpa [Complex.normSq_apply] using hre
@@ -112,8 +112,7 @@ theorem classicalReplacementKraus_complete {R : MultipartiteSystem P}
     convert congrArg (fun x : ℝ => (x : ℂ))
       (A.sum_localClassicalWeight i) using 1
     · simp [Matrix.sum_apply, Matrix.single_apply]
-    · exact Complex.ofReal_one.symm
-  · simp only [Matrix.sum_apply, Matrix.one_apply, hij, if_false]
+  · simp only [Matrix.sum_apply, Matrix.one_apply, hij, ite_false]
     apply Finset.sum_eq_zero
     intro o _
     apply Finset.sum_eq_zero
@@ -193,7 +192,8 @@ theorem liftedOperation_apply
     RCLike.star_def]
   simp_rw [hsum]
   simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
-  simp [apply_ite]
+  simp only [apply_ite, map_zero, mul_zero, Finset.sum_ite_eq, Finset.mem_univ,
+    ite_true, Matrix.submatrix_apply]
 
 /-- Every raw local operation of the announced replacement preserves diagonal matrices. -/
 theorem classicalReplacement_localOperation_preservesDiagonal
@@ -205,6 +205,9 @@ theorem classicalReplacement_localOperation_preservesDiagonal
       ∀ b b', b ≠ b' →
         (A.classicalReplacement.localOperation o rho) b b' = 0 := by
   intro o rho _ b b' hne
+  change A.Outcome at o
+  change Op (R.reg A.actor) at rho
+  change A.Output (A.announce o) at b b'
   change ((∑ ab : R.reg A.actor × A.Output (A.announce o),
     matrixConjLinear (A.classicalReplacementKraus o ab)) rho) b b' = 0
   simp only [matrixConjLinear,
@@ -236,7 +239,7 @@ theorem localOperation_diagonal_apply
   by_cases hbb' : b = b'
   · subst b'
     rw [← Matrix.sum_single_eq_diagonal d]
-    simp only [map_sum, Matrix.sum_apply, if_true]
+    simp only [map_sum, Matrix.sum_apply, ite_true]
     apply Finset.sum_congr rfl
     intro a _
     have hsingle :
@@ -269,7 +272,7 @@ theorem localOperation_diagonal_apply
       simp [mul_comm]
     rw [hdiag]
     simp [smul_eq_mul, mul_comm]
-  · rw [if_neg hbb']
+  · rw [ite_eq_right hbb']
     exact hlocal (Matrix.diagonal d)
       (fun a a' haa' => Matrix.diagonal_apply_ne _ haa') b b' hbb'
 
@@ -290,7 +293,7 @@ theorem classicalReplacement_localOperation_diagonal
       (b : A.Output (A.announce o)) :
       A.classicalReplacement.localClassicalWeight o a b =
         A.localClassicalWeight o a b := by
-    rw [localClassicalWeight_eq_sum_normSq]
+    refine (localClassicalWeight_eq_sum_normSq A.classicalReplacement o a b).trans ?_
     change (∑ ab : R.reg A.actor × A.Output (A.announce o),
       Complex.normSq (A.classicalReplacementKraus o ab b a)) = _
     simp only [classicalReplacementKraus,
@@ -310,8 +313,10 @@ theorem classicalReplacement_localOperation_diagonal
   rw [A.classicalReplacement.localOperation_diagonal_apply o
       (A.classicalReplacement_localOperation_preservesDiagonal o) d b b',
     A.localOperation_diagonal_apply o hlocal d b b']
-  simp only [hweight]
-  rfl
+  apply if_congr Iff.rfl
+  · exact Finset.sum_congr rfl (fun a _ => congrArg (fun t : ℝ => (t : ℂ) * d a)
+      (hweight a b))
+  · rfl
 
 /-- Honest-register preservation recovers the acting party's diagonal-preservation law once a
 spectator basis point is fixed. -/
@@ -374,7 +379,18 @@ theorem PreservesHonestRegistersDiagonal.localOperation_preservesDiagonal_at
           (fun y => (R.splitAt A.actor).symm
             (y, ((R.splitAtSet A.actor (A.Output (A.announce o))) q').2)) = sigma := by
     ext a a'
-    simp [rho, q, q']
+    have hq : ((R.splitAtSet A.actor (A.Output (A.announce o))) q).2 = s :=
+      congrArg Prod.snd ((R.splitAtSet A.actor (A.Output (A.announce o))).apply_symm_apply
+        (b, s))
+    have hq' : ((R.splitAtSet A.actor (A.Output (A.announce o))) q').2 = s :=
+      congrArg Prod.snd ((R.splitAtSet A.actor (A.Output (A.announce o))).apply_symm_apply
+        (b', s))
+    rw [hq, hq']
+    change (if (R.splitAt A.actor ((R.splitAt A.actor).symm (a, s))).2 = s ∧
+      (R.splitAt A.actor ((R.splitAt A.actor).symm (a', s))).2 = s then
+        sigma (R.splitAt A.actor ((R.splitAt A.actor).symm (a, s))).1
+          (R.splitAt A.actor ((R.splitAt A.actor).symm (a', s))).1 else 0) = sigma a a'
+    simp only [Equiv.apply_symm_apply, and_self, ite_true]
   rw [hslice] at hzero
   simpa [q, q'] using hzero
 
@@ -481,7 +497,7 @@ theorem PreservesHonestRegistersDiagonal.classicalReplacement_liftedOperation_te
     tensorIdLinear E (A.classicalReplacement.liftedOperation o) rho =
       tensorIdLinear E (A.liftedOperation o) rho := by
   rcases isEmpty_or_nonempty (R.rest A.actor) with hEmpty | hNonempty
-  · letI := hEmpty
+  · let := hEmpty
     ext p q
     exact isEmptyElim
       (((R.splitAtSet A.actor (A.Output (A.announce o))) p.1).2)
@@ -489,10 +505,15 @@ theorem PreservesHonestRegistersDiagonal.classicalReplacement_liftedOperation_te
     ext p q
     rcases p with ⟨qOut, e⟩
     rcases q with ⟨qOut', e'⟩
-    rw [tensorIdLinear_apply, tensorIdLinear_apply,
-      AnnouncedAction.liftedOperation_apply,
-      AnnouncedAction.liftedOperation_apply]
-    simp only [classicalReplacement_actor, classicalReplacement_announce]
+    change (A.out (A.announce o)).total at qOut qOut'
+    refine (tensorIdLinear_apply (A.classicalReplacement.liftedOperation o)
+      rho (qOut, e) (qOut', e')).trans ?_
+    refine Eq.trans ?_ (tensorIdLinear_apply (A.liftedOperation o)
+      rho (qOut, e) (qOut', e')).symm
+    refine (AnnouncedAction.liftedOperation_apply A.classicalReplacement o
+      (rho.submatrix (fun a => (a, e)) (fun a => (a, e'))) qOut qOut').trans ?_
+    refine Eq.trans ?_ (AnnouncedAction.liftedOperation_apply A o
+      (rho.submatrix (fun a => (a, e)) (fun a => (a, e'))) qOut qOut').symm
     let sigma : Op (R.reg A.actor) :=
       (rho.submatrix (fun a => (a, e)) (fun a => (a, e'))).submatrix
         (fun x => (R.splitAt A.actor).symm
@@ -622,8 +643,10 @@ private theorem IsHonestClassical.classicalReplacement_denote_eq
         (Program.announced A.classicalReplacement
           (fun y => (k y).classicalReplacement)).denote rho =
         (Program.announced A k).denote rho
-      rw [Program.denote_announced_eq_sum_liftedOperation,
-        Program.denote_announced_eq_sum_liftedOperation]
+      refine (LinearMap.congr_fun (Program.denote_announced_eq_sum_liftedOperation
+        A.classicalReplacement (fun y => (k y).classicalReplacement)) rho).trans ?_
+      refine Eq.trans ?_ (LinearMap.congr_fun
+        (Program.denote_announced_eq_sum_liftedOperation A k) rho).symm
       simp only [LinearMap.sum_apply, LinearMap.comp_apply]
       apply Finset.sum_congr rfl
       intro o _
@@ -639,14 +662,15 @@ private theorem IsHonestClassical.classicalReplacement_denote_eq
         simp only [tensorIdLinear_apply] at hentry
         exact hentry
       rw [haction]
-      simp only [AnnouncedAction.classicalReplacement_announce]
       exact congrArg _ (ih (A.announce o) (A.liftedOperation o rho) (hA o rho hrho))
   | priv A k hA hk ih =>
       change
         (Program.priv A.classicalReplacement k.classicalReplacement).denote rho =
         (Program.priv A k).denote rho
-      rw [Program.denote_priv_eq_sum_liftedOperation,
-        Program.denote_priv_eq_sum_liftedOperation]
+      refine (LinearMap.congr_fun (Program.denote_priv_eq_sum_liftedOperation
+        A.classicalReplacement k.classicalReplacement) rho).trans ?_
+      refine Eq.trans ?_ (LinearMap.congr_fun
+        (Program.denote_priv_eq_sum_liftedOperation A k) rho).symm
       simp only [LinearMap.sum_apply, LinearMap.comp_apply]
       apply Finset.sum_congr rfl
       intro o _
@@ -752,20 +776,15 @@ private theorem controlledContinuation_leaf_eq_denote_comp_reindexOp
       Program ((Boundary.leaf R).system e) (C e)) :
     controlledContinuation k =
       (k ()).denote.comp (reindexOp (Boundary.leafSpaceEquiv R)) := by
-  calc
-    controlledContinuation k =
-        (controlledContinuation k).comp LinearMap.id := by rfl
-    _ = (controlledContinuation k).comp
-        ((Program.done : Program R (.leaf R)).denote.comp
-          (reindexOp (Boundary.leafSpaceEquiv R))) := by
-      rw [denote_done_comp_reindexOp]
-    _ = ((controlledContinuation k).comp
-          (Program.done : Program R (.leaf R)).denote).comp
-        (reindexOp (Boundary.leafSpaceEquiv R)) := by
-      rw [LinearMap.comp_assoc]
-    _ = (k ()).denote.comp (reindexOp (Boundary.leafSpaceEquiv R)) := by
-      rw [controlledContinuation_comp_denote_done]
-      rfl
+  let L : Op (Boundary.leaf R).space →ₗ[ℂ] Op (C ()).space := controlledContinuation k
+  let J : Op R.total →ₗ[ℂ] Op (Boundary.leaf R).space :=
+    (Program.done : Program R (.leaf R)).denote
+  let E := reindexOp (Boundary.leafSpaceEquiv R)
+  have hid : J.comp E = LinearMap.id := denote_done_comp_reindexOp R
+  have hL : (L.comp J).comp E = (k ()).denote.comp E :=
+    congrArg (fun C : Op R.total →ₗ[ℂ] Op (C ()).space => C.comp E)
+      (controlledContinuation_comp_denote_done R k)
+  exact (congrArg L.comp hid.symm).trans hL
 
 /-- A program that creates a CQ leaf output followed by an honest-classical continuation has a CQ
 grafted output.  The leaf's unique public coordinate is transported to the continuation's input
@@ -781,8 +800,12 @@ theorem IsHonestClassical.graft_leaf_denote_tensorId
       (tensorIdLinear E p.denote rho)) :
     IsClassicalOnFirst (Alpha := B.space) (Ref := E)
       (tensorIdLinear E (p.graft (fun _ => k)).denote rho) := by
-  rw [Program.denote_graft,
-    controlledContinuation_leaf_eq_denote_comp_reindexOp]
+  have hden : (p.graft (fun _ => k)).denote =
+      k.denote.comp ((reindexOp (Boundary.leafSpaceEquiv S)).comp p.denote) := by
+    exact (Program.denote_graft p (fun _ => k)).trans
+      (congrArg (fun L : Op (Boundary.leaf S).space →ₗ[ℂ] Op B.space => L.comp p.denote)
+        (controlledContinuation_leaf_eq_denote_comp_reindexOp S (fun _ => k)))
+  rw [hden]
   exact hk.denote_tensorId
     (tensorIdLinear E (reindexOp (Boundary.leafSpaceEquiv S))
       (tensorIdLinear E p.denote rho))

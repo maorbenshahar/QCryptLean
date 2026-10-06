@@ -39,8 +39,8 @@ theorem quantum_seedKey_LHL_smooth_hashing_witness
       traceDistanceGen (seedKeyExtractorOutputState H τ).toJointDensity.toOp
         (seedUniformOutputState (S := S) (Z := Z) τ.quantumMarginal).toJointDensity.toOp ≤
         (1 / 2) * Real.sqrt ((Fintype.card Z : ℝ) * 2 ^ (-k)) := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   by_cases hkpos : 0 < k
   · obtain ⟨τ, hd, ht⟩ := smoothMinEntropy_exists_approx_le ε hε ρ σ hσ k hkpos hk
@@ -74,8 +74,8 @@ theorem quantum_seedKey_LHL_smooth
         (seedUniformOutputState (S := S) (Z := Z)
           ρ.quantumMarginal).toJointDensity.toOp ≤
       (1 / 2) * Real.sqrt ((Fintype.card Z : ℝ) * 2 ^ (-k)) + 2 * ε := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   obtain ⟨ρ', hρ'_dist, hρ'_k⟩ :=
     quantum_seedKey_LHL_smooth_hashing_witness H hH ρ σ hσ_pd ε hε k hk

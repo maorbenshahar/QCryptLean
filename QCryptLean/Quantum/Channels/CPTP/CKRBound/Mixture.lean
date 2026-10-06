@@ -29,7 +29,7 @@ de Finetti reference state. -/
 theorem integralTensorPower_ckrMixtureMeasure_eq
     (d n : ℕ) [NeZero d] [NeZero n] [NeZero (d ^ n)] :
     integralTensorPower n (ckrMixtureMeasure d) = ckrDeFinettiState d n := by
-  haveI : NeZero ((d * d) ^ n) := ⟨pow_ne_zero n (NeZero.ne (d * d))⟩
+  have : NeZero ((d * d) ^ n) := ⟨pow_ne_zero n (NeZero.ne (d * d))⟩
   unfold ckrMixtureMeasure
   calc
     integralTensorPower n (partialTraceBDensityMeasure (deFinetti_haarMeasure (d * d)))

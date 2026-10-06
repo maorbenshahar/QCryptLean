@@ -30,7 +30,7 @@ namespace Quantum.Channels
 theorem ckrMixtureMeasure_isOpenPosMeasure
     (d : ℕ) [NeZero d] :
     (ckrMixtureMeasure d).measure.IsOpenPosMeasure := by
-  haveI : NeZero (d * d) := ⟨mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero (d * d) := ⟨mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
   unfold ckrMixtureMeasure
   exact InfoTheory.DeFinetti.partialTraceBDensityMeasure_deFinetti_haarMeasure_isOpenPos d
 

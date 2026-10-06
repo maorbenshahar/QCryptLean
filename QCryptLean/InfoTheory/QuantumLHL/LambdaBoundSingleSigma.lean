@@ -54,7 +54,7 @@ private lemma diag_offdiag_split
   refine Finset.sum_congr rfl fun x _ => ?_
   have hdiag : f x x = ∑ x' : α, if x = x' then f x x' else 0 := by
     rw [Finset.sum_ite_eq Finset.univ x (fun x' => f x x'),
-      if_pos (Finset.mem_univ x)]
+      ite_eq_left (Finset.mem_univ x)]
   rw [hdiag, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun x' _ => ?_
   by_cases h : x = x' <;> simp [h]
@@ -104,17 +104,17 @@ private lemma sum_z_collapse_double_iff
       (if z1 = z2 then f else 0) := by
   by_cases h : z1 = z2
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have : (∑ z : Z, (if z1 = z ∧ z1 = z then f else 0)) =
         ∑ z : Z, if z1 = z then f else 0 := by
       refine Finset.sum_congr rfl fun z _ => ?_
       by_cases hz : z1 = z <;> simp [hz]
     rw [this, Finset.sum_ite_eq Finset.univ z1 (fun _ => f),
-      if_pos (Finset.mem_univ z1)]
-  · rw [if_neg h]
+      ite_eq_left (Finset.mem_univ z1)]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro z _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     exact h (h1.trans h2.symm)
 
@@ -137,10 +137,10 @@ lemma tr_S_avg_sq_S_le_avg_tr_S_sq_S
       (1 / (Fintype.card T : ℝ)) *
         ∑ t, (S * A t * A t * S).trace.re := by
   by_cases hT : Nonempty T
-  · haveI := hT
+  · have := hT
     exact Quantum.Operators.tr_smul_avg_right_mul_sq_re_le_avg_tr_right_mul_sq_re A S hA hS
   · rw [not_nonempty_iff] at hT
-    haveI : IsEmpty T := hT
+    have : IsEmpty T := hT
     simp
 
 /-- **Per-seed collision identity (single-σ form, abstract).**
@@ -219,7 +219,7 @@ lemma sum_tr_SMzsqS_le_seed_avg_collision_sum_single
               (ρ.stateMap x').toOp * hσ.inverseSqrt).trace.re
            else 0) := by
   by_cases hS : Nonempty S
-  · haveI := hS
+  · have := hS
     -- Abbreviations.
     set T : Op n := hσ.inverseSqrt with hT_def
     set R : X → Op n := fun x => (ρ.stateMap x).toOp with hR_def
@@ -274,7 +274,7 @@ lemma sum_tr_SMzsqS_le_seed_avg_collision_sum_single
     exact le_of_eq (per_seed_collision_identity_single T R (H.hash s))
   · -- Empty seed: extractorWeightedOp = 0 for all z, RHS sum is 0.
     rw [not_nonempty_iff] at hS
-    haveI : IsEmpty S := hS
+    have : IsEmpty S := hS
     have hMz : ∀ z : Z, extractorWeightedOp H ρ z = 0 := by
       intro z
       unfold extractorWeightedOp
@@ -306,12 +306,12 @@ lemma sum_tr_SDsqS_eq_sum_tr_SMzsqS_sub_uniform
         ((1 : ℝ) / (Fintype.card Z : ℝ)) * (S * R * R * S).trace.re := by
   by_cases hcard : Fintype.card Z = 0
   · -- Empty case: all sums over Z vanish, and `R = 0` (forced by `hSumM`).
-    haveI hZemp : IsEmpty Z := Fintype.card_eq_zero_iff.mp hcard
+    have hZemp : IsEmpty Z := Fintype.card_eq_zero_iff.mp hcard
     have hR : R = 0 := by
       simpa [Finset.sum_of_isEmpty] using hSumM.symm
     subst hR
     simp
-  haveI hZne : Nonempty Z := Fintype.card_pos_iff.mp (Nat.pos_of_ne_zero hcard)
+  have hZne : Nonempty Z := Fintype.card_pos_iff.mp (Nat.pos_of_ne_zero hcard)
   set c : ℝ := 1 / (Fintype.card Z : ℝ) with hc_def
   set cC : ℂ := (c : ℂ) with hcC_def
   -- Per-z trace identity.

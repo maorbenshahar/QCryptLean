@@ -61,14 +61,14 @@ private theorem conj_single
     matrixConjLinear K (Matrix.single p p 1) y z = K y p * star (K z p) := by
   rw [matrixConjLinear_apply, Finset.sum_eq_single p]
   · rw [Finset.sum_eq_single p]
-    · rw [Matrix.single_apply, if_pos ⟨rfl, rfl⟩, mul_one]
+    · rw [Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩, mul_one]
     · intro b _ hb
-      rw [Matrix.single_apply, if_neg (fun h => hb h.1.symm), mul_zero, zero_mul]
+      rw [Matrix.single_apply, ite_eq_right (fun h => hb h.1.symm), mul_zero, zero_mul]
     · intro h
       exact absurd (Finset.mem_univ _) h
   · intro q _ hq
     refine Finset.sum_eq_zero fun b _ => ?_
-    rw [Matrix.single_apply, if_neg (fun h => hq h.2.symm), mul_zero, zero_mul]
+    rw [Matrix.single_apply, ite_eq_right (fun h => hq h.2.symm), mul_zero, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -102,9 +102,9 @@ private theorem ideal_single_diag_equalKey
         (⟨e, (L.coordinates e).symm (oldA, oldB, u')⟩ : B.space)) = 1 := by
     rw [Finset.sum_eq_single a']
     · rw [Finset.sum_eq_single b']
-      · rw [Matrix.single_apply, if_pos ⟨rfl, rfl⟩]
+      · rw [Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩]
       · intro c _ hc2
-        rw [Matrix.single_apply, if_neg]
+        rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h1, -⟩
         have h2 : ((a', b', u') :
               (L.disposition e).Key × (L.disposition e).Key × L.Residual e) = (a', c, u') :=
@@ -114,7 +114,7 @@ private theorem ideal_single_diag_equalKey
         exact absurd (Finset.mem_univ _) h
     · intro c _ hc2
       refine Finset.sum_eq_zero fun d _ => ?_
-      rw [Matrix.single_apply, if_neg]
+      rw [Matrix.single_apply, ite_eq_right]
       rintro ⟨h1, -⟩
       have h2 : ((a', b', u') :
             (L.disposition e).Key × (L.disposition e).Key × L.Residual e) = (c, d, u') :=
@@ -122,7 +122,7 @@ private theorem ideal_single_diag_equalKey
       exact hc2 (congrArg (fun z => z.1) h2).symm
     · intro h
       exact absurd (Finset.mem_univ _) h
-  rw [hw, hw', L.ideal_coordinate_entry, if_pos ⟨rfl, rfl, rfl⟩, hsum, mul_one]
+  rw [hw, hw', L.ideal_coordinate_entry, ite_eq_left ⟨rfl, rfl, rfl⟩, hsum, mul_one]
 
 /-- Conjugating by a Kraus matrix with a single nonzero entry in the evaluated row. -/
 private theorem conj_row_single
@@ -163,8 +163,8 @@ private theorem residual_subsingleton
     {B : Boundary TwoParty.Party} (L : QKD.OutputLayout B) (e : B.Exit)
     (hA : Subsingleton (L.AliceResidual e)) (hB : Subsingleton (L.BobResidual e)) :
     Subsingleton (L.Residual e) := by
-  haveI := spectatorParty_isEmpty L
-  haveI : Subsingleton (L.Spectators e) :=
+  have := spectatorParty_isEmpty L
+  have : Subsingleton (L.Spectators e) :=
     ⟨fun f g => funext fun i => isEmptyElim i⟩
   exact inferInstance
 
@@ -379,8 +379,20 @@ private theorem succKraus_column
         Instrument.weightedChoiceScale (totalSelectedControlKernel N nK mZ mX pA pB
           (Math.FiniteEmbedding.joinSubsetPerm S pi)) om.1
       else 0) := by
-  simp only [reconstructionSuccessKraus, inputPoint, Equiv.symm_apply_apply,
-    Equiv.apply_symm_apply, true_and]
+  let D := retainedAnalysisOutputDataEquiv nK mZ mX ell ellEV leakEC
+  let E := retainedAnalysisOutputEquiv nK mZ mX ell ellEV leakEC
+  let embed := successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC om.1
+    (selectedControlSupport_hasQuotas N nK mZ mX pA pB S pi om)
+  have hd : D (E.symm (E (D.symm (pi, u)))) = (pi, u) :=
+    (congrArg D (E.symm_apply_apply _)).trans (D.apply_symm_apply _)
+  unfold reconstructionSuccessKraus
+  dsimp only
+  refine ite_congr (propext ⟨?_, ?_⟩) (fun _ => rfl) (fun _ => rfl)
+  · intro h
+    exact h.2.2.trans (congrArg embed (congrArg Prod.snd hd))
+  · intro h
+    exact ⟨rfl, congrArg Prod.fst hd,
+      h.trans (congrArg embed (congrArg Prod.snd hd)).symm⟩
 
 /-- One supported success Kraus matrix has a single nonzero entry in every fibre row. -/
 private theorem succKraus_row
@@ -398,6 +410,8 @@ private theorem succKraus_row
         Instrument.weightedChoiceScale (totalSelectedControlKernel N nK mZ mX pA pB
           (Math.FiniteEmbedding.joinSubsetPerm S pi)) om.1
       else 0) := by
+  let : Decidable (x.2 = Sum.inl S) :=
+    (inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) x.2 (Sum.inl S)
   simp only [reconstructionSuccessKraus, inputPoint]
   refine if_congr ?_ rfl rfl
   constructor
@@ -428,7 +442,7 @@ private theorem succKraus_shortage_column
     (hx : ∀ T : Set.powersetCard (Fin N) (nK + mZ + mX), x.2 ≠ Sum.inl T) :
     reconstructionSuccessKraus N nK mZ mX ell ellEV leakEC pA pB S pi om y x = 0 := by
   simp only [reconstructionSuccessKraus]
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨h1, -, -⟩
   exact hx S h1
 
@@ -441,14 +455,27 @@ private theorem failKraus_apply
     (y : ReconstructionOutput N nK mZ mX ell ellEV leakEC)
     (x : ReconstructionInput N nK mZ mX ell ellEV leakEC) :
     reconstructionShortageKraus N nK mZ mX ell ellEV leakEC pA pB j t om y x =
-      (if shortageCompleteOutput N nK mZ mX ell ellEV leakEC om.1
+      @ite ℂ
+        (shortageCompleteOutput N nK mZ mX ell ellEV leakEC om.1
             (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j om) = y ∧
-            (t, Sum.inr j) = x then
-        Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j) om.1
-      else 0) := by
+            (t, Sum.inr j) = x)
+        (@instDecidableAnd _ _
+          ((inferInstance : DecidableEq (ReconstructionOutput N nK mZ mX ell ellEV leakEC))
+            (shortageCompleteOutput N nK mZ mX ell ellEV leakEC om.1
+              (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j om)) y)
+          ((inferInstance : DecidableEq (ReconstructionInput N nK mZ mX ell ellEV leakEC))
+            (t, Sum.inr j) x))
+        (Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j) om.1)
+        0 := by
   unfold reconstructionShortageKraus
   refine (Matrix.smul_apply _ _ _ _).trans ?_
-  simp only [Matrix.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
+  refine (congrArg (fun z : ℂ => _ • z)
+    (Matrix.single_apply _
+      ((t, Sum.inr j) : ReconstructionInput N nK mZ mX ell ellEV leakEC) (1 : ℂ) y x)).trans ?_
+  simp only [smul_eq_mul, mul_ite, mul_one, mul_zero]
+  split <;> rename_i h
+  · exact (ite_eq_left h).symm
+  · exact (ite_eq_right h).symm
 
 /-- The reconstruction channel expanded into its explicit Kraus family. -/
 private theorem postChannel_eq_krausSum
@@ -720,7 +747,7 @@ private theorem succ_ideal_general
   obtain ⟨gX, wX⟩ := Xpt
   dsimp only at hE hkey hsub ⊢
   subst hE
-  haveI := hsub
+  have := hsub
   exact ideal_single_diag_equalKey _ _ _ wX hkey (Subsingleton.elim _ _)
 
 /-- The complete-output ideal weight of one same-exit diagonal matrix unit at the literal
@@ -792,8 +819,8 @@ private theorem zeroOneBitAcceptedPoint_zero :
       (((heq_of_eq (congrArg (fun z : Fin 2 × Fin 2 => z.2) hpair)).symm).trans ?_))
     exact BoundaryKeyLayout.acceptCoordinates_snd_fst_heq_coordinates_snd_fst _ hd _
   refine congrArg (Sigma.mk zeroOneBitBaseOutput.1) ?_
-  rw [Equiv.symm_apply_eq]
-  exact (Prod.ext hkeyA (Prod.ext hkeyB rfl)).symm
+  exact (zeroOneBitLayout.coordinates zeroOneBitBaseOutput.1).symm_apply_eq.mpr
+    (Prod.ext hkeyA (Prod.ext hkeyB rfl)).symm
 
 /-- The retained resource block selected by the fixture comparison-control sector carries the
 nonzero equal-key replacement weight. -/
@@ -816,8 +843,11 @@ private theorem succControlBlock :
           (Fintype.equivFin (ComparisonControl 0 (0 + 0 + 0))) (Sum.inl emptySubset))) =
         (k, Sum.inl emptySubset) := by
     intro k
-    simp [reconstructionInputEquiv]
-    rfl
+    simp only [reconstructionInputEquiv, Equiv.symm_trans_apply,
+      Equiv.symm_apply_apply, Equiv.prodCongr_symm, Equiv.prodCongr_apply,
+      Equiv.refl_symm, Equiv.coe_refl, Prod.map_apply, id_eq]
+    exact congrArg (fun c : ComparisonControl 0 0 => (k, c))
+      ((Fintype.equivFin (ComparisonControl 0 0)).symm_apply_apply _)
   have hblock : (Matrix.of fun i j =>
       successInput
         (finProdFinEquiv (i,
@@ -842,9 +872,13 @@ private theorem succControlBlock :
             (finProdFinEquiv (j,
               (Fintype.equivFin (ComparisonControl 0 (0 + 0 + 0))) (Sum.inl emptySubset))))
         from rfl,
-      hin, hin, successTypedInput, Matrix.single_apply, Matrix.reindex_apply,
-      Matrix.submatrix_apply, Matrix.single_apply]
-    refine if_congr ?_ rfl rfl
+      hin, hin, successTypedInput]
+    refine (Matrix.single_apply
+      ((retainedAnalysisOutputEquiv 0 0 0 1 0 0 (zeroOneBitAcceptedPoint 0 1),
+        Sum.inl emptySubset) : ReconstructionInput 0 0 0 0 1 0 0) _ (1 : ℂ)
+      (i, Sum.inl emptySubset) (j, Sum.inl emptySubset)).trans ?_
+    rw [Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.single_apply]
+    refine ite_congr (propext ?_) (fun _ => rfl) (fun _ => rfl)
     constructor
     · rintro ⟨h1, h2⟩
       exact ⟨(Equiv.eq_symm_apply _).mpr (congrArg Prod.fst h1),
@@ -1047,7 +1081,7 @@ private instance : Unique (FailureControlSupport 1 1 0 0 pureZ pureZ failureInde
       rw [← pureZ_failure_kernel]
       exact om.2
     by_contra hne
-    rw [PMF.pure_apply, if_neg hne] at h
+    rw [PMF.pure_apply, ite_eq_right hne] at h
     exact absurd h (lt_irrefl 0)
 
 /-- The one-round shortage amplitude is one. -/
@@ -1112,7 +1146,9 @@ private theorem failChannel_row (W : Op (ReconstructionInput 1 1 0 0 0 0 0))
             (totalFailureControlKernel 1 1 0 0 pureZ pureZ failureIndex)
             (default : FailureControlSupport 1 1 0 0 pureZ pureZ failureIndex).1 = 1 from
           failScale_eq_one]
-      exact if_congr ⟨fun h => h.2.symm, fun h => ⟨rfl, h.symm⟩⟩ rfl rfl
+      by_cases h : q = ((t, Sum.inr failureIndex) : ReconstructionInput 1 1 0 0 0 0 0)
+      · exact (ite_eq_left ⟨rfl, h.symm⟩).trans (ite_eq_left h).symm
+      · exact (ite_eq_right (fun hc => h hc.2.symm)).trans (ite_eq_right h).symm
     rw [conj_row_single _ W _ _ 1 hK]
     simp
   rw [postChannel_eq_krausSum, LinearMap.sum_apply, Matrix.sum_apply,
@@ -1185,7 +1221,7 @@ private theorem failureTypedInput_sector (p q : ReconstructionInput 1 1 0 0 0 0 
     (hp : ∃ T : Set.powersetCard (Fin 1) (1 + 0 + 0), p.2 = Sum.inl T) :
     failureTypedInput p q = 0 := by
   obtain ⟨T, hT⟩ := hp
-  rw [failureTypedInput_eq, Matrix.single_apply, if_neg]
+  rw [failureTypedInput_eq, Matrix.single_apply, ite_eq_right]
   rintro ⟨h1, -⟩
   rw [← h1] at hT
   simp only [failurePointQ, reduceCtorEq] at hT
@@ -1196,9 +1232,9 @@ private theorem failureTypedInput_diag_sum :
       failureTypedInput (t, Sum.inr failureIndex) (t, Sum.inr failureIndex)) = 1 := by
   rw [failureTypedInput_eq,
     Fintype.sum_eq_single ((retainedAnalysisOutputEquiv 1 0 0 0 0 0) failureRetainedOutput)]
-  · rw [Matrix.single_apply, if_pos ⟨rfl, rfl⟩]
+  · rw [Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩]
   · intro t ht
-    rw [Matrix.single_apply, if_neg]
+    rw [Matrix.single_apply, ite_eq_right]
     rintro ⟨h1, -⟩
     exact ht (congrArg Prod.fst h1).symm
 

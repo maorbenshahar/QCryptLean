@@ -170,12 +170,12 @@ rank). -/
 theorem bb84_bellSymmetricPurifier_exists (n : ℕ) [NeZero n] [NeZero (4 ^ n)] :
     Nonempty (BB84BellSymmetricPurifier n) := by
   classical
-  haveI hSig : NeZero ((signalDim ^ n) * (signalDim ^ n)) :=
+  have hSig : NeZero ((signalDim ^ n) * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero n (by norm_num)) (pow_ne_zero n (by norm_num))⟩
   set ρ : DensityOp ((signalDim ^ n) * (signalDim ^ n)) :=
     bb84BellPairedDeFinettiState n with hρ_def
   -- the purifier register dimension is the rank `r ≤ C(n+3,3)`, and `r ≥ 1`
-  haveI hr : NeZero (Matrix.rank ρ.toOp) := ⟨(densityOp_rank_pos ρ).ne'⟩
+  have hr : NeZero (Matrix.rank ρ.toOp) := ⟨(densityOp_rank_pos ρ).ne'⟩
   have hr_le : Matrix.rank ρ.toOp ≤ bb84PolyDimTight n := by
     rw [hρ_def]; exact bb84BellPairedDeFinettiState_rank_le_polyDimTight n
   -- the generic rank-dimension purification
@@ -222,8 +222,8 @@ theorem bb84_bellTensorTraceNorm_EnV_eq_canonical
       ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
     ckrTensorTraceNorm Δ (bb84BellCKRDeFinettiPurification n) =
       ckrTensorTraceNorm Δ (bb84EnVBellPurification V) := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI : NeZero ((signalDim ^ n) * V.dV) :=
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   exact tensorTraceNorm_eq_of_shared_marginal Δ (bb84BellDeFinettiDensity n)
     (bb84BellCKRDeFinettiPurification n) (bb84EnVBellPurification V)

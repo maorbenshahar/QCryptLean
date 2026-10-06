@@ -67,18 +67,18 @@ noncomputable def sqrtPosSemidefOp {n : ℕ} (A : PosSemidefOp n) : Op n :=
 lemma sqrtPosSemidefOp_sq {n : ℕ} (A : PosSemidefOp n) :
     sqrtPosSemidefOp A * sqrtPosSemidefOp A = A.toOp := by
   unfold sqrtPosSemidefOp
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   exact CFC.sqrt_mul_sqrt_self A.toOp (posSemidefOp_implies_mathlib A).nonneg
 
 /-- `√A` is Hermitian. -/
 lemma sqrtPosSemidefOp_isHermitian {n : ℕ} (A : PosSemidefOp n) :
     (sqrtPosSemidefOp A).IsHermitian := by
   unfold sqrtPosSemidefOp
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   exact ((CFC.sqrt_nonneg (a := A.toOp)).posSemidef).isHermitian
 
 /-- Uhlmann fidelity for positive semidefinite operators:
@@ -99,9 +99,9 @@ noncomputable def fidelitySq {n : ℕ} [NeZero n] (A B : PosSemidefOp n) : ℝ :
 theorem fidelity_nonneg_posSemidefOp {n : ℕ} [NeZero n]
     (A B : PosSemidefOp n) : 0 ≤ fidelity A B := by
   unfold fidelity
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   let S := sqrtPosSemidefOp A
   let inner := S * B.toOp * S
   have hS : S† = S := sqrtPosSemidefOp_isHermitian A
@@ -120,9 +120,9 @@ theorem fidelity_nonneg_posSemidefOp {n : ℕ} [NeZero n]
 lemma fidelity_self_posSemidefOp {n : ℕ} [NeZero n] (A : PosSemidefOp n) :
     fidelity A A = (Matrix.trace A.toOp).re := by
   unfold fidelity
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   have h_sq : sqrtPosSemidefOp A * sqrtPosSemidefOp A = A.toOp :=
     sqrtPosSemidefOp_sq A
   have h_inner :
@@ -272,9 +272,9 @@ private lemma cfcSqrt_ketbra {n : ℕ} (v : Ket n) (α : ℝ) (hα : 0 < α)
     letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
     letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
     CFC.sqrt (v * v.dag) = ((Real.sqrt α / α : ℝ) : ℂ) • (v * v.dag) := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   apply CFC.sqrt_unique
   · rw [smul_mul_smul_comm, ketbra_mul_ketbra, hv, smul_smul]
     have hc : ((Real.sqrt α / α : ℝ) : ℂ) * ((Real.sqrt α / α : ℝ) : ℂ) * (α : ℂ) = 1 := by
@@ -306,9 +306,9 @@ lemma braOpKet_eq_quadraticForm {n : ℕ} (A : Op n) (ψ : Ket n) :
 theorem fidelity_fromPure {n : ℕ} [NeZero n]
     (ρ : DensityOp n) (ψ : Ket n) (hψ : (ψ.dag * ψ) = 1) :
     DensityOp.fidelity ρ (DensityOp.fromPure ψ hψ) = Real.sqrt ((ψ.dag * ρ.toOp * ψ).re) := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   let S := sqrtPosSemidefOp ρ.toPosSemidefOp
   let v : Ket n := ⟨S.mulVec ψ.vec⟩
   set α := (ψ.dag * ρ.toOp * ψ).re with hα_def
@@ -371,7 +371,7 @@ lemma fidelityPureSq_tensor {n m : ℕ} [NeZero n] [NeZero m]
         (by rw [Ket.dag_tensor, bra_tensor_mul_ket_tensor, hψ, hφ]; ring)) =
     DensityOp.fidelitySq ρ (DensityOp.fromPure ψ hψ) *
     DensityOp.fidelitySq σ (DensityOp.fromPure φ hφ) := by
-  haveI : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
+  have : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
   rw [fidelitySq_fromPure, fidelitySq_fromPure, fidelitySq_fromPure]
   have h_assoc :
       (ψ ⊗ φ).dag * (ρ.tensor σ).toOp * (ψ ⊗ φ) =
@@ -430,7 +430,7 @@ lemma braOpKet_le_one {n : ℕ} (ρ : DensityOp n) (ψ : Ket n)
     rw [braOpKet_eq_quadraticForm]
     simp only [quadraticForm, dotProduct, Finset.univ_eq_empty, Finset.sum_empty, Complex.zero_re]
     linarith
-  · haveI : NeZero n := ⟨hn⟩
+  · have : NeZero n := ⟨hn⟩
     let hH := ρ.toPosSemidefOp.toHermitianOp.isHermitian
     let ev := hH.eigenvalues
     have h_ev_bounds := density_eigenvalues_bound ρ
@@ -571,15 +571,15 @@ theorem fidelity_tensor_mul {n m : ℕ} [NeZero n] [NeZero m] [NeZero (n * m)]
     (A B : PosSemidefOp n) (A' B' : PosSemidefOp m) :
     fidelity (A.tensor A') (B.tensor B') = fidelity A B * fidelity A' B' := by
   -- Instantiate the CFC-required instances for Op (n * m).
-  letI : PartialOrder (Op (n * m)) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op (n * m)) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op (n * m)) := Matrix.instNonnegSpectrumClass
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
-  letI : PartialOrder (Op m) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op (n * m)) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op (n * m)) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op (n * m)) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op m) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
   -- Abbreviations for PSD square roots.
   set SA  := sqrtPosSemidefOp A  with hSA_def
   set SA' := sqrtPosSemidefOp A' with hSA'_def

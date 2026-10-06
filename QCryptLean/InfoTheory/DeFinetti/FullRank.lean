@@ -125,7 +125,7 @@ theorem integralTensorPower_toOp_posDef_of_isOpenPosMeasure
       quadraticForm (integralTensorPower n μ).toOp v from rfl]
   rw [Complex.pos_iff]
   constructor
-  · haveI : MeasureTheory.Measure.IsOpenPosMeasure μ.measure := hμ
+  · have : MeasureTheory.Measure.IsOpenPosMeasure μ.measure := hμ
     set f : DensityOp d → ℝ :=
       fun σ => (quadraticForm (σ.tensorPowGen n).toOp v).re
     have hf_cont : Continuous f := by

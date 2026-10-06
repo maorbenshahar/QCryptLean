@@ -127,11 +127,11 @@ theorem bb84_peLabelledEnVRhoEtilde_smoothMinEntropyFloorPhaseOnly_announcePE_of
   · rw [ENNReal.ofReal_eq_zero.mpr (le_of_not_gt hLevelPos)]
     exact bot_le
   have hmn := lt_of_bb84PairedHaarFloorLevelDev_pos hLevelPos
-  haveI hNd : NeZero (signalDim * signalDim) := ⟨by norm_num⟩
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hN' : NeZero (1 * (signalDim ^ n)) :=
+  have hNd : NeZero (signalDim * signalDim) := ⟨by norm_num⟩
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hN' : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLab : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLab : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
@@ -158,13 +158,13 @@ theorem bb84_peLabelledEnVRhoEtilde_smoothMinEntropyFloorPhaseOnly_announcePE_of
     exact hfloor
   -- The de Finetti Haar measure is supported on the closed pure-state locus.
   have hPpure_closed : IsClosed
-      (setOf (fun σ : DensityOp (signalDim * signalDim) => σ.IsPure)) := by
+      (Set.ofPred (fun σ : DensityOp (signalDim * signalDim) => σ.IsPure)) := by
     have hcont : Continuous (fun σ : DensityOp (signalDim * signalDim) => σ.toOp) :=
       continuous_induced_dom
     exact isClosed_eq (hcont.mul hcont) hcont
   have hPpure_ae :
       ∀ᵐ τ ∂(deFinetti_haarMeasure (signalDim * signalDim)).measure,
-        τ ∈ setOf (fun σ : DensityOp (signalDim * signalDim) => σ.IsPure) :=
+        τ ∈ Set.ofPred (fun σ : DensityOp (signalDim * signalDim) => σ.IsPure) :=
     deFinetti_haarMeasure_isProductStateMeasure (signalDim * signalDim)
   exact
     smoothMinEntropy_coarsen_ge_of_deFinetti_postFilter_ownMarginal_heavyFloor
@@ -179,7 +179,7 @@ theorem bb84_peLabelledEnVRhoEtilde_smoothMinEntropyFloorPhaseOnly_announcePE_of
     (bb84PELabelledPairedHaarPerSigmaFamily_blocks_continuous (m := m) 1 (bb84UnitRegisterEmbed n)
         (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ)
     G hgoodClosed
-    (P := setOf (fun σ : DensityOp (signalDim * signalDim) => σ.IsPure))
+    (P := Set.ofPred (fun σ : DensityOp (signalDim * signalDim) => σ.IsPure))
     hPpure_closed hPpure_ae
     (bb84PairedHaarFloorLevelDev n m Q δ dev εTensor) εTensor
     E
@@ -218,10 +218,10 @@ theorem bb84_peLabelledEnVRhoEtilde_smoothMinEntropyFloorPhaseOnly_announce_ofTa
         ((bb84PELabelledEnVRhoEtilde (m := m) 1 (bb84UnitRegisterEmbed n)
           (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ).quantumMarginal.maxMixedTensor
           (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV))) := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hN' : NeZero (1 * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hN' : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLab : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLab : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
@@ -292,29 +292,29 @@ theorem naharSiftedDeFinetti_peLabelledEnV_smoothFloorPhaseOnly_announcePE_ofTai
                     (bb84UnitRegisterEmbed_isCPTP n) peSel xSel
                   (bb84EnVCKRPurification V)).toCQState)).tensorLeftKernel
             (bb84AnnounceKernel ℓEV peSel ec)) σref := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hVdv : NeZero V.dV := V.dV_neZero
-  haveI hRdim : NeZero ((signalDim ^ n) * V.dV) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hVdv : NeZero V.dV := V.dV_neZero
+  have hRdim : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hEnDim : NeZero (1 * (signalDim ^ n)) :=
+  have hEnDim : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hEveDimR : NeZero (1 * ((signalDim ^ n) * V.dV)) :=
+  have hEveDimR : NeZero (1 * ((signalDim ^ n) * V.dV)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLabPow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
+  have hLabPow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
     ⟨pow_ne_zero _ (by norm_num [signalDim])⟩
-  haveI hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hAnn : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) :=
+  have hAnn : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
       (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num)))⟩
-  haveI hAnnLabE : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) *
+  have hAnnLabE : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) *
       (signalDim ^ (n - bb84KeyRoundCount n m) *
         (1 * (signalDim ^ n)))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI hAnnDim : NeZero (bb84PEAnnounceLabelDim n m) := ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hAnnLabRef : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) *
+  have hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hAnnDim : NeZero (bb84PEAnnounceLabelDim n m) := ⟨pow_ne_zero _ (NeZero.ne _)⟩
+  have hAnnLabRef : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) *
       (bb84PEAnnounceLabelDim n m *
         (1 * (signalDim ^ n)))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩

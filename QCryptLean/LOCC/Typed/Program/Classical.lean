@@ -50,25 +50,13 @@ theorem liftedOperation_ofInstrument_functionAndForget_apply
         (x, ((R.splitAtSet i HH) q).2))
       (fun y => (R.splitAt i).symm
         (y, ((R.splitAtSet i HH) q').2))
-  have hsum (g : R.total → ℂ) :
-      (∑ x, g x) =
-        ∑ p : R.reg i × R.rest i, g ((R.splitAt i).symm p) := by
-    exact (Equiv.sum_comp (R.splitAt i).symm g).symm
   have hlift
       (L : Instrument (R.reg i) (HH) Unit) :
       ((PrivateAction.ofInstrument i L).liftedOperation () rho) q q' =
         (L.operation () rhoqq)
           ((R.splitAtSet i HH) q).1
           ((R.splitAtSet i HH) q').1 := by
-    change ((L.liftAt R i).operation () rho) q q' = _
-    simp only [Instrument.liftAt, Instrument.operation, matrixConjLinear,
-      LinearMap.coe_sum, LinearMap.coe_mk, AddHom.coe_mk, Finset.sum_apply,
-      Matrix.sum_apply, Matrix.mul_apply, localKrausLift_apply, ite_mul, zero_mul,
-      Matrix.conjTranspose_apply, RCLike.star_def, rhoqq]
-    simp_rw [hsum]
-    simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
-    simp [apply_ite]
-    rfl
+    exact Instrument.liftAt_operation_apply (R := R) i L () rho q q'
   rw [hlift (Instrument.functionAndForget f)]
   simp only [Instrument.functionAndForget_operation_apply, rhoqq,
     Matrix.submatrix_apply]

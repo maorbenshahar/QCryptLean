@@ -153,12 +153,12 @@ theorem singleKraus_conj_single {p q : ℕ} (u : Fin q) (v d : Fin p) :
       if d = v then Matrix.single u u (1 : ℂ) else 0 := by
   by_cases h : d = v
   · subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have := krausConj_single_of_col (Matrix.single u d (1 : ℂ)) d u 1
       (fun i => by simp [Matrix.single_apply, eq_comm])
     simp only [star_one, one_mul, one_smul] at this
     exact this
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     exact krausConj_single_of_col_zero _ _ (fun i => by simp [Ne.symm h])
 
 /-- The unit-Eve padding is the value-preserving `(·, 0)` embedding. -/

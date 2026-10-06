@@ -109,7 +109,7 @@ operator analogue of `√x ≤ (1+x)/2`.  Proof: `(1 - √C)² ⪰ 0`, i.e.
 `1 - 2·√C + C ⪰ 0`, since `1` and `√C` commute (both are CFC of `C`). -/
 lemma sqrt_le_one_add_div_two {n : ℕ} {C : Op n} (hC : C.PosSemidef) :
     CFC.sqrt C ≤ (1 / 2 : ℝ) • ((1 : Op n) + C) := by
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
   set R : Op n := CFC.sqrt C with hR
   have hRherm : R.IsHermitian := (CFC.sqrt_nonneg C).posSemidef.isHermitian
   have hRR : R * R = C := CFC.sqrt_mul_sqrt_self C hC.nonneg
@@ -258,7 +258,7 @@ theorem opGeoMean_smul_one_le {n : ℕ} {A : Op n} (hA : A.PosDef) {B : Op n}
     have hBzero : B = 0 := by
       have hBmulVec : ∀ w : Fin n → ℂ, B.mulVec w = 0 := by
         intro w
-        refine (hB.dotProduct_mulVec_zero_iff w).mp ?_
+        refine hB.dotProduct_mulVec_zero_iff.mp ?_
         have hle : (quadraticForm B w).re ≤ 0 := by
           have hbw := hb w
           rw [← hb_eq, Complex.ofReal_zero, zero_smul] at hbw

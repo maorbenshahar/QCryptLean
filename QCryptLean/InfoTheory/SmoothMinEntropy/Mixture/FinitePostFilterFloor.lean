@@ -2,6 +2,7 @@ import QCryptLean.InfoTheory.SmoothMinEntropy.Mixture.PostFilter
 import QCryptLean.InfoTheory.SmoothMinEntropy.Mixture.MixtureFloor
 import QCryptLean.InfoTheory.SmoothMinEntropy.Basic.SmoothCompactness
 import Mathlib.Analysis.Convex.Caratheodory
+import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
 import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 import Mathlib.Probability.ConditionalProbability
 
@@ -51,8 +52,9 @@ private lemma sum_eq_sum_of_embedding {σ ι : Type*} [Fintype σ] [Fintype ι] 
 
 /-- **Finite-dimensional Carathéodory compactness.** In a finite-dimensional real normed space the
 convex hull of a compact set is compact. The convex hull is realised as the continuous image of the
-compact product `stdSimplex × (range-in-s tuples)` of `d + 1` points, with `d = finrank`; the ⊆
-direction is Carathéodory (`eq_pos_convex_span_of_mem_convexHull`) padded to `d + 1` points. -/
+compact product of `Convexity.StdSimplex` and tuples of `d + 1` points in the set,
+with `d = finrank`; the ⊆ direction is Carathéodory
+(`eq_pos_convex_span_of_mem_convexHull`) padded to `d + 1` points. -/
 private lemma isCompact_convexHull_of_isCompact_finiteDim
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     {s : Set E} (hs : IsCompact s) : IsCompact (convexHull ℝ s) := by
@@ -64,17 +66,24 @@ private lemma isCompact_convexHull_of_isCompact_finiteDim
     intro i _
     exact ((continuous_apply i).comp continuous_fst).smul
       ((continuous_apply i).comp continuous_snd)
-  have hKcompact : IsCompact ((stdSimplex ℝ (Fin (d + 1))) ×ˢ
+  let weights := Set.range (fun t : Convexity.StdSimplex ℝ (Fin (d + 1)) =>
+    (t.weights : Fin (d + 1) → ℝ))
+  have hweights (w : Fin (d + 1) → ℝ) :
+      w ∈ weights ↔ (∀ i, 0 ≤ w i) ∧ ∑ i, w i = 1 := by
+    simp only [weights, Convexity.StdSimplex.range_toFun_comp_weights,
+      Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq]
+  have hKcompact : IsCompact (weights ×ˢ
       (Set.univ.pi (fun _ : Fin (d + 1) => s))) :=
-    (isCompact_stdSimplex ℝ (Fin (d + 1))).prod (isCompact_univ_pi (fun _ => hs))
+    (isCompact_range (continuous_pi (fun i =>
+      Convexity.StdSimplex.continuous_weights_apply ℝ i))).prod (isCompact_univ_pi (fun _ => hs))
   have himg : convexHull ℝ s = (fun p : (Fin (d + 1) → ℝ) × (Fin (d + 1) → E) =>
-      ∑ i, p.1 i • p.2 i) '' ((stdSimplex ℝ (Fin (d + 1))) ×ˢ
+      ∑ i, p.1 i • p.2 i) '' (weights ×ˢ
         (Set.univ.pi (fun _ : Fin (d + 1) => s))) := by
     apply Set.Subset.antisymm
     · intro x hx
       obtain ⟨σ, hσfin, z, w, hzs, haff, hwpos, hwsum, hwcomb⟩ :=
         eq_pos_convex_span_of_mem_convexHull hx
-      letI : Fintype σ := hσfin
+      let : Fintype σ := hσfin
       have hσne : Nonempty σ := by
         rcases isEmpty_or_nonempty σ with hE | hN
         · exfalso
@@ -119,8 +128,10 @@ private lemma isCompact_convexHull_of_isCompact_finiteDim
                 (fun i => by change W (e i) • Z (e i) = w i • z i; rw [hWe i, hZe i])
                 (fun j hj => by change W j • Z j = 0; rw [hWout j hj, zero_smul])
           _ = x := hwcomb
-      exact ⟨(W, Z), ⟨⟨hWnonneg, hWsum⟩, Set.mem_univ_pi.mpr hZmem⟩, hgeq⟩
+      exact ⟨(W, Z), ⟨(hweights W).mpr ⟨hWnonneg, hWsum⟩,
+        Set.mem_univ_pi.mpr hZmem⟩, hgeq⟩
     · rintro x ⟨⟨W, Z⟩, ⟨hW, hZ⟩, rfl⟩
+      have hW := (hweights W).mp hW
       have hWsum : ∑ i, W i = 1 := hW.2
       have hZmem : ∀ i, Z i ∈ s := Set.mem_univ_pi.mp hZ
       have hcm : (∑ i, W i • Z i) = Finset.univ.centerMass W Z :=
@@ -177,7 +188,7 @@ theorem integralRestrict_eq_finite_subConvexCombination
         (∫ τ in goodSet, ((f τ).stateMap x).toOp i j ∂μ.measure)
           = ∑ z, (p z : ℂ) • ((f (ψ z)).stateMap x).toOp i j) := by
   classical
-  haveI hprob : IsProbabilityMeasure μ.measure := μ.isProbability
+  have hprob : IsProbabilityMeasure μ.measure := μ.isProbability
   set F : DensityOp d → (X → Op dE) := fun τ x => ((f τ).stateMap x).toOp with hFdef
   have hFcont : Continuous F := continuous_pi hcont
   have hGoodCompact : IsCompact goodSet :=
@@ -209,7 +220,7 @@ theorem integralRestrict_eq_finite_subConvexCombination
         _ = 1 := by norm_num
     set ν : Measure (DensityOp d) :=
       (μ.measure goodSet)⁻¹ • μ.measure.restrict goodSet with hνdef
-    haveI hνprob : IsProbabilityMeasure ν := ProbabilityTheory.cond_isProbabilityMeasure hzero
+    have hνprob : IsProbabilityMeasure ν := ProbabilityTheory.cond_isProbabilityMeasure hzero
     have hcinv_ne_zero : (μ.measure goodSet)⁻¹ ≠ 0 := ENNReal.inv_ne_zero.mpr hmne_top
     have hcinv_ne_top : (μ.measure goodSet)⁻¹ ≠ ∞ := ENNReal.inv_ne_top.mpr hzero
     have hFint_ν : Integrable F ν := by
@@ -228,7 +239,7 @@ theorem integralRestrict_eq_finite_subConvexCombination
       Convex.integral_mem (convex_convexHull ℝ _) hHullClosed hae hFint_ν
     obtain ⟨σ, hσfin, weq, zpt, hw0, hwsum, hzmem, hcomb⟩ :=
       mem_convexHull_iff_exists_fintype.mp hmem
-    letI : Fintype σ := hσfin
+    let : Fintype σ := hσfin
     choose ψ0 hψ0mem hψ0eq using hzmem
     have hintν : (∫ τ, F τ ∂ν) = m⁻¹ • Y := by
       rw [hνdef, MeasureTheory.integral_smul_measure, ENNReal.toReal_inv]
@@ -596,7 +607,7 @@ theorem
       (∀ x : X, opLe (ρ_good.stateMap x).toOp (ρ_mix.stateMap x).toOp) ∧
       (∑ x : X, (ρ_mix.stateMap x).trace) - (∑ x : X, (ρ_good.stateMap x).trace) ≤ ε ∧
       ENNReal.ofReal k ≤ smoothMinEntropy εBar ρ_good σ_ref := by
-  letI : IsProbabilityMeasure μ.measure := μ.isProbability
+  let : IsProbabilityMeasure μ.measure := μ.isProbability
   have h_int : ∀ x : X, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((f τ).stateMap x).toOp) μ.measure :=
     fun x => (hcont x).integrable_of_compactSpace
@@ -645,7 +656,7 @@ theorem smoothMinEntropy_ge_of_deFinetti_postFilter_finiteSmoothFloor_subNormali
     (hf_smoothFloor : ∀ τ ∈ goodSet, τ ∈ P →
       ENNReal.ofReal k ≤ smoothMinEntropy εBar (f τ) σ_ref) :
     ENNReal.ofReal k ≤ smoothMinEntropy (εBar + Real.sqrt (2 * ε)) ρ_mix σ_ref := by
-  letI : IsProbabilityMeasure μ.measure := μ.isProbability
+  let : IsProbabilityMeasure μ.measure := μ.isProbability
   have h_int : ∀ x : X, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((f τ).stateMap x).toOp) μ.measure :=
     fun x => (hcont x).integrable_of_compactSpace
@@ -687,7 +698,7 @@ theorem smoothMinEntropy_ge_of_deFinetti_postFilter_ownMarginal_heavyFloor
       ENNReal.ofReal k ≤ smoothMinEntropy εBar (f τ) (f τ).quantumMarginal) :
     ENNReal.ofReal k ≤
       smoothMinEntropy (εBar + Real.sqrt (2 * ε)) ρ_mix ρ_mix.quantumMarginal := by
-  letI : IsProbabilityMeasure μ.measure := μ.isProbability
+  let : IsProbabilityMeasure μ.measure := μ.isProbability
   have h_int : ∀ x : X, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((f τ).stateMap x).toOp) μ.measure :=
     fun x => (hcont x).integrable_of_compactSpace
@@ -817,7 +828,7 @@ theorem smoothMinEntropyReal_subMixture_ge_inf_component
     (hmix : ∀ x : X, (ρ.stateMap x).toOp = ∑ z, (p z : ℂ) • ((comp z).stateMap x).toOp)
     (σ : SubDensityOp n) (k : ℝ)
     (hρ_weight_pos : 0 < ∑ x : X, (ρ.stateMap x).trace)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)))
     (hfeas_comp_ball : ∀ z, ∀ ρ' : CQState X n,
       CQState.purifiedDistance (comp z) ρ' ≤ ε → hasFeasibleLambda ρ' σ)
     (hfloor : ∀ z, k ≤ smoothMinEntropyReal ε (comp z) σ) :
@@ -884,7 +895,7 @@ theorem smoothMinEntropyReal_ge_of_smoothFloor_of_purifiedDistance
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (εBar s : ℝ) (hεBar : 0 ≤ εBar) (_hs : 0 ≤ s)
     (ρ ρ' : CQState X n) (σ : SubDensityOp n) (k : ℝ)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal (εBar + s) ρ σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal (εBar + s) ρ σ)))
     (hd : CQState.purifiedDistance ρ ρ' ≤ s)
     (hk : k ≤ smoothMinEntropyReal εBar ρ' σ) :
     k ≤ smoothMinEntropyReal (εBar + s) ρ σ := by
@@ -960,7 +971,7 @@ theorem smoothMinEntropyReal_ge_of_deFinetti_postFilter_finiteSmoothFloor_subNor
     rw [Matrix.smul_apply, smul_eq_mul]
   have hfloor_z : ∀ z, k ≤ smoothMinEntropyReal εBar (f (ψ z)) σ_ref :=
     fun z => hf_smoothFloor (ψ z) (hψ_mem z) (hψ_memP z)
-  have hbdd_good : BddAbove (setOf (isInSmoothedSetReal εBar ρ_good σ_ref)) :=
+  have hbdd_good : BddAbove (Set.ofPred (isInSmoothedSetReal εBar ρ_good σ_ref)) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ
         (fun _ hd => CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower hρ hd)) εBar
@@ -972,7 +983,8 @@ theorem smoothMinEntropyReal_ge_of_deFinetti_postFilter_finiteSmoothFloor_subNor
   have hgood_floor : k ≤ smoothMinEntropyReal εBar ρ_good σ_ref :=
     smoothMinEntropyReal_subMixture_ge_inf_component εBar hεBar_nonneg p hp_nonneg hp_sum_le
       (fun z => f (ψ z)) ρ_good hmix σ_ref k hweight_pos_good hbdd_good hfeas_cb hfloor_z
-  have hbdd_mix : BddAbove (setOf (isInSmoothedSetReal (εBar + Real.sqrt (2 * ε)) ρ_mix σ_ref)) :=
+  have hbdd_mix :
+      BddAbove (Set.ofPred (isInSmoothedSetReal (εBar + Real.sqrt (2 * ε)) ρ_mix σ_ref)) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ
         (fun _ hd => CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower hρ hd))
@@ -1035,7 +1047,7 @@ theorem
     rw [Matrix.smul_apply, smul_eq_mul]
   have hfloor_z : ∀ z, k ≤ smoothMinEntropyReal εBar (f (ψ z)) σ_ref :=
     fun z => hf_smoothFloor (ψ z) (hψ_mem z) (hψ_memP z)
-  have hbdd_good : BddAbove (setOf (isInSmoothedSetReal εBar ρ_good σ_ref)) :=
+  have hbdd_good : BddAbove (Set.ofPred (isInSmoothedSetReal εBar ρ_good σ_ref)) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ
         (fun _ hd => CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower hρ hd)) εBar

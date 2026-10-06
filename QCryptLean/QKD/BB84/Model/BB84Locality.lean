@@ -67,9 +67,9 @@ theorem bb84SiftedSinglePairOp_eq_tensor (peSel xSel : Bool) :
           (if peSel && xSel then Quantum.Gates.hadamard else (1 : Op 2)) := by
   unfold bb84SiftedSinglePairOp
   by_cases h : (peSel && xSel) = true
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     rfl
-  · simp only [if_neg h, Op.tensor_one]
+  · simp only [ite_eq_right h, Op.tensor_one]
 
 /-! ## 2. (a) The sift layer is a product across the laboratory cut -/
 

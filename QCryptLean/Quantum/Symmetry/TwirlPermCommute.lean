@@ -64,7 +64,7 @@ theorem permuteSignalLinear_bellTwirl_conj (n : ℕ) [NeZero n] [NeZero (4 ^ n)]
     permuteSignalLinear n π (bellTwirlUnitary n g * M * (bellTwirlUnitary n g)ᴴ) =
       bellTwirlUnitary n (g ∘ ⇑π⁻¹) * permuteSignalLinear n π M *
         (bellTwirlUnitary n (g ∘ ⇑π⁻¹))ᴴ := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   set Uπ := permutationRepresentation 4 n π with hUπ
   have hconj : Uπ * bellTwirlUnitary n g = bellTwirlUnitary n (g ∘ ⇑π⁻¹) * Uπ := by
     have h := bellTwirlUnitary_perm_conj n π g

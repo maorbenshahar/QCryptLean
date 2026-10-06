@@ -29,7 +29,24 @@ open TypedLOCC.TwoParty
 
 /-- The two BB84 measurement bases used by the one-round physical primitive. -/
 inductive Basis | z | x
-  deriving DecidableEq, Fintype, Nonempty
+  deriving DecidableEq, Nonempty
+
+/-- The measurement bases in constructor order. -/
+protected abbrev Basis.enumList : List Basis := [.z, .x]
+
+protected theorem Basis.enumList_getElem?_ctorIdx_eq (theta : Basis) :
+    Basis.enumList[Basis.ctorIdx theta]? = some theta := by
+  cases theta <;> rfl
+
+protected theorem Basis.enumList_nodup : Basis.enumList.Nodup := by
+  decide
+
+instance instFintypeBasis : Fintype Basis where
+  elems := ⟨Basis.enumList, Basis.enumList_nodup⟩
+  complete theta := by
+    change theta ∈ Basis.enumList
+    exact List.mem_iff_getElem?.mpr
+      ⟨Basis.ctorIdx theta, Basis.enumList_getElem?_ctorIdx_eq theta⟩
 
 /-- A local BB84 measurement result. -/
 abbrev Bit := Fin 2
@@ -183,8 +200,17 @@ theorem measureAliceWithSpectator_liftedOperation_apply
       simp [aliceInputAt, aliceOutputAt, MultipartiteSystem.splitAt, TwoParty.pairEquiv]
   change ((uniformMeasureAndRecord.liftAt (system Bit S) .alice).operation observed rho)
     (aliceOutputAt stored s) (aliceOutputAt stored' s') = _
-  rw [Instrument.liftAt_operation_apply (R := system Bit S) .alice uniformMeasureAndRecord]
+  refine (Instrument.liftAt_operation_apply (R := system Bit S) .alice
+    uniformMeasureAndRecord observed rho (aliceOutputAt stored s)
+      (aliceOutputAt stored' s')).trans ?_
   rw [hout_fst stored s, hout_fst stored' s']
+  change uniformMeasureAndRecord.operation observed
+    (rho.submatrix
+      (fun x : Bit => ((system Bit S).splitAt .alice).symm
+        (x, (((system Bit S).splitAtSet .alice StoredRecord) (aliceOutputAt stored s)).2))
+      (fun y : Bit => ((system Bit S).splitAt .alice).symm
+        (y, (((system Bit S).splitAtSet .alice StoredRecord) (aliceOutputAt stored' s')).2)))
+    stored stored' = _
   simp_rw [hrestore]
   unfold uniformMeasureAndRecord
   have hkeep := Instrument.keeping_operation_apply
@@ -193,11 +219,15 @@ theorem measureAliceWithSpectator_liftedOperation_apply
     stored.1 stored'.1 stored.2 stored'.2
   refine hkeep.trans ?_
   by_cases hstored : stored.2 = observed ∧ stored'.2 = observed
-  · rw [if_pos hstored, if_pos hstored]
+  · rw [ite_eq_left hstored, ite_eq_left hstored]
     rw [Instrument.uniformChoice_operation]
-    simp [cardBasis, fixedBasisMeasurement, Instrument.operation,
-      Instrument.ofFine, matrixConjLinear, fixedBasisKraus,
-      Matrix.mul_apply, TwoParty.system]
+    change (Fintype.card Basis : ℂ)⁻¹ *
+      (∑ _ : Unit, fixedBasisKraus observed.1 observed.2 *
+        rho.submatrix (fun x => aliceInputAt x s) (fun y => aliceInputAt y s') *
+          (fixedBasisKraus observed.1 observed.2)ᴴ) stored.1 stored'.1 = _
+    simp only [cardBasis, Finset.univ_unique, Finset.sum_singleton,
+      Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.submatrix_apply,
+      fixedBasisKraus, Fin.sum_univ_two]
     ring
   · simp [hstored]
 
@@ -221,19 +251,21 @@ theorem measureAliceWithSpectator_sum_isRecordDiagonal
       ((∑ observed : Record,
           (measureAliceWithSpectator S).liftedOperation observed) rho) := by
   intro stored stored' s s' hne
-  simp only [LinearMap.sum_apply, Matrix.sum_apply]
-  simp_rw [measureAliceWithSpectator_liftedOperation_apply]
+  change (∑ observed : Record, (measureAliceWithSpectator S).liftedOperation observed rho
+    (aliceOutputAt stored s) (aliceOutputAt stored' s')) = 0
   apply Finset.sum_eq_zero
   intro observed _
-  rw [if_neg]
-  intro hboth
-  exact hne (hboth.1.trans hboth.2.symm)
+  exact (measureAliceWithSpectator_liftedOperation_apply observed rho stored stored' s s').trans
+    (ite_eq_right fun hboth => hne (hboth.1.trans hboth.2.symm))
 
 /-- One physical round: Alice measures privately, Bob measures privately, then the program ends. -/
 def singleQubitRoundProgram : Program inputSystem (.leaf outputSystem) := by
-  simpa only [measureBob, measureAlice, measureAliceWithSpectator,
-    PrivateAction.out_ofInstrument, inputSystem, TwoParty.set_alice, TwoParty.set_bob] using
-    measureAlice.then (measureBob.then .done)
+  have h : measureBob.out = outputSystem := by
+    change ((system Bit Bit).set .alice StoredRecord).set .bob StoredRecord =
+      system StoredRecord StoredRecord
+    rw [TwoParty.set_alice, TwoParty.set_bob]
+  exact cast (congrArg (fun R => Program inputSystem (.leaf R)) h)
+    (measureAlice.then (measureBob.then .done))
 
 /-! ## Definition-driven constructor probes -/
 

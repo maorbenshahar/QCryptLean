@@ -275,7 +275,7 @@ lemma opLe_mulVec_eq_zero_of_psd {n : ℕ} {A B : Op n}
   have hAge : 0 ≤ (quadraticForm A v).re := posSemidef_re_quadraticForm_nonneg hA v
   have hAre : (quadraticForm A v).re = 0 := le_antisymm hAle hAge
   have hAim : (quadraticForm A v).im = 0 := quadraticForm_im_of_isHermitian A hA.isHermitian v
-  exact (hA.dotProduct_mulVec_zero_iff v).mp (Complex.ext hAre hAim)
+  exact hA.dotProduct_mulVec_zero_iff.mp (Complex.ext hAre hAim)
 
 /-- **Löwner domination contains the support: kernel-submodule form.**
 
@@ -546,16 +546,16 @@ private lemma quadraticForm_partialTraceB_eq_sum_referenceBlockInsert
                 A (finProdFinEquiv (i, k)) (finProdFinEquiv (j, k)) * x j := by
             congr 1; ext i
             rw [Finset.sum_eq_single k]
-            · rw [if_pos rfl]
+            · rw [ite_eq_left rfl]
               congr 1
               congr 1; ext j
               rw [Finset.sum_eq_single k]
-              · rw [if_pos rfl]
+              · rw [ite_eq_left rfl]
               · intro l' _ hl'
-                rw [if_neg hl', mul_zero]
+                rw [ite_eq_right hl', mul_zero]
               · intro hk; exact (hk (Finset.mem_univ k)).elim
             · intro l _ hl
-              rw [if_neg hl, zero_mul]
+              rw [ite_eq_right hl, zero_mul]
             · intro hk; exact (hk (Finset.mem_univ k)).elim
       _ = ∑ i : Fin dE, ∑ j : Fin dE,
               star (x i) * A (finProdFinEquiv (i, k))
@@ -683,7 +683,7 @@ theorem opLe_le_card_smul_partialTraceB_tensor_one
   have hv : (∑ r : Fin dR, z r) = v := by
     funext p
     simp only [z, referenceBlockSupport, Finset.sum_apply,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true]
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hsum :=
     quadraticForm_sum_le_card_mul_sum_quadraticForm (A := A) hA z
   have hblock :=

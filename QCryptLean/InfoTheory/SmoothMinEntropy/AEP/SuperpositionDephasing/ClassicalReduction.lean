@@ -67,7 +67,7 @@ theorem smoothHmin_classicalCond_reduction
   classical
   have hweight_le_one : ∀ s ∈ S, weight s ≤ 1 :=
     fun _ hs => (Finset.single_le_sum hweight_nonneg hs).trans hweight_sum
-  letI : Nonempty {s // s ∈ S} := ⟨⟨hS_nonempty.choose, hS_nonempty.choose_spec⟩⟩
+  let : Nonempty {s // s ∈ S} := ⟨⟨hS_nonempty.choose, hS_nonempty.choose_spec⟩⟩
   let mix := dephasedMixtureCQ S comp weight hweight_nonneg hweight_le_one hweight_sum
   let H := smoothMinEntropy ε mix σ_dephased
   let F := S.inf' hS_nonempty componentLower
@@ -143,13 +143,13 @@ theorem smoothHminReal_classicalCond_reduction
         (dephasedMixtureCQ S comp weight hweight_nonneg hweight_le_one hweight_sum)
         σ_dephased := by
   classical
-  letI : Nonempty {s // s ∈ S} := ⟨⟨hS_nonempty.choose, hS_nonempty.choose_spec⟩⟩
+  let : Nonempty {s // s ∈ S} := ⟨⟨hS_nonempty.choose, hS_nonempty.choose_spec⟩⟩
   set mix := dephasedMixtureCQ S comp weight hweight_nonneg hweight_le_one hweight_sum with hmix
   have hmix_norm : ∑ p : X × {s // s ∈ S}, (mix.stateMap p).trace = 1 := by
     rw [hmix]
     exact dephasedMixtureCQ_sum_stateMap_trace_eq_one S comp weight hweight_nonneg
       hweight_le_one hweight_sum hweight_sum_eq hcomp_norm
-  have hbdd : BddAbove (setOf (isInSmoothedSetReal ε mix σ_dephased)) :=
+  have hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε mix σ_dephased)) :=
     smoothMinEntropyReal_bddAbove ε hε_lt_one mix hmix_norm σ_dephased
   refine le_of_forall_pos_le_add (fun ν hν => ?_)
   set k : ℝ := S.inf' hS_nonempty componentLower - ν with hk

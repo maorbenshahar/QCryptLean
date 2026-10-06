@@ -94,7 +94,7 @@ lemma reshapedPurificationPair
       partialTraceB (ψτ * ψτ.dag) = (DensityOp.partialTraceB τ).toOp ∧
       ‖((sameAncillaPurificationKet ρ).dag * (ketB τ U) : ℂ)‖ =
         ‖(ψρ.dag * ψτ : ℂ)‖ := by
-  letI : NeZero (dR * (dE * dR)) :=
+  let : NeZero (dR * (dE * dR)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dR) (Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR))⟩
   -- Reshape the two original kets into the new carrier.
   refine ⟨Quantum.TensorProducts.reshapeKet (sameAncillaPurificationKet ρ),
@@ -160,7 +160,7 @@ theorem fidelity_le_fidelity_partialTraceB_ofDensity
   -- (ii) Regrouping: reshape the joint kets into `Ket (dE * (dR * (dE * dR)))`
   -- so they purify the reduced states `(Tr_R ρ, Tr_R τ)` on the combined
   -- ancilla, with overlap norm preserved.
-  letI : NeZero (dR * (dE * dR)) :=
+  let : NeZero (dR * (dE * dR)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dR) (Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR))⟩
   obtain ⟨ψρ', ψτ', hψρ'_pt, hψτ'_pt, h_overlap_eq⟩ :=
     fidelity_le_fidelity_partialTraceB_ofDensity.reshapedPurificationPair ρ τ U
@@ -211,9 +211,9 @@ theorem fidelity_le_fidelity_partialTraceB
     {dE dR : ℕ} [NeZero dE] [NeZero dR] [NeZero (dE * dR)]
     (A B : PosSemidefOp (dE * dR)) :
     fidelity A B ≤ fidelity A.partialTraceB B.partialTraceB := by
-  letI : PartialOrder (Op (dE * dR)) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op (dE * dR)) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op (dE * dR)) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op (dE * dR)) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op (dE * dR)) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op (dE * dR)) := Matrix.instNonnegSpectrumClass
   -- Set the trace scalars `a := (Tr A).re` and `b := (Tr B).re`.
   set a : ℝ := (Matrix.trace A.toOp).re
   set b : ℝ := (Matrix.trace B.toOp).re

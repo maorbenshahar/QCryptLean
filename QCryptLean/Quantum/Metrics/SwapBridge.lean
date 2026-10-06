@@ -68,7 +68,7 @@ lemma swapOp_mul_self (n : ℕ) [NeZero n] : swapOp n * swapOp n = 1 := by
   ext p q
   simp only [Matrix.mul_apply, Matrix.one_apply, swapOp, Matrix.of_apply]
   simp only [ite_mul, one_mul, zero_mul]
-  simp_rw [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp_rw [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   have hinv : swapEquiv n (swapEquiv n p) = p := by
     have : (swapEquiv n).symm = swapEquiv n := by
       ext x
@@ -107,11 +107,11 @@ lemma swapOp_tensor {n : ℕ} [NeZero n] (A : Op n) (B : Op n) :
   simp only [Matrix.mul_apply, swapOp, Matrix.of_apply, Op.tensor,
     Matrix.reindex_apply, Matrix.submatrix_apply, kroneckerMap_apply]
   simp only [ite_mul, one_mul, zero_mul, mul_ite, mul_one, mul_zero]
-  simp_rw [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp_rw [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   simp_rw [show ∀ x : Fin (n * n),
     ((swapEquiv n) x = q) = (x = (swapEquiv n).symm q) from
-    fun x => propext (Equiv.apply_eq_iff_eq_symm_apply (swapEquiv n))]
-  simp_rw [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    fun x => propext (Equiv.eq_symm_apply (swapEquiv n)).symm]
+  simp_rw [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hsymm : (swapEquiv n).symm = swapEquiv n := by
     ext x
     simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply]
@@ -132,11 +132,11 @@ lemma swapOp_conj_entry (n : ℕ) [NeZero n] (X : Op (n * n)) (p q : Fin (n * n)
     (swapOp n * X * swapOp n) p q = X (swapEquiv n p) (swapEquiv n q) := by
   simp only [Matrix.mul_apply, swapOp, Matrix.of_apply]
   simp only [ite_mul, one_mul, zero_mul, mul_ite, mul_one, mul_zero]
-  simp_rw [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp_rw [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   simp_rw [show ∀ x : Fin (n * n),
     ((swapEquiv n) x = q) = (x = (swapEquiv n).symm q) from
-    fun x => propext (Equiv.apply_eq_iff_eq_symm_apply (swapEquiv n))]
-  simp_rw [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    fun x => propext (Equiv.eq_symm_apply (swapEquiv n)).symm]
+  simp_rw [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have hsymm : (swapEquiv n).symm = swapEquiv n := by
     ext x
     simp [swapEquiv, Equiv.trans_apply, Equiv.prodComm_apply]
@@ -161,7 +161,7 @@ lemma swapOp_trace {n : ℕ} [NeZero n] (σ : Op (n * n)) :
 /-- SWAP conjugation preserves trace norm. -/
 lemma swapOp_traceNorm {n : ℕ} [NeZero n] (X : Op (n * n)) :
     traceNorm (swapOp n * X * swapOp n) = traceNorm X := by
-  haveI : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
+  have : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
   calc traceNorm (swapOp n * X * swapOp n)
       = traceNorm (X * swapOp n) := by
         rw [Matrix.mul_assoc]
@@ -181,9 +181,9 @@ lemma traceNorm_mapTensorId_eq_mapIdTensor {n m : ℕ} [NeZero n] [NeZero m]
     (Φ : Op n →ₗ[ℂ] Op m) (X : Op (n * n)) :
     traceNorm (mapTensorId Φ X) =
       traceNorm (mapIdTensor Φ (swapOp n * X * swapOp n)) := by
-  haveI : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
-  haveI : NeZero (m * n) := ⟨Nat.mul_ne_zero (NeZero.ne m) (NeZero.ne n)⟩
-  haveI : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
+  have : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
+  have : NeZero (m * n) := ⟨Nat.mul_ne_zero (NeZero.ne m) (NeZero.ne n)⟩
+  have : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
   -- The reindexing equivalence swapping (a,s) ↔ (s,a) between Fin(m*n) and Fin(n*m)
   let e : Fin (m * n) ≃ Fin (n * m) :=
     finProdFinEquiv.symm.trans ((Equiv.prodComm (Fin m) (Fin n)).trans finProdFinEquiv)
@@ -214,7 +214,7 @@ lemma mapIdTensor_psd_bound_of_mapTensorId {n m : ℕ} [NeZero n] [NeZero m]
       traceNorm (mapTensorId Φ ρ) ≤ B)
     (σ : Op (n * n)) (hσ : σ.PosSemidef) (hσ_tr : σ.trace.re ≤ 1) :
     traceNorm (mapIdTensor Φ σ) ≤ B := by
-  haveI : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
+  have : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
   -- Set ρ := SWAP * σ * SWAP, which is PSD with same trace
   set ρ := swapOp n * σ * swapOp n with hρ_def
   -- ρ is PSD
@@ -256,10 +256,10 @@ private lemma mapIdTensor_tensor {n m : ℕ} [NeZero n] [NeZero m]
       Matrix.single_apply, mul_ite, mul_one, mul_zero]
     symm; exact Finset.sum_eq_single r
       (fun i _ hi => Finset.sum_eq_zero (fun j _ => by
-        exact if_neg (fun ⟨h1, _⟩ => hi h1)))
+        exact ite_eq_right (fun ⟨h1, _⟩ => hi h1)))
       (fun h => absurd (Finset.mem_univ r) h) |>.trans
         (Finset.sum_eq_single c
-          (fun j _ hj => if_neg (fun ⟨_, h2⟩ => hj h2))
+          (fun j _ hj => ite_eq_right (fun ⟨_, h2⟩ => hj h2))
           (fun h => absurd (Finset.mem_univ c) h) |>.trans (by simp))
   -- Rewrite RHS using linearity
   conv_rhs =>
@@ -435,8 +435,8 @@ lemma contraction_absorption_calc_idTensor {n m : ℕ} [NeZero n] [NeZero m]
     (hσ_psd : σ.PosSemidef) (hσ_tr : σ.trace.re ≤ 1)
     (hA₀ : ‖A₀‖ ≤ 1) (hB₀ : ‖B₀‖ ≤ 1) :
     traceNorm (Op.tensor A₀ (1 : Op m) * mapIdTensor Φ σ * Op.tensor B₀ (1 : Op m)) ≤ B := by
-  haveI : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
-  haveI : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
+  have : NeZero (n * n) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne n)⟩
+  have : NeZero (n * m) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne m)⟩
   -- Right Holder: traceNorm(M * (B₀⊗I)) ≤ traceNorm(M) * ‖B₀⊗I‖
   have h_right : traceNorm (Op.tensor A₀ (1 : Op m) * mapIdTensor Φ σ *
       Op.tensor B₀ (1 : Op m)) ≤

@@ -251,13 +251,13 @@ private lemma topRightBlock_eq_proj_mul_unitary_mul_incl {d a : ℕ}
   simp only [topRightBlock_apply, Matrix.mul_apply, E1, E2, Matrix.of_apply]
   rw [Finset.sum_eq_single (finSumFinEquiv (Sum.inr j))]
   · -- Main outer case: k = e(inr j); the outer if-factor is 1.
-    rw [if_pos rfl, mul_one]
+    rw [ite_eq_left rfl, mul_one]
     rw [Finset.sum_eq_single (finSumFinEquiv (Sum.inl i))]
     · simp
-    · intro l _ hl; rw [if_neg hl]; ring
+    · intro l _ hl; rw [ite_eq_right hl]; ring
     · intro h; exact (h (Finset.mem_univ _)).elim
   · -- Outer non-singled case: k ≠ e(inr j); the outer if-factor is 0.
-    intro k _ hk; rw [if_neg hk]; ring
+    intro k _ hk; rw [ite_eq_right hk]; ring
   · intro h; exact (h (Finset.mem_univ _)).elim
 
 /-- The first selector matrix `E1` satisfies `E1 * E1ᴴ = (1 : Op d)`. -/
@@ -273,7 +273,7 @@ private lemma E1_mul_conjTranspose_eq_one {d a : ℕ} :
   · subst hij
     rw [Finset.sum_eq_single (finSumFinEquiv (Sum.inl i))]
     · simp
-    · intro b _ hb; rw [if_neg hb]; simp
+    · intro b _ hb; rw [ite_eq_right hb]; simp
     · intro h; exact (h (Finset.mem_univ _)).elim
   · rw [Matrix.one_apply_ne hij]
     apply Finset.sum_eq_zero
@@ -286,8 +286,8 @@ private lemma E1_mul_conjTranspose_eq_one {d a : ℕ} :
           hki.symm.trans hkj
         have := finSumFinEquiv.injective heq
         exact Sum.inl.inj this
-      rw [if_pos hki, if_neg hkj]; simp
-    · rw [if_neg hki]; simp
+      rw [ite_eq_left hki, ite_eq_right hkj]; simp
+    · rw [ite_eq_right hki]; simp
 
 /-- The second selector matrix `E2` satisfies `E2ᴴ * E2 = (1 : Op a)`. -/
 private lemma E2_conjTranspose_mul_eq_one {d a : ℕ} :
@@ -302,7 +302,7 @@ private lemma E2_conjTranspose_mul_eq_one {d a : ℕ} :
   · subst hij
     rw [Finset.sum_eq_single (finSumFinEquiv (Sum.inr i))]
     · simp
-    · intro b _ hb; rw [if_neg hb]; simp
+    · intro b _ hb; rw [ite_eq_right hb]; simp
     · intro h; exact (h (Finset.mem_univ _)).elim
   · rw [Matrix.one_apply_ne hij]
     apply Finset.sum_eq_zero
@@ -315,8 +315,8 @@ private lemma E2_conjTranspose_mul_eq_one {d a : ℕ} :
           hki.symm.trans hkj
         have := finSumFinEquiv.injective heq
         exact Sum.inr.inj this
-      rw [if_pos hki, if_neg hkj]; simp
-    · rw [if_neg hki]; simp
+      rw [ite_eq_left hki, ite_eq_right hkj]; simp
+    · rw [ite_eq_right hki]; simp
 
 /-- A nonnegative real whose square is at most one is itself at most one. -/
 private lemma le_one_of_nonneg_of_mul_self_le_one {x : ℝ} (hx : 0 ≤ x) (h : x * x ≤ 1) :
@@ -367,8 +367,8 @@ lemma l2_opNorm_topRightBlock_unitaryOp_le_one {d a : ℕ}
     _ ≤ ‖E1‖ * ‖U.toOp‖ * ‖E2‖ :=
         mul_le_mul_of_nonneg_right (Matrix.l2_opNorm_mul _ _) (norm_nonneg _)
     _ ≤ 1 := by
-        have h1 : ‖E1‖ * ‖U.toOp‖ ≤ 1 := mul_le_one₀ hE1_le hU_nn hU_le
-        exact mul_le_one₀ h1 hE2_nn hE2_le
+        have h1 : ‖E1‖ * ‖U.toOp‖ ≤ 1 := (mul_le_of_le_one_left hU_nn hE1_le).trans hU_le
+        exact (mul_le_of_le_one_left hE2_nn h1).trans hE2_le
 
 /-- Trace identity for a polar factorization: if `Sρ` is Hermitian, then
 `Tr((Sρ · Wρ)ᴴ · (Sτ · Wτ)) = Tr((Wτ · Wρᴴ) · (Sρ · Sτ))`. -/

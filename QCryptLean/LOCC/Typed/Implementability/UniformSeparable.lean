@@ -104,9 +104,11 @@ theorem reindex_famKraus_eq_tensorRect (K : ∀ i, Matrix ((S).reg i) ((R).reg i
     Matrix.reindex sCoord rCoord (famKraus K) =
       Quantum.TensorProducts.tensorRect (K Party.alice) (K Party.bob) := by
   ext i j
-  rw [Quantum.TensorProducts.tensorRect_apply]
-  simp only [Matrix.reindex_apply, Matrix.submatrix_apply, famKraus, Matrix.of_apply]
-  rw [prod_party]
+  let KA : Matrix (Fin sA) (Fin rA) ℂ := K Party.alice
+  let KB : Matrix (Fin sB) (Fin rB) ℂ := K Party.bob
+  change (∏ p : Party, K p ((sCoord).symm i p) ((rCoord).symm j p)) =
+    Quantum.TensorProducts.tensorRect KA KB i j
+  rw [Quantum.TensorProducts.tensorRect_apply, prod_party]
   rfl
 
 /-- A complete public exit appends its full transcript label in canonical output coordinates. -/
@@ -218,8 +220,15 @@ theorem castRect_mul_coordinateKraus {T : TList} {D : ℕ}
         (HMul.hMul (β := Matrix (Fin sB) (Fin rB) ℂ)
           (appendIndexKraus sB (e (Boundary.uniformExitEquiv S T t)))
           (b.uniformPartyKraus Party.bob)) := by
-  rw [coordinateKraus, ← Matrix.mul_assoc, castRect_mul_appendIndexKraus,
-    Quantum.TensorProducts.tensorRect_mul]
+  rw [coordinateKraus, ← Matrix.mul_assoc, castRect_mul_appendIndexKraus]
+  let KA : Matrix (Fin sA) (Fin rA) ℂ := b.uniformPartyKraus Party.alice
+  let KB : Matrix (Fin sB) (Fin rB) ℂ := b.uniformPartyKraus Party.bob
+  change Quantum.TensorProducts.tensorRect (1 : Quantum.Operators.Op sA)
+    (appendIndexKraus sB (e (Boundary.uniformExitEquiv S T t))) *
+      Quantum.TensorProducts.tensorRect KA KB =
+    Quantum.TensorProducts.tensorRect KA
+      (appendIndexKraus sB (e (Boundary.uniformExitEquiv S T t)) * KB)
+  rw [Quantum.TensorProducts.tensorRect_mul]
   exact congrArg (fun M : Matrix (Fin sA) (Fin rA) ℂ =>
     Quantum.TensorProducts.tensorRect M
       (appendIndexKraus sB (e (Boundary.uniformExitEquiv S T t)) *

@@ -106,7 +106,7 @@ private theorem tendsto_rpow_aux [Nonempty n] {X : Type*} {l : Filter X} {A : X 
     {A₀ : Matrix n n ℂ} (hA : ∀ᶠ x in l, (A x).PosSemidef) (hA₀ : A₀.PosSemidef)
     {t : ℝ} (ht : 0 ≤ t) (h : Filter.Tendsto A l (nhds A₀)) :
     Filter.Tendsto (fun x => A x ^ t) l (nhds (A₀ ^ t)) := by
-  letI : CStarAlgebra (Matrix n n ℂ) := {}
+  let : CStarAlgebra (Matrix n n ℂ) := {}
   simp_rw [CFC.rpow_def]
   refine h.cfc_nnreal (s := Set.Icc 0 (‖A₀‖₊ + 1)) isCompact_Icc (· ^ t) ?_ ?_ ?_ ?_ ?_
   · have hev : ∀ᶠ x in l, ‖A x‖₊ ≤ ‖A₀‖₊ + 1 :=

@@ -63,7 +63,7 @@ private lemma coarsen_deFinetti_postFilter_data
     (∑ y : Yc, ((Matrix.of fun i j : Fin dE =>
         ∫ τ in goodSetᶜ, ((CQState.coarsen g (f τ)).stateMap y).toOp i j ∂μ.measure :
           Op dE).trace).re ≤ ε) := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   -- Entry-eval CLM (reads matrix entry `i j`), used to transport integrability through entries.
   let entryCLM : Fin dE → Fin dE → (Op dE →L[ℝ] ℂ) := fun i j =>
     LinearMap.toContinuousLinearMap
@@ -90,16 +90,16 @@ private lemma coarsen_deFinetti_postFilter_data
     refine MeasureTheory.integrable_finsetSum (f := fun x (τ : DensityOp d) =>
       if g x = y then ((f τ).stateMap x).toOp else 0) _ (fun x _ => ?_)
     by_cases hx : g x = y
-    · simp only [if_pos hx]; exact h_int x
-    · simp only [if_neg hx]; exact MeasureTheory.integrable_zero _ _ _
+    · simp only [ite_eq_left hx]; exact h_int x
+    · simp only [ite_eq_right hx]; exact MeasureTheory.integrable_zero _ _ _
   -- (D2) coarsened B13 integral split, regrouped over the fibers of `g`.
   · intro y i j
     have hintSum : ∀ x ∈ (Finset.univ : Finset Xc), MeasureTheory.Integrable
         (fun τ : DensityOp d => if g x = y then ((f τ).stateMap x).toOp i j else 0) μ.measure := by
       intro x _
       by_cases hx : g x = y
-      · simp only [if_pos hx]; exact hentInt x i j
-      · simp only [if_neg hx]; exact MeasureTheory.integrable_zero _ _ _
+      · simp only [ite_eq_left hx]; exact hentInt x i j
+      · simp only [ite_eq_right hx]; exact MeasureTheory.integrable_zero _ _ _
     rw [hcoarsenEntry ρ_mix y i j,
       show (∫ τ : DensityOp d, ((CQState.coarsen g (f τ)).stateMap y).toOp i j ∂μ.measure)
           = ∫ τ : DensityOp d, (∑ x : Xc, if g x = y then ((f τ).stateMap x).toOp i j else 0)
@@ -109,8 +109,8 @@ private lemma coarsen_deFinetti_postFilter_data
       MeasureTheory.integral_finsetSum _ hintSum]
     refine Finset.sum_congr rfl (fun x _ => ?_)
     by_cases hx : g x = y
-    · simp only [if_pos hx]; exact hf_lin x i j
-    · simp only [if_neg hx, MeasureTheory.integral_zero]
+    · simp only [ite_eq_left hx]; exact hf_lin x i j
+    · simp only [ite_eq_right hx, MeasureTheory.integral_zero]
   -- (D3) coarsened block continuity: a finite fiber sum of continuous blocks.
   · intro y
     have hrw : (fun τ : DensityOp d => ((CQState.coarsen g (f τ)).stateMap y).toOp) =
@@ -119,8 +119,8 @@ private lemma coarsen_deFinetti_postFilter_data
     rw [hrw]
     refine continuous_finsetSum _ (fun x _ => ?_)
     by_cases hx : g x = y
-    · simp only [if_pos hx]; exact hcont x
-    · simp only [if_neg hx]; exact continuous_const
+    · simp only [ite_eq_left hx]; exact hcont x
+    · simp only [ite_eq_right hx]; exact continuous_const
   -- (D4) coarsened bad-branch trace: fiber regrouping of the uncoarsened bad-branch traces.
   · have hmat : ∀ y : Yc,
         (Matrix.of fun i j : Fin dE =>
@@ -135,12 +135,13 @@ private lemma coarsen_deFinetti_postFilter_data
             (Filter.Eventually.of_forall (fun τ => hcoarsenEntry (f τ) y i j)),
         MeasureTheory.integral_finsetSum _ (fun x _ => by
           by_cases hx : g x = y
-          · simp only [if_pos hx]; exact ((entryCLM i j).integrable_comp (h_int x)).integrableOn
-          · simp only [if_neg hx]; exact MeasureTheory.integrableOn_zero)]
+          · simp only [ite_eq_left hx]
+            exact ((entryCLM i j).integrable_comp (h_int x)).integrableOn
+          · simp only [ite_eq_right hx]; exact MeasureTheory.integrableOn_zero)]
       refine Finset.sum_congr rfl (fun x _ => ?_)
       by_cases hx : g x = y
-      · simp only [if_pos hx, Matrix.of_apply]
-      · simp only [if_neg hx, Matrix.zero_apply, MeasureTheory.integral_zero]
+      · simp only [ite_eq_left hx, Matrix.of_apply]
+      · simp only [ite_eq_right hx, Matrix.zero_apply, MeasureTheory.integral_zero]
     have hsum : ∑ y : Yc, ((Matrix.of fun i j : Fin dE =>
             ∫ τ in goodSetᶜ, ((CQState.coarsen g (f τ)).stateMap y).toOp i j ∂μ.measure :
               Op dE).trace).re
@@ -210,14 +211,14 @@ lemma goodBranchBlockOp_coarsen_eq_sum_fiber
   rw [MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall hentry),
     MeasureTheory.integral_finsetSum _ (fun x _ => by
       by_cases hx : g x = y
-      · simp only [if_pos hx]
+      · simp only [ite_eq_left hx]
         exact ((entryCLM i j).integrable_comp (h_int x)).integrableOn
-      · simp only [if_neg hx]
+      · simp only [ite_eq_right hx]
         exact MeasureTheory.integrableOn_zero)]
   refine Finset.sum_congr rfl (fun x _ => ?_)
   by_cases hx : g x = y
-  · simp only [if_pos hx, Matrix.of_apply]
-  · simp only [if_neg hx, Matrix.zero_apply, MeasureTheory.integral_zero]
+  · simp only [ite_eq_left hx, Matrix.of_apply]
+  · simp only [ite_eq_right hx, Matrix.zero_apply, MeasureTheory.integral_zero]
 
 /-- **The coarsening of a fine good branch IS the good branch of the coarsened family.**
 
@@ -260,8 +261,8 @@ lemma coarsen_stateMap_toOp_eq_goodBranchBlockOp_coarsen
   rw [CQState.coarsen_stateMap_toOp, goodBranchBlockOp_coarsen_eq_sum_fiber g μ f goodSet h_int y]
   refine Finset.sum_congr rfl (fun x _ => ?_)
   by_cases hx : g x = y
-  · simp only [if_pos hx, hρ_good_eq x]
-  · simp only [if_neg hx]
+  · simp only [ite_eq_left hx, hρ_good_eq x]
+  · simp only [ite_eq_right hx]
 
 /-- Coarsened component smooth floors give an extended post-filter floor at radius
 `εBar + sqrt (2 * ε)` without a retained-mass hypothesis. -/
@@ -291,7 +292,7 @@ theorem smoothMinEntropy_coarsen_ge_of_deFinetti_postFilter_finiteSmoothFloor_su
       ENNReal.ofReal k ≤ smoothMinEntropy εBar (CQState.coarsen g (f τ)) σ_ref) :
     ENNReal.ofReal k ≤
       smoothMinEntropy (εBar + Real.sqrt (2 * ε)) (CQState.coarsen g ρ_mix) σ_ref := by
-  letI : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  let : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
   have h_int : ∀ x : Xc, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((f τ).stateMap x).toOp) μ.measure :=
     fun x => (hcont x).integrable_of_compactSpace
@@ -335,7 +336,7 @@ theorem smoothMinEntropy_coarsen_ge_goodBr_of_postFilterFloor_subNorm_lin
       (∑ y : Yc, ((CQState.coarsen g ρ_mix).stateMap y).trace) -
           (∑ y : Yc, (ρ_good.stateMap y).trace) ≤ ε ∧
       ENNReal.ofReal k ≤ smoothMinEntropy εBar ρ_good σ_ref := by
-  letI : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  let : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
   have h_int : ∀ x : Xc, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((f τ).stateMap x).toOp) μ.measure :=
     fun x => (hcont x).integrable_of_compactSpace
@@ -380,7 +381,7 @@ theorem smoothMinEntropy_coarsen_ge_fineGoodBr_of_postFilter_subNorm_lin
       (∑ x : Xc, (ρ_mix.stateMap x).trace) - (∑ x : Xc, (ρ_good.stateMap x).trace) ≤ ε ∧
       ENNReal.ofReal k ≤ smoothMinEntropy εBar (CQState.coarsen g ρ_good) σ_ref := by
   classical
-  letI : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  let : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
   have h_int : ∀ x : Xc, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((f τ).stateMap x).toOp) μ.measure :=
     fun x => (hcont x).integrable_of_compactSpace
@@ -439,7 +440,7 @@ theorem smoothMinEntropy_coarsen_ge_of_deFinetti_postFilter_ownMarginal_heavyFlo
       ENNReal.ofReal k ≤ smoothMinEntropy εBar (CQState.coarsen g (f τ)) (f τ).quantumMarginal) :
     ENNReal.ofReal k ≤ smoothMinEntropy (εBar + Real.sqrt (2 * ε))
       (CQState.coarsen g ρ_mix) ρ_mix.quantumMarginal := by
-  letI : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  let : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
   have h_int : ∀ x : Xc, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((f τ).stateMap x).toOp) μ.measure :=
     fun x => (hcont x).integrable_of_compactSpace

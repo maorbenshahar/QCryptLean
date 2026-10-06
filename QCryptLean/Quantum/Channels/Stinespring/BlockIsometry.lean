@@ -73,10 +73,10 @@ theorem idTensorRectBlock_conjTranspose
     finProdFinEquiv_symm_apply]
   by_cases hab : q.divNat = p.divNat
   · have hba : p.divNat = q.divNat := hab.symm
-    rw [if_pos hab, if_pos hba]
+    rw [ite_eq_left hab, ite_eq_left hba]
   · have hba : ¬ p.divNat = q.divNat := by
       simpa [eq_comm] using hab
-    rw [if_neg hab, if_neg hba]
+    rw [ite_eq_right hab, ite_eq_right hba]
     simp
 
 end Quantum.Channels

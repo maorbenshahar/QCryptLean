@@ -74,9 +74,11 @@ def selectedRecordContinuation {n N : ℕ} (f : Fin n ↪ Fin N) :
     Program (weightedStreamSystem (finishAcc Unit N) 0)
       (.leaf (weightedSelectedRecordSystem N n)) :=
   cast (by
-    simp only [selectedRecordAliceAction, selectedRecordBobAction,
-      PrivateAction.out_ofInstrument, weightedStreamSystem, weightedSelectedRecordSystem,
-      TwoParty.set_alice, TwoParty.set_bob])
+    apply congrArg (fun R => Program (weightedStreamSystem (finishAcc Unit N) 0) (.leaf R))
+    change ((weightedStreamSystem (finishAcc Unit N) 0).set .alice
+      (SelectedLocalRecord N n)).set .bob (SelectedLocalRecord N n) = _
+    rw [weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob]
+    rfl)
     ((selectedRecordAliceAction f).then (selectedRecordBobAction f).run)
 
 /-- The actual physical weighted measurement schedule followed by the two local selected-record
@@ -129,6 +131,8 @@ def selectedMeasurementLaw (pA pB : PMF Basis) {n N : ℕ}
     else 0
   map_add' rho sigma := by
     ext q q'
+    change _ = (if q.1 = q'.1 ∧ q.2 = q'.2 then _ else (0 : ℂ)) +
+      (if q.1 = q'.1 ∧ q.2 = q'.2 then _ else (0 : ℂ))
     by_cases h : q.1 = q'.1 ∧ q.2 = q'.2
     · have hqq : q = q' := Prod.ext h.1 h.2
       subst q'
@@ -136,6 +140,7 @@ def selectedMeasurementLaw (pA pB : PMF Basis) {n N : ℕ}
     · simp [h]
   map_smul' c rho := by
     ext q q'
+    change _ = c * (if q.1 = q'.1 ∧ q.2 = q'.2 then _ else 0)
     by_cases h : q.1 = q'.1 ∧ q.2 = q'.2
     · have hqq : q = q' := Prod.ext h.1 h.2
       subst q'
@@ -220,10 +225,10 @@ private theorem sum_ite_selected_eq {n N : ℕ} (f : Fin n ↪ Fin N) (u : Fin n
     (∑ x, if u = (fun i ↦ x (f i)) then g x else 0) =
       ∑ v : Fin (N - n) → Bit, g ((selectedBitSplit f).symm (u, v)) := by
   rw [← (selectedBitSplit f).symm.sum_comp, Fintype.sum_prod_type,
-    Fintype.sum_eq_single u fun u' hu' => Finset.sum_eq_zero fun v _ => if_neg fun h =>
+    Fintype.sum_eq_single u fun u' hu' => Finset.sum_eq_zero fun v _ => ite_eq_right fun h =>
       hu' (h.trans (funext (selectedBitSplit_symm_apply_embedding f u' v))).symm]
   exact Finset.sum_congr rfl fun v _ =>
-    if_pos (funext (selectedBitSplit_symm_apply_embedding f u v)).symm
+    ite_eq_left (funext (selectedBitSplit_symm_apply_embedding f u v)).symm
 
 /-! ### Completeness of the complementary fixed-basis measurements -/
 
@@ -325,7 +330,8 @@ private theorem sum_sum_conj_mul_row_eq {α β ω₁ ω₂ : Type} [Fintype α] 
         Finset.sum_congr rfl fun col _ => by
           rw [Fintype.sum_prod_type]
           refine Finset.sum_congr rfl fun row _ => ?_
-          rw [Fintype.sum_eq_single col.2 fun y hy => by rw [if_neg hy, mul_zero], if_pos rfl,
+          rw [Fintype.sum_eq_single col.2 fun y hy => by rw [ite_eq_right hy, mul_zero],
+            ite_eq_left rfl,
             mul_one]
     _ = _ := by
         rw [Fintype.sum_prod_type]
@@ -414,7 +420,7 @@ private theorem sum_ite_selectedLocalRecord_eq {n N : ℕ} (f : Fin n ↪ Fin N)
   rw [← (finishedRecordEquiv N).symm.sum_comp, Fintype.sum_prod_type]
   simp only [selectedLocalRecord_finishedRecordEquiv_symm, Prod.mk.injEq]
   rw [Fintype.sum_eq_single theta fun theta' h => Finset.sum_eq_zero fun x _ =>
-    if_neg fun hx => h hx.1.symm]
+    ite_eq_right fun hx => h hx.1.symm]
   exact (Finset.sum_congr rfl fun x _ => if_congr (and_iff_right rfl) rfl rfl).trans
     (sum_ite_selected_eq f u _)
 
@@ -434,7 +440,7 @@ private theorem weightedMeasurementSchedule_output_finishedRecordEquiv_symm
       (matrixConjLinear
         (fixedBasisPairKraus (fun i ↦ ((), (p.1 i, p.2 i))) (fun i ↦ ((), (q.1 i, q.2 i))))
         (reindexOp (weightedScheduleUnitInputEquiv N) rho)) () () :=
-  (weightedMeasurementSchedule_output_apply pA pB N rho _ _ _ _).trans (if_pos ⟨rfl, rfl⟩)
+  (weightedMeasurementSchedule_output_apply pA pB N rho _ _ _ _).trans (ite_eq_left ⟨rfl, rfl⟩)
 
 /-! ### The grafted program -/
 
@@ -464,9 +470,10 @@ theorem selectedRecordContinuation_denote_apply {n N : ℕ} (f : Fin n ↪ Fin N
   rcases q with ⟨qA, qB⟩
   rcases q' with ⟨qA', qB'⟩
   have hout : (selectedRecordBobAction f).out = weightedSelectedRecordSystem N n := by
-    simp only [selectedRecordBobAction, selectedRecordAliceAction,
-      PrivateAction.out_ofInstrument, weightedStreamSystem, weightedSelectedRecordSystem,
-      TwoParty.set_alice, TwoParty.set_bob]
+    change ((weightedStreamSystem (finishAcc Unit N) 0).set .alice
+      (SelectedLocalRecord N n)).set .bob (SelectedLocalRecord N n) = _
+    rw [weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob]
+    rfl
   have hcoord (a b : SelectedLocalRecord N n) :
       (Equiv.cast (congrArg Boundary.space (congrArg Boundary.leaf hout.symm)))
           ((Boundary.leafSpaceEquiv (weightedSelectedRecordSystem N n)).symm
@@ -514,7 +521,9 @@ theorem selectedRecordContinuation_denote_apply {n N : ℕ} (f : Fin n ↪ Fin N
           (qA, qB))
         (((selectedRecordAliceAction f).out.set .bob (SelectedLocalRecord N n)).pairEquiv.symm
           (qA', qB')) = _
-  rw [Instrument.liftAt_bob_operation_apply]
+  refine (Instrument.liftAt_bob_operation_apply (selectedRecordAliceAction f).out
+    (Instrument.functionAndForget (selectedLocalRecord f)) ()
+    ((selectedRecordAliceAction f).liftedOperation () xi) qA qA' qB qB').trans ?_
   refine (Instrument.functionAndForget_operation_apply (selectedLocalRecord f) _ qB qB').trans ?_
   have hAliceApply (a a' : SelectedLocalRecord N n)
       (rB : streamRegister (finishAcc Unit N) 0) :
@@ -532,9 +541,11 @@ theorem selectedRecordContinuation_denote_apply {n N : ℕ} (f : Fin n ↪ Fin N
           (SelectedLocalRecord N n)).pairEquiv.symm (a, rB))
         (((weightedStreamSystem (finishAcc Unit N) 0).set .alice
           (SelectedLocalRecord N n)).pairEquiv.symm (a', rB)) = _
-    rw [Instrument.liftAt_alice_operation_apply]
+    refine (Instrument.liftAt_alice_operation_apply (weightedStreamSystem (finishAcc Unit N) 0)
+      (Instrument.functionAndForget (selectedLocalRecord f)) () xi a a' rB rB).trans ?_
     exact Instrument.functionAndForget_operation_apply (selectedLocalRecord f) _ a a'
-  simp_rw [Matrix.submatrix_apply, hAliceApply]
+  refine Finset.sum_congr rfl fun rB _ => ?_
+  exact if_congr Iff.rfl (hAliceApply qA qA' rB) rfl
 
 /-- **Entry law of the grafted program.**  An output entry of the selected-record program sums
 the diagonal entries of the schedule output over the complete local records that project to the
@@ -563,8 +574,12 @@ private theorem weightedSelectedMeasurementProgram_denote_apply
         (.leaf (weightedStreamSystem (finishAcc Unit N) 0))).denote sigma =
         (weightedMeasurementSchedule pA pB N).denote rho := by
     ext q q'
-    simp [sigma, Program.denote_done, reindexOp,
-      Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
+    refine (congrArg (fun M : Op (Boundary.leaf
+        (weightedStreamSystem (finishAcc Unit N) 0)).space => M q q')
+      (LinearMap.congr_fun Program.denote_done sigma)).trans ?_
+    exact congrArg₂ ((weightedMeasurementSchedule pA pB N).denote rho)
+      ((Boundary.leafSpaceEquiv (weightedStreamSystem (finishAcc Unit N) 0)).symm_apply_apply q)
+      ((Boundary.leafSpaceEquiv (weightedStreamSystem (finishAcc Unit N) 0)).symm_apply_apply q')
   -- The grafted continuation runs the selected-record continuation on `sigma`.
   have hgraft :
       (weightedSelectedMeasurementProgram pA pB N f).denote rho =
@@ -599,19 +614,19 @@ theorem weightedSelectedMeasurementProgram_denote_eq
   by_cases hdiag : (a, uA) = (a', uA') ∧ (b, uB) = (b', uB')
   · -- Diagonal entries: both record sums run over the complementary bits only.
     obtain ⟨⟨⟩, ⟨⟩⟩ := hdiag
-    rw [if_pos ⟨rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl⟩]
     simp only [and_self, sum_ite_selectedLocalRecord_eq,
       weightedMeasurementSchedule_output_finishedRecordEquiv_symm]
     -- Pull out the basis-string weights and discard the complementary bits.
     rw [← sum_matrixConjLinear_fixedBasisPairKraus_selectedBitSplit, Finset.mul_sum]
     exact Finset.sum_congr rfl fun _ _ => (Finset.mul_sum _ _ _).symm
   · -- Off-diagonal entries vanish: a complete record has a single selected record.
-    rw [if_neg hdiag]
+    rw [ite_eq_right hdiag]
     refine Finset.sum_eq_zero fun rB _ => ?_
     by_cases hB : (b, uB) = selectedLocalRecord f rB ∧ (b', uB') = selectedLocalRecord f rB
-    · rw [if_pos hB]
-      exact Finset.sum_eq_zero fun rA _ => if_neg fun hA =>
+    · rw [ite_eq_left hB]
+      exact Finset.sum_eq_zero fun rA _ => ite_eq_right fun hA =>
         hdiag ⟨hA.1.trans hA.2.symm, hB.1.trans hB.2.symm⟩
-    · exact if_neg hB
+    · exact ite_eq_right hB
 
 end QKD.BB84.Measurement

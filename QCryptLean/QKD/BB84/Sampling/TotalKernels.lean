@@ -371,7 +371,7 @@ theorem selectFiberDefault
     rw [hxPrefix]
     simp
   unfold select
-  rw [dif_pos hq]
+  rw [dite_eq_left hq]
   congr 1
   apply Function.Embedding.ext
   intro k
@@ -650,7 +650,7 @@ theorem totalizedReconstructedStatusRawLaw_eq
             PMF.pure (false, x) (status, omega)) := by
         ac_rfl
   by_cases hn : nK + mZ + mX = 0
-  · rw [totalizedReconstructedStatusRawLaw, dif_pos hn,
+  · rw [totalizedReconstructedStatusRawLaw, dite_eq_left hn,
       reconstructedStatusRawLaw]
     simp only [PMF.bind_apply, tsum_fintype, Fintype.sum_bool]
     have hnK : nK = 0 := by omega
@@ -659,15 +659,15 @@ theorem totalizedReconstructedStatusRawLaw_eq
     subst nK
     subst mZ
     subst mX
-    simp only [if_true, Bool.false_eq_true, if_false,
+    simp only [ite_true, Bool.false_eq_true, ite_false,
       selectionStatusLaw_apply, selectionStatusWeight,
       selectionSuccessMass_zero_quotas, selectionFailureMass_zero_quotas,
       one_mul, zero_mul, add_zero]
     simpa [selectionSuccessMass_zero_quotas] using hselected
-  · rw [totalizedReconstructedStatusRawLaw, dif_neg hn,
+  · rw [totalizedReconstructedStatusRawLaw, dite_eq_right hn,
       reconstructedStatusRawLaw]
     simp only [PMF.bind_apply, tsum_fintype, Fintype.sum_bool]
-    simp only [if_true, Bool.false_eq_true, if_false,
+    simp only [ite_true, Bool.false_eq_true, ite_false,
       selectionStatusLaw_apply, selectionStatusWeight]
     exact congrArg₂ (fun x y => x + y) hselected
       (hfailure ⟨0, Nat.pos_of_ne_zero hn⟩)

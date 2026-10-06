@@ -75,7 +75,7 @@ lemma traceNorm_seedPerSeedConditionedOp_sub_le
         ∑ x : X, if H.hash s x = z then
           Quantum.Metrics.traceNorm
             ((ρ.stateMap x).toOp - (ρ'.stateMap x).toOp) else 0 := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_nn : (0 : ℝ) ≤ 1 / (Fintype.card S : ℝ) := by positivity
   rw [seedPerSeedConditionedOp_sub_toOp_eq H ρ ρ' s z, traceNorm_real_smul]
   rw [abs_of_nonneg hS_nn]
@@ -106,7 +106,7 @@ lemma sum_traceNorm_seedPerSeedConditionedOp_sub_le
           (seedPerSeedConditionedOp H ρ' sz.1 sz.2).toOp) ≤
       ∑ x : X, Quantum.Metrics.traceNorm
           ((ρ.stateMap x).toOp - (ρ'.stateMap x).toOp) := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : (0 : ℝ) < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos
@@ -173,8 +173,8 @@ lemma traceNorm_seedKeyExtractorOutput_sub_joint_le
           (seedKeyExtractorOutputState H ρ').toJointDensity.toOp) ≤
       Quantum.Metrics.traceNorm
         (ρ.toJointDensity.toOp - ρ'.toJointDensity.toOp) := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [cqState_joint_traceNorm_eq_sum_blocks
         (seedKeyExtractorOutputState H ρ) (seedKeyExtractorOutputState H ρ'),
@@ -203,8 +203,8 @@ lemma traceDistanceGen_seedKeyExtractorOutput_le
         (seedKeyExtractorOutputState H ρ').toJointDensity.toOp ≤
       Quantum.Metrics.traceDistanceGen
         ρ.toJointDensity.toOp ρ'.toJointDensity.toOp := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   unfold Quantum.Metrics.traceDistanceGen
   have hnorm := traceNorm_seedKeyExtractorOutput_sub_joint_le H ρ ρ'
@@ -250,8 +250,8 @@ lemma traceDistanceGen_seedKeyExtractorOutput_le_purifiedDistance
         (seedKeyExtractorOutputState H ρ).toJointDensity.toOp
         (seedKeyExtractorOutputState H ρ').toJointDensity.toOp ≤
       CQState.purifiedDistance ρ ρ' := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   have hStep1 := traceDistanceGen_seedKeyExtractorOutput_le H ρ ρ'
   have hStep2 :=

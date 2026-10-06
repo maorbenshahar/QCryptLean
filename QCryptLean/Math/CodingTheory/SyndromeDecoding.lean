@@ -1,7 +1,7 @@
 import Mathlib.InformationTheory.Hamming
 import Mathlib.Algebra.Group.Hom.Defs
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.Group.Fin.Basic
 import Mathlib.Tactic.Positivity
 
@@ -92,17 +92,17 @@ lemma syndromeRepresentative_failure_le (syn : (I → Fin 2) →+ (Fin m → Fin
   intro e _
   have hnn := mul_nonneg (hw e) (collisionCount_nonneg syn T e)
   by_cases hrep : rep (syn e) = e
-  · rw [if_pos hrep]
+  · rw [ite_eq_left hrep]
     apply add_nonneg _ hnn
     split_ifs
     · exact le_refl 0
     · exact hw e
-  · rw [if_neg hrep]
+  · rw [ite_eq_right hrep]
     by_cases he : e ∈ T
-    · rw [if_pos he, zero_add]
+    · rw [ite_eq_left he, zero_add]
       have hc := one_le_collisionCount syn T e _ (hmem e he) hrep (hsyn e he)
       simpa using mul_le_mul_of_nonneg_left hc (hw e)
-    · rw [if_neg he]
+    · rw [ite_eq_right he]
       exact le_add_of_nonneg_right hnn
 
 end Math.CodingTheory

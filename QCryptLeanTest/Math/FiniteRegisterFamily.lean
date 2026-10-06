@@ -52,8 +52,11 @@ noncomputable def bellPOVMTyped (k : Fin 4) : Matrix qubitPair.total qubitPair.t
 theorem bellPOVMTyped_trace (k : Fin 4) : (bellPOVMTyped k).trace = 1 := by
   simp only [Matrix.trace, Matrix.diag_apply]
   rw [qubitPair_sum_univ]
-  fin_cases k <;>
-    norm_num [bellPOVMTyped, bellSignTyped, bellTable, cfg, Matrix.of_apply]
+  change (1 / 2 : ℂ) * (bellTable k 0 0 * bellTable k 0 0) +
+    (1 / 2 : ℂ) * (bellTable k 0 1 * bellTable k 0 1) +
+    (1 / 2 : ℂ) * (bellTable k 1 0 * bellTable k 1 0) +
+    (1 / 2 : ℂ) * (bellTable k 1 1 * bellTable k 1 1) = 1
+  fin_cases k <;> norm_num [bellTable]
 
 /-- Three named laboratories. -/
 inductive Party3

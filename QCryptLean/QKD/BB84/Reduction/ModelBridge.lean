@@ -94,11 +94,11 @@ theorem ideal_single_coordinates {B : Boundary P} (L : BoundaryKeyLayout B) (e :
         heq_eq_eq, true_and, Equiv.apply_eq_iff_eq, Prod.mk.injEq, smul_eq_mul]
       by_cases hk : a₁ = b₁ ∧ a₂ = b₂ ∧ a₁ = a₂
       · obtain ⟨rfl, rfl, rfl⟩ := hk
-        rw [if_pos ⟨rfl, rfl, rfl⟩]
+        rw [ite_eq_left ⟨rfl, rfl, rfl⟩]
         simp [Finset.sum_ite_eq, ite_and, eq_comm]
-      · rw [if_neg hk]
+      · rw [ite_eq_right hk]
         symm
-        refine mul_eq_zero_of_right _ (Finset.sum_eq_zero fun k _ => if_neg ?_)
+        refine mul_eq_zero_of_right _ (Finset.sum_eq_zero fun k _ => ite_eq_right ?_)
         rintro ⟨⟨rfl, rfl, -⟩, ⟨h₂, h₂', -⟩⟩
         exact hk ⟨rfl, h₂.symm.trans h₂', h₂⟩
     · have hne : ∀ (r r' : (L.disposition e).Key × (L.disposition e).Key × L.Residual e)
@@ -108,7 +108,7 @@ theorem ideal_single_coordinates {B : Boundary P} (L : BoundaryKeyLayout B) (e :
             (⟨f, (L.coordinates f).symm s⟩ : B.space)
             (⟨f, (L.coordinates f).symm s'⟩ : B.space) = 0 := by
         intro r r' s s'
-        rw [Matrix.single_apply, if_neg]
+        rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h, -⟩
         exact hfe (congrArg Sigma.fst h).symm
       simp only [hne, Finset.sum_const_zero, mul_zero, ite_self, Matrix.smul_apply,
@@ -116,7 +116,7 @@ theorem ideal_single_coordinates {B : Boundary P} (L : BoundaryKeyLayout B) (e :
   · rw [L.ideal_crossExit_zero _ hfg]
     symm
     simp only [Matrix.smul_apply, Matrix.sum_apply, Matrix.single_apply]
-    refine smul_eq_zero_of_right _ (Finset.sum_eq_zero fun k _ => if_neg ?_)
+    refine smul_eq_zero_of_right _ (Finset.sum_eq_zero fun k _ => ite_eq_right ?_)
     rintro ⟨h, h'⟩
     exact hfg ((congrArg Sigma.fst h).symm.trans (congrArg Sigma.fst h'))
 
@@ -136,17 +136,17 @@ theorem ideal_single_of_injective {B₂ B₁ : Boundary P} {L₂ : BoundaryKeyLa
   have hM : ∀ z w, (z ∉ Set.range φ ∨ w ∉ Set.range φ) →
       Matrix.single (φ x) (φ x) (1 : ℂ) z w = 0 := by
     rintro z w (hz | hw)
-    · rw [Matrix.single_apply, if_neg]
+    · rw [Matrix.single_apply, ite_eq_right]
       rintro ⟨rfl, -⟩
       exact hz ⟨x, rfl⟩
-    · rw [Matrix.single_apply, if_neg]
+    · rw [Matrix.single_apply, ite_eq_right]
       rintro ⟨-, rfl⟩
       exact hw ⟨x, rfl⟩
   have hM' : ∀ z w, (z ∉ Set.range φ ∨ w ∉ Set.range φ) →
       (c • ∑ i, Matrix.single (φ (y i)) (φ (y i)) (1 : ℂ)) z w = 0 := by
     rintro z w hzw
     simp only [Matrix.smul_apply, Matrix.sum_apply, Matrix.single_apply]
-    refine smul_eq_zero_of_right _ (Finset.sum_eq_zero fun i _ => if_neg ?_)
+    refine smul_eq_zero_of_right _ (Finset.sum_eq_zero fun i _ => ite_eq_right ?_)
     rintro ⟨rfl, rfl⟩
     rcases hzw with hz | hw
     · exact hz ⟨y i, rfl⟩
@@ -530,7 +530,9 @@ theorem rawClassicalTailDataOf_eq (n m ell ellEV : ℕ) (peSel : Fin n → Bool)
         seedPair := st
         evTag := verificationTag n ellEV peSel st.2 (QKD.BB84.Model.aliceKeyOf n peSel (x .alice))
         syndrome := ec.syndrome (QKD.BB84.Model.aliceKeyOf n peSel (x .alice)) } := by
-  simp [rawClassicalTailDataOf, QKD.BB84.Model.evTagSynOf_eq, QKD.BB84.Model.announcedSeed]
+  unfold rawClassicalTailDataOf
+  rw [QKD.BB84.Model.evTagSynOf_eq n ell ellEV peSel leakEC ec _ (x .alice)]
+  simp [QKD.BB84.Model.announcedSeed]
 
 variable (nK mZ mX ell ellEV leakEC : ℕ)
 
@@ -554,7 +556,9 @@ theorem modelTailData_eq_rawClassicalTailDataOf
       rawClassicalTailDataOf (nK + mZ + mX) (mZ + mX) ell ellEV (@Sampling.packedPESel nK mZ mX)
         leakEC ec x st := by
   rw [rawClassicalTailDataOf_eq]
-  simp [modelTailData, QKD.BB84.Model.jointOutcome, QKD.BB84.Model.aliceKeyString_jointOutcome]
+  rw [QKD.BB84.Model.aliceKeyString_jointOutcome (nK + mZ + mX)
+    (@Sampling.packedPESel nK mZ mX) (x .alice) (x .bob)]
+  simp [modelTailData, QKD.BB84.Model.jointOutcome]
 
 
 /-- The abort leaf of the final stage carries no key register: its point does not depend on the
@@ -599,8 +603,11 @@ theorem modelOutputPoint_modelOutputIndex
     dsimp only
     rw [hdata, rawClassicalTailDataOf_eq]
     simp only [Equiv.symm_apply_apply, Fin.zero_eta, QKD.BB84.Model.aliceKeySlotOf,
-      QKD.BB84.Model.bobKeySlotOf, ↓reduceIte, QKD.BB84.Model.aliceKeyString_jointOutcome,
-      QKD.BB84.Model.bobKeyString_jointOutcome]
+      QKD.BB84.Model.bobKeySlotOf, ↓reduceIte]
+    rw [QKD.BB84.Model.aliceKeyString_jointOutcome (nK + mZ + mX)
+      (@Sampling.packedPESel nK mZ mX) (x .alice) (x .bob),
+      QKD.BB84.Model.bobKeyString_jointOutcome (nK + mZ + mX)
+        (@Sampling.packedPESel nK mZ mX) (x .alice) (x .bob)]
   · simp only [bb84.peFailOutIndex]
     rw [modelOutputDecode_cast]
     dsimp only
@@ -731,7 +738,7 @@ theorem finalStage_ideal_single_accept (ell : ℕ) (a b : Fin (2 ^ ell)) :
         Matrix.single (finalStagePoint ell 0 k k) (finalStagePoint ell 0 k k) (1 : ℂ) := by
   let L := (FinalStage.outputLayout ell).toBoundaryKeyLayout
   let e0 : (FinalStage.boundary ell).Exit := ⟨0, ()⟩
-  haveI : Subsingleton (L.Residual e0) := by
+  have : Subsingleton (L.Residual e0) := by
     refine ⟨fun x y => Prod.ext (Prod.ext rfl rfl) (funext fun i => ?_)⟩
     rcases i with ⟨⟨p, hp⟩, hpb⟩
     cases p with

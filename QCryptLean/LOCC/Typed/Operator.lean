@@ -1,6 +1,6 @@
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Kronecker
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Logic.Equiv.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset

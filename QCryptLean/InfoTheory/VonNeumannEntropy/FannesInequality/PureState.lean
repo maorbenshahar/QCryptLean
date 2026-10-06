@@ -292,12 +292,10 @@ theorem fannes_inequality_pure {n : ℕ} [NeZero n] (ρ : DensityOp n)
   -- 3. The fidelity F² = ⟨ψ|ρ|ψ⟩ is bounded by the max eigenvalue of ρ
   -- 4. So p_max ≥ F² ≥ 1 - T
   -- 5. Apply entropy_bound_with_large_eigenvalue: S(ρ) ≤ T·log(n-1) + H(T)
-
   -- Step 1: Set up the pure state σ
   let σ := DensityOp.fromPure ψ hψ
   -- Note: traceDistance_from_fidelity gives: traceDistance ρ σ ≤ √(1 - fidelityPureSq ρ ψ hψ)
   -- but we don't need this upper bound - we need the spectral approach below
-
   -- Step 2: Establish fidelity bounds
   have h_fid_nn := fidelityPureSq_nonneg ρ ψ hψ
   have h_fid_le := fidelityPureSq_le_one ρ ψ hψ

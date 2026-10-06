@@ -42,8 +42,8 @@ The `L2` bridge `condVonNeumann_eq_vonNeumannEntropy_sub_div_log_two` instantiat
 same expression the Bennett row's AEP lift produces. -/
 theorem condVonNeumann_bb84ComponentAliceZCQState_eq_rate (σ : DensityOp signalDim) :
     condVonNeumann (bb84ComponentAliceZCQState σ) = bb84ComponentAliceZRate σ := by
-  haveI hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI hjoint : NeZero (signalDim * Fintype.card (Fin 2)) := ⟨by simp [signalDim]⟩
+  have hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hjoint : NeZero (signalDim * Fintype.card (Fin 2)) := ⟨by simp [signalDim]⟩
   exact condVonNeumann_eq_vonNeumannEntropy_sub_div_log_two (bb84ComponentAliceZCQState σ)
     (bb84ComponentAliceZCQState_norm σ)
 

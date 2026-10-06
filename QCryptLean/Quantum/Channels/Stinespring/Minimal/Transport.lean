@@ -168,7 +168,7 @@ theorem minimalStinespringDilation_transport_equiv
       dilation_recovers_transport
         (Φ := Φ) (Ψ := Ψ) (V := h_dil.isometry) eIn eOut h_reindex h_dil.recovers
   · intro envDim' _ _ W hW_iso hW_rec
-    haveI : NeZero (m * envDim') :=
+    have : NeZero (m * envDim') :=
       ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos m) (NeZero.pos envDim'))⟩
     let Wback : Matrix (Fin (m * envDim')) (Fin n) ℂ :=
       W.submatrix (stinespringOutputEnvEquiv (envDim := envDim') eOut.symm) eIn

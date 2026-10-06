@@ -79,7 +79,7 @@ theorem seedPerSeedWeightedOp_trace_le {S X Z : Type*} [Fintype S] [Fintype X] [
     [DecidableEq Z] {n : ℕ} (H : QuantumHashFamily S X Z)
     (ρ : CQState X n) (s : S) (z : Z) :
     (seedPerSeedWeightedOp H ρ s z).trace.re ≤ 1 / Fintype.card S := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : (0 : ℝ) < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hCoeff_nonneg : 0 ≤ (1 / (Fintype.card S : ℝ)) :=
@@ -118,7 +118,7 @@ lemma seedPerSeedWeightedOp_pos_semidef {S X Z : Type*} [Fintype S] [Fintype X]
   unfold seedPerSeedWeightedOp quadraticForm
   rw [Matrix.smul_mulVec, dotProduct_smul, Complex.smul_re]
   apply mul_nonneg
-  · haveI : Nonempty S := H.seedNonempty
+  · have : Nonempty S := H.seedNonempty
     positivity
   · have hmulVec : (∑ x : X,
         if H.hash s x = z then (ρ.stateMap x).toOp else 0).mulVec v =
@@ -152,7 +152,7 @@ noncomputable def seedPerSeedConditionedOp {S X Z : Type*} [Fintype S] [Fintype 
   pos_semidef := seedPerSeedWeightedOp_pos_semidef H ρ s z
   trace_le_one := by
     exact le_trans (seedPerSeedWeightedOp_trace_le H ρ s z) (by
-      haveI : Nonempty S := H.seedNonempty
+      have : Nonempty S := H.seedNonempty
       rw [div_le_one (by positivity)]
       exact_mod_cast Nat.one_le_iff_ne_zero.mpr Fintype.card_ne_zero)
 
@@ -283,9 +283,9 @@ lemma seedKeyExtractorOutputState_coarsen_snd
   apply Finset.sum_congr rfl
   intro s _
   rw [Finset.sum_eq_single z]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro z' _ hz'
-    rw [if_neg hz']
+    rw [ite_eq_right hz']
   · intro hz
     exact (hz (Finset.mem_univ z)).elim
 
@@ -354,9 +354,9 @@ lemma seedUniformOutputState_coarsen_snd
       apply Finset.sum_congr rfl
       intro s _
       rw [Finset.sum_eq_single z]
-      · rw [if_pos rfl]
+      · rw [ite_eq_left rfl]
       · intro z' _ hz'
-        rw [if_neg hz']
+        rw [ite_eq_right hz']
       · intro hz
         exact (hz (Finset.mem_univ z)).elim
     _ = cZ • σ.toOp := by

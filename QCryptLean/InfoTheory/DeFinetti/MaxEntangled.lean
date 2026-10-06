@@ -132,7 +132,7 @@ lemma sum_finProdFinEquiv_diag {m : ℕ} {α : Type*} [AddCommMonoid α]
   rw [Fintype.sum_prod_type]
   apply Finset.sum_congr rfl
   intro a _
-  rw [Finset.sum_ite_eq Finset.univ a, if_pos (Finset.mem_univ _)]
+  rw [Finset.sum_ite_eq Finset.univ a, ite_eq_left (Finset.mem_univ _)]
 
 /-- General trace identity: `Tr[Ω * (A ⊗ B)] = Tr[A * Bᵀ]`. -/
 lemma trace_maxEntangled_mul_tensor {m : ℕ} (A B : Op m) :
@@ -161,7 +161,7 @@ lemma trace_maxEntangled_mul_tensor {m : ℕ} (A B : Op m) :
         rw [Finset.sum_ite_eq Finset.univ p₁]
         simp [Finset.mem_univ]
       simp_rw [inner]
-    · simp only [hi, false_and, if_false, zero_mul, Finset.sum_const_zero]
+    · simp only [hi, false_and, ite_false, zero_mul, Finset.sum_const_zero]
   simp only [trace, Matrix.diag, entry_eq]
   rw [Fintype.sum_equiv finProdFinEquiv.symm _ (fun p =>
     if p.1 = p.2 then ∑ k, A k p.1 * B k p.2 else 0)
@@ -210,9 +210,9 @@ private lemma maxEntangledOp_mul_tensor_one_entry {m : ℕ} (M : Op m)
         then if x = x_1 then M x (finProdFinEquiv.symm j).1 else 0 else 0) =
         if x = (finProdFinEquiv.symm j).2 then M x (finProdFinEquiv.symm j).1 else 0 := by
       intro x
-      rw [Finset.sum_ite_eq' Finset.univ, if_pos (Finset.mem_univ _)]
+      rw [Finset.sum_ite_eq' Finset.univ, ite_eq_left (Finset.mem_univ _)]
     simp_rw [inner_eq]
-    rw [Finset.sum_ite_eq' Finset.univ, if_pos (Finset.mem_univ _)]
+    rw [Finset.sum_ite_eq' Finset.univ, ite_eq_left (Finset.mem_univ _)]
   · simp only [hi, ite_false]
     apply Finset.sum_eq_zero
     intro _ _

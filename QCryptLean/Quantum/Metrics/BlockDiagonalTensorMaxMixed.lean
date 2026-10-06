@@ -105,9 +105,9 @@ lemma sqrtPosSemidefOp_cqBlock
   let e : Fin d × X ≃ Fin (d * Fintype.card X) :=
     (Equiv.prodCongr (Equiv.refl (Fin d)) (Fintype.equivFin X)).trans finProdFinEquiv
   unfold sqrtPosSemidefOp
-  letI : PartialOrder (Op (d * Fintype.card X)) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op (d * Fintype.card X)) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op (d * Fintype.card X)) :=
+  let : PartialOrder (Op (d * Fintype.card X)) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op (d * Fintype.card X)) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op (d * Fintype.card X)) :=
     Matrix.instNonnegSpectrumClass
   refine CFC.sqrt_unique
     (a := (cqBlockPosSemidefOp A).toOp)
@@ -151,7 +151,7 @@ theorem traceNorm_sqrtProduct_cqBlock_eq_sum
         (sqrtPosSemidefOp (cqBlockPosSemidefOp A) *
           sqrtPosSemidefOp (cqBlockPosSemidefOp B)) =
       ∑ x : X, traceNorm (sqrtPosSemidefOp (A x) * sqrtPosSemidefOp (B x)) := by
-  haveI : NeZero (Fintype.card X) := ⟨by
+  have : NeZero (Fintype.card X) := ⟨by
     intro h
     exact NeZero.ne (d * Fintype.card X) (by rw [h, Nat.mul_zero])⟩
   let e : Fin d × X ≃ Fin (d * Fintype.card X) :=
@@ -185,7 +185,7 @@ lemma traceNorm_tensor_one {dE dR : ℕ} [NeZero dE] [NeZero dR] [NeZero (dE * d
       finProdFinEquiv_symm_apply, mul_ite, mul_one, mul_zero]
     by_cases h : p.modNat = q.modNat
     · simp [h]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       symm
       apply Finset.sum_eq_zero
       intro x _
@@ -224,9 +224,9 @@ lemma sqrtPosSemidefOp_tensorMaxMixed {dE dR : ℕ} [NeZero dR]
     rw [hr_sq]
     simp
   unfold sqrtPosSemidefOp
-  letI : PartialOrder (Op (dE * dR)) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op (dE * dR)) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op (dE * dR)) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op (dE * dR)) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op (dE * dR)) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op (dE * dR)) := Matrix.instNonnegSpectrumClass
   refine CFC.sqrt_unique
     (a := (A.tensorMaxMixed dR).toOp)
     (b := r • (CFC.sqrt A.toOp ⊗ (1 : Op dR))) ?_ ?_
@@ -324,7 +324,7 @@ theorem traceNorm_sqrtProduct_cqBlock_tensorMaxMixed_eq
     traceNorm
         (sqrtPosSemidefOp (cqBlockPosSemidefOp A) *
           sqrtPosSemidefOp (cqBlockPosSemidefOp B)) := by
-  haveI : NeZero (dE * dR) :=
+  have : NeZero (dE * dR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   calc
     traceNorm

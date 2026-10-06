@@ -146,8 +146,8 @@ lemma exists_sdp_dual_witness_of_optimal_povm
       (∀ x : X, opLe (ρ.stateMap x).toOp Y) ∧
       Y.trace.re = povmGuessingProb ρ := by
   -- Derive `Nonempty X` from `∑ x, M x = 1` together with `NeZero n`.
-  haveI : Nonempty (Fin n) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩⟩
-  haveI : Nonempty X := by
+  have : Nonempty (Fin n) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩⟩
+  have : Nonempty X := by
     rcases isEmpty_or_nonempty X with hE | hNE
     · exfalso
       have hsum0 : (∑ x : X, M x) = (0 : Op n) := by

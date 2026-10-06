@@ -98,7 +98,7 @@ private lemma linearIndependent_eigenvecSpanFirst₀
       f i * dotProduct (star (U · j_idx))
         (Matrix.col U (e ⟨i.val, by rw [Fintype.card_fin n]; exact i.isLt.trans_le hk⟩)) = f j := by
     rw [Finset.sum_eq_single j]
-    · rw [h_orthonormal j, if_pos rfl, mul_one]
+    · rw [h_orthonormal j, ite_eq_left rfl, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_idx ≠ e ⟨i.val, by rw [Fintype.card_fin n]; exact i.isLt.trans_le hk⟩ := by
@@ -106,7 +106,7 @@ private lemma linearIndependent_eigenvecSpanFirst₀
         have h_inj := e.injective heq
         rw [Fin.mk.injEq] at h_inj
         exact hi_ne (Fin.ext h_inj.symm)
-      rw [if_neg h_ne, mul_zero]
+      rw [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)
@@ -114,7 +114,7 @@ private lemma linearIndependent_eigenvecSpanFirst₀
       g i * dotProduct (star (U · j_idx))
         (Matrix.col U (e ⟨i.val, by rw [Fintype.card_fin n]; exact i.isLt.trans_le hk⟩)) = g j := by
     rw [Finset.sum_eq_single j]
-    · rw [h_orthonormal j, if_pos rfl, mul_one]
+    · rw [h_orthonormal j, ite_eq_left rfl, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_idx ≠ e ⟨i.val, by rw [Fintype.card_fin n]; exact i.isLt.trans_le hk⟩ := by
@@ -122,7 +122,7 @@ private lemma linearIndependent_eigenvecSpanFirst₀
         have h_inj := e.injective heq
         rw [Fin.mk.injEq] at h_inj
         exact hi_ne (Fin.ext h_inj.symm)
-      rw [if_neg h_ne, mul_zero]
+      rw [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)
@@ -184,7 +184,7 @@ private lemma linearIndependent_eigenvecSpanFrom₀
       f i * dotProduct (star (U · j_idx))
         (Matrix.col U (e ⟨k.val + i.val, by rw [Fintype.card_fin n]; omega⟩)) = f j := by
     rw [Finset.sum_eq_single j]
-    · rw [h_orthonormal j, if_pos rfl, mul_one]
+    · rw [h_orthonormal j, ite_eq_left rfl, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_idx ≠ e ⟨k.val + i.val, by rw [Fintype.card_fin n]; omega⟩ := by
@@ -192,7 +192,7 @@ private lemma linearIndependent_eigenvecSpanFrom₀
         have h_inj := e.injective heq
         rw [Fin.mk.injEq] at h_inj
         exact hi_ne (Fin.ext (by omega))
-      rw [if_neg h_ne, mul_zero]
+      rw [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)
@@ -200,7 +200,7 @@ private lemma linearIndependent_eigenvecSpanFrom₀
       g i * dotProduct (star (U · j_idx))
         (Matrix.col U (e ⟨k.val + i.val, by rw [Fintype.card_fin n]; omega⟩)) = g j := by
     rw [Finset.sum_eq_single j]
-    · rw [h_orthonormal j, if_pos rfl, mul_one]
+    · rw [h_orthonormal j, ite_eq_left rfl, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_idx ≠ e ⟨k.val + i.val, by rw [Fintype.card_fin n]; omega⟩ := by
@@ -208,7 +208,7 @@ private lemma linearIndependent_eigenvecSpanFrom₀
         have h_inj := e.injective heq
         rw [Fin.mk.injEq] at h_inj
         exact hi_ne (Fin.ext (by omega))
-      rw [if_neg h_ne, mul_zero]
+      rw [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)
@@ -261,7 +261,7 @@ lemma rayleigh_lower_bound₀ (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermiti
           simp only [dotProduct, Matrix.mul_apply, Matrix.conjTranspose_apply, Pi.star_apply]
         rw [h_dot_eq, h_UU, Matrix.one_apply]
         have h_ne : i ≠ e ⟨j.val, by rw [Fintype.card_fin n]; omega⟩ := hi_not_in j
-        simp only [if_neg h_ne]
+        simp only [ite_eq_right h_ne]
       | zero => simp only [dotProduct_zero]
       | add u' w' _ _ hu'_ih hw'_ih =>
         simp only [dotProduct_add]
@@ -474,7 +474,7 @@ lemma rayleigh_upper_bound₀ (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermiti
           simp only [dotProduct, Matrix.mul_apply, Matrix.conjTranspose_apply, Pi.star_apply]
         rw [h_dot_eq, h_UU, Matrix.one_apply]
         have h_ne : i ≠ e ⟨k.val + j.val, by rw [Fintype.card_fin n]; omega⟩ := hi_not_in j
-        simp only [if_neg h_ne]
+        simp only [ite_eq_right h_ne]
       | zero => simp only [dotProduct_zero]
       | add u' w' _ _ hu'_ih hw'_ih =>
         simp only [dotProduct_add]

@@ -78,11 +78,11 @@ theorem one_sub_binomialPassSum_le_two_hoeffding (m : ℕ) (hm : m ≠ 0) (Q δ 
         if ((k : ℝ) / m ≤ Q - δ ∨ Q + δ ≤ (k : ℝ) / m) then w k else 0 := by
     refine Finset.sum_le_sum fun k _ => ?_
     by_cases hband : |(k : ℝ) / m - Q| ≤ δ
-    · rw [if_pos hband]
+    · rw [ite_eq_left hband]
       split_ifs
       · exact hw_nonneg k
       · exact le_refl 0
-    · rw [if_neg hband]
+    · rw [ite_eq_right hband]
       have htail : (k : ℝ) / m ≤ Q - δ ∨ Q + δ ≤ (k : ℝ) / m := by
         rcases lt_or_ge ((k : ℝ) / m) Q with hlt | hge
         · left
@@ -101,7 +101,7 @@ theorem one_sub_binomialPassSum_le_two_hoeffding (m : ℕ) (hm : m ≠ 0) (Q δ 
           have hpos : ¬ ((k : ℝ) / m - Q ≤ δ) := fun h => hband (this h)
           push Not at hpos
           linarith
-      rw [if_pos htail]
+      rw [ite_eq_left htail]
   have htwo := Math.Concentration.BinomialHoeffding.binomial_two_tail_le m hm Q δ δ hQ0 hQ1 hδ hδ
   have hsum : (∑ k ∈ Finset.range (m + 1),
       if ((k : ℝ) / m ≤ Q - δ ∨ Q + δ ≤ (k : ℝ) / m) then w k else 0) ≤

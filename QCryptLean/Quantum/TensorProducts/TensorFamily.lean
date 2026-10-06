@@ -352,8 +352,8 @@ theorem tensorFamily_diagonal (v : Fin n → Fin d → ℂ) :
   by_cases hfg : f = g
   · subst hfg; simp
   · obtain ⟨k, hk⟩ := Function.ne_iff.mp hfg
-    rw [if_neg hfg]
-    exact Finset.prod_eq_zero (Finset.mem_univ k) (if_neg hk)
+    rw [ite_eq_right hfg]
+    exact Finset.prod_eq_zero (Finset.mem_univ k) (ite_eq_right hk)
 
 /-- The tensor product of matrix units is the matrix unit at the digit strings of their positions,
 with the product of their coefficients. -/

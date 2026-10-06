@@ -74,7 +74,9 @@ theorem strictSelection_retains_all_bases :
 /-- Strict selection reads only the bit at the second chronological coordinate. -/
 theorem strictSelection_reads_second_bit :
     (selectedLocalRecord selectSecond completedTwo).2 0 = 1 := by
-  simp [selectedLocalRecord, completedTwo, twoStored, twoBits, selectSecond]
+  change twoBits (selectSecond 0) = 1
+  change (if (1 : Fin 2) = 0 then (0 : Bit) else 1) = 1
+  exact ite_eq_right (by decide)
 
 /-- Full reversed selection preserves all bases but reverses the retained bit order. -/
 theorem reversedFullSelection_bits :

@@ -54,7 +54,8 @@ private theorem completedBasisAliceAnnouncement_liftedOperation_diag (N : ℕ)
         (CompletedLocalRecord N)).pairEquiv.symm (rA, rB))
       (((weightedStreamSystem (finishAcc Unit N) 0).set .alice
         (CompletedLocalRecord N)).pairEquiv.symm (rA, rB)) = _
-  rw [Instrument.liftAt_alice_operation_apply]
+  refine (Instrument.liftAt_alice_operation_apply (weightedStreamSystem (finishAcc Unit N) 0)
+    (Instrument.nondemolitionReadout (completedBasisString N)) a sigma rA rA rB rB).trans ?_
   have h := Instrument.nondemolitionReadout_operation_apply (completedBasisString N) a
       (sigma.submatrix
         (fun x => (weightedStreamSystem (finishAcc Unit N) 0).pairEquiv.symm (x, rB))
@@ -83,12 +84,14 @@ private theorem completedBasisAnnouncements_liftedOperation_diag (N : ℕ)
         (CompletedLocalRecord N)).pairEquiv.symm (rA, rB))
       ((((completedBasisAliceAnnouncement N).out a).set .bob
         (CompletedLocalRecord N)).pairEquiv.symm (rA, rB)) = _
-  rw [Instrument.liftAt_bob_operation_apply]
+  refine (Instrument.liftAt_bob_operation_apply ((completedBasisAliceAnnouncement N).out a)
+    (Instrument.nondemolitionReadout (completedBasisString N)) b
+    ((completedBasisAliceAnnouncement N).liftedOperation a sigma) rA rA rB rB).trans ?_
   refine (Instrument.nondemolitionReadout_operation_apply (completedBasisString N) b
     (((completedBasisAliceAnnouncement N).liftedOperation a sigma).submatrix
       (fun x => ((completedBasisAliceAnnouncement N).out a).pairEquiv.symm (rA, x))
       (fun x => ((completedBasisAliceAnnouncement N).out a).pairEquiv.symm (rA, x))) rB rB).trans ?_
-  simp only [Matrix.submatrix_apply, and_self]
+  simp only [and_self]
   have hAlice : (completedBasisAliceAnnouncement N).liftedOperation a sigma
       (((completedBasisAliceAnnouncement N).out a).pairEquiv.symm (rA, rB))
       (((completedBasisAliceAnnouncement N).out a).pairEquiv.symm (rA, rB)) =
@@ -96,7 +99,7 @@ private theorem completedBasisAnnouncements_liftedOperation_diag (N : ℕ)
           sigma ((weightedStreamSystem (finishAcc Unit N) 0).pairEquiv.symm (rA, rB))
             ((weightedStreamSystem (finishAcc Unit N) 0).pairEquiv.symm (rA, rB)) else 0 :=
     completedBasisAliceAnnouncement_liftedOperation_diag N a sigma rA rB
-  rw [hAlice]
+  refine (if_congr Iff.rfl hAlice rfl).trans ?_
   by_cases hA : completedBasisString N rA = a <;>
     by_cases hB : completedBasisString N rB = b <;> simp [hA, hB]
 
@@ -108,7 +111,6 @@ theorem shuffleAnnouncement_liftedOperation_apply (N : ℕ) (a b : Fin N → Bas
     reindexOp (Equiv.cast (congrArg MultipartiteSystem.total
       (show (shuffleAnnouncement N a b).out order =
           (completedBasisBobAnnouncement N a).out b from by
-        rw [shuffleAnnouncement, AnnouncedAction.out_ofInstrument]
         exact MultipartiteSystem.set_self _ _)))
         ((shuffleAnnouncement N a b).liftedOperation (order, ()) upsilon) =
       (Fintype.card (Shuffle a b) : ℂ)⁻¹ • upsilon := by
@@ -121,6 +123,13 @@ theorem shuffleAnnouncement_liftedOperation_apply (N : ℕ) (a b : Fin N → Bas
     change ((uniformShuffleInstrument N a b).liftAt R .alice).operation
       (order, ()) upsilon _ _ = _
     rw [Instrument.liftAt_operation_apply (R := R) .alice (uniformShuffleInstrument N a b)]
+    let E : R.total ≃ CompletedLocalRecord N × R.rest .alice := R.splitAt .alice
+    let O : (R.set .alice (CompletedLocalRecord N)).total ≃
+        CompletedLocalRecord N × R.rest .alice := R.splitAtSet .alice (CompletedLocalRecord N)
+    change (uniformShuffleInstrument N a b).operation (order, ())
+      (upsilon.submatrix (fun x => E.symm (x, (O (O.symm (E q))).2))
+        (fun x => E.symm (x, (O (O.symm (E q'))).2)))
+      (O (O.symm (E q))).1 (O (O.symm (E q'))).1 = _
     simp only [Equiv.apply_symm_apply, uniformShuffleInstrument]
     refine (congrFun (congrFun (LinearMap.congr_fun
       (Instrument.uniformChoice_operation
@@ -135,7 +144,9 @@ theorem shuffleAnnouncement_liftedOperation_apply (N : ℕ) (a b : Fin N → Bas
           (fun x => (R.splitAt .alice).symm (x, (R.splitAt .alice q).2))
           (fun x => (R.splitAt .alice).symm (x, (R.splitAt .alice q').2)))
         (R.splitAt .alice q).1 (R.splitAt .alice q').1).trans ?_
-    simp only [and_self, ite_true, Matrix.submatrix_apply, Prod.eta, Equiv.symm_apply_apply]
+    simp only [and_self, ite_true]
+    exact congrArg₂ upsilon ((R.splitAt .alice).symm_apply_apply q)
+      ((R.splitAt .alice).symm_apply_apply q')
   ext q q'
   change R.total at q q'
   change (shuffleAnnouncement N a b).liftedOperation (order, ()) upsilon
@@ -190,7 +201,12 @@ theorem weightedLatePublicSelectionProgram_success_apply
       (fun _ : (Boundary.leaf (weightedStreamSystem (finishAcc Unit N) 0)).Exit =>
         latePublicSelectionProgram N nK mZ mX)
       ((weightedMeasurementSchedule pA pB N).denote rho)) _ _ = _
-  rw [Program.controlledContinuation_sameExit]
+  refine (Program.controlledContinuation_sameExit
+    (fun _ : (Boundary.leaf (weightedStreamSystem (finishAcc Unit N) 0)).Exit =>
+      latePublicSelectionProgram N nK mZ mX)
+    ((weightedMeasurementSchedule pA pB N).denote rho) ()
+    (lateSelectionSuccessAt N nK mZ mX omega h q)
+    (lateSelectionSuccessAt N nK mZ mX omega h q')).trans ?_
   let sigma : Op (weightedStreamSystem (finishAcc Unit N) 0).total :=
     ((Boundary.exitKraus
       (.leaf (weightedStreamSystem (finishAcc Unit N) 0)) ())ᴴ *
@@ -202,13 +218,11 @@ theorem weightedLatePublicSelectionProgram_success_apply
     (lateSelectionSuccessAt N nK mZ mX omega h q') = _
   have hB : (completedBasisBobAnnouncement N omega.a).out omega.b =
       weightedStreamSystem (finishAcc Unit N) 0 := by
-    simp only [completedBasisBobAnnouncement, completedBasisAliceAnnouncement,
-      AnnouncedAction.out_ofInstrument, weightedStreamSystem, TwoParty.set_alice,
-      TwoParty.set_bob]
-    rfl
+    change ((weightedStreamSystem (finishAcc Unit N) 0).set .alice
+      (CompletedLocalRecord N)).set .bob (CompletedLocalRecord N) = _
+    rw [weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob]
   have hself : (shuffleAnnouncement N omega.a omega.b).out omega.order =
       (completedBasisBobAnnouncement N omega.a).out omega.b := by
-    rw [shuffleAnnouncement, AnnouncedAction.out_ofInstrument]
     exact MultipartiteSystem.set_self _ _
   let hfinal := hself.trans hB
   let tau := (completedBasisAliceAnnouncement N).liftedOperation omega.a sigma
@@ -243,28 +257,24 @@ theorem weightedLatePublicSelectionProgram_success_apply
     simp only [cast_cast] at hop
     exact hop
   unfold latePublicSelectionProgram lateSelectionSuccessAt
-  simp only [id_eq]
   have hAlice := Program.denote_then_publicSpaceEquiv_symm_apply
     (completedBasisAliceAnnouncement N) (Equiv.refl _) (fun _ => rfl)
-  simp only [completedBasisAliceAnnouncement_announce] at hAlice
   refine (hAlice _ _ sigma omega.a _ _).trans ?_
   have hBob := Program.denote_then_publicSpaceEquiv_symm_apply
     (completedBasisBobAnnouncement N omega.a) (Equiv.refl _) (fun _ => rfl)
-  simp only [completedBasisBobAnnouncement_announce] at hBob
   refine (hBob _ _ tau omega.b _ _).trans ?_
   have hShuffle := Program.denote_then_publicSpaceEquiv_symm_apply
     (shuffleAnnouncement N omega.a omega.b) (Equiv.prodUnique _ _) (fun _ => rfl)
-  simp only [shuffleAnnouncement_announce] at hShuffle
   refine (hShuffle _ _ upsilonRaw (omega.order, ()) _ _).trans ?_
   refine (Program.denote_cast_apply hfinal rfl _ _ _ _).trans ?_
-  simp only [Equiv.cast_refl, Equiv.refl_apply]
+  simp only [Equiv.cast_refl]
   change (quotaSelectionContinuation N nK mZ mX omega).denote
     (((shuffleAnnouncement N omega.a omega.b).liftedOperation
       (omega.order, ()) upsilonRaw).submatrix
         (Equiv.cast (congrArg MultipartiteSystem.total hfinal)).symm
         (Equiv.cast (congrArg MultipartiteSystem.total hfinal)).symm) _ _ = _
   rw [hshuffle]
-  simp only [map_smul, Matrix.smul_apply, smul_eq_mul]
+  simp only [map_smul]
   have hquota : HEq
       (quotaSelectionContinuation N nK mZ mX omega)
       (selectedRecordContinuation (selectedEmbedding omega h)) := by
@@ -349,8 +359,10 @@ theorem weightedLatePublicSelectionProgram_success_apply
             (fun _ => .leaf
               (weightedSelectedRecordSystem N (nK + mZ + mX)))) x)
     rw [← hleafrow xq, ← hleafrow xq'] at hentry
-    rw [Program.controlledContinuation_sameExit] at hentry
-    exact hentry
+    exact (Program.controlledContinuation_sameExit
+      (fun _ : (Boundary.leaf (weightedStreamSystem (finishAcc Unit N) 0)).Exit =>
+        selectedRecordContinuation (selectedEmbedding omega h))
+      ((weightedMeasurementSchedule pA pB N).denote rho) () xq xq').symm.trans hentry
   have hupsilonDiag
       (rA rB : CompletedLocalRecord N) :
       upsilon ((TwoParty.pairEquiv _ _).symm (rA, rB))
@@ -397,41 +409,41 @@ theorem weightedLatePublicSelectionProgram_success_apply
       selectedRecordContinuation_denote_apply _ sigma q q']
     by_cases hg : q.1.1 = omega.a ∧ q'.1.1 = omega.a ∧
         q.2.1 = omega.b ∧ q'.2.1 = omega.b
-    · rw [if_pos hg]
+    · rw [ite_eq_left hg]
       apply Finset.sum_congr rfl
       intro rB _
       by_cases hb : q.2 =
           selectedLocalRecord (selectedEmbedding omega h) rB ∧
         q'.2 = selectedLocalRecord (selectedEmbedding omega h) rB
-      · rw [if_pos hb, if_pos hb]
+      · rw [ite_eq_left hb, ite_eq_left hb]
         apply Finset.sum_congr rfl
         intro rA _
         by_cases ha : q.1 =
             selectedLocalRecord (selectedEmbedding omega h) rA ∧
           q'.1 = selectedLocalRecord (selectedEmbedding omega h) rA
-        · rw [if_pos ha, if_pos ha, hupsilonDiag]
+        · rw [ite_eq_left ha, ite_eq_left ha, hupsilonDiag]
           have hAr : completedBasisString N rA = omega.a := by
             rw [← hselectedBasis, ← ha.1]
             exact hg.1
           have hBr : completedBasisString N rB = omega.b := by
             rw [← hselectedBasis, ← hb.1]
             exact hg.2.2.1
-          rw [if_pos ⟨hAr, hBr⟩]
-        · rw [if_neg ha, if_neg ha]
-      · rw [if_neg hb, if_neg hb]
-    · rw [if_neg hg]
+          rw [ite_eq_left ⟨hAr, hBr⟩]
+        · rw [ite_eq_right ha, ite_eq_right ha]
+      · rw [ite_eq_right hb, ite_eq_right hb]
+    · rw [ite_eq_right hg]
       apply Finset.sum_eq_zero
       intro rB _
       by_cases hb : q.2 =
           selectedLocalRecord (selectedEmbedding omega h) rB ∧
         q'.2 = selectedLocalRecord (selectedEmbedding omega h) rB
-      · rw [if_pos hb]
+      · rw [ite_eq_left hb]
         apply Finset.sum_eq_zero
         intro rA _
         by_cases ha : q.1 =
             selectedLocalRecord (selectedEmbedding omega h) rA ∧
           q'.1 = selectedLocalRecord (selectedEmbedding omega h) rA
-        · rw [if_pos ha, hupsilonDiag]
+        · rw [ite_eq_left ha, hupsilonDiag]
           have hnot : ¬ (completedBasisString N rA = omega.a ∧
               completedBasisString N rB = omega.b) := by
             rintro ⟨hAr, hBr⟩
@@ -445,10 +457,11 @@ theorem weightedLatePublicSelectionProgram_success_apply
               exact hBr
             · rw [hb.2, hselectedBasis]
               exact hBr
-          rw [if_neg hnot]
-        · rw [if_neg ha]
-      · rw [if_neg hb]
-  rw [htransport hleaf
+          rw [ite_eq_right hnot]
+        · rw [ite_eq_right ha]
+      · rw [ite_eq_right hb]
+  refine (congrArg (fun z : ℂ => (Fintype.card (Shuffle omega.a omega.b) : ℂ)⁻¹ * z)
+    (htransport hleaf
     (selectedRecordContinuation (selectedEmbedding omega h)) upsilon
     ((Boundary.leafSpaceEquiv
       (weightedSelectedRecordSystem N (nK + mZ + mX))).symm
@@ -456,7 +469,7 @@ theorem weightedLatePublicSelectionProgram_success_apply
     ((Boundary.leafSpaceEquiv
       (weightedSelectedRecordSystem N (nK + mZ + mX))).symm
         ((TwoParty.pairEquiv _ _).symm q'))
-    (cast_heq _ _) (cast_heq _ _)]
+    (cast_heq _ _) (cast_heq _ _))).trans ?_
   rw [hselectedUpsilon, hselectedSigma]
   by_cases hg : q.1.1 = omega.a ∧ q'.1.1 = omega.a ∧
       q.2.1 = omega.b ∧ q'.2.1 = omega.b <;> simp [hg]
@@ -532,13 +545,17 @@ theorem weightedLatePublicSelectionProgram_abort_apply
         (Boundary.graftSpaceEquiv
           (.leaf (weightedStreamSystem (finishAcc Unit N) 0))
           (fun _ => lateSelectionBoundary N nK mZ mX)) x)
-  rw [← hrow (lateSelectionAbortAt N nK mZ mX omega h),
-    ← hrow (lateSelectionAbortAt N nK mZ mX omega h)]
+  rw [← hrow (lateSelectionAbortAt N nK mZ mX omega h)]
   change (Program.controlledContinuation
       (fun _ : (Boundary.leaf (weightedStreamSystem (finishAcc Unit N) 0)).Exit =>
         latePublicSelectionProgram N nK mZ mX)
       ((weightedMeasurementSchedule pA pB N).denote rho)) _ _ = _
-  rw [Program.controlledContinuation_sameExit]
+  refine (Program.controlledContinuation_sameExit
+    (fun _ : (Boundary.leaf (weightedStreamSystem (finishAcc Unit N) 0)).Exit =>
+      latePublicSelectionProgram N nK mZ mX)
+    ((weightedMeasurementSchedule pA pB N).denote rho) ()
+    (lateSelectionAbortAt N nK mZ mX omega h)
+    (lateSelectionAbortAt N nK mZ mX omega h)).trans ?_
   let sigma : Op (weightedStreamSystem (finishAcc Unit N) 0).total :=
     ((Boundary.exitKraus
       (.leaf (weightedStreamSystem (finishAcc Unit N) 0)) ())ᴴ *
@@ -550,13 +567,11 @@ theorem weightedLatePublicSelectionProgram_abort_apply
     (lateSelectionAbortAt N nK mZ mX omega h) = _
   have hB : (completedBasisBobAnnouncement N omega.a).out omega.b =
       weightedStreamSystem (finishAcc Unit N) 0 := by
-    simp only [completedBasisBobAnnouncement, completedBasisAliceAnnouncement,
-      AnnouncedAction.out_ofInstrument, weightedStreamSystem, TwoParty.set_alice,
-      TwoParty.set_bob]
-    rfl
+    change ((weightedStreamSystem (finishAcc Unit N) 0).set .alice
+      (CompletedLocalRecord N)).set .bob (CompletedLocalRecord N) = _
+    rw [weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob]
   have hself : (shuffleAnnouncement N omega.a omega.b).out omega.order =
       (completedBasisBobAnnouncement N omega.a).out omega.b := by
-    rw [shuffleAnnouncement, AnnouncedAction.out_ofInstrument]
     exact MultipartiteSystem.set_self _ _
   let hfinal := hself.trans hB
   let tau := (completedBasisAliceAnnouncement N).liftedOperation omega.a sigma
@@ -591,28 +606,24 @@ theorem weightedLatePublicSelectionProgram_abort_apply
     simp only [cast_cast] at hop
     exact hop
   unfold latePublicSelectionProgram lateSelectionAbortAt
-  simp only [id_eq]
   have hAlice := Program.denote_then_publicSpaceEquiv_symm_apply
     (completedBasisAliceAnnouncement N) (Equiv.refl _) (fun _ => rfl)
-  simp only [completedBasisAliceAnnouncement_announce] at hAlice
   refine (hAlice _ _ sigma omega.a _ _).trans ?_
   have hBob := Program.denote_then_publicSpaceEquiv_symm_apply
     (completedBasisBobAnnouncement N omega.a) (Equiv.refl _) (fun _ => rfl)
-  simp only [completedBasisBobAnnouncement_announce] at hBob
   refine (hBob _ _ tau omega.b _ _).trans ?_
   have hShuffle := Program.denote_then_publicSpaceEquiv_symm_apply
     (shuffleAnnouncement N omega.a omega.b) (Equiv.prodUnique _ _) (fun _ => rfl)
-  simp only [shuffleAnnouncement_announce] at hShuffle
   refine (hShuffle _ _ upsilonRaw (omega.order, ()) _ _).trans ?_
   refine (Program.denote_cast_apply hfinal rfl _ _ _ _).trans ?_
-  simp only [Equiv.cast_refl, Equiv.refl_apply]
+  simp only [Equiv.cast_refl]
   change (quotaSelectionContinuation N nK mZ mX omega).denote
     (((shuffleAnnouncement N omega.a omega.b).liftedOperation
       (omega.order, ()) upsilonRaw).submatrix
         (Equiv.cast (congrArg MultipartiteSystem.total hfinal)).symm
         (Equiv.cast (congrArg MultipartiteSystem.total hfinal)).symm) _ _ = _
   rw [hshuffle]
-  simp only [map_smul, Matrix.smul_apply, smul_eq_mul]
+  simp only [map_smul]
   have hquota : HEq
       (quotaSelectionContinuation N nK mZ mX omega)
       (discardCompletedRecords N) := by
@@ -734,10 +745,11 @@ theorem weightedLatePublicSelectionProgram_abort_apply
     rw [hentry]
     have hs := weightedMeasurementSchedule_output_apply pA pB N rho
       rA rA rB rB
-    simp only [and_self, if_true] at hs
+    simp only [and_self, ite_true] at hs
     exact hs
-  rw [htransport hleaf (discardCompletedRecords N) upsilon
-    abortRow abortRow (cast_heq _ _) (cast_heq _ _)]
+  refine (congrArg (fun z : ℂ => (Fintype.card (Shuffle omega.a omega.b) : ℂ)⁻¹ * z)
+    (htransport hleaf (discardCompletedRecords N) upsilon
+      abortRow abortRow (cast_heq _ _) (cast_heq _ _))).trans ?_
   rw [discardCompletedRecords_denote_apply]
   rw [Finset.sum_comm]
   rw [hsumRecords]
@@ -768,12 +780,12 @@ theorem weightedLatePublicSelectionProgram_abort_apply
                 (completeStoredRecords omega.b xB))
               (reindexOp (weightedScheduleUnitInputEquiv N) rho)) () () := by
       rw [Finset.sum_eq_single omega.b]
-      · simp only [if_pos]
+      · simp only [ite_eq_left]
         rw [← Finset.mul_sum]
       · intro thetaB _ hthetaB
         apply Finset.sum_eq_zero
         intro xB _
-        rw [if_neg hthetaB]
+        rw [ite_eq_right hthetaB]
       · simp
     let c : ℂ :=
       ((Sampling.basisStringLaw N pA omega.a).toReal : ℂ) *
@@ -834,7 +846,7 @@ theorem weightedLatePublicSelectionProgram_abort_apply
     intro thetaB _
     apply Finset.sum_eq_zero
     intro xB _
-    rw [if_neg]
+    rw [ite_eq_right]
     exact fun hab => hthetaA hab.1
   · simp
 
@@ -881,11 +893,11 @@ theorem sum_matrixConjLinear_fixedBasisPairKraus (N : ℕ) (a b : Fin N → Basi
     by_cases hv : v = v'
     · subst hv
       simp
-    · rw [if_neg hv]
+    · rw [ite_eq_right hv]
       by_cases h1 : ∀ i, v.1 i = v'.1 i
       · have h2 : ¬ ∀ i, v.2 i = v'.2 i := fun h2 => hv (Prod.ext (funext h1) (funext h2))
-        rw [if_pos h1, if_neg h2, mul_zero]
-      · rw [if_neg h1, zero_mul]
+        rw [ite_eq_left h1, ite_eq_right h2, mul_zero]
+      · rw [ite_eq_right h1, zero_mul]
   calc
     _ = ∑ xA : Fin N → Bit, ∑ xB : Fin N → Bit,
           Matrix.trace ((fixedBasisPairKraus (completeStoredRecords a xA)

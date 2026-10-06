@@ -151,7 +151,7 @@ lemma shannonEntropy_perm {n : ℕ} (p q : Fin n → ℝ) (σ : Equiv.Perm (Fin 
   unfold shannonEntropy
   conv_lhs => arg 2; ext i; rw [hpq]
   -- Goal: ∑ i, entropyTerm (q (σ i)) = ∑ i, entropyTerm (q i)
-  have h : (setOf fun a => σ a ≠ a) ⊆ (Finset.univ : Finset (Fin n)) := by
+  have h : (Set.ofPred fun a => σ a ≠ a) ⊆ (Finset.univ : Finset (Fin n)) := by
     intro x _; exact Finset.mem_univ x
   exact Equiv.Perm.sum_comp σ Finset.univ (entropyTerm ∘ q) h
 
@@ -463,9 +463,9 @@ theorem choose_le_two_pow_mul_binaryEntropyBits (n k : ℕ) (hk : k ≤ n) :
         have hq_pos : 0 < 1 - p := sub_pos.mpr hp_lt1
         -- `entropyTerm p = -p log p`, `entropyTerm (1-p) = -(1-p) log (1-p)`.
         have hep : entropyTerm p = -p * Real.log p := by
-          rw [entropyTerm]; rw [if_neg (ne_of_gt hp_pos)]
+          rw [entropyTerm]; rw [ite_eq_right (ne_of_gt hp_pos)]
         have heq : entropyTerm (1 - p) = -(1 - p) * Real.log (1 - p) := by
-          rw [entropyTerm]; rw [if_neg (ne_of_gt hq_pos)]
+          rw [entropyTerm]; rw [ite_eq_right (ne_of_gt hq_pos)]
         -- `n · p = k`, `n · (1-p) = n - k` as reals.
         have hnp : (n : ℝ) * p = (k : ℝ) := by
           rw [hp_def, mul_div_cancel₀ _ hnR.ne']

@@ -135,7 +135,7 @@ theorem rawControlLaw_apply (N : ℕ) (pA pB : PMF Basis) (omega : RawControl N)
     · rw [Fintype.sum_eq_single order₀]
       · simp [mul_assoc]
       · intro order horder
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h
         cases h
         exact horder rfl
@@ -143,7 +143,7 @@ theorem rawControlLaw_apply (N : ℕ) (pA pB : PMF Basis) (omega : RawControl N)
       apply mul_eq_zero_of_right
       apply Fintype.sum_eq_zero
       intro order
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h
       exact hb (congrArg (fun control : RawControl N => control.b) h).symm
   · intro a ha
@@ -153,7 +153,7 @@ theorem rawControlLaw_apply (N : ℕ) (pA pB : PMF Basis) (omega : RawControl N)
     apply mul_eq_zero_of_right
     apply Fintype.sum_eq_zero
     intro order
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact ha (congrArg (fun control : RawControl N => control.a) h).symm
 

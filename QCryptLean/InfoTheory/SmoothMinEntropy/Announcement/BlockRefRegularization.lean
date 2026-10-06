@@ -220,7 +220,7 @@ theorem smoothMinEntropy_blockDiagRefRegularized_ge
     (k : ℝ) (hk : ENNReal.ofReal k ≤ smoothMinEntropy ε ρ (blockDiagRef ν hν)) :
     ENNReal.ofReal (k + Real.log (1 - γ) / Real.log 2) ≤
       smoothMinEntropy ε ρ (blockDiagRefRegularized ν hν γ hγ0 hγ1.le) := by
-  haveI : NeZero (dC * dE) := ⟨Nat.mul_ne_zero (NeZero.ne dC) (NeZero.ne dE)⟩
+  have : NeZero (dC * dE) := ⟨Nat.mul_ne_zero (NeZero.ne dC) (NeZero.ne dE)⟩
   exact smoothMinEntropy_ge_of_smul_opLe_of_floor ε ρ (blockDiagRef ν hν)
     (blockDiagRefRegularized ν hν γ hγ0 hγ1.le) (1 - γ) (by linarith) (by linarith)
     (opLe_smul_blockDiagRefRegularized ν hν γ hγ0 hγ1.le) k hk
@@ -238,7 +238,7 @@ theorem smoothMinEntropyReal_blockDiagRefRegularized_ge_of_pos_floor
     (hk : k ≤ smoothMinEntropyReal ε ρ (blockDiagRef ν hν)) :
     k + Real.log (1 - γ) / Real.log 2 ≤
       smoothMinEntropyReal ε ρ (blockDiagRefRegularized ν hν γ hγ0.le hγ1.le) := by
-  haveI : NeZero (dC * dE) := ⟨Nat.mul_ne_zero (NeZero.ne dC) (NeZero.ne dE)⟩
+  have : NeZero (dC * dE) := ⟨Nat.mul_ne_zero (NeZero.ne dC) (NeZero.ne dE)⟩
   exact smoothMinEntropyReal_ge_of_smul_opLe_of_pos_floor ε hε_nn ρ (blockDiagRef ν hν)
     (blockDiagRefRegularized ν hν γ hγ0.le hγ1.le) (1 - γ) (by linarith) (by linarith)
     (opLe_smul_blockDiagRefRegularized ν hν γ hγ0.le hγ1.le)

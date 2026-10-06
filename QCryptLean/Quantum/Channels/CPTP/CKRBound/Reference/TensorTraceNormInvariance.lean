@@ -86,7 +86,7 @@ private lemma idTensorRect_conj_entry'
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun s' _ => ?_
     simp only [ite_mul, zero_mul]
-    rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+    rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ _)]
   -- reindex the outer `reference` summation, substitute the inner collapse, then collapse `dq`
   rw [← Equiv.sum_comp finProdFinEquiv
         (fun x => (∑ x_1 : Fin (a * drin), (if cp = (finProdFinEquiv.symm x_1).1
@@ -101,7 +101,7 @@ private lemma idTensorRect_conj_entry'
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun s' _ => ?_
   simp only [apply_ite (star : ℂ → ℂ), star_zero, mul_ite, mul_zero]
-  rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+  rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ _)]
   ring
 
 /-- The signal-side map `Δ ⊗ id` commutes with reference-side conjugation by the rectangular

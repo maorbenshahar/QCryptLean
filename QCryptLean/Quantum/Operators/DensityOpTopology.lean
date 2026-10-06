@@ -79,7 +79,7 @@ lemma isClosed_setOf_posSemidef : IsClosed {A : Op n | A.PosSemidef} := by
   have hrewrite : {A : Op n | A.PosSemidef} =
       {A : Op n | A.IsHermitian} ∩ ⋂ v : Fin n → ℂ, {A : Op n | 0 ≤ star v ⬝ᵥ A.mulVec v} := by
     ext A
-    simp only [Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter,
+    simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter,
       Matrix.posSemidef_iff_dotProduct_mulVec]
   rw [hrewrite]
   exact h_herm.inter (isClosed_iInter h_dot)

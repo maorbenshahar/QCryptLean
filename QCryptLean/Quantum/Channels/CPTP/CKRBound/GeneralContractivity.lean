@@ -268,9 +268,9 @@ lemma mapIdTensor_preserves_conjTranspose
     mapIdTensor T A.conjTranspose =
       (mapIdTensor T A).conjTranspose := by
   -- mapIdTensor T is itself a CP linear map, so it preserves †
-  haveI : NeZero (k * n) :=
+  have : NeZero (k * n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne k) (NeZero.ne n)⟩
-  haveI : NeZero (k * m) :=
+  have : NeZero (k * m) :=
     ⟨Nat.mul_ne_zero (NeZero.ne k) (NeZero.ne m)⟩
   let Φ : Op (k * n) →ₗ[ℂ] Op (k * m) :=
     { toFun := mapIdTensor T
@@ -298,9 +298,9 @@ theorem traceNorm_mapIdTensor_contractive {n m k : ℕ}
     (A : Op (k * n)) :
     traceNorm (mapIdTensor T A) ≤ traceNorm A := by
   -- NeZero instances for product dimensions
-  haveI hkn : NeZero (k * n) :=
+  have hkn : NeZero (k * n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne k) (NeZero.ne n)⟩
-  haveI hkm : NeZero (k * m) :=
+  have hkm : NeZero (k * m) :=
     ⟨Nat.mul_ne_zero (NeZero.ne k) (NeZero.ne m)⟩
   -- Wrap mapIdTensor T as a LinearMap
   let Ψ : Op (k * n) →ₗ[ℂ] Op (k * m) :=
@@ -329,8 +329,8 @@ theorem traceNorm_mapIdTensor_contractive {n m k : ℕ}
   have hΨ_contr : ∀ P : Op (k * n), P.PosSemidef →
       (Ψ P).trace.re ≤ P.trace.re :=
     fun P hP => trace_mapIdTensor_psd_le T hT_contr P hP
-  haveI : NeZero (k * n + (k * n)) := neZero_add_self _
-  haveI : NeZero (k * m + (k * m)) := neZero_add_self _
+  have : NeZero (k * n + (k * n)) := neZero_add_self _
+  have : NeZero (k * m + (k * m)) := neZero_add_self _
   have h_contract :=
     traceNorm_blockMap_contractive_hermitian Ψ hΨ_cp
       hΨ_contr (selfAdjointDilation A) h_herm

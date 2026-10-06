@@ -78,14 +78,14 @@ theorem measurementKLDiv_eq_ofReal_of_support {n m : ℕ} [NeZero n] [NeZero m]
     (M : InfoTheory.Measurement.POVM n m) (ρ σ : DensityOp n)
     (h_support : ∀ y, M.prob σ y = 0 → M.prob ρ y = 0) :
     measurementKLDiv M ρ σ = ENNReal.ofReal (measurementKLDivReal M ρ σ) := by
-  simp only [measurementKLDiv, if_pos h_support]
+  simp only [measurementKLDiv, ite_eq_left h_support]
 
 /-- When classical support fails, `measurementKLDiv` equals ⊤. -/
 theorem measurementKLDiv_eq_top {n m : ℕ} [NeZero n] [NeZero m]
     (M : InfoTheory.Measurement.POVM n m) (ρ σ : DensityOp n)
     (h_not_support : ¬ ∀ y, M.prob σ y = 0 → M.prob ρ y = 0) :
     measurementKLDiv M ρ σ = ⊤ := by
-  simp only [measurementKLDiv, if_neg h_not_support]
+  simp only [measurementKLDiv, ite_eq_right h_not_support]
 
 /-!
 ### Naimark Dilation and Data Processing Inequality
@@ -214,7 +214,7 @@ lemma shannonEntropy_zeroPad {n N : ℕ} (hn : n ≤ N) (evs : Fin n → ℝ) :
           if h : i.val < n then evs ⟨i.val, h⟩ else 0) := by
     unfold shannonEntropy
     exact (Fintype.sum_equiv (finCongr hNk) _ _
-      (fun i => by simp [finCongr])).symm
+      (fun _ => rfl)).symm
   rw [h_reindex]
   -- The dite function agrees pointwise with Fin.addCases
   have h_congr :
@@ -257,7 +257,7 @@ lemma sum_zeroPad_eq {n N : ℕ} (hn : n ≤ N) (f : Fin n → ℝ) :
     (∑ i : Fin (n + (N - n)),
       if h : i.val < n then f ⟨i.val, h⟩ else 0) from
     (Fintype.sum_equiv (finCongr hNk) _ _
-      (fun i => by simp [finCongr])).symm, Fin.sum_univ_add]
+      (fun _ => rfl)).symm, Fin.sum_univ_add]
   have h1 : (∑ i : Fin n,
       if h : (Fin.castAdd (N - n) i).val < n
       then f ⟨(Fin.castAdd (N - n) i).val, h⟩ else 0) =
@@ -282,11 +282,11 @@ lemma sum_dite_fin_eq {N n : ℕ} {M : Type*} [AddCommMonoid M] (hn : n ≤ N)
   rw [Fin.sum_univ_add]
   have h1 : (∑ i : Fin n, if h : (Fin.castAdd m i : ℕ) < n
       then f ⟨(Fin.castAdd m i : ℕ), h⟩ else 0) = ∑ i : Fin n, f i := by
-    congr 1; ext i; simp only [Fin.val_castAdd]; rw [dif_pos i.isLt]
+    congr 1; ext i; simp only [Fin.val_castAdd]; rw [dite_eq_left i.isLt]
   have h2 : (∑ i : Fin m, if h : (Fin.natAdd n i : ℕ) < n
       then f ⟨(Fin.natAdd n i : ℕ), h⟩ else 0) = 0 := by
     apply Finset.sum_eq_zero; intro i _
-    simp only [Fin.val_natAdd]; exact dif_neg (by omega)
+    simp only [Fin.val_natAdd]; exact dite_eq_right (by omega)
   rw [h1, h2, add_zero]
 
 -- Helper: columns of an isometry are orthonormal in EuclideanSpace
@@ -312,11 +312,12 @@ private lemma onb_matrix_unitary {N : ℕ}
     U.conjTranspose * U = 1 := by
   intro U
   ext i j
-  simp only [U, Matrix.mul_apply, Matrix.conjTranspose_apply, Matrix.one_apply]
+  change (∑ k, star ((b i : Fin N → ℂ) k) * (b j : Fin N → ℂ) k) =
+    if i = j then 1 else 0
   have := (orthonormal_iff_ite.mp b.orthonormal) i j
   rw [EuclideanSpace.inner_eq_star_dotProduct] at this
   simp only [dotProduct, Pi.star_apply] at this
-  convert this using 1; congr 1; ext k; simp [mul_comm]
+  simpa only [mul_comm] using this
 
 -- Helper: first n columns of ONB-extended matrix match the original isometry
 private lemma onb_extension_cols {n N : ℕ}
@@ -342,7 +343,7 @@ private lemma onb_extension_cols {n N : ℕ}
       ((WithLp.equiv 2 (Fin N → ℂ)).symm (fun r => A r ⟨j.val, j.isLt⟩) :
         Fin N → ℂ) := by
     have := congr_arg (WithLp.equiv 2 (Fin N → ℂ)) hbv
-    simpa [dif_pos j.isLt] using this
+    simpa [dite_eq_left j.isLt] using this
   rw [this]; rfl
 
 -- Helper: the entry-by-entry conjugation equality
@@ -356,7 +357,7 @@ private lemma diagonal_conjugation_entries {n N : ℕ}
         if h : i.val < n then d ⟨i.val, h⟩ else 0) * U.conjTranspose := by
   ext i j
   simp only [Matrix.mul_apply, Matrix.diagonal_apply, Matrix.conjTranspose_apply]
-  simp_rw [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp_rw [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   have rhs_simp : ∀ k : Fin N,
       U i k * (if h : (k : ℕ) < n then d ⟨k, h⟩ else 0) * star (U j k) =
       if h : (k : ℕ) < n then
@@ -395,14 +396,23 @@ lemma exists_unitary_extension_of_isometry {n N : ℕ}
     if h : i.val < n then cols ⟨i.val, h⟩ else 0
   let s : Set (Fin N) := Set.range
     (fun j : Fin n => (⟨j.val, Nat.lt_of_lt_of_le j.isLt hn⟩ : Fin N))
-  have hs_restrict : Orthonormal ℂ (s.restrict v) := by
+  have hs_restrict : Orthonormal ℂ (s.domRestrict v) := by
+    change Orthonormal ℂ (fun i : s => v i)
     rw [orthonormal_iff_ite]
-    intro ⟨i, hi⟩ ⟨j, hj⟩
-    obtain ⟨i', rfl⟩ := hi
-    obtain ⟨j', rfl⟩ := hj
-    simp only [v, s, Set.restrict_apply, dif_pos i'.isLt, dif_pos j'.isLt, Fin.eta]
-    rw [(orthonormal_iff_ite.mp hcols) i' j']
-    simp [Fin.val_inj]
+    intro i j
+    obtain ⟨i', hi⟩ := i.property
+    obtain ⟨j', hj⟩ := j.property
+    have hvi : v i = cols i' := by
+      rw [← hi]
+      exact dite_eq_left i'.isLt
+    have hvj : v j = cols j' := by
+      rw [← hj]
+      exact dite_eq_left j'.isLt
+    change inner ℂ (v i) (v j) = _
+    rw [hvi, hvj, (orthonormal_iff_ite.mp hcols) i' j']
+    have hij : i = j ↔ i' = j' := by
+      simp only [Subtype.ext_iff, ← hi, ← hj, Fin.ext_iff]
+    exact if_congr hij.symm rfl rfl
   have hcard :
       Module.finrank ℂ (EuclideanSpace ℂ (Fin N)) = Fintype.card (Fin N) := by
     simp [EuclideanSpace]
@@ -587,7 +597,7 @@ lemma unitary_diagonal_conjugation_function {n : ℕ}
   -- Now prove the matrix equation entry-by-entry
   ext i k
   simp only [Matrix.mul_apply, Matrix.diagonal_apply, Matrix.conjTranspose_apply]
-  simp_rw [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp_rw [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   -- Rewrite each summand using h_f_entry
   have h_sum_eq : ∀ j, R i j * (↑(f (evs1 j)) : ℂ) * star (R k j) =
       (↑(f (μ i)) : ℂ) * (R i j * star (R k j)) := by

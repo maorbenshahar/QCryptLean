@@ -174,7 +174,7 @@ private lemma fiber_card_const {n : ℕ} {g f f' : Fin n → Fin 4}
   obtain ⟨σ', hσ'⟩ := hf'
   apply Finset.card_nbij' (fun σ => σ * σ'⁻¹ * σ₀) (fun σ => σ * σ₀⁻¹ * σ')
   · intro σ hσ
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hσ ⊢
+    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and] at hσ ⊢
     funext y
     change g ((σ * σ'⁻¹ * σ₀) y) = f y
     rw [Equiv.Perm.mul_apply, Equiv.Perm.mul_apply]
@@ -186,7 +186,7 @@ private lemma fiber_card_const {n : ℕ} {g f f' : Fin n → Fin 4}
     rw [h1, h2]
     exact congrFun hσ₀ y
   · intro σ hσ
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hσ ⊢
+    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and] at hσ ⊢
     funext y
     change g ((σ * σ₀⁻¹ * σ') y) = f' y
     rw [Equiv.Perm.mul_apply, Equiv.Perm.mul_apply]
@@ -214,7 +214,7 @@ lemma bellPerm_count_mul_orbit {n : ℕ} {f g : Fin n → Fin 4}
   have hmaps : Set.MapsTo (fun σ : Equiv.Perm (Fin n) => g ∘ ⇑σ)
       ↑(Finset.univ : Finset (Equiv.Perm (Fin n))) ↑orbit := by
     intro σ _
-    simp only [horbit, Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and]
+    simp only [horbit, Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and]
     exact univ_val_map_comp_perm g σ
   have hsum := Finset.card_eq_sum_card_fiberwise hmaps
   rw [Finset.card_univ, Fintype.card_perm, Fintype.card_fin] at hsum
@@ -259,10 +259,10 @@ lemma bellTypeMult_eq_orbit {n : ℕ} (i : Fin (4 ^ n)) :
   apply Finset.card_nbij' (fun k => (@finFunctionFinEquiv 4 n).symm k)
     (fun f' => @finFunctionFinEquiv 4 n f')
   · intro k hk
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hk ⊢
+    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and] at hk ⊢
     exact (bellType_eq_iff_map_eq k i).mp hk
   · intro f' hf'
-    simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hf' ⊢
+    simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and] at hf' ⊢
     apply (bellType_eq_iff_map_eq (@finFunctionFinEquiv 4 n f') i).mpr
     rw [Equiv.symm_apply_apply]
     exact hf'
@@ -302,18 +302,18 @@ theorem symmetricProjector_apply_eq_typeIndicator (n : ℕ) [NeZero n] (i j : Fi
     congr 1
     apply Finset.card_nbij' (fun σ => σ⁻¹) (fun σ => σ⁻¹)
     · intro σ hσ
-      simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hσ ⊢
+      simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and] at hσ ⊢
       rw [Equiv.Perm.inv_def]
       exact hσ.symm
     · intro σ hσ
-      simp only [Finset.coe_filter, Set.mem_setOf_eq, Finset.mem_univ, true_and] at hσ ⊢
+      simp only [Finset.coe_filter, Set.mem_ofPred_eq, Finset.mem_univ, true_and] at hσ ⊢
       rw [Equiv.Perm.inv_def, Equiv.symm_symm]
       exact hσ.symm
     · intro σ _; simp
     · intro σ _; simp
   rw [hentry]
   by_cases htype : bellTypeOfIndex n i = bellTypeOfIndex n j
-  · rw [if_pos htype]
+  · rw [ite_eq_left htype]
     have hmap : Finset.univ.val.map ((@finFunctionFinEquiv 4 n).symm i)
         = Finset.univ.val.map ((@finFunctionFinEquiv 4 n).symm j) :=
       (bellType_eq_iff_map_eq i j).mp htype
@@ -342,7 +342,7 @@ theorem symmetricProjector_apply_eq_typeIndicator (n : ℕ) [NeZero n] (i j : Fi
       right_ne_zero_of_mul (hcast ▸ hfac)
     rw [← hcast]
     field_simp
-  · rw [if_neg htype]
+  · rw [ite_eq_right htype]
     have hmap : Finset.univ.val.map ((@finFunctionFinEquiv 4 n).symm i)
         ≠ Finset.univ.val.map ((@finFunctionFinEquiv 4 n).symm j) := by
       intro h; exact htype ((bellType_eq_iff_map_eq i j).mpr h)
@@ -370,7 +370,7 @@ theorem symmetricProjector_eq_bellDicke_resolution (n : ℕ) [NeZero n] :
       intro T k; split <;> simp
     simp_rw [hstar]
     by_cases hij : bellTypeOfIndex n i = bellTypeOfIndex n j
-    · rw [if_pos hij]
+    · rw [ite_eq_left hij]
       rw [Finset.sum_eq_single (bellTypeOfIndex n i)]
       · simp [hij]
       · intro T _ hT
@@ -378,7 +378,7 @@ theorem symmetricProjector_eq_bellDicke_resolution (n : ℕ) [NeZero n] :
         · exact absurd h.symm hT
         · simp [h]
       · intro h; exact absurd (Finset.mem_univ _) h
-    · rw [if_neg hij, Finset.sum_eq_zero]
+    · rw [ite_eq_right hij, Finset.sum_eq_zero]
       intro T _
       by_cases hiT : bellTypeOfIndex n i = T
       · have hjT : bellTypeOfIndex n j ≠ T := fun h => hij (hiT.trans h.symm)
@@ -483,7 +483,7 @@ theorem tensor_one_mulVec_maxEnt {N : ℕ} (M : Op N) :
   simp only [Op_tensor_apply_finProd, Equiv.symm_apply_apply, Matrix.one_apply]
   rw [Finset.sum_eq_single (finProdFinEquiv.symm I).2]
   · simp
-  · intro k _ hk; rw [if_neg (Ne.symm hk), mul_zero]
+  · intro k _ hk; rw [ite_eq_right (Ne.symm hk), mul_zero]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 /-- `W·Vᴴ` maps `e_c` to the doubled Bell ket `|β_c⟩ ⊗ |β_c⟩`. -/
@@ -562,8 +562,8 @@ private theorem bellTypeProjector_entry (n : ℕ) (T : Sym (Fin 4) n) (i₁ i₂
       rw [Matrix.conjTranspose_apply, bellRotation_star]
     rw [hRi]
     by_cases hT : bellTypeOfIndex n a = T
-    · rw [if_pos hT, if_pos hT, mul_one]
-    · rw [if_neg hT, if_neg hT, mul_zero, zero_mul]
+    · rw [ite_eq_left hT, ite_eq_left hT, mul_one]
+    · rw [ite_eq_right hT, ite_eq_right hT, mul_zero, zero_mul]
   · intro b _ hb
     simp [bellTypeDiagProjector, hb]
   · intro h; exact absurd (Finset.mem_univ _) h
@@ -595,8 +595,8 @@ theorem bellDeFinetti_bellRot_diag (n : ℕ) [NeZero n] :
   ext i j
   simp only [Matrix.smul_apply, Matrix.diagonal_apply, smul_eq_mul, bb84PolyDimTight]
   by_cases hij : i = j
-  · rw [if_pos hij, if_pos hij, hij]
-  · rw [if_neg hij, if_neg hij, mul_zero]
+  · rw [ite_eq_left hij, ite_eq_left hij, hij]
+  · rw [ite_eq_right hij, ite_eq_right hij, mul_zero]
 
 /-- **The Bell-diagonal form of `√τ_Bell`**:
 `√τ_Bell = Rᴴ·diag(√(C(n+3,3)⁻¹·mult(type i)⁻¹))·R`.  The RHS is PSD and squares to `τ_Bell` (by the
@@ -608,9 +608,9 @@ theorem sqrtOp_bellDeFinetti_diag (n : ℕ) [NeZero n] :
       = (bellRotation n)ᴴ *
           Matrix.diagonal (fun i => (Real.sqrt ((bb84PolyDimTight n : ℝ)⁻¹ *
             (bellTypeMult n (bellTypeOfIndex n i) : ℝ)⁻¹) : ℂ)) * bellRotation n := by
-  letI : PartialOrder (Op (4 ^ n)) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op (4 ^ n)) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op (4 ^ n)) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op (4 ^ n)) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op (4 ^ n)) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op (4 ^ n)) := Matrix.instNonnegSpectrumClass
   set sDg : Fin (4 ^ n) → ℂ := fun i => (Real.sqrt ((bb84PolyDimTight n : ℝ)⁻¹ *
     (bellTypeMult n (bellTypeOfIndex n i) : ℝ)⁻¹) : ℂ) with hsDgdef
   set S : Op (4 ^ n) := (bellRotation n)ᴴ * Matrix.diagonal sDg * bellRotation n with hSdef
@@ -624,7 +624,7 @@ theorem sqrtOp_bellDeFinetti_diag (n : ℕ) [NeZero n] :
     rw [Matrix.diagonal_mul_diagonal]
     congr 1
     funext i
-    rw [symmetricProjector_apply_eq_typeIndicator, if_pos rfl, hsDgdef]
+    rw [symmetricProjector_apply_eq_typeIndicator, ite_eq_left rfl, hsDgdef]
     rw [← Complex.ofReal_mul, Real.mul_self_sqrt (by positivity)]
     push_cast
     ring

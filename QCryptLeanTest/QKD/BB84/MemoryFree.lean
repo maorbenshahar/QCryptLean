@@ -198,7 +198,7 @@ theorem zeroRound_zeroQuota_success :
         ((QKD.BB84.lateSelectionExitEquiv 0 0 0 0).symm emptyControl)) then
       QKD.BB84.rawClassicalTailBoundary 0 0 0 0 (@Sampling.packedPESel 0 0 0) 0
     else .leaf Measurement.lateSelectionAbortSystem) = _
-  rw [Equiv.apply_symm_apply, if_pos h]
+  rw [Equiv.apply_symm_apply, ite_eq_left h]
 
 /-- A positive quota at zero rounds selects the actual Unit/Unit shortage leaf. -/
 theorem zeroRound_positiveQuota_abort :
@@ -211,7 +211,7 @@ theorem zeroRound_positiveQuota_abort :
         ((QKD.BB84.lateSelectionExitEquiv 0 1 0 0).symm emptyControl)) then
       QKD.BB84.rawClassicalTailBoundary 1 0 0 0 (@Sampling.packedPESel 1 0 0) 0
     else .leaf Measurement.lateSelectionAbortSystem) = _
-  rw [Equiv.apply_symm_apply, if_neg h]
+  rw [Equiv.apply_symm_apply, ite_eq_right h]
 
 /-- The accepting final exit has Alice's and Bob's locally owned key multipartite system. -/
 theorem final_accept_system (ℓ : ℕ) :

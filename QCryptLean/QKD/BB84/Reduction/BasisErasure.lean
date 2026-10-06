@@ -27,16 +27,20 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
     (σ : Op (weightedSelectedRecordSystem N n).total) (x : (FinalStage.rawSystem n).total) :
     (QKD.BB84.selectedBitsToRawProgram N n).denote σ ⟨(), x⟩ ⟨(), x⟩ =
       ∑ qB : SelectedLocalRecord N n, ∑ qA : SelectedLocalRecord N n,
-        if x .alice = QKD.BB84.selectedBitsToRaw qA ∧ x .bob = QKD.BB84.selectedBitsToRaw qB then
-          σ ((TwoParty.pairEquiv _ _).symm (qA, qB)) ((TwoParty.pairEquiv _ _).symm (qA, qB))
-        else 0 := by
+        @ite ℂ
+          (x .alice = QKD.BB84.selectedBitsToRaw qA ∧ x .bob = QKD.BB84.selectedBitsToRaw qB)
+          (@instDecidableAnd _ _
+            ((inferInstance : DecidableEq (Fin (2 ^ n))) (x .alice) (selectedBitsToRaw qA))
+            ((inferInstance : DecidableEq (Fin (2 ^ n))) (x .bob) (selectedBitsToRaw qB)))
+          (σ ((TwoParty.pairEquiv _ _).symm (qA, qB))
+            ((TwoParty.pairEquiv _ _).symm (qA, qB))) 0 := by
   have hx : x = (TwoParty.pairEquiv _ _).symm (x .alice, x .bob) := by
     funext i
     cases i <;> rfl
   have hout : (QKD.BB84.selectedBitsToRawBobAction N n).out = FinalStage.rawSystem n := by
-    simp only [QKD.BB84.selectedBitsToRawBobAction, QKD.BB84.selectedBitsToRawAliceAction,
-      PrivateAction.out_ofInstrument, weightedSelectedRecordSystem, FinalStage.rawSystem,
-      TwoParty.set_alice, TwoParty.set_bob]
+    change ((weightedSelectedRecordSystem N n).set .alice (Fin (2 ^ n))).set .bob
+      (Fin (2 ^ n)) = _
+    rw [weightedSelectedRecordSystem, TwoParty.set_alice, TwoParty.set_bob]
   have hcoord (a b : Fin (2 ^ n)) :
       (Equiv.cast (congrArg Boundary.space (congrArg Boundary.leaf hout.symm)))
           ((Boundary.leafSpaceEquiv (FinalStage.rawSystem n)).symm
@@ -56,13 +60,10 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
     ((Boundary.leafSpaceEquiv (FinalStage.rawSystem n)).symm
       ((TwoParty.pairEquiv _ _).symm ((x .alice), (x .bob)))) = _
   unfold QKD.BB84.selectedBitsToRawProgram
-  rw [Program.denote_cast_apply rfl (congrArg Boundary.leaf hout.symm), hcoord]
-  change ((QKD.BB84.selectedBitsToRawAliceAction N n).then (QKD.BB84.selectedBitsToRawBobAction N
-    n).run).denote σ
-    ((Boundary.leafSpaceEquiv (QKD.BB84.selectedBitsToRawBobAction N n).out).symm
-      ((QKD.BB84.selectedBitsToRawBobAction N n).out.pairEquiv.symm ((x .alice), (x .bob))))
-    ((Boundary.leafSpaceEquiv (QKD.BB84.selectedBitsToRawBobAction N n).out).symm
-      ((QKD.BB84.selectedBitsToRawBobAction N n).out.pairEquiv.symm ((x .alice), (x .bob)))) = _
+  refine (Program.denote_cast_apply rfl (congrArg Boundary.leaf hout.symm) _ _ _ _).trans ?_
+  refine (congrArg₂ (((selectedBitsToRawAliceAction N n).then
+    (selectedBitsToRawBobAction N n).run).denote σ)
+    (hcoord (x .alice) (x .bob)) (hcoord (x .alice) (x .bob))).trans ?_
   unfold PrivateAction.then PrivateAction.run
   rw [Program.denote_priv_eq_sum_liftedOperation]
   change ((∑ o : Unit, ((QKD.BB84.selectedBitsToRawBobAction N n).then Program.done).denote ∘ₗ
@@ -87,7 +88,10 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
           ((x .alice), (x .bob)))
         (((QKD.BB84.selectedBitsToRawAliceAction N n).out.set .bob (Fin (2 ^ n))).pairEquiv.symm
           ((x .alice), (x .bob))) = _
-  rw [Instrument.liftAt_bob_operation_apply]
+  refine (Instrument.liftAt_bob_operation_apply (selectedBitsToRawAliceAction N n).out
+    (Instrument.functionAndForget (@selectedBitsToRaw N n)) ()
+    ((selectedBitsToRawAliceAction N n).liftedOperation () σ)
+    (x .alice) (x .alice) (x .bob) (x .bob)).trans ?_
   refine (Instrument.functionAndForget_operation_apply
     (@QKD.BB84.selectedBitsToRaw N n) _ _ _).trans ?_
   have hAliceApply (a a' : Fin (2 ^ n))
@@ -106,22 +110,22 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
           (Fin (2 ^ n))).pairEquiv.symm (a, rB))
         (((weightedSelectedRecordSystem N n).set .alice
           (Fin (2 ^ n))).pairEquiv.symm (a', rB)) = _
-    rw [Instrument.liftAt_alice_operation_apply]
+    refine (Instrument.liftAt_alice_operation_apply (weightedSelectedRecordSystem N n)
+      (Instrument.functionAndForget (@selectedBitsToRaw N n)) () σ a a' rB rB).trans ?_
     exact Instrument.functionAndForget_operation_apply (@QKD.BB84.selectedBitsToRaw N n) _ _ _
-  simp_rw [Matrix.submatrix_apply, hAliceApply]
-  apply Finset.sum_congr rfl
-  intro qB _
-  by_cases hB : x .bob = QKD.BB84.selectedBitsToRaw qB
-  · simp only [hB, and_self, ite_true]
-    apply Finset.sum_congr rfl
-    intro qA _
-    simp only [and_true]
-    rfl
-  · simp only [and_self]
-    refine (if_neg hB).trans ?_
+  let xa : Fin (2 ^ n) := x .alice
+  let xb : Fin (2 ^ n) := x .bob
+  refine Finset.sum_congr rfl fun qB _ => ?_
+  by_cases hB : xb = selectedBitsToRaw qB
+  · refine (ite_eq_left ⟨hB, hB⟩).trans ?_
+    refine (hAliceApply xa xa qB).trans ?_
+    refine Finset.sum_congr rfl fun qA _ => ?_
+    by_cases hA : xa = selectedBitsToRaw qA
+    · exact (ite_eq_left ⟨hA, hA⟩).trans (ite_eq_left ⟨hA, hB⟩).symm
+    · exact (ite_eq_right (fun h => hA h.1)).trans
+        (ite_eq_right (fun h => hA h.1)).symm
+  · refine (ite_eq_right (fun h => hB h.1)).trans ?_
     symm
-    apply Finset.sum_eq_zero
-    intro qA _
-    exact if_neg (fun h => hB h.2)
+    exact Finset.sum_eq_zero fun qA _ => ite_eq_right (fun h => hB h.2)
 
 end QKD.BB84.Reduction

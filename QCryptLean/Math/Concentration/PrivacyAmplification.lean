@@ -454,7 +454,7 @@ lemma average_l2_sq_bound {n m : ℕ} [NeZero n] [NeZero m]
           if H.hash s i' = x then p i * p i' else 0 :=
         fun x => by split_ifs <;> ring
       simp_rw [h_prod_ite]
-      rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+      rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ _)]
     · simp only [heq, ↓reduceIte, mul_zero]
       apply Finset.sum_eq_zero; intro j _
       by_cases hj1 : H.hash s i = j

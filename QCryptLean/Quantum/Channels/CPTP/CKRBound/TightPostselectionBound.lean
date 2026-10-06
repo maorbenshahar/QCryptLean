@@ -297,7 +297,7 @@ theorem ckr_postselection_tight {n : ℕ} [NeZero n]
       ≤ ↑(Nat.choose (n + 3) 3) * ckrTensorTraceNorm Δ τ :=
         diamondNorm_le_symDim_mul_ckrTraceNorm_tight Δ hΔ τ hτ
     _ ≤ (↑n + 1) ^ (3 : ℕ) * ckrTensorTraceNorm Δ τ :=
-        mul_le_mul_of_nonneg_right (by exact_mod_cast choose_add_le_pow_succ n 3)
+        mul_le_mul_of_nonneg_right (by exact_mod_cast Nat.choose_add_le_add_one_pow n 3)
           (ckrTensorTraceNorm_nonneg Δ τ)
 
 end QKD.BB84.Engine

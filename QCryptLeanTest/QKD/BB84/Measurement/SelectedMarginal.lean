@@ -33,7 +33,7 @@ theorem selectSecond_complement_zero :
       (Math.FiniteEmbedding.embeddingComplementEquiv selectSecond 0 : Fin 2) ≠ 1 := by
     intro h
     apply hnot
-    exact ⟨0, by simpa [selectSecond] using h.symm⟩
+    exact ⟨0, by exact h.symm⟩
   apply Fin.ext
   omega
 
@@ -132,13 +132,15 @@ theorem discardedOffDiagonal_vanishes :
     Fintype.sum_unique]
   rw [Instrument.onFactor_operation_apply,
     Instrument.discardToUnit_operation_apply]
-  simp only [discardedOffDiagonalInput, discardedOffDiagonalSplit, reindexOp,
-    unitProdEquiv, LinearMap.coe_mk, AddHom.coe_mk, Matrix.submatrix_apply,
-    Nat.add_one_sub_one, Equiv.symm_trans_apply, Equiv.prodComm_symm,
-    Equiv.prodComm_apply, Prod.swap_prod_mk]
+  change (∑ u : (Fin 1 → Bit) × (Fin 1 → Bit), discardedOffDiagonalSplit
+    (selectedPairBitSplit selectSecond ((selectedPairBitSplit selectSecond).symm
+      ((zeroOne, zeroOne), u)))
+    (selectedPairBitSplit selectSecond ((selectedPairBitSplit selectSecond).symm
+      ((zeroOne, zeroOne), u)))) = 0
+  simp only [Equiv.apply_symm_apply, discardedOffDiagonalSplit]
   apply Finset.sum_eq_zero
   intro u _
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro ⟨hu0, hu1⟩
   apply zeroOne_ne_oneOne
   exact congrArg (fun p => p.2.1) (hu0.symm.trans hu1)

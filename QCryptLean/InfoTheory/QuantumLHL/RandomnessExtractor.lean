@@ -127,7 +127,7 @@ theorem extractorConditionedOp_trace_le_one {S X Z : Type*} [Fintype S] [Fintype
     (ρ : CQState X n) (z : Z) :
     (extractorWeightedOp H ρ z).trace.re ≤ 1 := by
   rw [extractorWeightedOp_trace_re_eq]
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : (0 : ℝ) < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos
@@ -214,7 +214,7 @@ lemma sum_extractorWeightedOp_eq_quantumMarginalOp
     {S X Z : Type*} [Fintype S] [Fintype X] [Fintype Z] [DecidableEq Z]
     {n : ℕ} (H : QuantumHashFamily S X Z) (ρ : CQState X n) :
     ∑ z : Z, extractorWeightedOp H ρ z = ρ.quantumMarginalOp := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : (0 : ℝ) < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos

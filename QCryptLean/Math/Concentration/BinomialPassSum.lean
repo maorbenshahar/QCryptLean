@@ -78,15 +78,15 @@ theorem binomialPassSum_le_hoeffding (n : ℕ) (hn : n ≠ 0) (Q δ η p : ℝ)
       have h1pk : 0 ≤ (1 - p) ^ (n - k) := pow_nonneg (by linarith) _
       positivity
     by_cases hband : |(k : ℝ) / n - Q| ≤ δ
-    · rw [if_pos hband]
+    · rw [ite_eq_left hband]
       have hle : (k : ℝ) / n ≤ p - η := by
         have h1 : (k : ℝ) / n - Q ≤ δ := (abs_le.mp hband).2
         linarith
-      rw [if_pos hle]
-    · rw [if_neg hband]
+      rw [ite_eq_left hle]
+    · rw [ite_eq_right hband]
       by_cases hlt : (k : ℝ) / n ≤ p - η
-      · rw [if_pos hlt]; exact hw_nonneg
-      · rw [if_neg hlt]
+      · rw [ite_eq_left hlt]; exact hw_nonneg
+      · rw [ite_eq_right hlt]
   refine le_trans hdom ?_
   exact Math.Concentration.BinomialHoeffding.binomial_lower_tail n hn p η hp0 hp1 hη
 
@@ -109,7 +109,7 @@ theorem binomialPassSum_eq_zero_of_rate_one (n : ℕ) (hn : n ≠ 0) (Q δ : ℝ
   refine Finset.sum_eq_zero (fun k hk => ?_)
   by_cases hkn : k = n
   · subst hkn
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hband
     rw [div_self (Nat.cast_ne_zero.mpr hn), abs_le] at hband
     exact absurd h (not_lt.mpr (sub_le_iff_le_add'.mp hband.2))
@@ -144,7 +144,7 @@ theorem binomialPassSum_eq_one_of_rate_zero (n : ℕ) (Q δ : ℝ) (hQ0 : 0 ≤ 
     rw [Nat.cast_zero, zero_div, zero_sub, abs_neg, abs_of_nonneg hQ0]
     exact hQδ
   rw [Finset.sum_eq_single 0]
-  · rw [if_pos hband]
+  · rw [ite_eq_left hband]
     simp
   · intro k _ hk0
     have hkpos : k ≠ 0 := hk0
@@ -230,11 +230,11 @@ theorem fiberProdSum_eq_binomial {n d : ℕ}
       constructor
       · intro h_eq i
         by_cases hi : i ∈ S
-        · simp only [t, if_pos hi]
+        · simp only [t, ite_eq_left hi]
           have hmem : i ∈ (Finset.univ.filter (fun i => flag (ω i))) := by rw [h_eq]; exact hi
           simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem ⊢
           exact hmem
-        · simp only [t, if_neg hi]
+        · simp only [t, ite_eq_right hi]
           have hmem : i ∉ (Finset.univ.filter (fun i => flag (ω i))) := by rw [h_eq]; exact hi
           simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem ⊢
           exact hmem
@@ -245,11 +245,11 @@ theorem fiberProdSum_eq_binomial {n d : ℕ}
         · intro h_flag
           by_contra hi
           specialize h_pi i
-          simp only [t, if_neg hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
+          simp only [t, ite_eq_right hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
           exact h_pi h_flag
         · intro hi
           specialize h_pi i
-          simp only [t, if_pos hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
+          simp only [t, ite_eq_left hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
           exact h_pi
     rw [h_eq_pi, ← Finset.prod_univ_sum t (fun _ j => g j)]
     have h_t_sum : ∀ i : Fin n,
@@ -258,8 +258,8 @@ theorem fiberProdSum_eq_binomial {n d : ℕ}
           else (∑ j ∈ Finset.univ.filter (fun j => ¬ flag j), g j) := by
       intro i
       by_cases hi : i ∈ S
-      · simp only [t, if_pos hi]
-      · simp only [t, if_neg hi]
+      · simp only [t, ite_eq_left hi]
+      · simp only [t, ite_eq_right hi]
     rw [Finset.prod_congr rfl (fun i _ => h_t_sum i),
         Finset.prod_ite (f := fun _ => (∑ j ∈ Finset.univ.filter (fun j => flag j), g j))
           (g := fun _ => (∑ j ∈ Finset.univ.filter (fun j => ¬ flag j), g j)),
@@ -323,20 +323,20 @@ theorem flagOutcomePassSum_eq_binomialPassSum {n d : ℕ}
             ∏ i : Fin n, g (ω i)
         else 0 := by
     by_cases hpe : |(k : ℝ) / n - Q| ≤ δ
-    · rw [if_pos hpe]
+    · rw [ite_eq_left hpe]
       refine Finset.sum_congr rfl ?_
       intro ω hω
       rw [Finset.mem_filter] at hω
       have hck : (Finset.univ.filter (fun i => flag (ω i))).card = k := hω.2
       simp only [hF, hck]
-      rw [if_pos hpe]
-    · rw [if_neg hpe]
+      rw [ite_eq_left hpe]
+    · rw [ite_eq_right hpe]
       refine Finset.sum_eq_zero ?_
       intro ω hω
       rw [Finset.mem_filter] at hω
       have hck : (Finset.univ.filter (fun i => flag (ω i))).card = k := hω.2
       simp only [hF, hck]
-      rw [if_neg hpe]
+      rw [ite_eq_right hpe]
   rw [hfiber, fiberProdSum_eq_binomial flag g k]
   -- complement rate: `∑_{¬flag} g = 1 − ∑_{flag} g`.
   have hcomp : (∑ j ∈ Finset.univ.filter (fun j => ¬ flag j), g j) =

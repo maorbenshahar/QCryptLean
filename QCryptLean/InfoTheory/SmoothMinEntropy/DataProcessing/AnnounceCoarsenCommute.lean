@@ -64,9 +64,9 @@ lemma CQState.coarsenBlock_tensorLeftKernel_of_fiberConstant
   rw [CQState.coarsenBlock_toOp, CQState.coarsenBlock_toOp, tensor_sum_op]
   refine Finset.sum_congr rfl (fun x _ => ?_)
   by_cases hx : g x = y
-  · rw [if_pos hx, if_pos hx, CQState.tensorLeftKernel_stateMap, hK x, hx]
+  · rw [ite_eq_left hx, ite_eq_left hx, CQState.tensorLeftKernel_stateMap, hK x, hx]
     rfl
-  · rw [if_neg hx, if_neg hx, tensor_zero_op]
+  · rw [ite_eq_right hx, ite_eq_right hx, tensor_zero_op]
 
 /-- **The announce kernel slides past a coarsening it factors through.**
 

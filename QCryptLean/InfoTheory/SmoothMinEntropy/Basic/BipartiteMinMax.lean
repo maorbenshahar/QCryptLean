@@ -93,7 +93,7 @@ def dmaxIsFeasible {d : ℕ} (ρ Q : Op d) (t : ℝ) : Prop :=
 As with `minFeasibleLambda`, the infimum of an empty feasible set is Lean's `sInf ∅ = 0`
 sentinel (interpreted as `D_max = +∞`). -/
 noncomputable def dmaxFeasibleLambda {d : ℕ} (ρ Q : Op d) : ℝ :=
-  sInf (setOf (dmaxIsFeasible ρ Q))
+  sInf (Set.ofPred (dmaxIsFeasible ρ Q))
 
 /-- Predicate: the `D_max`-feasible set for `(ρ, Q)` is nonempty. -/
 def hasDmaxFeasibleLambda {d : ℕ} (ρ Q : Op d) : Prop :=
@@ -101,7 +101,7 @@ def hasDmaxFeasibleLambda {d : ℕ} (ρ Q : Op d) : Prop :=
 
 /-- The `D_max`-feasible set is bounded below by `0`. -/
 lemma dmaxFeasibleLambda_bddBelow {d : ℕ} (ρ Q : Op d) :
-    BddBelow (setOf (dmaxIsFeasible ρ Q)) :=
+    BddBelow (Set.ofPred (dmaxIsFeasible ρ Q)) :=
   ⟨0, fun _ ht => ht.1⟩
 
 /-- Every `D_max`-feasible scalar bounds the optimum from above. -/
@@ -113,7 +113,7 @@ lemma dmaxFeasibleLambda_le_of_feasible {d : ℕ} (ρ Q : Op d) {t : ℝ}
 lemma dmaxFeasibleLambda_nonneg {d : ℕ} (ρ Q : Op d) :
     0 ≤ dmaxFeasibleLambda ρ Q := by
   unfold dmaxFeasibleLambda
-  by_cases h : (setOf (dmaxIsFeasible ρ Q)).Nonempty
+  by_cases h : (Set.ofPred (dmaxIsFeasible ρ Q)).Nonempty
   · exact le_csInf h (fun _ ht => ht.1)
   · rw [Set.not_nonempty_iff_eq_empty] at h
     rw [h, Real.sInf_empty]
@@ -293,7 +293,7 @@ theorem dmaxFeasibleLambda_mono_of_orderPreserving {d d' : ℕ} (Φ : Op d → O
     (hsmul : ∀ (t : ℝ) (Q : Op d), Φ (Complex.ofReal t • Q) = Complex.ofReal t • Φ Q)
     (ρ Q : Op d) (hfeas : hasDmaxFeasibleLambda ρ Q) :
     dmaxFeasibleLambda (Φ ρ) (Φ Q) ≤ dmaxFeasibleLambda ρ Q := by
-  have hsub : setOf (dmaxIsFeasible ρ Q) ⊆ setOf (dmaxIsFeasible (Φ ρ) (Φ Q)) := by
+  have hsub : Set.ofPred (dmaxIsFeasible ρ Q) ⊆ Set.ofPred (dmaxIsFeasible (Φ ρ) (Φ Q)) := by
     intro t ht
     refine ⟨ht.1, ?_⟩
     have himg : opLe (Φ ρ) (Φ (Complex.ofReal t • Q)) := hmono _ _ ht.2
@@ -437,7 +437,8 @@ lemma reindex_blockDiagonal_const_eq_tensor_one
     Prod.map_apply, id_eq, Matrix.one_apply, finProdFinEquiv_symm_apply]
   by_cases h : i.modNat = j.modNat
   · rw [h]; simp
-  · rw [if_neg h, if_neg (fun hh => h ((Fintype.equivFin X).symm.injective hh)), mul_zero]
+  · rw [ite_eq_right h, ite_eq_right (fun hh => h ((Fintype.equivFin X).symm.injective hh)),
+    mul_zero]
 
 /-- The CQ max-entropy reference operator `I_X ⊗ σ_A` is, in the quantum-first layout, the tensor
 `σ_A ⊗ 1_X`. Hence the CQ conditional max-entropy `conditionalMaxEntropyFidelityReal` is the
@@ -520,7 +521,7 @@ private lemma quadraticForm_reindex_blockDiagonal_block_support
   simp only [Pi.star_apply, blockDiagonal_mulVec_apply, hcol]
   rw [Finset.sum_comm]
   rw [Finset.sum_eq_single x]
-  · simp only [hu, if_pos rfl]
+  · simp only [hu, ite_eq_left rfl]
     rw [quadraticForm, dotProduct]
     apply Finset.sum_congr rfl
     intro a _
@@ -570,8 +571,8 @@ theorem dmaxFeasibleLambda_toJointDensity_tensor_one_eq_minFeasibleLambda
     (ρ : CQState X n) (σ : SubDensityOp n) :
     dmaxFeasibleLambda ρ.toJointDensity.toOp
       (Op.tensor σ.toOp (1 : Op (Fintype.card X))) = minFeasibleLambda ρ σ := by
-  have hset : setOf (dmaxIsFeasible ρ.toJointDensity.toOp
-      (Op.tensor σ.toOp (1 : Op (Fintype.card X)))) = setOf (isFeasible ρ σ) := by
+  have hset : Set.ofPred (dmaxIsFeasible ρ.toJointDensity.toOp
+      (Op.tensor σ.toOp (1 : Op (Fintype.card X)))) = Set.ofPred (isFeasible ρ σ) := by
     ext t
     exact ⟨isFeasible_of_dmaxIsFeasible_toJointDensity_tensor_one ρ σ,
       dmaxIsFeasible_toJointDensity_tensor_one_of_isFeasible ρ σ⟩

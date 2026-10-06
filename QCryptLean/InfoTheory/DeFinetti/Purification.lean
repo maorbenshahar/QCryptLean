@@ -91,9 +91,9 @@ noncomputable def sqrtOp {m : ℕ} (ρ : DensityOp m) : Op m :=
 lemma sqrtOp_sq {m : ℕ} (ρ : DensityOp m) :
     sqrtOp ρ * sqrtOp ρ = ρ.toOp := by
   unfold sqrtOp
-  letI : PartialOrder (Op m) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op m) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
   exact CFC.sqrt_mul_sqrt_self ρ.toOp ((posSemidefOp_implies_mathlib ρ.toPosSemidefOp).nonneg)
 
 section sqrtContinuity
@@ -114,7 +114,7 @@ attribute [local instance] instCStarAlgebraOp_def
 -- using CFC continuity (Mathlib.Analysis.SpecialFunctions...Rpow.Isometric).
 private lemma sqrtOp_continuous {m : ℕ} [NeZero m] :
     Continuous (fun ρ : DensityOp m => sqrtOp ρ) := by
-  haveI : DecidableEq (Fin m) := inferInstance
+  have : DecidableEq (Fin m) := inferInstance
   have hsq : ∀ ρ : DensityOp m, sqrtOp ρ = CFC.sqrt ρ.toOp := fun ρ => by
     unfold sqrtOp; rfl
   simp_rw [hsq]
@@ -127,9 +127,9 @@ end sqrtContinuity
 lemma sqrtOp_isHermitian {m : ℕ} (ρ : DensityOp m) :
     (sqrtOp ρ).IsHermitian := by
   unfold sqrtOp
-  letI : PartialOrder (Op m) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op m) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
   exact ((CFC.sqrt_nonneg (a := ρ.toOp)).posSemidef).isHermitian
 
 /-- √ρ† = √ρ (consequence of Hermiticity) -/
@@ -208,9 +208,9 @@ noncomputable def purificationDensityOp {d n : ℕ} [NeZero d] [NeZero n]
 lemma sqrtOp_commutes_of_commutes {m : ℕ} (ρ : DensityOp m) (U : Op m)
     (hcomm : U * ρ.toOp = ρ.toOp * U) :
     U * sqrtOp ρ = sqrtOp ρ * U := by
-  letI : PartialOrder (Op m) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op m) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op m) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op m) := Matrix.instNonnegSpectrumClass
   unfold sqrtOp
   change U * CFC.sqrt ρ.toOp = CFC.sqrt ρ.toOp * U
   simp only [CFC.sqrt]
@@ -516,7 +516,7 @@ lemma densityOp_purification_exists {d n : ℕ} [NeZero d] [NeZero n]
 `ρ`. -/
 lemma purificationDensityOp_continuous {d n : ℕ} [NeZero d] [NeZero n] :
     Continuous (purificationDensityOp (d := d) (n := n)) := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   rw [continuous_induced_rng]
   change Continuous (fun ρ : DensityOp (d ^ n) => purificationOp ρ)
   simp only [purificationOp]

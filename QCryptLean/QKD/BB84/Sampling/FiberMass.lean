@@ -89,7 +89,7 @@ theorem selectionSuccessMass_eq_sum_fibers
       cases hselect : select nK mZ mX omega with
       | none => simp [hselect] at hs
       | some f => exact ⟨f, rfl⟩
-    simp only [hq, if_true]
+    simp only [hq, ite_true]
     rw [hf]
     simp
   · have hs : select nK mZ mX omega = none := by
@@ -127,7 +127,7 @@ theorem selectedInjection_fiberMass
 theorem selectionSuccessMass_zero_quotas (N : ℕ) (pA pB : PMF Basis) :
     selectionSuccessMass N 0 0 0 pA pB = 1 := by
   rw [selectionSuccessMass]
-  simp only [HasQuotas, zero_add, zero_le, and_self, if_true]
+  simp only [HasQuotas, zero_add, zero_le, and_self, ite_true]
   rw [← tsum_fintype (L := SummationFilter.unconditional _)]
   exact (rawControlLaw N pA pB).tsum_coe
 

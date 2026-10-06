@@ -87,8 +87,8 @@ lemma partialTraceB_projection_posDef_of_supported {a b : ℕ} [NeZero (a * b)]
     (Q : Op (a * b)) (ρ : DensityOp (a * b))
     (hQ : Q.IsHermitian) (hQQ : Q * Q = Q) (hQρ : Q * ρ.toOp = ρ.toOp)
     (hρ : (partialTraceB ρ.toOp).PosDef) : (partialTraceB Q).PosDef := by
-  haveI : NeZero a := ⟨left_ne_zero_of_mul (NeZero.ne (a * b))⟩
-  haveI : NeZero b := ⟨right_ne_zero_of_mul (NeZero.ne (a * b))⟩
+  have : NeZero a := ⟨left_ne_zero_of_mul (NeZero.ne (a * b))⟩
+  have : NeZero b := ⟨right_ne_zero_of_mul (NeZero.ne (a * b))⟩
   have hbound : (Q - ρ.toOp).PosSemidef := by
     simpa using trace_smul_projection_sub_posSemidef (g := 1) Q ρ.toOp hQ hQQ
       (posSemidefOp_implies_mathlib ρ.toPosSemidefOp) hQρ (by simpa using ρ.trace_one) one_ne_zero

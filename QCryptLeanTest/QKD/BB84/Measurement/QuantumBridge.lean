@@ -40,7 +40,8 @@ theorem reference_offDiagonal_survives :
     let W : Op (((Fin 0 → Bit) × (Fin 0 → Bit)) × Fin 2) :=
       fun q q' => if q.2 = 0 ∧ q'.2 = 1 then (3 + Complex.I : ℂ) else 0
     selectedReferenceInputBlock W 0 1 x x = (3 + Complex.I : ℂ) := by
-  simp [selectedReferenceInputBlock]
+  change (if (0 : Fin 2) = 0 ∧ (1 : Fin 2) = 1 then (3 + Complex.I : ℂ) else 0) = _
+  exact ite_eq_left ⟨rfl, rfl⟩
 
 /-- Native bit-string numeral coordinates are exactly `finFunctionFinEquiv`. -/
 theorem retainedBitCoordinateEquiv_apply (n : ℕ) (x : Fin n → Bit) :

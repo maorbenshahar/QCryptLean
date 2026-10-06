@@ -200,8 +200,8 @@ theorem krausMapFintype_isCompletelyPositive {n m : ℕ} [NeZero n] [NeZero m]
       by_cases hx : x = (finProdFinEquiv.symm q).1
       · subst hx
         simp only [and_true, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-      · rw [if_neg hx]
-        exact Finset.sum_eq_zero fun y _ => if_neg (fun ⟨_, h⟩ => hx h.symm)
+      · rw [ite_eq_right hx]
+        exact Finset.sum_eq_zero fun y _ => ite_eq_right (fun ⟨_, h⟩ => hx h.symm)
     simp_rw [ite_and]
     simp [Finset.sum_ite_eq, Finset.mem_univ]
   simp_rw [Matrix.sum_apply, hE]

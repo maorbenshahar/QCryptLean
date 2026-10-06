@@ -76,21 +76,14 @@ theorem coordinates_ideal_eq_retainedFactorizedIdeal
     exact reconstruction_resource_intertwines
       pA pB N nK mZ mX ell ellEV leakEC ec delta Q
   rw [A.ideal_eq_resource_comp_real, hreal]
-  calc
-    A.resource.comp (Post.comp (L.comp Pre)) =
-        (A.resource.comp Post).comp (L.comp Pre) := by rfl
-    _ = (Post.comp R).comp (L.comp Pre) :=
-      congrArg (fun F => F.comp (L.comp Pre)) hcomm
-    _ = Post.comp ((R.comp L).comp Pre) := by rfl
-    _ = retainedFactorizedIdeal
-        pA pB N nK mZ mX ell ellEV leakEC hN ec delta Q := by
-      rw [show R.comp L =
-          retainedControlLift N (nK + mZ + mX)
-            (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC)
-            ((retainedAnalysisResource nK mZ mX ell ellEV leakEC).comp
-              (retainedAnalysisReal nK mZ mX ell ellEV leakEC ec delta Q)) by
-        exact retainedControlLift_comp _ _ _ _ _ _]
-      rfl
+  have hlift : R.comp L =
+      retainedControlLift N (nK + mZ + mX)
+        (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC)
+        ((retainedAnalysisResource nK mZ mX ell ellEV leakEC).comp
+          (retainedAnalysisReal nK mZ mX ell ellEV leakEC ec delta Q)) :=
+    retainedControlLift_comp _ _ _ _ _ _
+  exact (congrArg (fun F => F.comp (L.comp Pre)) hcomm).trans
+    (congrArg (fun F => Post.comp (F.comp Pre)) hlift)
 
 /-- Exact factorization of the physical real-minus-ideal map. -/
 theorem coordinates_difference_eq_retainedFactorizedDifference
@@ -127,9 +120,9 @@ theorem coordinates_difference_diamondNorm_le_retained_of_le
           pA pB N nK mZ mX ell ellEV leakEC ec delta Q).difference ≤
       Quantum.Channels.diamondNorm
         (retainedAnalysisDifference nK mZ mX ell ellEV leakEC ec delta Q) := by
-  letI := comparisonPreInputDimNeZero N
-  letI := comparisonPreOutputDimNeZero N (nK + mZ + mX)
-  letI := reconstructionInputDimNeZero N nK mZ mX ell ellEV leakEC
+  let := comparisonPreInputDimNeZero N
+  let := comparisonPreOutputDimNeZero N (nK + mZ + mX)
+  let := reconstructionInputDimNeZero N nK mZ mX ell ellEV leakEC
   set Delta := retainedAnalysisDifference nK mZ mX ell ellEV leakEC ec delta Q with hDelta
   have hHerm : ∀ M : Quantum.Operators.Op (4 ^ (nK + mZ + mX)),
       Delta Mᴴ = (Delta M)ᴴ :=

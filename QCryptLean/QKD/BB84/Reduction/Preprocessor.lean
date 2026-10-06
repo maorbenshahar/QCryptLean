@@ -128,12 +128,12 @@ def comparisonPreSuccessKraus
     Matrix (ComparisonPreOutput N (nK + mZ + mX))
       (ComparisonPreInput N) ℂ :=
   fun q a =>
-    if q.2 = Sum.inl S then
-      comparisonPreSuccessScale N nK mZ mX pA pB *
+    @ite ℂ (q.2 = Sum.inl S)
+      ((inferInstance : DecidableEq (ComparisonControl N (nK + mZ + mX))) q.2 (Sum.inl S))
+      (comparisonPreSuccessScale N nK mZ mX pA pB *
         (selectedInputMarginalInstrument
           (increasingSubsetEmbedding S)).kraus () t
-            ((selectedPairNumeralEquiv (nK + mZ + mX)).symm q.1) a
-    else 0
+            ((selectedPairNumeralEquiv (nK + mZ + mX)).symm q.1) a) 0
 
 /-- Square-root amplitude of the shortage branch. -/
 def comparisonPreFailureScale
@@ -177,7 +177,7 @@ theorem comparisonPreKraus_complete
         (comparisonPreKraus N nK mZ mX pA pB r)ᴴ *
           comparisonPreKraus N nK mZ mX pA pB r = 1 := by
   classical
-  letI : Nonempty (Set.powersetCard (Fin N) (nK + mZ + mX)) :=
+  let : Nonempty (Set.powersetCard (Fin N) (nK + mZ + mX)) :=
     ⟨comparisonInitialSubset hN⟩
   have hsuccessS
       (S : Set.powersetCard (Fin N) (nK + mZ + mX))
@@ -189,18 +189,15 @@ theorem comparisonPreKraus_complete
         (star (comparisonPreSuccessScale N nK mZ mX pA pB) *
           comparisonPreSuccessScale N nK mZ mX pA pB) *
             (if a = b then 1 else 0) := by
-    simp only [comparisonPreSuccessKraus, Matrix.mul_apply,
-      Matrix.conjTranspose_apply, RCLike.star_def,
-      Fintype.sum_prod_type, mul_ite, mul_one, mul_zero,
-      Finset.sum_ite_eq', Finset.mem_univ, if_true]
     let I := selectedInputMarginalInstrument (increasingSubsetEmbedding S)
     let s := comparisonPreSuccessScale N nK mZ mX pA pB
     let e := (selectedPairNumeralEquiv (nK + mZ + mX)).symm
-    change
-      ∑ t : I.krausIndex (), ∑ x,
-        star (s * I.kraus () t (e x) a) *
-          (s * I.kraus () t (e x) b) =
-          if a = b then star s * s else 0
+    let control : ComparisonControl N (nK + mZ + mX) := Sum.inl S
+    change (∑ t : I.krausIndex (), ∑ q : ComparisonPreOutput N (nK + mZ + mX),
+      star (if q.2 = control then s * I.kraus () t (e q.1) a else 0) *
+        (if q.2 = control then s * I.kraus () t (e q.1) b else 0)) = _
+    simp only [Fintype.sum_prod_type, mul_ite, mul_zero, Finset.sum_ite_eq',
+      Finset.mem_univ, ite_true, mul_one]
     have hcomplete := congrFun (congrFun I.complete a) b
     simp only [Fintype.sum_unique, Matrix.sum_apply, Matrix.mul_apply,
       Matrix.conjTranspose_apply, RCLike.star_def, Matrix.one_apply] at hcomplete
@@ -250,8 +247,10 @@ theorem comparisonPreKraus_complete
             (star s * s) • Matrix.single x x (1 : ℂ)
           else 0 := by
       by_cases hj : j.val = 0
-      · simp only [comparisonPreFailureKraus, hj, if_pos]
-        dsimp only [ComparisonPreOutput, ComparisonControl]
+      · simp only [comparisonPreFailureKraus, hj, ite_eq_left]
+        let z : ComparisonPreOutput N (nK + mZ + mX) :=
+          (comparisonZeroNativeInput (nK + mZ + mX), Sum.inr j)
+        change (s • Matrix.single z x (1 : ℂ))ᴴ * (s • Matrix.single z x 1) = _
         rw [Matrix.conjTranspose_smul]
         conv_lhs => tactic => exact Matrix.smul_mul _ _ _
         conv_lhs => arg 2; tactic => exact Matrix.mul_smul _ _ _
@@ -277,8 +276,8 @@ theorem comparisonPreKraus_complete
         · subst b
           simp [j, s, Matrix.single_apply]
         · have hj : j.val = 0 := rfl
-          rw [if_neg hab]
-          simp only [hj, if_true, smul_single, smul_eq_mul, mul_one]
+          rw [ite_eq_right hab]
+          simp only [hj, ite_true, smul_single, smul_eq_mul, mul_one]
           simp only [mul_zero]
           apply Finset.sum_eq_zero
           intro x _
@@ -303,7 +302,7 @@ theorem comparisonPreKraus_complete
   rw [hfailure]
   by_cases hab : a = b
   · subst b
-    simp only [if_true, mul_one, Finset.sum_const, Finset.card_univ,
+    simp only [ite_true, mul_one, Finset.sum_const, Finset.card_univ,
       nsmul_eq_mul]
     rw [comparisonPreSuccessScale, comparisonPreFailureScale]
     rw [show
@@ -420,7 +419,7 @@ theorem comparisonPreInstrument_channel_apply
     (comparisonPreInstrument N nK mZ mX pA pB hN).channel rho q q' =
       comparisonPreEntry N nK mZ mX pA pB rho q q' := by
   classical
-  letI : Nonempty (Set.powersetCard (Fin N) (nK + mZ + mX)) :=
+  let : Nonempty (Set.powersetCard (Fin N) (nK + mZ + mX)) :=
     ⟨comparisonInitialSubset hN⟩
   have hsuccess
       (S : Set.powersetCard (Fin N) (nK + mZ + mX))
@@ -442,13 +441,30 @@ theorem comparisonPreInstrument_channel_apply
     · subst c
       by_cases hc' : c' = Sum.inl S
       · subst c'
-        -- both output blocks are the `S` block: the entry is `s s̄` times the selected-marginal
-        -- channel entry, term by term in the Kraus index and the two contracted input indices
-        simp only [comparisonPreSuccessKraus, if_pos, Matrix.mul_apply,
-          Matrix.conjTranspose_apply, Instrument.channel, Fintype.sum_unique,
-          Instrument.operation, LinearMap.sum_apply, matrixConjLinear,
-          LinearMap.coe_mk, AddHom.coe_mk, Matrix.sum_apply, and_self, star_mul',
-          ← comparisonPreSuccessScale_mul_star, Finset.mul_sum, Finset.sum_mul]
+        let I := selectedInputMarginalInstrument (increasingSubsetEmbedding S)
+        let s := comparisonPreSuccessScale N nK mZ mX pA pB
+        let e := (selectedPairNumeralEquiv (nK + mZ + mX)).symm
+        have hentry (t : I.krausIndex ()) (y) (a : ComparisonPreInput N) :
+            comparisonPreSuccessKraus N nK mZ mX pA pB S t (y, Sum.inl S) a =
+              s * I.kraus () t (e y) a := ite_eq_left rfl
+        refine Eq.trans ?_ (ite_eq_left ⟨rfl, rfl⟩).symm
+        change (∑ t : I.krausIndex (), ∑ b : ComparisonPreInput N,
+          (∑ a : ComparisonPreInput N,
+            comparisonPreSuccessKraus N nK mZ mX pA pB S t (x, Sum.inl S) a * rho a b) *
+            star (comparisonPreSuccessKraus N nK mZ mX pA pB S t (x', Sum.inl S) b)) = _
+        simp_rw [hentry]
+        refine Eq.trans ?_ (congrArg (fun z : ℂ => z * I.channel rho (e x) (e x'))
+          (comparisonPreSuccessScale_mul_star N nK mZ mX pA pB))
+        simp only [Instrument.channel, Fintype.sum_unique, Instrument.operation,
+          LinearMap.sum_apply, matrixConjLinear, LinearMap.coe_mk, AddHom.coe_mk,
+          Matrix.sum_apply, Matrix.mul_apply, Matrix.conjTranspose_apply]
+        change (∑ t : I.krausIndex (), ∑ b : ComparisonPreInput N,
+          (∑ a : ComparisonPreInput N, s * I.kraus () t (e x) a * rho a b) *
+            star (s * I.kraus () t (e x') b)) =
+          (s * star s) * (∑ t : I.krausIndex (), ∑ b : ComparisonPreInput N,
+            (∑ a : ComparisonPreInput N, I.kraus () t (e x) a * rho a b) *
+              star (I.kraus () t (e x') b))
+        simp only [star_mul', Finset.mul_sum, Finset.sum_mul]
         exact Finset.sum_congr rfl fun t _ => Finset.sum_congr rfl fun b _ =>
           Finset.sum_congr rfl fun a _ => by ring
       · simp only [mul_apply, comparisonPreSuccessKraus, ↓reduceIte, conjTranspose_apply, hc',
@@ -475,8 +491,7 @@ theorem comparisonPreInstrument_channel_apply
       rfl
     by_cases hj : j.val = 0
     · -- `(c E_{ia}) ρ (c E_{ia})ᴴ = E_{ii} (c ρ_aa c̄)` with `i = (0, inr j)`
-      dsimp only [ComparisonPreOutput, ComparisonControl] at q q' ⊢
-      rw [comparisonPreFailureKraus, if_pos hj]
+      rw [comparisonPreFailureKraus, ite_eq_left hj]
       have hsingle := Matrix.smul_single (comparisonPreFailureScale N nK mZ mX pA pB)
         (comparisonZeroNativeInput (nK + mZ + mX), (Sum.inr j : ComparisonControl N _)) a (1 : ℂ)
       simp only [smul_eq_mul, mul_one] at hsingle
@@ -488,13 +503,22 @@ theorem comparisonPreInstrument_channel_apply
             (comparisonPreFailureScale N nK mZ mX pA pB) * rho * M) q q')
           (Matrix.conjTranspose_single _ _ _)).trans ?_
       refine (congrFun (congrFun (Matrix.single_mul_mul_single _ _ _ _ _ rho _) q) q').trans ?_
-      rw [Matrix.single_apply, ← hscale]
-      apply if_congr _ (mul_right_comm _ _ _) rfl
-      constructor
-      · rintro ⟨hq, hq'⟩
-        exact ⟨hj, Prod.mk.inj hq.symm, Prod.mk.inj hq'.symm⟩
-      · rintro ⟨_, hq, hq'⟩
-        exact ⟨(Prod.ext hq.1 hq.2).symm, (Prod.ext hq'.1 hq'.2).symm⟩
+      refine (Matrix.single_apply
+        ((comparisonZeroNativeInput (nK + mZ + mX), Sum.inr j) :
+          ComparisonPreOutput N (nK + mZ + mX)) _ _ q q').trans ?_
+      let z : ComparisonPreOutput N (nK + mZ + mX) :=
+        (comparisonZeroNativeInput (nK + mZ + mX), Sum.inr j)
+      by_cases hq : z = q ∧ z = q'
+      · have hcoords := And.intro hj
+          (And.intro (Prod.mk.inj hq.1.symm) (Prod.mk.inj hq.2.symm))
+        exact (ite_eq_left hq).trans ((mul_right_comm _ _ _).trans
+          ((congrArg (fun s : ℂ => s * rho a a) hscale).trans (ite_eq_left hcoords).symm))
+      · have hcoords : ¬(j.val = 0 ∧
+            (q.1 = comparisonZeroNativeInput (nK + mZ + mX) ∧ q.2 = Sum.inr j) ∧
+            (q'.1 = comparisonZeroNativeInput (nK + mZ + mX) ∧ q'.2 = Sum.inr j)) := by
+          rintro ⟨_, hx, hx'⟩
+          exact hq ⟨(Prod.ext hx.1 hx.2).symm, (Prod.ext hx'.1 hx'.2).symm⟩
+        exact (ite_eq_right hq).trans (ite_eq_right hcoords).symm
     · simp only [comparisonPreFailureKraus, hj, ↓reduceIte, Matrix.zero_mul, conjTranspose_zero,
         Matrix.mul_zero, Matrix.zero_apply, false_and]
   rw [Instrument.channel, Fintype.sum_unique, Instrument.operation]
@@ -519,15 +543,15 @@ theorem comparisonPreInstrument_channel_apply
       Finset.sum_const_zero, add_zero]
     by_cases hSS : S = S'
     · subst S'
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       rw [Fintype.sum_eq_single S]
-      · simp
+      · exact ite_eq_left ⟨rfl, rfl⟩
       · intro S hS
         simp only [ite_eq_right_iff]
         intro h
         exfalso
         exact hS (Sum.inl.inj h.1).symm
-    · rw [if_neg hSS]
+    · rw [ite_eq_right hSS]
       apply Finset.sum_eq_zero
       intro S _
       simp only [ite_eq_right_iff]
@@ -544,7 +568,7 @@ theorem comparisonPreInstrument_channel_apply
         j.val = 0 ∧ j'.val = 0 ∧
           x = comparisonZeroNativeInput (nK + mZ + mX) ∧
           x' = comparisonZeroNativeInput (nK + mZ + mX)
-    · rw [if_pos hcond]
+    · rw [ite_eq_left hcond]
       have hj : j = j' := by
         apply Fin.ext
         exact hcond.1.trans hcond.2.1.symm
@@ -557,13 +581,13 @@ theorem comparisonPreInstrument_channel_apply
               x' = comparisonZeroNativeInput (nK + mZ + mX) ∧
                 (Sum.inr j : ComparisonControl N (nK + mZ + mX)) = Sum.inr j :=
           ⟨hcond.1, ⟨hcond.2.2.1, rfl⟩, hcond.2.2.2, rfl⟩
-        refine (if_pos hbranch).trans ?_
+        refine (ite_eq_left hbranch).trans ?_
         rw [Finset.mul_sum]
       · intro k hne
         simp only [ite_eq_right_iff]
         intro h
         exact (hne (Sum.inr.inj h.2.1.2).symm).elim
-    · rw [if_neg hcond]
+    · rw [ite_eq_right hcond]
       apply Finset.sum_eq_zero
       intro k _
       simp only [ite_eq_right_iff]

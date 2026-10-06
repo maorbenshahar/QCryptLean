@@ -193,10 +193,10 @@ theorem negative_fixed_reference_entropy :
     field_simp
     norm_num
   refine ⟨hreal, ?_, ?_, ?_⟩
-  · rw [conditionalMinEntropy, negative_entropy_optimum, if_pos (by norm_num), hreal]
+  · rw [conditionalMinEntropy, negative_entropy_optimum, ite_eq_left (by norm_num), hreal]
     norm_num
   · rw [smoothMinEntropy_zero_eq, conditionalMinEntropy, negative_entropy_optimum,
-      if_pos (by norm_num), hreal]
+      ite_eq_left (by norm_num), hreal]
     norm_num
   · intro h
     have hd := opLe_re_diag_le (h.2 ()) (0 : Fin 2)
@@ -328,10 +328,10 @@ theorem weighted_negative_component_positive_output :
   · rw [smoothMinEntropyReal_zero_eq, hc_real]
     norm_num
   · rw [smoothMinEntropy_zero_eq, conditionalMinEntropy, hc,
-      if_pos (by norm_num), hc_real]
+      ite_eq_left (by norm_num), hc_real]
     norm_num [ENNReal.ofReal_of_nonpos]
   · rw [smoothMinEntropy_zero_eq, conditionalMinEntropy, hρ,
-      if_pos (by norm_num), hρ_real]
+      ite_eq_left (by norm_num), hρ_real]
     norm_num
   · refine smoothMinEntropy_subMixture_ge_weighted 0 (by norm_num)
       (fun _ : Unit => 1 / 16) (by intro z; norm_num) (by norm_num)

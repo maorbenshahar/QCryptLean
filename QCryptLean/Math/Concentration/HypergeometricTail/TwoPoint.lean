@@ -105,7 +105,7 @@ lemma twoPoint_centered_mgf_le
   have hμprob : IsProbabilityMeasure μ := by
     dsimp [μ]
     exact twoPointMeasure_is_probability_measure hp_nonneg hp_le_one
-  letI : IsProbabilityMeasure μ := hμprob
+  let : IsProbabilityMeasure μ := hμprob
   have hmeas : AEMeasurable X μ := by
     exact (measurable_of_finite X).aemeasurable
   have hbounded : ∀ᵐ q ∂μ, X q ∈ Set.Icc a b := by

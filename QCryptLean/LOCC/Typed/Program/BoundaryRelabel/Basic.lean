@@ -55,14 +55,16 @@ theorem reindexOp_symm_reindexOp {HH HH' : Type} [Fintype HH] [DecidableEq HH]
     [Fintype HH'] [DecidableEq HH'] (e : HH ≃ HH') (M : TypedLOCC.Op HH) :
     reindexOp e.symm (reindexOp e M) = M := by
   ext i j
-  simp [reindexOp]
+  change M (e.symm (e i)) (e.symm (e j)) = M i j
+  simp only [Equiv.symm_apply_apply]
 
 /-- Reindexing along a bijection undoes reindexing along its inverse. -/
 theorem reindexOp_reindexOp_symm {HH HH' : Type} [Fintype HH] [DecidableEq HH]
     [Fintype HH'] [DecidableEq HH'] (e : HH ≃ HH') (M : TypedLOCC.Op HH') :
     reindexOp e (reindexOp e.symm M) = M := by
   ext i j
-  simp [reindexOp]
+  change M (e (e.symm i)) (e (e.symm j)) = M i j
+  simp only [Equiv.apply_symm_apply]
 
 /-- An intertwining relation for a register relabelling can be read in either direction. -/
 theorem map_reindexOp_symm_of_reindexOp {HH HH' : Type} [Fintype HH] [DecidableEq HH]
@@ -260,8 +262,8 @@ theorem denote_of_subsingleton_space {R : MultipartiteSystem P} {B : Boundary P}
     Fintype.card_eq_one_iff.mpr ⟨x, fun z => hsub.allEq z x⟩
   let eOut : B.space ≃ Fin 1 := Fintype.equivFinOfCardEq hcard
   let eIn : R.total ≃ Fin (Fintype.card R.total) := Fintype.equivFin R.total
-  haveI : NeZero (Fintype.card R.total) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero 1 := ⟨one_ne_zero⟩
+  have : NeZero (Fintype.card R.total) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero 1 := ⟨one_ne_zero⟩
   have hcptp := p.coordinateDenote_isCPTP eIn eOut
   have htp := hcptp.2.2 (Matrix.reindex eIn eIn sigma)
   have hcoord : coordinateLinear eIn eOut p.denote (Matrix.reindex eIn eIn sigma) =

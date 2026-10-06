@@ -286,7 +286,7 @@ theorem mixCQ_En_hf_lin (μ : DensityMeasure (dA * dB)) (h_int : M.Integrable μ
     (x : Fin M.toProtocol.rawKeyDim) (i j : Fin M.condDim) :
     ((M.mixCQ_En μ h_int).stateMap x).toOp i j =
       ∫ σ : DensityOp (dA * dB), ((M.rawKeyCQ σ).stateMap x).toOp i j ∂μ.measure := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   have hstate : ((M.mixCQ_En μ h_int).stateMap x).toOp =
       ∫ σ : DensityOp (dA * dB), ((M.rawKeyCQ σ).stateMap x).toOp ∂μ.measure := rfl
   rw [hstate]
@@ -315,7 +315,7 @@ only:
 theorem mixCQ_En_weight_eq (μ : DensityMeasure (dA * dB)) (h_int : M.Integrable μ) :
     ∑ x : Fin M.toProtocol.rawKeyDim, ((M.mixCQ_En μ h_int).stateMap x).trace =
       ∫ σ : DensityOp (dA * dB), M.pAcc σ ∂μ.measure := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   have hblock : ∀ x : Fin M.toProtocol.rawKeyDim,
       ((M.mixCQ_En μ h_int).stateMap x).trace =
         ∫ σ : DensityOp (dA * dB), ((M.rawKeyCQ σ).stateMap x).trace ∂μ.measure := fun x =>
@@ -355,7 +355,7 @@ theorem registerExtendedMixtureFloor_le_add
       ⟨Nat.mul_ne_zero M.condDim_neZero.out hdV.out⟩
     K ≤ smoothMinEntropy (εBar + Real.sqrt (2 * ε)) ρ_EnV
       (M.sigmaE.tensorMaxMixed dV) + ENNReal.ofReal (2 * Real.logb 2 (dV : ℝ)) := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
   exact smoothMinEntropy_registerExtended_le_add_of_deFinetti_postFilter_floor
     dV μ (M.mixCQ_En μ h_int) ρ_EnV M.rawKeyCQ M.sigmaE hblocks
     (M.mixCQ_En_hf_lin μ h_int) hcont goodSet hClosed P hP_closed hP_ae K εBar ε
@@ -436,10 +436,10 @@ theorem registerExtendedMixtureFloorReal
     have hs : Real.sqrt (2 * ε) < 1 / 2 := by linarith
     have hs2 := Real.lt_sq_of_sqrt_lt hs
     nlinarith
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI := M.condDim_neZero
-  haveI := M.toProtocol.rawKeyDim_neZero
-  haveI : Nonempty (Fin M.toProtocol.rawKeyDim) := ⟨(0 : Fin M.toProtocol.rawKeyDim)⟩
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have := M.condDim_neZero
+  have := M.toProtocol.rawKeyDim_neZero
+  have : Nonempty (Fin M.toProtocol.rawKeyDim) := ⟨(0 : Fin M.toProtocol.rawKeyDim)⟩
   exact smoothMinEntropyReal_registerExtended_ge_of_deFinetti_postFilter_finiteSmoothFloor
     dV μ (M.mixCQ_En μ h_int) ρ_EnV
     M.rawKeyCQ M.sigmaE M.sigmaE_posDef hblocks h_int (M.mixCQ_En_hf_lin μ h_int)

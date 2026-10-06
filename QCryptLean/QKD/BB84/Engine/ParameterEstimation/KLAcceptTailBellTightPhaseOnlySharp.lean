@@ -83,10 +83,10 @@ theorem
             ((bb84BellEnVRhoEtilde 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n)
                 peSel xSel Q δ).tensorLeftKernel
               (bb84PELabelKernel (m := m) peSel))) σref := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hEnDim : NeZero (1 * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hEnDim : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
@@ -124,7 +124,7 @@ theorem
     exact bb84_bell_goodPreimage_isClosed_ofClosed (isClosed_le hphase continuous_const)
   -- The general-`m` sharp-cap per-σ Bell labelled floor at the PHASE-ONLY pivot, at the deviation
   -- edge, at PURE accepting rate-good components.
-  have hf_smoothFloor : ∀ φ ∈ G, φ ∈ setOf (fun φ' : DensityOp 4 => φ'.IsPure) →
+  have hf_smoothFloor : ∀ φ ∈ G, φ ∈ Set.ofPred (fun φ' : DensityOp 4 => φ'.IsPure) →
       ENNReal.ofReal (bb84BellFloorLevelSecondOrderSharpAtDev n m Q δ dev ε_AEP β) ≤
         smoothMinEntropy ε_AEP
           (CQState.coarsen (aliceKeyString peSel)
@@ -141,11 +141,11 @@ theorem
     rw [CQState.coarsen_quantumMarginal] at hfloor
     exact hfloor
   -- The Bell de Finetti Haar measure is supported on the closed pure-state locus.
-  have hPpure_closed : IsClosed (setOf (fun φ : DensityOp 4 => φ.IsPure)) := by
+  have hPpure_closed : IsClosed (Set.ofPred (fun φ : DensityOp 4 => φ.IsPure)) := by
     have hcont : Continuous (fun φ : DensityOp 4 => φ.toOp) := continuous_induced_dom
     exact isClosed_eq (hcont.mul hcont) hcont
   have hPpure_ae : ∀ᵐ φ ∂(deFinetti_haarMeasure 4).measure,
-      φ ∈ setOf (fun φ' : DensityOp 4 => φ'.IsPure) :=
+      φ ∈ Set.ofPred (fun φ' : DensityOp 4 => φ'.IsPure) :=
     deFinetti_haarMeasure_isProductStateMeasure 4
   exact
     smoothMinEntropy_coarsen_ge_of_deFinetti_postFilter_ownMarginal_heavyFloor
@@ -165,7 +165,7 @@ theorem
       (bb84PELabelKernel (m := m) peSel) x
       (bb84_bellPairedHaarPerSigmaFamily_blocks_continuous peSel xSel Q δ x))
     G hgoodClosed
-    (P := setOf (fun φ : DensityOp 4 => φ.IsPure))
+    (P := Set.ofPred (fun φ : DensityOp 4 => φ.IsPure))
     hPpure_closed hPpure_ae
     (bb84BellFloorLevelSecondOrderSharpAtDev n m Q δ dev ε_AEP β) ε_AEP
     E
@@ -206,10 +206,10 @@ theorem
             ((bb84BellEnVRhoEtilde 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n)
                 peSel xSel Q δ).tensorLeftKernel
               (bb84PELabelKernel (m := m) peSel))) σref := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hEnDim : NeZero (1 * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hEnDim : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
@@ -253,7 +253,7 @@ theorem
             ((bb84BellEnVRhoEtilde 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n)
                 peSel xSel Q δ).tensorLeftKernel
               (bb84PELabelKernel (m := m) peSel))) σref := by
-  haveI hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
+  have hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
   refine bellPeLabelledEnVRhoEtilde_smoothFloorPhaseOnly_announcePE_soSharp_ofTail_ofLevel
     (m := m) peSel xSel hcount Q δ hbelow ε_AEP hAEP
     (secondOrderSharpBeta bb84SharpVarianceCap (bb84KeyRoundCount n m) ε_AEP) ?_ ?_
@@ -304,10 +304,10 @@ theorem
                 peSel xSel Q δ).tensorLeftKernel
               (bb84PELabelKernel (m := m) peSel))).tensorLeftKernel
             (bb84AnnounceKernel ℓEV peSel ec)) σref := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hEnDim : NeZero (1 * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hEnDim : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
@@ -369,14 +369,14 @@ theorem
                 peSel xSel Q δ).tensorLeftKernel
               (bb84PELabelKernel (m := m) peSel))).tensorLeftKernel
             (bb84AnnounceKernel ℓEV peSel ec)) σref := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hEnDim : NeZero (1 * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hEnDim : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
-  haveI hAnnLabE : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hAnnLabE : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (1 * (signalDim ^ n)))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
@@ -434,15 +434,15 @@ theorem
                 peSel xSel Q δ).tensorLeftKernel
               (bb84PELabelKernel (m := m) peSel))).tensorLeftKernel
             (bb84AnnounceKernel ℓEV peSel ec)) σref := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hEnDim : NeZero (1 * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hEnDim : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
   -- The fixed-`β⋆` row is the free-`β` rung at the clamped optimiser `β⋆`.
-  haveI hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
+  have hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
   refine bellPeLabelledEnVRhoEtilde_smoothFloorPhaseOnly_announce_secondOrderSharp_ofTail_ofLevel
     (m := m) peSel xSel hcount ec Q δ hbelow ε_AEP hAEP
     (secondOrderSharpBeta bb84SharpVarianceCap (bb84KeyRoundCount n m) ε_AEP) ?_ ?_
@@ -479,23 +479,23 @@ theorem
           (bb84PELabelledLHLInput (m := m) ℓEV 1 (bb84UnitRegisterEmbed n)
               (bb84UnitRegisterEmbed_isCPTP n) peSel xSel ec Q δ
             (bb84EnVBellPurification V)) σref := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hVdv : NeZero V.dV := V.dV_neZero
-  haveI hRdim : NeZero ((signalDim ^ n) * V.dV) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hVdv : NeZero V.dV := V.dV_neZero
+  have hRdim : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hEnDim : NeZero (1 * (signalDim ^ n)) :=
+  have hEnDim : NeZero (1 * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hEveDimR : NeZero (1 * ((signalDim ^ n) * V.dV)) :=
+  have hEveDimR : NeZero (1 * ((signalDim ^ n) * V.dV)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hLabPow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
+  have hLabPow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
     ⟨pow_ne_zero _ (by norm_num [signalDim])⟩
-  haveI hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hLabE : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       (1 * (signalDim ^ n))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hAnn : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) :=
+  have hAnn : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) :=
     ⟨Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
       (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num)))⟩
-  haveI hAnnLabE : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) *
+  have hAnnLabE : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV)) *
       (signalDim ^ (n - bb84KeyRoundCount n m) *
         (1 * (signalDim ^ n)))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
@@ -671,7 +671,7 @@ theorem
               (bb84UnitRegisterEmbed_isCPTP n) peSel xSel ec Q δ
             (bb84EnVBellPurification V)) σref := by
   -- The fixed-`β⋆` row is the free-`β` rung at the clamped optimiser `β⋆`.
-  haveI hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
+  have hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
   refine peLabelledLHLInput_bellRef_smoothFloorPhaseOnly_soSharp_ofTail_ofLevel
     (m := m) peSel xSel ec Q δ ε_AEP hbelow
     (secondOrderSharpBeta bb84SharpVarianceCap (bb84KeyRoundCount n m) ε_AEP) ?_ ?_
@@ -827,10 +827,10 @@ theorem
         (bb84SymPassBlockDelta false n m ℓ ℓEV Q δ peSel xSel leakEC ec)
         (bb84BellCKRDeFinettiPurification n) ≤
       bb84CKRPostselectionInnerBudgetOfEpsPAOfTail E ε_AEP epsPA := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   -- The Bell symmetric purifier `V_Bell` at the affordable register `V.dV ≤ C(n+3,3)`.
   obtain ⟨V⟩ := bb84_bellSymmetricPurifier_exists n
-  haveI hRdim : NeZero ((signalDim ^ n) * V.dV) :=
+  have hRdim : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   refine (mul_le_mul_of_nonneg_left
     (bb84SymPassBlockDelta_ckrTensorTraceNorm_le false n m ℓ ℓEV Q δ peSel xSel
@@ -910,10 +910,10 @@ theorem
         (bb84SymPassBlockDelta false n m ℓ ℓEV Q δ peSel xSel leakEC ec)
         (bb84BellCKRDeFinettiPurification n) ≤
       bb84CKRPostselectionInnerBudgetOfEpsPAOfTail E ε_AEP epsPA := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   -- The Bell symmetric purifier `V_Bell` at the affordable register `V.dV ≤ C(n+3,3)`.
   obtain ⟨V⟩ := bb84_bellSymmetricPurifier_exists n
-  haveI hRdim : NeZero ((signalDim ^ n) * V.dV) :=
+  have hRdim : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   refine (mul_le_mul_of_nonneg_left
     (bb84SymPassBlockDelta_ckrTensorTraceNorm_le false n m ℓ ℓEV Q δ peSel xSel

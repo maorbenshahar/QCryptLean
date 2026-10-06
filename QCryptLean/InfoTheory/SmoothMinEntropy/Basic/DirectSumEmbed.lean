@@ -291,7 +291,7 @@ lemma traceNorm_fromBlocks_scalar_abs {n : ℕ} [NeZero n] (M : Op n) (c : ℝ) 
         · simp only [Matrix.fromBlocks_apply₂₁, Matrix.zero_apply, neg_zero]
         · simp only [Matrix.fromBlocks_apply₂₂, Matrix.diagonal_apply]
           by_cases h : a = b
-          · simp only [h, if_true]
+          · simp only [h, ite_true]
             push_cast
             ring
           · simp [h]

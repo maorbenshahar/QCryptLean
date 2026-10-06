@@ -60,7 +60,7 @@ noncomputable def CQState.coarsenBlock {X Y : Type*} [Fintype X] [DecidableEq Y]
     apply Finset.sum_congr rfl
     intro x _
     by_cases hx : g x = y
-    · rw [if_pos hx]
+    · rw [ite_eq_left hx]
       exact (ρ.stateMap x).isHermitian
     · simp [hx]
   pos_semidef := by

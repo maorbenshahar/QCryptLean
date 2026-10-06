@@ -100,7 +100,7 @@ theorem smoothMinEntropyReal_ge_of_goodBranch_traceGap
     dsimp [η]
     linarith
   have hbdd : BddAbove
-      (setOf (isInSmoothedSetReal (Real.sqrt (2 * ε)) ρ_mix σ_ref)) :=
+      (Set.ofPred (isInSmoothedSetReal (Real.sqrt (2 * ε)) ρ_mix σ_ref)) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ
         (fun _ hd => CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower hρ hd))

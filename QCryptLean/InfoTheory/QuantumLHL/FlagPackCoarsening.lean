@@ -216,8 +216,8 @@ lemma flagPackOp_ite {C : Type*} [Fintype C] [DecidableEq C] {nE : ℕ}
     (p : Prop) [Decidable p] (F : C → Op nE) :
     flagPackOp (fun c => if p then F c else 0) = if p then flagPackOp F else 0 := by
   by_cases h : p
-  · simp only [if_pos h]
-  · simp only [if_neg h]
+  · simp only [ite_eq_left h]
+  · simp only [ite_eq_right h]
     exact flagPackOp_zero
 
 lemma flagPackOp_apply_eq_reindex {C : Type*} [Fintype C] [DecidableEq C] {nE : ℕ}
@@ -293,8 +293,8 @@ lemma flagPack_seedPerSeedWeightedOp {S X Z C : Type*} [Fintype S] [Fintype X] [
   intro x _
   rw [flagPackOp_ite]
   by_cases hp : H.hash s x = z
-  · rw [if_pos hp, if_pos hp, flagPack_stateMap_toOp]
-  · rw [if_neg hp, if_neg hp]
+  · rw [ite_eq_left hp, ite_eq_left hp, flagPack_stateMap_toOp]
+  · rw [ite_eq_right hp, ite_eq_right hp]
 
 /-- **The seed-key extractor commutes with flag packing.** Applying a hash family to the classical
 register of a flag pack equals flag-packing the per-block extractor outputs. The extractor acts by a
@@ -411,8 +411,8 @@ lemma traceNorm_flagPack_diff_eq_sum {X C : Type*} [Fintype X] [DecidableEq X] [
         - (CQState.flagPack blocks' hj').toJointDensity.toOp)
       = ∑ x : X, ∑ c : C,
           traceNorm (((blocks c).stateMap x).toOp - ((blocks' c).stateMap x).toOp) := by
-  haveI : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (nE * Fintype.card C) :=
+  have : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (nE * Fintype.card C) :=
     ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
   rw [traceNorm_joint_diff_eq_sum]
   apply Finset.sum_congr rfl
@@ -458,12 +458,12 @@ theorem traceDistanceGen_flagControlledCoarsen_le {X Y C : Type*}
       traceDistanceGen
         (CQState.flagPack blocks hj).toJointDensity.toOp
         (CQState.flagPack blocks' hj').toJointDensity.toOp := by
-  haveI : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (nE * Fintype.card C) :=
+  have : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (nE * Fintype.card C) :=
     ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
-  haveI : NeZero ((nE * Fintype.card C) * Fintype.card Y) :=
+  have : NeZero ((nE * Fintype.card C) * Fintype.card Y) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero) Fintype.card_ne_zero⟩
-  haveI : NeZero ((nE * Fintype.card C) * Fintype.card X) :=
+  have : NeZero ((nE * Fintype.card C) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero) Fintype.card_ne_zero⟩
   apply traceDistanceGen_le_of_traceNorm_sub_le_of_trace_re_sub_eq
   · rw [traceNorm_flagPack_diff_eq_sum, traceNorm_flagPack_diff_eq_sum,

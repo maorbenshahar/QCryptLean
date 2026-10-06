@@ -90,7 +90,7 @@ lemma lowerTail_le_tilt (m : ℕ) (p a s : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 1) (h
       have h1pk : 0 ≤ (1 - p) ^ (m - k) := pow_nonneg (by linarith) _
       positivity
     by_cases hbad : (k : ℝ) / m ≤ a
-    · rw [if_pos hbad]
+    · rw [ite_eq_left hbad]
       -- On the bad set, `m·a - k ≥ 0` so `exp(...) ≥ 1`.
       rcases Nat.eq_zero_or_pos m with hm0 | hmpos
       · -- `m = 0`: only `k = 0`, exponent `0`, `exp 0 = 1`.
@@ -103,7 +103,7 @@ lemma lowerTail_le_tilt (m : ℕ) (p a s : ℝ) (h0 : 0 ≤ p) (h1 : p ≤ 1) (h
         have hexp : 1 ≤ Real.exp (s * ((m : ℝ) * a - (k : ℝ))) :=
           Real.one_le_exp (mul_nonneg hs.le (sub_nonneg.mpr hk_le))
         exact le_mul_of_one_le_right hw_nonneg hexp
-    · rw [if_neg hbad]
+    · rw [ite_eq_right hbad]
       exact mul_nonneg hw_nonneg (Real.exp_pos _).le
   refine hbound.trans (le_of_eq ?_)
   -- Factor `exp(s·(m·a - k)) = exp(s·m·a) · exp(-s)^k`.
@@ -209,7 +209,7 @@ lemma lowerTail_zero_eq (m : ℕ) (p : ℝ) :
     · have hm_pos : 0 < (m : ℝ) := Nat.cast_pos.mpr hmpos
       have : ¬ ((k : ℝ) / m ≤ 0) := by
         rw [not_le]; positivity
-      rw [if_neg this]
+      rw [ite_eq_right this]
   · intro h; simp at h
 
 /-- **Binomial KL-rate Chernoff lower tail.**
@@ -245,7 +245,7 @@ theorem lowerTail_le_klBer (m : ℕ) (p a b : ℝ)
         rw [not_le]
         have hk_nonneg : 0 ≤ (k : ℝ) / m := by positivity
         linarith
-      rw [if_neg this]
+      rw [ite_eq_right this]
     rw [hzero]
     exact (Real.exp_pos _).le
   · -- `a = 0`: only `k = 0` passes; bound `(1-p)^m ≤ (1-b)^m`.
@@ -319,8 +319,8 @@ theorem upperTail_le_klBer (m : ℕ) (p a b : ℝ)
         -- Reflect the indicator, the binomial coefficient and the exponents.
         simp only [hcond, Nat.choose_symm hkm, Nat.sub_sub_self hkm]
         by_cases hc : (k : ℝ) / m ≤ 1 - a
-        · rw [if_pos hc, if_pos hc]; ring
-        · rw [if_neg hc, if_neg hc]
+        · rw [ite_eq_left hc, ite_eq_left hc]; ring
+        · rw [ite_eq_right hc, ite_eq_right hc]
       rw [hsub]
       refine le_trans (lowerTail_le_klBer m (1 - p) (1 - a) (1 - b)
         (by linarith) (by linarith) (by linarith) (by linarith)) ?_
@@ -339,8 +339,8 @@ theorem upperTail_le_klBer (m : ℕ) (p a b : ℝ)
           mul_nonneg (mul_nonneg (by exact_mod_cast Nat.zero_le _) (pow_nonneg hp0 _))
             (pow_nonneg (by linarith) _)
         by_cases hc : b ≤ (k : ℝ) / m
-        · rw [if_pos hc]
-        · rw [if_neg hc]; exact hw
+        · rw [ite_eq_left hc]
+        · rw [ite_eq_right hc]; exact hw
       refine hle.trans ?_
       have htotal : (∑ k ∈ Finset.range (m + 1),
             (m.choose k : ℝ) * p ^ k * (1 - p) ^ (m - k)) = 1 := by
@@ -356,7 +356,7 @@ theorem upperTail_le_klBer (m : ℕ) (p a b : ℝ)
     rw [Finset.sum_eq_single m]
     · have hm1 : ((1 : ℝ) ≤ (m : ℝ) / m) := by
         rw [div_self hmR.ne']
-      rw [if_pos hm1,
+      rw [ite_eq_left hm1,
         show (m.choose m : ℝ) * p ^ m * (1 - p) ^ (m - m) = p ^ m from by simp, hkl,
         show (-(m : ℝ) * -Real.log b) = (m : ℝ) * Real.log b from by ring,
         Real.exp_nat_mul, Real.exp_log hb0]
@@ -368,7 +368,7 @@ theorem upperTail_le_klBer (m : ℕ) (p a b : ℝ)
         have hlt : k < m := Nat.lt_of_le_of_ne hk_le hkm
         rw [div_lt_one hmR]
         exact_mod_cast hlt
-      rw [if_neg hneg]
+      rw [ite_eq_right hneg]
     · intro h; simp at h
   · -- `a > 1`: every count satisfies `k/m ≤ 1 < a`, so the tail is empty.
     have hzero : (∑ k ∈ Finset.range (m + 1),
@@ -383,7 +383,7 @@ theorem upperTail_le_klBer (m : ℕ) (p a b : ℝ)
         calc (k : ℝ) / m ≤ 1 := by
               rw [div_le_one hmR]; exact_mod_cast hk_le
           _ < a := ha1
-      rw [if_neg hneg]
+      rw [ite_eq_right hneg]
     rw [hzero]
     exact (Real.exp_pos _).le
 

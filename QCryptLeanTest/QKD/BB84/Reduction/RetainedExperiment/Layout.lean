@@ -2,6 +2,12 @@ import QCryptLean.QKD.BB84.Reduction.RetainedExperiment
 import QCryptLean.QKD.BB84.TailOutput
 import QCryptLean.QKD.BB84.Program
 
+/-!
+# Retained-output layout tests
+
+These fixtures check the literal accepted and aborted outputs and their ordered key projections.
+-/
+
 open scoped Matrix BigOperators
 
 noncomputable section
@@ -47,7 +53,7 @@ theorem zeroAcceptedRawOutput_disposition (keys : Fin 2 × Fin 2) :
       ⟨(QKD.BB84.classicalTailExitEquiv 0 0 1 0 (fun i => Fin.elim0 i) 0).symm zeroTailData,
         (finalStageOutputEquiv 1).symm (Sum.inl keys)⟩ := by
     exact G.apply_symm_apply _
-  rw [Boundary.graftSpaceEquiv_apply] at hforward
+  have hforward := (Boundary.graftSpaceEquiv_apply B C _).symm.trans hforward
   have hchild : (⟨z.2, qc⟩ : (FinalStage.boundary 1).space) =
       (finalStageOutputEquiv 1).symm (Sum.inl keys) :=
     congrArg (fun w : Σ _ : B.Exit, (FinalStage.boundary 1).space => w.2) hforward
@@ -86,7 +92,7 @@ theorem zeroAcceptedRetainedOutput_disposition (keys : Fin 2 × Fin 2) :
       ⟨(retainedAnalysisPrefixExitEquiv 0).symm (Equiv.refl (Fin 0)),
         zeroAcceptedRawOutput keys⟩ := by
     exact G.apply_symm_apply _
-  rw [Boundary.graftSpaceEquiv_apply] at hforward
+  have hforward := (Boundary.graftSpaceEquiv_apply B C _).symm.trans hforward
   have hchild :
       (⟨z.2, qc⟩ :
         (QKD.BB84.rawClassicalTailBoundary 0 0 1 0 (fun i => Fin.elim0 i) 0).space) =
@@ -203,7 +209,7 @@ theorem zeroAbortRetainedOutput_disposition :
       ⟨(QKD.BB84.classicalTailExitEquiv 0 0 1 0 (fun i => Fin.elim0 i) 0).symm zeroTailData,
         (finalStageOutputEquiv 1).symm (Sum.inr ())⟩ := by
     exact G0.apply_symm_apply _
-  rw [Boundary.graftSpaceEquiv_apply] at hforward0
+  have hforward0 := (Boundary.graftSpaceEquiv_apply B0 C0 _).symm.trans hforward0
   have hchild0 : (⟨z0.2, qc0⟩ : (FinalStage.boundary 1).space) =
       (finalStageOutputEquiv 1).symm (Sum.inr ()) :=
     congrArg (fun w : Σ _ : B0.Exit, (FinalStage.boundary 1).space => w.2) hforward0
@@ -228,7 +234,7 @@ theorem zeroAbortRetainedOutput_disposition :
       ⟨(retainedAnalysisPrefixExitEquiv 0).symm (Equiv.refl (Fin 0)),
         zeroAbortRawOutput⟩ := by
     exact G.apply_symm_apply _
-  rw [Boundary.graftSpaceEquiv_apply] at hforward
+  have hforward := (Boundary.graftSpaceEquiv_apply B C _).symm.trans hforward
   have hchild :
       (⟨z.2, qc⟩ :
         (QKD.BB84.rawClassicalTailBoundary 0 0 1 0 (fun i => Fin.elim0 i) 0).space) =

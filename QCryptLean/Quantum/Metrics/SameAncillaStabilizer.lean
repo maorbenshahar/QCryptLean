@@ -86,9 +86,9 @@ private lemma reshapeVec_tensor_mul_ket {d : ℕ} (A B : Op d)
 private lemma cfc_sqrt_commutes_of_commutes {d : ℕ} (ρ : DensityOp d) (U : Op d)
     (hcomm : U * ρ.toOp = ρ.toOp * U) :
     U * CFC.sqrt ρ.toOp = CFC.sqrt ρ.toOp * U := by
-  letI : PartialOrder (Op d) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op d) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op d) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op d) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op d) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op d) := Matrix.instNonnegSpectrumClass
   simp only [CFC.sqrt]
   have hc : Commute ρ.toOp U := hcomm.symm
   exact (Commute.cfcₙ_nnreal hc NNReal.sqrt).symm.eq

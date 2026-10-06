@@ -67,15 +67,15 @@ theorem binomialPassSum_le_klChernoff (m : ℕ) (Q δ b p : ℝ)
       have h1pk : 0 ≤ (1 - p) ^ (m - k) := pow_nonneg (by linarith) _
       positivity
     by_cases hband : |(k : ℝ) / m - Q| ≤ δ
-    · rw [if_pos hband]
+    · rw [ite_eq_left hband]
       have hle : (k : ℝ) / m ≤ Q + δ := by
         have h1 : (k : ℝ) / m - Q ≤ δ := (abs_le.mp hband).2
         linarith
-      rw [if_pos hle]
-    · rw [if_neg hband]
+      rw [ite_eq_left hle]
+    · rw [ite_eq_right hband]
       by_cases hlt : (k : ℝ) / m ≤ Q + δ
-      · rw [if_pos hlt]; exact hw_nonneg
-      · rw [if_neg hlt]
+      · rw [ite_eq_left hlt]; exact hw_nonneg
+      · rw [ite_eq_right hlt]
   exact hdom.trans (BinomialKLTail.lowerTail_le_klBer m p (Q + δ) b hb hbp hp1 hb1)
 
 /-- **KL-rate Chernoff bound on the two-sided PE-band failure mass.**
@@ -124,19 +124,19 @@ theorem one_sub_binomialPassSum_le_exp_klBer (m : ℕ) (Q δ q : ℝ)
       mul_nonneg (mul_nonneg (Nat.cast_nonneg _) (pow_nonneg hq0.le _))
         (pow_nonneg (by linarith : (0 : ℝ) ≤ 1 - q) _)
     by_cases hband : |(k : ℝ) / m - Q| ≤ δ
-    · rw [if_pos hband]
+    · rw [ite_eq_left hband]
       split_ifs <;> linarith [hwpos]
-    · rw [if_neg hband]
+    · rw [ite_eq_right hband]
       -- Outside the band means `k/m < Q - δ` or `Q + δ < k/m` (valid for every sign of `δ`).
       have hout : (k : ℝ) / m < Q - δ ∨ Q + δ < (k : ℝ) / m := by
         by_contra hcon
         push Not at hcon
         exact hband (abs_le.mpr ⟨by linarith, by linarith⟩)
       rcases hout with hlow | hhigh
-      · rw [if_pos (by linarith : (k : ℝ) / m ≤ Q - δ)]
+      · rw [ite_eq_left (by linarith : (k : ℝ) / m ≤ Q - δ)]
         split_ifs <;> linarith [hwpos]
-      · rw [if_neg (by linarith : ¬ ((k : ℝ) / m ≤ Q - δ)),
-          if_pos (by linarith : Q + δ ≤ (k : ℝ) / m)]
+      · rw [ite_eq_right (by linarith : ¬ ((k : ℝ) / m ≤ Q - δ)),
+          ite_eq_left (by linarith : Q + δ ≤ (k : ℝ) / m)]
         linarith [hwpos]
   -- The two tails are priced at the KL rate by the one-sided bounds.
   have hlow := BinomialKLTail.lowerTail_le_klBer m q (Q - δ) q hlo (le_refl q) hq1.le hq1

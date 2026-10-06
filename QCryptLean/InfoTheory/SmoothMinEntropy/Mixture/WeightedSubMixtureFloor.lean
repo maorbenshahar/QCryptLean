@@ -168,7 +168,7 @@ theorem smoothMinEntropyReal_subMixture_ge_weighted
     (hmix : ∀ x : X, (ρ.stateMap x).toOp = ∑ z, (p z : ℂ) • ((comp z).stateMap x).toOp)
     (σ : SubDensityOp n) (hσ : σ.toOp.PosDef)
     (hρ_weight : ε ^ 2 < ∑ x : X, (ρ.stateMap x).trace)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)))
     (k : ℝ) (kz : Z → ℝ)
     (hfloor : ∀ z, kz z < smoothMinEntropyReal ε (comp z) σ)
     (hk : ∑ z, p z * (2 : ℝ) ^ (-(kz z)) ≤ (2 : ℝ) ^ (-k)) :

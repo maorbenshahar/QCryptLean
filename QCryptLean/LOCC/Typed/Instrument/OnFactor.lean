@@ -86,8 +86,8 @@ theorem onFactorKraus_complete [Fintype A] [DecidableEq A]
     by_cases h1 : (eIn a).1 = (eIn a').1
     · have h2 : (eIn a).2 ≠ (eIn a').2 := fun h2 =>
         hne (Prod.ext_iff.mpr ⟨h1, h2⟩)
-      rw [if_neg h2, if_neg haa, mul_zero]
-    · rw [if_neg haa, Matrix.one_apply_ne h1]
+      rw [ite_eq_right h2, ite_eq_right haa, mul_zero]
+    · rw [ite_eq_right haa, Matrix.one_apply_ne h1]
       simp
 
 /-- Run `I` on the first factor selected by `eIn` and `eOut`, leaving `S` unchanged.

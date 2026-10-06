@@ -46,8 +46,8 @@ theorem collisionQuantity_filterKeep_le {Xc : Type*} [Fintype Xc] {d : ℕ}
   refine Finset.sum_le_sum fun x _ => ?_
   simp only [CQState.filterKeep_stateMap]
   by_cases hx : keep x
-  · simp only [hx, if_true, le_refl]
-  · simp only [hx, Bool.false_eq_true, if_false]
+  · simp only [hx, ite_true, le_refl]
+  · simp only [hx, Bool.false_eq_true, ite_false]
     rw [show ((0 : SubDensityOp d).toOp) = 0 from rfl, weightedFrobeniusSq_zero]
     exact weightedFrobeniusSq_nonneg _ _
 

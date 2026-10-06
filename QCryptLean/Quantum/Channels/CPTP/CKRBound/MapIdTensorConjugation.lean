@@ -32,10 +32,10 @@ private lemma mapIdTensor_tensor_right
     symm
     exact Finset.sum_eq_single r
       (fun i _ hi => Finset.sum_eq_zero (fun j _ =>
-        if_neg (fun ⟨h1, _⟩ => hi h1)))
+        ite_eq_right (fun ⟨h1, _⟩ => hi h1)))
       (fun h => absurd (Finset.mem_univ r) h) |>.trans
         (Finset.sum_eq_single c
-          (fun j _ hj => if_neg (fun ⟨_, h2⟩ => hj h2))
+          (fun j _ hj => ite_eq_right (fun ⟨_, h2⟩ => hj h2))
           (fun h => absurd (Finset.mem_univ c) h) |>.trans (by simp))
   conv_rhs =>
     rw [hD_decomp, map_sum]

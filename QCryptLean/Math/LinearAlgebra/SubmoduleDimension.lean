@@ -10,7 +10,7 @@ import Mathlib.LinearAlgebra.Matrix.Hermitian
 import Mathlib.LinearAlgebra.Matrix.DotProduct
 import Mathlib.Analysis.Matrix.Spectrum
 import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Analysis.Convex.Combination
 
@@ -173,7 +173,7 @@ private lemma linearIndependent_eigenvecSpanFirst
     rw [Finset.sum_eq_single j]
     · rw [h_orthonormal j]
       have h_j_eq : j_cast = Fin.castLE hk j := rfl
-      simp only [h_j_eq, if_true, mul_one]
+      simp only [h_j_eq, ite_true, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_cast ≠ Fin.castLE hk i := by
@@ -184,7 +184,7 @@ private lemma linearIndependent_eigenvecSpanFirst
         rw [h_j_val, h_i_val] at h_val_eq
         have h_eq_val : i.val = j.val := h_val_eq.symm
         exact hi_ne (Fin.ext h_eq_val)
-      simp only [if_neg h_ne, mul_zero]
+      simp only [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)
@@ -193,7 +193,7 @@ private lemma linearIndependent_eigenvecSpanFirst
     rw [Finset.sum_eq_single j]
     · rw [h_orthonormal j]
       have h_j_eq : j_cast = Fin.castLE hk j := rfl
-      simp only [h_j_eq, if_true, mul_one]
+      simp only [h_j_eq, ite_true, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_cast ≠ Fin.castLE hk i := by
@@ -204,7 +204,7 @@ private lemma linearIndependent_eigenvecSpanFirst
         rw [h_j_val, h_i_val] at h_val_eq
         have h_eq_val : i.val = j.val := h_val_eq.symm
         exact hi_ne (Fin.ext h_eq_val)
-      simp only [if_neg h_ne, mul_zero]
+      simp only [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)
@@ -267,7 +267,7 @@ private lemma linearIndependent_eigenvecSpanFrom
       have h_j_idx_eq : j_idx = ⟨k.val + j.val, by omega⟩ := by
         ext
         simp only [j_idx]
-      simp only [h_j_idx_eq, if_true, mul_one]
+      simp only [h_j_idx_eq, ite_true, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_idx ≠ ⟨k.val + i.val, by omega⟩ := by
@@ -275,7 +275,7 @@ private lemma linearIndependent_eigenvecSpanFrom
         have h_val_eq : j_idx.val = (⟨k.val + i.val, by omega⟩ : Fin n).val := congrArg Fin.val heq
         simp only [j_idx] at h_val_eq
         omega
-      simp only [if_neg h_ne, mul_zero]
+      simp only [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)
@@ -286,7 +286,7 @@ private lemma linearIndependent_eigenvecSpanFrom
       have h_j_idx_eq : j_idx = ⟨k.val + j.val, by omega⟩ := by
         ext
         simp only [j_idx]
-      simp only [h_j_idx_eq, if_true, mul_one]
+      simp only [h_j_idx_eq, ite_true, mul_one]
     · intro i _ hi_ne
       rw [h_orthonormal i]
       have h_ne : j_idx ≠ ⟨k.val + i.val, by omega⟩ := by
@@ -294,7 +294,7 @@ private lemma linearIndependent_eigenvecSpanFrom
         have h_val_eq : j_idx.val = (⟨k.val + i.val, by omega⟩ : Fin n).val := congrArg Fin.val heq
         simp only [j_idx] at h_val_eq
         omega
-      simp only [if_neg h_ne, mul_zero]
+      simp only [ite_eq_right h_ne, mul_zero]
     · intro hj_not_mem
       exfalso
       exact hj_not_mem (Finset.mem_univ j)

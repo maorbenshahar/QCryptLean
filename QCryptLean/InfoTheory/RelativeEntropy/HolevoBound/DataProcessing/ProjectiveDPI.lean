@@ -93,9 +93,9 @@ lemma unitary_column_ne_zero {N : ℕ} (U : Matrix (Fin N) (Fin N) ℂ)
       simp only [Matrix.mulVec, dotProduct, Pi.single_apply,
         Pi.zero_apply] at this
       rwa [Finset.sum_eq_single j
-        (fun b _ hb => by simp only [if_neg hb, mul_zero])
+        (fun b _ hb => by simp only [ite_eq_right hb, mul_zero])
         (fun habs => (habs (Finset.mem_univ _)).elim),
-        if_pos rfl, mul_one] at this
+        ite_eq_left rfl, mul_one] at this
     rw [hk, mul_zero]
   linarith
 
@@ -184,7 +184,7 @@ lemma projector_mul_eigenvector_unitary_eq_zero_of_ne {N m : ℕ} [NeZero N] [Ne
     · simp only at h
       exact h
     · intro b _ hb
-      rw [if_neg hb, mul_zero]
+      rw [ite_eq_right hb, mul_zero]
     · exact absurd (Finset.mem_univ j)
   have hne : (hH.eigenvalues j : ℂ) ≠ (y'.val : ℂ) := by
     rw [hg j]
@@ -230,16 +230,16 @@ lemma projector_adapted_column_identity {N m : ℕ} [NeZero N] [NeZero m]
   apply Matrix.ext; intro i j
   have h_lhs : (P y * U) i j = if g j = y then U i j else 0 := by
     by_cases hgj : g j = y
-    · rw [if_pos hgj, h_identity j hgj i]
-    · rw [if_neg hgj, h_vanish_gen y j hgj i]
+    · rw [ite_eq_left hgj, h_identity j hgj i]
+    · rw [ite_eq_right hgj, h_vanish_gen y j hgj i]
   have h_rhs : (U * Matrix.diagonal
       (fun j => if g j = y then (1 : ℂ) else 0)) i j =
       if g j = y then U i j else 0 := by
     rw [Matrix.mul_apply]
     rw [Finset.sum_eq_single j]
-    · rw [Matrix.diagonal_apply, if_pos rfl]
+    · rw [Matrix.diagonal_apply, ite_eq_left rfl]
       split_ifs <;> simp
-    · intro b _ hb; rw [Matrix.diagonal_apply, if_neg hb, mul_zero]
+    · intro b _ hb; rw [Matrix.diagonal_apply, ite_eq_right hb, mul_zero]
     · exact absurd (Finset.mem_univ j)
   rw [h_lhs, h_rhs]
 
@@ -285,7 +285,7 @@ lemma trace_indicator_diagonal_mul {N m : ℕ}
     rw [Finset.sum_eq_single i]
     · simp
     · intro b _ hb
-      rw [if_neg (Ne.symm hb), zero_mul]
+      rw [ite_eq_right (Ne.symm hb), zero_mul]
     · exact absurd (Finset.mem_univ i)]
   rw [show ∑ i : Fin N, (if g i = y then (1 : ℂ) else 0) * M i i =
       ∑ i ∈ Finset.univ.filter (fun i => g i = y), M i i from by

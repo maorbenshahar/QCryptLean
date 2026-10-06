@@ -36,7 +36,7 @@ lemma quadraticForm_single_eq_diag {N : ℕ}
     star (Pi.single j 1) ⬝ᵥ (M *ᵥ Pi.single j 1) = M j j := by
   simp only [dotProduct, mulVec, Pi.star_apply, Pi.single_apply]
   rw [Finset.sum_eq_single j, Finset.sum_eq_single j]
-  · simp only [if_true, star_one, one_mul, mul_one]
+  · simp only [ite_true, star_one, one_mul, mul_one]
   · intro b _ hbj; simp [hbj]
   · simp
   · intro b _ hbj; simp [hbj]
@@ -61,7 +61,7 @@ lemma diag_zero_of_ker_sub {N : ℕ}
   have h_A_zero : A j j = 0 :=
     Complex.ext hAjj h_im_zero
   have h_A_mulvec_zero : A.mulVec (Pi.single j 1) = 0 :=
-    (Matrix.PosSemidef.dotProduct_mulVec_zero_iff hA_psd _).mp (by
+    (Matrix.PosSemidef.dotProduct_mulVec_zero_iff hA_psd).mp (by
       rw [h_quad_A]
       exact h_A_zero)
   have h_B_mulvec_zero : B.mulVec (Pi.single j 1) = 0 :=

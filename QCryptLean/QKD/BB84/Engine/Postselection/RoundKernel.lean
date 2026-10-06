@@ -93,21 +93,21 @@ private theorem conj_single_of_col {A : Op 4} {ω πω : Fin 4}
       A i ω * (starRingEnd ℂ) (A j ω) := by
     rw [Matrix.mul_apply, Finset.sum_eq_single ω]
     · rw [Matrix.mul_apply, Finset.sum_eq_single ω]
-      · rw [Matrix.single_apply, if_pos ⟨rfl, rfl⟩, Matrix.conjTranspose_apply,
+      · rw [Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩, Matrix.conjTranspose_apply,
           ← starRingEnd_apply]; ring
       · intro c _ hc
-        rw [Matrix.single_apply, if_neg (fun h => hc h.1.symm), mul_zero]
+        rw [Matrix.single_apply, ite_eq_right (fun h => hc h.1.symm), mul_zero]
       · intro h; exact (h (Finset.mem_univ _)).elim
     · intro l _ hl
       rw [Matrix.mul_apply, Finset.sum_eq_zero (fun c _ => ?_), zero_mul]
-      rw [Matrix.single_apply, if_neg (fun h => hl h.2.symm), mul_zero]
+      rw [Matrix.single_apply, ite_eq_right (fun h => hl h.2.symm), mul_zero]
     · intro h; exact (h (Finset.mem_univ _)).elim
   rw [hbody, Matrix.single_apply]
   by_cases hi : i = πω
   · by_cases hj : j = πω
-    · subst hi; subst hj; rw [if_pos ⟨rfl, rfl⟩]; exact hunit
-    · rw [if_neg (fun h => hj h.2.symm), hzero j hj, map_zero, mul_zero]
-  · rw [if_neg (fun h => hi h.1.symm), hzero i hi, zero_mul]
+    · subst hi; subst hj; rw [ite_eq_left ⟨rfl, rfl⟩]; exact hunit
+    · rw [ite_eq_right (fun h => hj h.2.symm), hzero j hj, map_zero, mul_zero]
+  · rw [ite_eq_right (fun h => hi h.1.symm), hzero i hi, zero_mul]
 
 /-- **Key round (single pair): the signed-Pauli pass-through.**  Conjugating a
 computational-basis outcome projector `|ω⟩⟨ω|` by a bilateral Pauli `G_k` returns the relabelled
@@ -121,9 +121,9 @@ theorem bb84BellSinglePair_conj_compProjector (k ω : Fin 4) :
       (Matrix.single (bellKeyOutcomePerm k ω) (bellKeyOutcomePerm k ω) 1 : Op 4) := by
   refine conj_single_of_col (fun i hi => ?_) ?_
   · -- off the relabelled row the column vanishes
-    rw [bb84BellSinglePairTwirlGroup_eq_monomial, Matrix.of_apply, if_neg hi]
+    rw [bb84BellSinglePairTwirlGroup_eq_monomial, Matrix.of_apply, ite_eq_right hi]
   · -- on it sits the sign `s = ±1`, and `s · conj s = 1`
-    rw [bb84BellSinglePairTwirlGroup_eq_monomial, Matrix.of_apply, if_pos rfl]
+    rw [bb84BellSinglePairTwirlGroup_eq_monomial, Matrix.of_apply, ite_eq_left rfl]
     fin_cases k <;> fin_cases ω <;>
       simp only [bellKeyOutcomeSign, Fin.reduceFinMk, Matrix.cons_val, map_one, map_neg, mul_one,
         mul_neg, neg_neg]
@@ -172,20 +172,21 @@ private theorem compProjector_mul_apply {n eveDim : ℕ} [NeZero eveDim] (ω : F
     (bb84CompProjector n eveDim ω * N) i l = if i.divNat = ω then N i l else 0 := by
   rw [Matrix.mul_apply]
   by_cases hi : i.divNat = ω
-  · rw [if_pos hi, Finset.sum_eq_single i]
-    · rw [bb84CompProjector_apply, if_pos ⟨hi.symm, hi.symm⟩, if_pos rfl, mul_one, one_mul]
+  · rw [ite_eq_left hi, Finset.sum_eq_single i]
+    · rw [bb84CompProjector_apply, ite_eq_left ⟨hi.symm, hi.symm⟩, ite_eq_left rfl, mul_one,
+      one_mul]
     · intro k _ hk
       have : bb84CompProjector n eveDim ω i k = 0 := by
         rw [bb84CompProjector_apply]
         by_cases hkd : ω = k.divNat
-        · rw [if_pos ⟨hi.symm, hkd⟩,
-            if_neg (fun hm => hk (fin_divNat_modNat_ext (hi.trans hkd) hm).symm), mul_zero]
-        · rw [if_neg (fun h => hkd h.2), zero_mul]
+        · rw [ite_eq_left ⟨hi.symm, hkd⟩,
+            ite_eq_right (fun hm => hk (fin_divNat_modNat_ext (hi.trans hkd) hm).symm), mul_zero]
+        · rw [ite_eq_right (fun h => hkd h.2), zero_mul]
       rw [this, zero_mul]
     · intro h; exact (h (Finset.mem_univ _)).elim
-  · rw [if_neg hi, Finset.sum_eq_zero]
+  · rw [ite_eq_right hi, Finset.sum_eq_zero]
     intro k _
-    rw [bb84CompProjector_apply, if_neg (fun h => hi h.1.symm), zero_mul, zero_mul]
+    rw [bb84CompProjector_apply, ite_eq_right (fun h => hi h.1.symm), zero_mul, zero_mul]
 
 /-- Right-multiplying by the AB outcome projector keeps the columns in block `ω` and kills the
     rest. -/
@@ -194,20 +195,22 @@ private theorem mul_compProjector_apply {n eveDim : ℕ} [NeZero eveDim] (ω : F
     (N * bb84CompProjector n eveDim ω) l j = if j.divNat = ω then N l j else 0 := by
   rw [Matrix.mul_apply]
   by_cases hj : j.divNat = ω
-  · rw [if_pos hj, Finset.sum_eq_single j]
-    · rw [bb84CompProjector_apply, if_pos ⟨hj.symm, hj.symm⟩, if_pos rfl, mul_one, mul_one]
+  · rw [ite_eq_left hj, Finset.sum_eq_single j]
+    · rw [bb84CompProjector_apply, ite_eq_left ⟨hj.symm, hj.symm⟩, ite_eq_left rfl, mul_one,
+      mul_one]
     · intro k _ hk
       have : bb84CompProjector n eveDim ω k j = 0 := by
         rw [bb84CompProjector_apply]
         by_cases hkd : ω = k.divNat
-        · rw [if_pos ⟨hkd, hj.symm⟩,
-            if_neg (fun hm => hk (fin_divNat_modNat_ext (hkd.symm.trans hj.symm) hm)), mul_zero]
-        · rw [if_neg (fun h => hkd h.1), zero_mul]
+        · rw [ite_eq_left ⟨hkd, hj.symm⟩,
+            ite_eq_right (fun hm => hk (fin_divNat_modNat_ext (hkd.symm.trans hj.symm) hm)),
+              mul_zero]
+        · rw [ite_eq_right (fun h => hkd h.1), zero_mul]
       rw [this, mul_zero]
     · intro h; exact (h (Finset.mem_univ _)).elim
-  · rw [if_neg hj, Finset.sum_eq_zero]
+  · rw [ite_eq_right hj, Finset.sum_eq_zero]
     intro k _
-    rw [bb84CompProjector_apply, if_neg (fun h => hj h.2.symm), zero_mul, mul_zero]
+    rw [bb84CompProjector_apply, ite_eq_right (fun h => hj h.2.symm), zero_mul, mul_zero]
 
 /-- Conjugating `N` by the AB outcome projector keeps only the `(ω, ω)` AB block of `N`. -/
 private theorem compProjector_conj_apply {n eveDim : ℕ} [NeZero eveDim] (ω : Fin (4 ^ n))
@@ -216,11 +219,11 @@ private theorem compProjector_conj_apply {n eveDim : ℕ} [NeZero eveDim] (ω : 
       if i.divNat = ω ∧ j.divNat = ω then N i j else 0 := by
   rw [Matrix.mul_assoc, compProjector_mul_apply]
   by_cases hi : i.divNat = ω
-  · rw [if_pos hi, mul_compProjector_apply]
+  · rw [ite_eq_left hi, mul_compProjector_apply]
     by_cases hj : j.divNat = ω
-    · rw [if_pos hj, if_pos ⟨hi, hj⟩]
-    · rw [if_neg hj, if_neg (fun h => hj h.2)]
-  · rw [if_neg hi, if_neg (fun h => hi h.1)]
+    · rw [ite_eq_left hj, ite_eq_left ⟨hi, hj⟩]
+    · rw [ite_eq_right hj, ite_eq_right (fun h => hj h.2)]
+  · rw [ite_eq_right hi, ite_eq_right (fun h => hi h.1)]
 
 /-- **The measurement channel as a sum of AB-outcome-projector conjugations**:
 `measurementChannel N = Σ_ω P_ω · N · P_ω`.  This reconstructs the (private-Kraus) measurement map
@@ -233,13 +236,13 @@ theorem measurementChannel_eq_sum_compProjector_conj {n eveDim : ℕ} [NeZero ev
   rw [measurementChannel_apply, Matrix.sum_apply,
     Finset.sum_congr rfl (fun ω _ => compProjector_conj_apply ω N i j)]
   by_cases h : i.divNat = j.divNat
-  · rw [if_pos h, Finset.sum_eq_single i.divNat]
-    · rw [if_pos ⟨rfl, h.symm⟩]
-    · intro ω _ hω; rw [if_neg (fun hcon => hω hcon.1.symm)]
+  · rw [ite_eq_left h, Finset.sum_eq_single i.divNat]
+    · rw [ite_eq_left ⟨rfl, h.symm⟩]
+    · intro ω _ hω; rw [ite_eq_right (fun hcon => hω hcon.1.symm)]
     · intro hcon; exact (hcon (Finset.mem_univ _)).elim
-  · rw [if_neg h, Finset.sum_eq_zero]
+  · rw [ite_eq_right h, Finset.sum_eq_zero]
     intro ω _
-    rw [if_neg (fun hcon => h (hcon.1.trans hcon.2.symm))]
+    rw [ite_eq_right (fun hcon => h (hcon.1.trans hcon.2.symm))]
 
 /-- Conjugating an AB outcome projector by a monomial `U ⊗ 1` relabels it: if `U` permutes the
 single-block projectors via `π` (`U · |ω⟩⟨ω| · Uᴴ = |πω⟩⟨πω|`), then

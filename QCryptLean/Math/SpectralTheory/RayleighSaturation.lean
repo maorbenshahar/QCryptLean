@@ -125,7 +125,7 @@ theorem rayleigh_re_eq_iff (hA : A.IsHermitian) {lam : ℝ} (hle : ∀ i, hA.eig
       · rw [re_dotProduct_smul_one_sub, hx]
         simp
       · exact (Complex.nonneg_iff.mp (hB.dotProduct_mulVec_nonneg x)).2.symm
-    have := (hB.dotProduct_mulVec_zero_iff x).mp hzero
+    have := hB.dotProduct_mulVec_zero_iff.mp hzero
     rw [happly] at this
     exact (sub_eq_zero.mp this).symm
   · intro hx

@@ -60,7 +60,7 @@ lemma Matrix.posSemidef_blockDiagonal [Finite m] [Finite o] {M : o → Matrix m 
     · subst hk; simp only [↓reduceIte]
       change star (M k b a) = M k a b
       rw [← Matrix.conjTranspose_apply]; exact congr_fun (congr_fun (h k).isHermitian a) b
-    · rw [if_neg hk, if_neg (Ne.symm hk), star_zero]
+    · rw [ite_eq_right hk, ite_eq_right (Ne.symm hk), star_zero]
   · -- Nonneg quadratic form
     intro x
     simp only [dotProduct, Pi.star_apply, Fintype.sum_prod_type, blockDiagonal_mulVec_apply]

@@ -1,7 +1,7 @@
 import QCryptLean.Quantum.Channels.CPTP.Basic
 import QCryptLean.Quantum.Metrics.TraceNorm.Frobenius
 import QCryptLean.Quantum.Metrics.TraceNormHoelder
-import Mathlib.Data.Real.Pointwise
+import Mathlib.Basic.Real.Pointwise
 import Mathlib.Analysis.Matrix.Normed
 import Mathlib.Analysis.InnerProductSpace.Positive
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
@@ -113,10 +113,10 @@ lemma linearMap_apply_eq_sum_single {n m : ℕ} (Δ : Op n →ₗ[ℂ] Op m)
     symm
     exact Finset.sum_eq_single r
       (fun i _ hi => Finset.sum_eq_zero (fun j _ =>
-        if_neg (fun ⟨h1, _⟩ => hi h1)))
+        ite_eq_right (fun ⟨h1, _⟩ => hi h1)))
       (fun h => absurd (Finset.mem_univ r) h) |>.trans
         (Finset.sum_eq_single l
-          (fun j _ hj => if_neg (fun ⟨_, h2⟩ => hj h2))
+          (fun j _ hj => ite_eq_right (fun ⟨_, h2⟩ => hj h2))
           (fun h => absurd (Finset.mem_univ l) h) |>.trans (by simp))
   conv_lhs => rw [hM, map_sum, Matrix.sum_apply]
   congr 1
@@ -331,7 +331,7 @@ noncomputable def diamondNorm {n m : ℕ} [NeZero n] [NeZero m]
     (Nat.mul_pos (NeZero.pos n) (NeZero.pos n))⟩
   haveI : NeZero (m * n) := ⟨Nat.pos_iff_ne_zero.mp
     (Nat.mul_pos (NeZero.pos m) (NeZero.pos n))⟩
-  sSup (setOf fun t : ℝ => ∃ X : Op (n * n),
+  sSup (Set.ofPred fun t : ℝ => ∃ X : Op (n * n),
     traceNorm X ≤ 1 ∧
     t = traceNorm (mapTensorId Φ X))
 
@@ -395,13 +395,13 @@ theorem mapTensorId_integral_commute
 /-- The diamond norm is non-negative. -/
 lemma diamondNorm_nonneg {n m : ℕ} [NeZero n] [NeZero m]
     (Φ : Op n →ₗ[ℂ] Op m) : 0 ≤ diamondNorm Φ := by
-  haveI : NeZero (n * n) := ⟨Nat.pos_iff_ne_zero.mp
+  have : NeZero (n * n) := ⟨Nat.pos_iff_ne_zero.mp
     (Nat.mul_pos (NeZero.pos n) (NeZero.pos n))⟩
-  haveI : NeZero (m * n) := ⟨Nat.pos_iff_ne_zero.mp
+  have : NeZero (m * n) := ⟨Nat.pos_iff_ne_zero.mp
     (Nat.mul_pos (NeZero.pos m) (NeZero.pos n))⟩
   unfold diamondNorm
   by_cases hbdd : BddAbove
-    (setOf fun t : ℝ => ∃ X : Op (n * n),
+    (Set.ofPred fun t : ℝ => ∃ X : Op (n * n),
       Quantum.Metrics.traceNorm X ≤ 1 ∧
       t = Quantum.Metrics.traceNorm (mapTensorId Φ X))
   · apply le_csSup_of_le hbdd
@@ -667,10 +667,10 @@ lemma mapTensorId_tensor {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
       Matrix.single_apply, mul_ite, mul_one, mul_zero]
     symm; exact Finset.sum_eq_single r
       (fun i _ hi => Finset.sum_eq_zero (fun j _ => by
-        exact if_neg (fun ⟨h1, _⟩ => hi h1)))
+        exact ite_eq_right (fun ⟨h1, _⟩ => hi h1)))
       (fun h => absurd (Finset.mem_univ r) h) |>.trans
         (Finset.sum_eq_single c
-          (fun j _ hj => if_neg (fun ⟨_, h2⟩ => hj h2))
+          (fun j _ hj => ite_eq_right (fun ⟨_, h2⟩ => hj h2))
           (fun h => absurd (Finset.mem_univ c) h) |>.trans (by simp))
   -- Simplify finProdFinEquiv.symm (finProdFinEquiv ...) = id
   simp only [Equiv.symm_apply_apply]
@@ -773,9 +773,9 @@ lemma mapTensorId_entry_bound {n m : ℕ} [NeZero n] [NeZero m]
       Complex.normSq (Φ (Matrix.single i j 1)
         (finProdFinEquiv.symm q).1 (finProdFinEquiv.symm p).1) := by
   -- Pin typeclass instances to avoid repeated synthesis
-  letI : Fintype (Fin n × Fin n) := inferInstance
-  letI : Fintype (Fin (n * n)) := inferInstance
-  letI : Fintype (Fin (m * n)) := inferInstance
+  let : Fintype (Fin n × Fin n) := inferInstance
+  let : Fintype (Fin (n * n)) := inferInstance
+  let : Fintype (Fin (m * n)) := inferInstance
   simp only [mapTensorId, Matrix.of_apply]
   -- Partial sum bound for x entries
   set s' := (finProdFinEquiv.symm q).2
@@ -905,7 +905,7 @@ lemma mapTensorId_frobenius_bound {n m : ℕ} [NeZero n] [NeZero m]
 lemma diamondNorm_bddAbove {n m : ℕ} [NeZero n] [NeZero m]
     [NeZero (n * n)] [NeZero (m * n)]
     (Φ : Op n →ₗ[ℂ] Op m) :
-    BddAbove (setOf fun t : ℝ => ∃ X : Op (n * n), traceNorm X ≤ 1 ∧
+    BddAbove (Set.ofPred fun t : ℝ => ∃ X : Op (n * n), traceNorm X ≤ 1 ∧
       t = traceNorm (mapTensorId Φ X)) := by
   -- Upper bound: √(m*n) * √(n² * C_Φ) where C_Φ = Frobenius norm² of Φ's basis images
   set C_Φ := ∑ a : Fin m, ∑ b : Fin m, ∑ i : Fin n, ∑ j : Fin n,
@@ -1024,9 +1024,9 @@ theorem diamondNorm_sub_le {n m : ℕ} [NeZero n] [NeZero m]
 lemma diamondNorm_ge_traceNorm_apply {n m : ℕ} [NeZero n] [NeZero m]
     (Φ : Op n →ₗ[ℂ] Op m) (ρ : DensityOp n) :
     traceNorm (Φ ρ.toOp) ≤ diamondNorm Φ := by
-  haveI hnn : NeZero (n * n) := ⟨Nat.pos_iff_ne_zero.mp
+  have hnn : NeZero (n * n) := ⟨Nat.pos_iff_ne_zero.mp
     (Nat.mul_pos (NeZero.pos n) (NeZero.pos n))⟩
-  haveI hmn : NeZero (m * n) := ⟨Nat.pos_iff_ne_zero.mp
+  have hmn : NeZero (m * n) := ⟨Nat.pos_iff_ne_zero.mp
     (Nat.mul_pos (NeZero.pos m) (NeZero.pos n))⟩
   -- Define X₀ = ρ ⊗ |0⟩⟨0|
   set E₀₀ : Op n := Matrix.single 0 0 1

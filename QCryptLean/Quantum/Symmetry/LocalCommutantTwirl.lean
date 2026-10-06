@@ -193,7 +193,7 @@ theorem referenceTwirl_eq_sqrt_sandwich
     (hκcomm : Commute (Op.tensor κ (1 : Op b)) Q) (hT : partialTraceB T = 1) :
     referenceTwirl μ U T =
       Op.tensor (CFC.sqrt κ) (1 : Op b) * Q * Op.tensor (CFC.sqrt κ) (1 : Op b) := by
-  letI := hκ.isUnit.invertible
+  let := hκ.isUnit.invertible
   have hΩ : IsUnit (partialTraceB Q) := hκinv ▸ hκ.inv.isUnit
   rw [referenceTwirl_eq_inverse_marginal_mul μ U T Q hint hQ hTQ hcomm hlocal hΩ hT,
     ← hκinv, Matrix.inv_inv_of_invertible]

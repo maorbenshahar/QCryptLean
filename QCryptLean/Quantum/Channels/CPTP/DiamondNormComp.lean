@@ -122,9 +122,9 @@ at most `1`, and `mapTensorId Λ` is again CPTP, hence trace-norm contractive
 theorem diamondNorm_cptp_le_one {n m : ℕ} [NeZero n] [NeZero m]
     (Λ : Op n →ₗ[ℂ] Op m) (hΛ : IsCPTP ⇑Λ) :
     diamondNorm Λ ≤ 1 := by
-  haveI : NeZero (n * n) :=
+  have : NeZero (n * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (m * n) :=
+  have : NeZero (m * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   refine diamondNorm_le_of_forall Λ 1 fun X hX => ?_
   exact (traceNorm_mapTensorId_cptp_contractive Λ hΛ X).trans hX
@@ -136,9 +136,9 @@ trace `1`, whence trace norm `1`. -/
 theorem diamondNorm_cptp_eq_one {n m : ℕ} [NeZero n] [NeZero m]
     (Λ : Op n →ₗ[ℂ] Op m) (hΛ : IsCPTP ⇑Λ) :
     diamondNorm Λ = 1 := by
-  haveI : NeZero (n * n) :=
+  have : NeZero (n * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (m * n) :=
+  have : NeZero (m * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   refine le_antisymm (diamondNorm_cptp_le_one Λ hΛ) ?_
   set X : Op (n * n) := Matrix.single 0 0 1 with hXdef
@@ -181,11 +181,11 @@ theorem diamondNorm_comp_le {n m p : ℕ} [NeZero n] [NeZero m] [NeZero p]
     (Φ : Op m →ₗ[ℂ] Op p) (Λ : Op n →ₗ[ℂ] Op m)
     (hHP : ∀ M : Op m, Φ Mᴴ = (Φ M)ᴴ) :
     diamondNorm (Φ ∘ₗ Λ) ≤ diamondNorm Φ * diamondNorm Λ := by
-  haveI : NeZero (n * n) :=
+  have : NeZero (n * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (m * n) :=
+  have : NeZero (m * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (p * n) :=
+  have : NeZero (p * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   refine diamondNorm_le_of_forall _ _ fun X hX => ?_
   rw [← mapTensorId_comp Λ Φ X]
@@ -211,11 +211,11 @@ pinned ancilla. -/
 theorem diamondNorm_postcomp_cptp_le {n m p : ℕ} [NeZero n] [NeZero m] [NeZero p]
     (A : Op m →ₗ[ℂ] Op p) (hA : IsCPTP ⇑A) (Δ : Op n →ₗ[ℂ] Op m) :
     diamondNorm (A ∘ₗ Δ) ≤ diamondNorm Δ := by
-  haveI : NeZero (n * n) :=
+  have : NeZero (n * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (m * n) :=
+  have : NeZero (m * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (p * n) :=
+  have : NeZero (p * n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   refine diamondNorm_le_of_forall _ _ fun X hX => ?_
   rw [← mapTensorId_comp Δ A X]

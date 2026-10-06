@@ -120,7 +120,7 @@ lemma traceDistance_from_fidelity_dim2 (ρ : DensityOp 2) (ψ : Ket 2)
   have h_ev1_neg : ev 1 = -ev 0 := by linarith only [h_sum_zero]
   -- Trace distance = (1/2)(|ev 0| + |ev 1|) = (1/2)(|ev 0| + |-ev 0|) = |ev 0|
   have h_td : traceDistance ρ.toOp σ.toOp = |ev 0| := by
-    haveI : NeZero 2 := ⟨two_ne_zero⟩
+    have : NeZero 2 := ⟨two_ne_zero⟩
     rw [traceDistance_densityOp_eq_traceNormHermitian ρ σ]
     simp only [traceNormHermitian]
     -- The eigenvalues are the same by definition

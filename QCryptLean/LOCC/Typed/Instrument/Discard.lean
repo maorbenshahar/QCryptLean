@@ -37,7 +37,7 @@ def Instrument.discardToUnit (K : Type) [Fintype K] [DecidableEq K] [Nonempty K]
       Matrix.one_apply, Finset.univ_unique, Finset.sum_singleton,
       apply_ite (star : ℂ → ℂ), star_one, star_zero, ite_mul, zero_mul, one_mul]
     rw [Finset.sum_ite_eq Finset.univ x (fun k => if y = k then (1 : ℂ) else 0)]
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     exact if_congr eq_comm rfl rfl
 
 /-- The individual hidden Kraus matrices of `discardToUnit` are the basis bras. -/

@@ -18,13 +18,41 @@ inductive Party where
   | alice
   | bob
   | spectator
-deriving DecidableEq, Fintype
+deriving DecidableEq
 
 inductive ExitTag where
   | abort
   | acceptZero
   | acceptOne
-deriving DecidableEq, Fintype
+deriving DecidableEq
+
+protected abbrev Party.enumList : List Party := [.alice, .bob, .spectator]
+
+protected theorem Party.enumList_getElem?_ctorIdx_eq (x : Party) :
+    Party.enumList[Party.ctorIdx x]? = some x := by
+  cases x <;> rfl
+
+protected theorem Party.enumList_nodup : Party.enumList.Nodup := by decide
+
+instance instFintypeParty : Fintype Party where
+  elems := ⟨Party.enumList, Party.enumList_nodup⟩
+  complete x := by
+    change x ∈ Party.enumList
+    exact List.mem_iff_getElem?.mpr ⟨Party.ctorIdx x, Party.enumList_getElem?_ctorIdx_eq x⟩
+
+protected abbrev ExitTag.enumList : List ExitTag := [.abort, .acceptZero, .acceptOne]
+
+protected theorem ExitTag.enumList_getElem?_ctorIdx_eq (x : ExitTag) :
+    ExitTag.enumList[ExitTag.ctorIdx x]? = some x := by
+  cases x <;> rfl
+
+protected theorem ExitTag.enumList_nodup : ExitTag.enumList.Nodup := by decide
+
+instance instFintypeExitTag : Fintype ExitTag where
+  elems := ⟨ExitTag.enumList, ExitTag.enumList_nodup⟩
+  complete x := by
+    change x ∈ ExitTag.enumList
+    exact List.mem_iff_getElem?.mpr ⟨ExitTag.ctorIdx x, ExitTag.enumList_getElem?_ctorIdx_eq x⟩
 
 def LocalReg (t : ExitTag) (p : Party) : Type :=
   match t with

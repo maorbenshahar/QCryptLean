@@ -113,8 +113,8 @@ theorem bb84SiftedSinglePairOp_unitary (peSel xSel : Bool) :
       (1 : Op signalDim) := by
   unfold bb84SiftedSinglePairOp
   by_cases h : (peSel && xSel) = true
-  · rw [if_pos h, bb84HadamardPair_hermitian, bb84HadamardPair_unitary]
-  · rw [if_neg h, Matrix.conjTranspose_one, Matrix.one_mul]
+  · rw [ite_eq_left h, bb84HadamardPair_hermitian, bb84HadamardPair_unitary]
+  · rw [ite_eq_right h, Matrix.conjTranspose_one, Matrix.one_mul]
 
 /-- The `n`-round LOCC sift unitary: the tensor product over rounds of
 `bb84SiftedSinglePairOp (peSel a) (xSel a)`, entry `(i, j) = ∏ a, (H⊗H or 1)_{i_a, j_a}` under

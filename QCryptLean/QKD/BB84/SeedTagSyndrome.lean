@@ -99,8 +99,9 @@ def fusedStage
       (.announce (FusedPublic n ℓ ℓEV peSel leakEC) B) :=
   (fusedAnnouncement n ℓ ℓEV peSel leakEC ec).then fun y =>
     cast (by
-      simp only [fusedAnnouncement, AnnouncedAction.out_ofInstrument,
-        FinalStage.rawSystem, TwoParty.set_alice]) (k y)
+      apply congrArg (fun R => Program R (B y))
+      change FinalStage.rawSystem n = (FinalStage.rawSystem n).set .alice (Fin (2 ^ n))
+      exact (TwoParty.set_alice _ _ _).symm) (k y)
 
 /-- Decoding a raw fused public cell gives the seed index and tag/syndrome value using the
 `outcomeDigit`/`finProdFinEquiv` encoding. -/
@@ -156,12 +157,22 @@ theorem fusedAnnouncement_liftedOperation_apply
     (FinalStage.rawSystem n) .alice).operation (r, v) rho) _ _ = _
   rw [Instrument.liftAt_operation_apply (R := FinalStage.rawSystem n) .alice
     (fusedReadoutInstrument n ℓ ℓEV peSel leakEC ec)]
+  let E : (FinalStage.rawSystem n).total ≃
+      Fin (2 ^ n) × (FinalStage.rawSystem n).rest .alice :=
+    (FinalStage.rawSystem n).splitAt .alice
+  let O : ((FinalStage.rawSystem n).set .alice (Fin (2 ^ n))).total ≃
+      Fin (2 ^ n) × (FinalStage.rawSystem n).rest .alice :=
+    (FinalStage.rawSystem n).splitAtSet .alice (Fin (2 ^ n))
+  change (fusedReadoutInstrument n ℓ ℓEV peSel leakEC ec).operation (r, v)
+    (rho.submatrix (fun x => E.symm (x, (O (O.symm (E q))).2))
+      (fun x => E.symm (x, (O (O.symm (E q'))).2)))
+    (O (O.symm (E q))).1 (O (O.symm (E q'))).1 = _
+  simp only [Equiv.apply_symm_apply]
   unfold fusedReadoutInstrument
   refine (congrFun (congrFun (LinearMap.congr_fun
     (Instrument.uniformChoice_operation
       (fun r => Instrument.nondemolitionReadout
         (Model.evTagSynOf n ℓ ℓEV peSel leakEC ec r)) r v) _) _) _).trans ?_
-  simp only [LinearMap.smul_apply, Matrix.smul_apply, smul_eq_mul, Equiv.apply_symm_apply]
   have h := congrArg (fun z => (Fintype.card (FusedSeedIndex n ℓ ℓEV peSel) : ℂ)⁻¹ * z)
       (Instrument.nondemolitionReadout_operation_apply
         (QKD.BB84.Model.evTagSynOf n ℓ ℓEV peSel leakEC ec r) v
@@ -172,8 +183,11 @@ theorem fusedAnnouncement_liftedOperation_apply
             (x, ((FinalStage.rawSystem n).splitAt .alice q').2)))
         ((FinalStage.rawSystem n).splitAt .alice q).1
         ((FinalStage.rawSystem n).splitAt .alice q').1)
-  simp only [mul_ite, mul_zero, Matrix.submatrix_apply, Prod.eta,
-    Equiv.symm_apply_apply] at h
-  exact h
+  simp only [mul_ite, mul_zero] at h
+  refine h.trans ?_
+  congr 1
+  exact congrArg ((Fintype.card (FusedSeedIndex n ℓ ℓEV peSel) : ℂ)⁻¹ * ·)
+    (congrArg₂ rho (((FinalStage.rawSystem n).splitAt .alice).symm_apply_apply q)
+      (((FinalStage.rawSystem n).splitAt .alice).symm_apply_apply q'))
 
 end QKD.BB84

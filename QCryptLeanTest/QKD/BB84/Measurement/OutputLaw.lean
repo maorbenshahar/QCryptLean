@@ -77,13 +77,25 @@ def offDiagonalAccumulatorInput :
 theorem inputBlock_offDiagonal_forward :
     weightedScheduleInputBlock (Fin 2) 0 offDiagonalAccumulatorInput
       0 1 0 0 (emptyBits, emptyBits) (emptyBits, emptyBits) = 2 := by
-  simp [weightedScheduleInputBlock, reindexOp, offDiagonalAccumulatorInput]
+  change offDiagonalAccumulatorInput
+    ((weightedStreamPairEquiv (Fin 2) 0).symm ((0, emptyBits), (0, emptyBits)))
+    ((weightedStreamPairEquiv (Fin 2) 0).symm ((1, emptyBits), (0, emptyBits))) = 2
+  unfold offDiagonalAccumulatorInput
+  exact ite_eq_left ⟨rfl, rfl⟩
 
 /-- Reversing the selected accumulator row and column reaches the zero reverse entry. -/
 theorem inputBlock_offDiagonal_reverse :
     weightedScheduleInputBlock (Fin 2) 0 offDiagonalAccumulatorInput
       1 0 0 0 (emptyBits, emptyBits) (emptyBits, emptyBits) = 0 := by
-  simp [weightedScheduleInputBlock, reindexOp, offDiagonalAccumulatorInput]
+  change offDiagonalAccumulatorInput
+    ((weightedStreamPairEquiv (Fin 2) 0).symm ((1, emptyBits), (0, emptyBits)))
+    ((weightedStreamPairEquiv (Fin 2) 0).symm ((0, emptyBits), (0, emptyBits))) = 0
+  unfold offDiagonalAccumulatorInput
+  apply ite_eq_right
+  intro h
+  have hzero := congrArg (fun q => ((weightedStreamPairEquiv (Fin 2) 0) q).1.1) h.1
+  have : (1 : Fin 2) = 0 := by simpa only [Equiv.apply_symm_apply] using hzero
+  exact one_ne_zero this
 
 /- The already-proved schedule diagonal theorem is available, but does not identify diagonal
 coefficients and is not used to assert either output-law target. -/

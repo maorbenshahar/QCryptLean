@@ -35,8 +35,8 @@ theorem siftPermHalf_unitary (n : ℕ) (peSel xSel : Fin n → Bool) (π : Equiv
         (if peSel a && xSel a then Quantum.Gates.hadamard else (1 : Op 2)) = 1 := by
     intro a
     by_cases h : peSel a && xSel a
-    · rw [if_pos h, Quantum.Gates.hadamard_hermitian, Quantum.Gates.hadamard_sq]
-    · rw [if_neg h, Matrix.conjTranspose_one, Matrix.one_mul]
+    · rw [ite_eq_left h, Quantum.Gates.hadamard_hermitian, Quantum.Gates.hadamard_sq]
+    · rw [ite_eq_right h, Matrix.conjTranspose_one, Matrix.one_mul]
   have hA := conjTranspose_tensorFamily_mul_self hfam
   have hU := (Math.RepresentationTheory.permutationRepresentation_unitary 2 n π).1
   unfold siftPermHalf

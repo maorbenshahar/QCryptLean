@@ -259,7 +259,7 @@ theorem bellRegExt_partialTraceB {n dimR : ℕ} [NeZero (4 ^ n)] [NeZero dimR]
     ext a a'
     simp only [partialTraceB, bellRegExt, Matrix.of_apply, Matrix.smul_apply, Finset.smul_sum,
       Matrix.sum_apply]
-    simp only [Equiv.symm_apply_apply, if_true, smul_eq_mul]
+    simp only [Equiv.symm_apply_apply, ite_true, smul_eq_mul]
     rw [Finset.sum_comm, ← Equiv.sum_comp finProdFinEquiv]
     simp_rw [Equiv.symm_apply_apply]
     rw [Fintype.sum_prod_type]

@@ -91,8 +91,8 @@ theorem bb84SiftedPEAnnounceLinear_isCPTP (n m ℓ ℓEV : ℕ) [NeZero n] (peSe
   let baseDim := bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC
   let idx : Fin n.factorial :=
     (Fintype.equivFin (Equiv.Perm (Fin n)) perm).cast (by simp [Fintype.card_perm])
-  haveI : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
-  haveI : NeZero (baseDim * n.factorial) :=
+  have : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
+  have : NeZero (baseDim * n.factorial) :=
     ⟨Nat.mul_ne_zero (NeZero.ne baseDim) (Nat.factorial_ne_zero n)⟩
   let hdim : baseDim * n.factorial =
       2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC :=
@@ -111,9 +111,9 @@ theorem bb84SiftedPEAnnounceLinear_isCPTP (n m ℓ ℓEV : ℕ) [NeZero n] (peSe
 theorem bb84SiftedPEAnnounceLinearEveVisible_isCPTP (n m ℓ ℓEV eveDim : ℕ) [NeZero n]
     [NeZero eveDim] (peSel : Fin n → Bool) (leakEC : ℕ) (perm : Equiv.Perm (Fin n)) :
     IsCPTP (⇑(bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV eveDim peSel leakEC perm)) := by
-  haveI : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC) :=
     bb84PEAnnounceBaseOutputDim_neZero n m ℓ ℓEV peSel leakEC
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num)) (pow_ne_zero _ (by norm_num)))
       (NeZero.ne _)⟩
   simpa [bb84SiftedPEAnnounceLinearEveVisible, mapTensorIdLinear] using
@@ -133,7 +133,7 @@ private theorem announce_PEAnnounce_bare_average_isCPTP (n m ℓ ℓEV : ℕ) [N
         (bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV 1 peSel leakEC π).comp
           (base.comp (((bb84SiftedConjChannel n 1 peSel xSel).comp
             (bb84UnitRegisterEmbed n)).comp (permuteSignalLinear n π))))) := by
-  haveI : NeZero (4 ^ n * 1) := ⟨by simp⟩
+  have : NeZero (4 ^ n * 1) := ⟨by simp⟩
   let Φ : Equiv.Perm (Fin n) → Op (4 ^ n) →ₗ[ℂ]
       Op (bb84EveVisiblePEAnnounceSymOutputDim n m ℓ ℓEV peSel leakEC 1) :=
     fun π =>
@@ -170,7 +170,7 @@ private theorem announce_PEAnnounce_bare_average_isCPTP (n m ℓ ℓEV : ℕ) [N
 theorem bb84SymRealChannel_isCPTP (n m ℓ ℓEV : ℕ) [NeZero n] [NeZero (4 ^ n)]
     (Q δ : ℝ) (peSel xSel : Fin n → Bool) (leakEC : ℕ) (ec : ECScheme n peSel leakEC) :
     IsCPTP (⇑(bb84SymRealChannel n m ℓ ℓEV Q δ peSel xSel leakEC ec)) := by
-  haveI : NeZero (4 ^ n * 1) := ⟨by simp⟩
+  have : NeZero (4 ^ n * 1) := ⟨by simp⟩
   unfold bb84SymRealChannel
   refine announce_PEAnnounce_bare_average_isCPTP n m ℓ ℓEV peSel xSel leakEC
     ((bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec Q
@@ -189,7 +189,7 @@ theorem bb84SymRealChannel_isCPTP (n m ℓ ℓEV : ℕ) [NeZero n] [NeZero (4 ^ 
 theorem bb84SymIdealChannel_isCPTP (n m ℓ ℓEV : ℕ) [NeZero n] [NeZero (4 ^ n)]
     (Q δ : ℝ) (peSel xSel : Fin n → Bool) (leakEC : ℕ) (ec : ECScheme n peSel leakEC) :
     IsCPTP (⇑(bb84SymIdealChannel n m ℓ ℓEV Q δ peSel xSel leakEC ec)) := by
-  haveI : NeZero (4 ^ n * 1) := ⟨by simp⟩
+  have : NeZero (4 ^ n * 1) := ⟨by simp⟩
   unfold bb84SymIdealChannel
   refine announce_PEAnnounce_bare_average_isCPTP n m ℓ ℓEV peSel xSel leakEC
     ((bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec Q
@@ -325,7 +325,7 @@ lemma bb84SiftedPEAnnounce_passOutput_trace_eq_gated_blockSum
   rw [Finset.sum_congr rfl (fun k _ => hKK k), Finset.sum_mul, Matrix.trace_sum]
   refine Finset.sum_congr rfl (fun k _ => ?_)
   by_cases h : gate k = true
-  · rw [if_pos h, if_pos h, trace_outcomeProjector_mul_measurementChannel]
+  · rw [ite_eq_left h, ite_eq_left h, trace_outcomeProjector_mul_measurementChannel]
     have hblk :
         ((bb84SiftedEveConditioned eveDim pre hpre peSel xSel τ.partialTraceB (ωof k)).toOp).trace =
           ∑ r : Fin eveDim,
@@ -334,7 +334,7 @@ lemma bb84SiftedPEAnnounce_passOutput_trace_eq_gated_blockSum
               (finProdFinEquiv (bb84OutcomeIndex (ωof k), r)) := by
       simp [bb84SiftedEveConditioned, Matrix.trace, bb84OutcomeEveEmbedding]
     rw [← hblk, SubDensityOp.trace_complex_eq]
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
     simp
 
 /-- **The τ-side accept weight is the PE-filtered sum of the attacked-marginal blocks.**  Tracing
@@ -352,18 +352,18 @@ theorem bb84SiftedEveVisible_tauLocalPEAcceptedWeight_eq_sum_marginalBlocks
         (if bb84SiftedLocalPETestPassed peSel xSel δ Q ω then
           (bb84SiftedEveConditioned eveDim pre hpre peSel xSel τ.partialTraceB ω).trace else 0) :=
               by
-  haveI : NeZero (eveDim * dimR) :=
+  have : NeZero (eveDim * dimR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   simp only [bb84SiftedEveVisible_tauLocalPEAcceptedWeight,
     bb84PostMeasurementCQSiftedLocalPEPassFilter]
   refine Finset.sum_congr rfl (fun ω _ => ?_)
   by_cases h : bb84SiftedLocalPETestPassed peSel xSel δ Q ω = true
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     change (bb84SiftedTauEveRefConditioned eveDim pre hpre peSel xSel τ ω).trace = _
     unfold SubDensityOp.trace
     rw [← trace_partialTraceB (bb84SiftedTauEveRefConditioned eveDim pre hpre peSel xSel τ ω).toOp,
       bb84SiftedTauEveRefConditioned_partialTraceB_eq_bb84SiftedEveConditioned]
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
     show SubDensityOp.trace (0 : SubDensityOp (eveDim * dimR)) = 0
     simp [SubDensityOp.trace]
 
@@ -381,9 +381,9 @@ lemma bb84SiftedPEAndEVGated_le_PEGated {n : ℕ} [NeZero n] [NeZero (4 ^ n)]
       (if bb84SiftedLocalPETestPassed peSel xSel δ Q ω then
         (bb84SiftedEveConditioned eveDim pre hpre peSel xSel ρ ω).trace else 0) := by
   by_cases h : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q t ω = true
-  · rw [if_pos h,
-      if_pos (bb84SiftedLocalPEAndEVPassed_imp_PETestPassed ℓEV peSel xSel ec δ Q t ω h)]
-  · rw [if_neg h]
+  · rw [ite_eq_left h,
+      ite_eq_left (bb84SiftedLocalPEAndEVPassed_imp_PETestPassed ℓEV peSel xSel ec δ Q t ω h)]
+  · rw [ite_eq_right h]
     split_ifs
     · exact (bb84SiftedEveConditioned eveDim pre hpre peSel xSel ρ ω).trace_nonneg
     · exact le_refl 0
@@ -465,8 +465,8 @@ theorem bb84_differAndAccept_weight_le_two_pow_neg_lEV {n : ℕ} [NeZero n] [NeZ
     (ec : ECScheme n peSel leakEC) (Q δ : ℝ) (ρ : DensityOp (4 ^ n)) :
     bb84SiftedEveVisible_differAndAcceptWeight eveDim pre hpre ℓEV peSel xSel ec Q δ ρ ≤
       (2 : ℝ) ^ (-(ℓEV : ℝ)) := by
-  haveI : NeZero (2 ^ ℓEV) := ⟨pow_ne_zero _ two_ne_zero⟩
-  haveI : Nonempty (Fin (2 ^ ℓEV)) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne (2 ^ ℓEV))⟩⟩
+  have : NeZero (2 ^ ℓEV) := ⟨pow_ne_zero _ two_ne_zero⟩
+  have : Nonempty (Fin (2 ^ ℓEV)) := ⟨⟨0, Nat.pos_of_ne_zero (NeZero.ne (2 ^ ℓEV))⟩⟩
   have hkey :=
     errorVerification_outcome_joint_correctness_of_universal
       (S := KeyBitString n peSel) (T := Fin (2 ^ ℓEV))

@@ -94,7 +94,7 @@ theorem abs_coeff_row_sum {S X Z : Type*} [Fintype S] [Fintype Z] [DecidableEq Z
     ∑ s : S, ∑ m : Z,
         |(if H.hash s x = m then (1 : ℝ) else 0) - 1 / (Fintype.card Z : ℝ)|
       = 2 * (1 - 1 / (Fintype.card Z : ℝ)) * (Fintype.card S : ℝ) := by
-  haveI : Nonempty Z := H.outputNonempty
+  have : Nonempty Z := H.outputNonempty
   set c : ℝ := 1 / (Fintype.card Z : ℝ) with hc_def
   have hZ_pos : 0 < (Fintype.card Z : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card Z)
@@ -114,11 +114,11 @@ theorem abs_coeff_row_sum {S X Z : Type*} [Fintype S] [Fintype Z] [DecidableEq Z
         = (if H.hash s x = m then (1 : ℝ) - 2 * c else 0) + c := by
       intro m
       by_cases hm : H.hash s x = m
-      · rw [if_pos hm, if_pos hm, abs_of_nonneg (by linarith : (0 : ℝ) ≤ 1 - c)]; ring
-      · rw [if_neg hm, if_neg hm, zero_sub, abs_neg, abs_of_nonneg hc_nonneg]; ring
+      · rw [ite_eq_left hm, ite_eq_left hm, abs_of_nonneg (by linarith : (0 : ℝ) ≤ 1 - c)]; ring
+      · rw [ite_eq_right hm, ite_eq_right hm, zero_sub, abs_neg, abs_of_nonneg hc_nonneg]; ring
     rw [Finset.sum_congr rfl (fun m _ => hpt m), Finset.sum_add_distrib,
       Finset.sum_ite_eq Finset.univ (H.hash s x) (fun _ => (1 : ℝ) - 2 * c)]
-    rw [if_pos (Finset.mem_univ _), Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hZc]
+    rw [ite_eq_left (Finset.mem_univ _), Finset.sum_const, Finset.card_univ, nsmul_eq_mul, hZc]
     ring
   rw [Finset.sum_congr rfl (fun s _ => hinner s), Finset.sum_const, Finset.card_univ,
     nsmul_eq_mul]

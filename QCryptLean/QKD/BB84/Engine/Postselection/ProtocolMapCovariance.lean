@@ -117,11 +117,11 @@ private theorem single_mul_unitary_perm {N b : ℕ}
     rcases eq_or_ne i (π ν) with hi | hi <;> rcases eq_or_ne j (π ν) with hj | hj <;>
       simp [hi, hj, eq_comm]
   have hdiag : ∀ ν, U (π ν) ν * (starRingEnd ℂ) (U (π ν) ν) = 1 := by
-    intro ν; rw [hkey ν (π ν) (π ν), if_pos rfl, mul_one]
+    intro ν; rw [hkey ν (π ν) (π ν), ite_eq_left rfl, mul_one]
   have hoff : ∀ ν i, i ≠ π ν → U i ν = 0 := by
     intro ν i hi
     have h := hkey ν i (π ν)
-    rw [if_neg hi, if_pos rfl, zero_mul] at h
+    rw [ite_eq_right hi, ite_eq_left rfl, zero_mul] at h
     have hne : (starRingEnd ℂ) (U (π ν) ν) ≠ 0 := fun hz => by
       simpa [hz] using hdiag ν
     exact (mul_eq_zero.mp h).resolve_right hne
@@ -131,10 +131,10 @@ private theorem single_mul_unitary_perm {N b : ℕ}
   · subst hp
     rw [Matrix.single_mul_apply_same, one_mul]
     by_cases hq : q = π.symm c
-    · subst hq; rw [if_pos ⟨rfl, rfl⟩, mul_one]
-    · rw [if_neg (fun h => hq h.2.symm), mul_zero]
+    · subst hq; rw [ite_eq_left ⟨rfl, rfl⟩, mul_one]
+    · rw [ite_eq_right (fun h => hq h.2.symm), mul_zero]
       exact hoff q c (fun hcon => hq (by rw [hcon, Equiv.symm_apply_apply]))
-  · rw [Matrix.single_mul_apply_of_ne (h := hp), if_neg (fun h => hp h.1.symm), mul_zero]
+  · rw [Matrix.single_mul_apply_of_ne (h := hp), ite_eq_right (fun h => hp h.1.symm), mul_zero]
 
 /-- The explicit `n`-fold outcome permutation `π_g` on `Fin (4ⁿ)` induced by the Bell twirl
 `bellTwirlUnitary n g`: per round `ω_i ↦ bellKeyOutcomePerm (g_i) ω_i`.  (This is the witness of
@@ -183,7 +183,7 @@ private theorem unitary_perm_diag_unit {N : ℕ}
     · rw [Matrix.mul_single_apply_same, mul_one, Matrix.conjTranspose_apply, starRingEnd_apply]
     · intro l _ hl; rw [Matrix.mul_single_apply_of_ne (hbj := hl), zero_mul]
     · intro hc; exact (hc (Finset.mem_univ _)).elim
-  rw [← hconj, hperm ν, Matrix.single_apply, if_pos ⟨rfl, rfl⟩]
+  rw [← hconj, hperm ν, Matrix.single_apply, ite_eq_left ⟨rfl, rfl⟩]
 
 /-- The Bell twirl unitary permutes the computational outcome projectors via the explicit `π_g`:
 `U_g · |ν⟩⟨ν| · U_g† = |π_g ν⟩⟨π_g ν|`.  (Explicit-witness form of
@@ -257,9 +257,9 @@ theorem permMatrix_mul_single {β γ : Type*} [Fintype β] [DecidableEq β] [Dec
     · intro h; rw [← h, Equiv.apply_symm_apply]
   by_cases hq : col = q
   · by_cases hp : σ.symm out = p
-    · rw [if_pos ⟨hcond.mpr hp, hq⟩, if_pos ⟨hp, hq⟩]
-    · rw [if_neg (fun h => hp (hcond.mp h.1)), if_neg (fun h => hp h.1)]
-  · rw [if_neg (fun h => hq h.2), if_neg (fun h => hq h.2)]
+    · rw [ite_eq_left ⟨hcond.mpr hp, hq⟩, ite_eq_left ⟨hp, hq⟩]
+    · rw [ite_eq_right (fun h => hp (hcond.mp h.1)), ite_eq_right (fun h => hp h.1)]
+  · rw [ite_eq_right (fun h => hq h.2), ite_eq_right (fun h => hq h.2)]
 
 /-!
 ### §4.6 — the Kraus-family reindexings and per-Kraus signed-monomial intertwinings

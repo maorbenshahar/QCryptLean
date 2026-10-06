@@ -114,7 +114,7 @@ theorem differentiable_matrix_trace {f : ℂ → Matrix n n ℂ} (hf : Different
 are the scalar weights of an interpolation test function. -/
 theorem differentiable_const_cpow_affine {c : ℂ} (hc : c ≠ 0) (a b : ℂ) :
     Differentiable ℂ fun z : ℂ => c ^ (a * z + b) := by
-  haveI : NeZero c := ⟨hc⟩
+  have : NeZero c := ⟨hc⟩
   exact (differentiable_const_cpow_of_neZero c).comp
     (((differentiable_const a).mul differentiable_id).add_const b)
 
@@ -144,7 +144,7 @@ theorem hermCpow_differentiable {A : Matrix n n ℂ} (hA : A.IsHermitian)
   rw [hrw]
   refine differentiable_matrix_mul_right _
     (differentiable_matrix_mul_left _ (differentiable_matrix_diagonal fun i => ?_))
-  haveI : NeZero ((hA.eigenvalues i : ℝ) : ℂ) := ⟨Complex.ofReal_ne_zero.mpr (hne i)⟩
+  have : NeZero ((hA.eigenvalues i : ℝ) : ℂ) := ⟨Complex.ofReal_ne_zero.mpr (hne i)⟩
   exact differentiable_const_cpow_of_neZero _
 
 /-- Entry bound for a complex spectral power: every entry is bounded by the sum of the

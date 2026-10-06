@@ -28,11 +28,11 @@ def slot {k : ℕ} (n : Fin k → ℕ) (i : Fin k) (M : Op (n i))
 
 @[simp] theorem slot_self {k : ℕ} (n : Fin k → ℕ) (i : Fin k)
     (M : Op (n i)) : slot n i M i = M := by
-  rw [slot, dif_pos rfl, castRect_self, Matrix.one_mul, Matrix.mul_one]
+  rw [slot, dite_eq_left rfl, castRect_self, Matrix.one_mul, Matrix.mul_one]
 
 @[simp] theorem slot_of_ne {k : ℕ} (n : Fin k → ℕ) (i : Fin k)
     (M : Op (n i)) {j : Fin k} (h : j ≠ i) : slot n i M j = 1 :=
-  dif_neg h
+  dite_eq_right h
 
 @[simp] theorem slot_one {k : ℕ} (n : Fin k → ℕ) (i : Fin k) :
     slot n i (1 : Op (n i)) = fun _ => 1 := by
@@ -47,9 +47,9 @@ theorem localFam_conjTranspose_mul_self {k : ℕ} (n n' : Fin k → ℕ) (i : Fi
     (K : Matrix (Fin (n' i)) (Fin (n i)) ℂ) (j : Fin k) :
     (localFam n n' i K j)ᴴ * localFam n n' i K j = slot n i (Kᴴ * K) j := by
   rcases eq_or_ne j i with rfl | h
-  · rw [localFam, dif_pos rfl, slot_self]
+  · rw [localFam, dite_eq_left rfl, slot_self]
     simp only [castRect_self, Matrix.one_mul, Matrix.mul_one]
-  · rw [localFam, dif_neg h, slot_of_ne _ _ _ h]
+  · rw [localFam, dite_eq_right h, slot_of_ne _ _ _ h]
     exact castRect_isometry (hag j h).symm
 
 /-- Summing the only varying factor commutes with the tensor product. -/

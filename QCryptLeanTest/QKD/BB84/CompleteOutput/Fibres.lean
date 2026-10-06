@@ -252,7 +252,9 @@ theorem zeroQuotaEmbedding_outerExit
       (successCompleteOutputEmbedding 0 0 0 0 1 0 0 emptyControl
         emptyControl_hasZeroQuotas q)).1 =
       Measurement.lateSelectionExit 0 0 0 0 emptyControl := by
-  simp [successCompleteOutputEmbedding]
+  exact congrArg Sigma.fst ((Boundary.graftSpaceEquiv
+    (Measurement.lateSelectionBoundary 0 0 0 0)
+    (QKD.BB84.completeContinuationBoundary 0 0 0 0 1 0 0)).apply_symm_apply _)
 
 /-- The explicit full-quota embedding is a well-typed injection at the boundary edge case. -/
 theorem fullQuotaEmbedding_exists :

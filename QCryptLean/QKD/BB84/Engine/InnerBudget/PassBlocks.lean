@@ -133,15 +133,23 @@ theorem bb84SymChannels_sub_eq_passBlocks
         bb84PassBlockDelta true (m := m) ℓ ℓEV 1 (bb84UnitRegisterEmbed n)
           peSel xSel leakEC ec Q δ := by
     rw [hbase]
-    simp only [bb84PassBlockDelta, Bool.false_eq_true, if_false, if_true]
+    simp only [bb84PassBlockDelta, Bool.false_eq_true, ite_false, ite_true]
     abel
   unfold bb84SymRealChannel bb84SymIdealChannel bb84SymPassBlockDelta
   rw [← smul_sub, ← Finset.sum_sub_distrib, ← smul_add, ← Finset.sum_add_distrib]
   refine congrArg _ (Finset.sum_congr rfl fun π _ => ?_)
-  simp only [← LinearMap.comp_sub, ← LinearMap.comp_add,
-    ← LinearMap.add_comp]
+  simp only [← LinearMap.comp_add, ← LinearMap.add_comp]
   rw [← hsplit]
-  rfl
+  let A := bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV 1 peSel leakEC π
+  let R := (bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec
+    Q δ).realProtocolMap (eveDim := 1)
+  let I := (bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec
+    Q δ).idealProtocolMap (eveDim := 1)
+  let T := (bb84SiftedConjAfterPre 1 (bb84UnitRegisterEmbed n) peSel xSel).comp
+    (permuteSignalLinear n π)
+  change A.comp (R.comp T) - A.comp (I.comp T) = A.comp ((R - I).comp T)
+  exact (LinearMap.comp_sub (I.comp T) (R.comp T) A).symm.trans
+    (congrArg A.comp (LinearMap.sub_comp T R I).symm)
 
 /-- Paired reference permutation invariance transfers a base pass-block bound to its average. -/
 theorem bb84SymPassBlockDelta_ckrTensorTraceNorm_le
@@ -296,7 +304,7 @@ theorem bb84SymDifferBlock_diamondNorm_le_two_pow_neg_lEV
         (m := m) ℓ ℓEV 1 ((bb84UnitRegisterEmbed n).comp (permuteSignalLinear n π))
         hpre peSel xSel leakEC ec Q δ τ
     have hbase : ckrTensorTraceNorm (base.comp (permuteSignalLinear n π)) τ ≤ B := by
-      simpa only [base, bb84PassBlockDelta, if_true,
+      simpa only [base, bb84PassBlockDelta, ite_true,
         bb84SiftedPEAnnounceEveVisibleRealDifferPassChannel,
         bb84SiftedPEAnnounceEveVisibleIdealDifferPassChannel, bb84SiftedConjAfterPre,
         LinearMap.sub_comp, LinearMap.comp_assoc] using hbound

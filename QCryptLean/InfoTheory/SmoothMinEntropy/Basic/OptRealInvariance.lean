@@ -222,7 +222,7 @@ private lemma op_eq_zero_of_posSemidef_quadraticForm_re_zero
   have h_qf_zero : ∀ v : Fin n → ℂ, quadraticForm A v = 0 := fun v =>
     Complex.ext (h v) (h_im v)
   have h_mulVec : ∀ v : Fin n → ℂ, A.mulVec v = 0 := fun v =>
-    (Matrix.PosSemidef.dotProduct_mulVec_zero_iff hA v).mp (h_qf_zero v)
+    (Matrix.PosSemidef.dotProduct_mulVec_zero_iff hA).mp (h_qf_zero v)
   ext i j
   have hcol := congr_fun (h_mulVec (Pi.single j 1)) i
   simpa [Matrix.mulVec, dotProduct, Pi.single_apply] using hcol
@@ -379,7 +379,7 @@ private lemma conditionalMinEntropyOptReal_eq_zero_of_dim_zero
       ({h | ∃ σ : SubDensityOp 0, h = conditionalMinEntropyReal ρ σ} : Set ℝ) =
         {0} := by
     ext h
-    simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
     constructor
     · rintro ⟨σ, hσ⟩
       rw [hσ, h_all_zero σ]
@@ -400,7 +400,7 @@ private lemma conditionalMinEntropyReal_zero_eq_zero
   have h_lam_zero : minFeasibleLambda ρ (0 : SubDensityOp n) = 0 := by
     apply le_antisymm _ (minFeasibleLambda_nonneg ρ _)
     by_cases hempty :
-        (setOf (isFeasible ρ (0 : SubDensityOp n))).Nonempty
+        (Set.ofPred (isFeasible ρ (0 : SubDensityOp n))).Nonempty
     · obtain ⟨t, ht⟩ := hempty
       have h_blocks_zero : ∀ x : X, (ρ.stateMap x).toOp = 0 := fun x => by
         have hop : opLe (ρ.stateMap x).toOp (Complex.ofReal t • (0 : Op n)) :=
@@ -483,7 +483,7 @@ private lemma conditionalMinEntropyReal_eveTensorUniformClassical_le_optReal
   · -- Positive branch: closed-set sInf attainment plus push-down feasibility
     -- give `0 < lB` and the log-monotone inequality.
     have hA_ne :
-        (setOf (isFeasible (ρ.eveTensorUniformClassical k) σ')).Nonempty := by
+        (Set.ofPred (isFeasible (ρ.eveTensorUniformClassical k) σ')).Nonempty := by
       by_contra hempty
       rw [Set.not_nonempty_iff_eq_empty] at hempty
       have hzero :
@@ -494,28 +494,28 @@ private lemma conditionalMinEntropyReal_eveTensorUniformClassical_le_optReal
     -- The sInf is attained (closed set, bounded below, nonempty).
     have hA_closed :
         IsClosed
-          (setOf (isFeasible (ρ.eveTensorUniformClassical k) σ')) :=
+          (Set.ofPred (isFeasible (ρ.eveTensorUniformClassical k) σ')) :=
       isFeasible_isClosed _ _
     have hlA_mem :
         minFeasibleLambda (ρ.eveTensorUniformClassical k) σ' ∈
-          setOf (isFeasible (ρ.eveTensorUniformClassical k) σ') := by
+          Set.ofPred (isFeasible (ρ.eveTensorUniformClassical k) σ') := by
       unfold minFeasibleLambda
       exact hA_closed.csInf_mem hA_ne (minFeasibleLambda_bddBelow _ _)
     -- Each feasible `t` for `(ρ⊗τ, σ')` is feasible for `(ρ, σ'.partialTraceB)`.
     have hsub :
-        setOf (isFeasible (ρ.eveTensorUniformClassical k) σ') ⊆
-          setOf (isFeasible ρ σ'.partialTraceB) := fun t ht =>
+        Set.ofPred (isFeasible (ρ.eveTensorUniformClassical k) σ') ⊆
+          Set.ofPred (isFeasible ρ σ'.partialTraceB) := fun t ht =>
       isFeasible_partialTraceB_of_isFeasible_eveTensorUniformClassical
         (k := k) ρ σ' ht
     have hB_ne :
-        (setOf (isFeasible ρ σ'.partialTraceB)).Nonempty :=
+        (Set.ofPred (isFeasible ρ σ'.partialTraceB)).Nonempty :=
       ⟨_, hsub hlA_mem⟩
     have hB_closed :
-        IsClosed (setOf (isFeasible ρ σ'.partialTraceB)) :=
+        IsClosed (Set.ofPred (isFeasible ρ σ'.partialTraceB)) :=
       isFeasible_isClosed _ _
     have hlB_mem :
         minFeasibleLambda ρ σ'.partialTraceB ∈
-          setOf (isFeasible ρ σ'.partialTraceB) := by
+          Set.ofPred (isFeasible ρ σ'.partialTraceB) := by
       unfold minFeasibleLambda
       exact hB_closed.csInf_mem hB_ne (minFeasibleLambda_bddBelow _ _)
     have hlB_le_lA :
@@ -607,7 +607,7 @@ theorem conditionalMinEntropyOptReal_eveTensorUniformClassical_invariant
     have hdEk : dE * k = 0 := by rw [hdE]; ring
     rw [conditionalMinEntropyOptReal_eq_zero_of_dim_zero hdEk _,
         conditionalMinEntropyOptReal_eq_zero_of_dim_zero hdE _]
-  · haveI hNZ : NeZero dE := ⟨hdE⟩
+  · have hNZ : NeZero dE := ⟨hdE⟩
     apply le_antisymm
     · -- LHS ≤ RHS: every value of the tensored sup-set is bounded by the
       -- original optimized min-entropy via partial trace / boundary handling.
@@ -626,9 +626,9 @@ theorem conditionalMinEntropyOptReal_eveTensorUniformClassical_invariant
       -- Feasibility sets coincide: the lift direction tensorizes, and the
       -- push-down direction uses `(σ ⊗ τ_k).partialTraceB = σ`.
       have h_set_eq :
-          setOf (isFeasible (ρ.eveTensorUniformClassical k)
+          Set.ofPred (isFeasible (ρ.eveTensorUniformClassical k)
               (σ.tensor (DensityOp.toSubDensityOp (DensityOp.maxMixed k)))) =
-            setOf (isFeasible ρ σ) := by
+            Set.ofPred (isFeasible ρ σ) := by
         ext t
         refine ⟨fun ht => ?_, fun ht => ?_⟩
         · have hpt :

@@ -172,12 +172,12 @@ lemma LinearCode.exists_nonzero_codeword {n k : ℕ} (C : LinearCode n k) (hk : 
     simp only [Matrix.mulVec, Matrix.transpose_apply, Pi.zero_apply] at hj
     rw [dotProduct.eq_1] at hj
     rw [Finset.sum_eq_single i] at hj
-    · have hei : e_i i = 1 := if_pos rfl
+    · have hei : e_i i = 1 := ite_eq_left rfl
       rw [hei, mul_one] at hj
       exact hj
     · intro b _ hne
       change C.generatorMatrix b j * e_i b = 0
-      have heb : e_i b = 0 := if_neg (fun hbi => hne hbi)
+      have heb : e_i b = 0 := ite_eq_right (fun hbi => hne hbi)
       rw [heb, mul_zero]
     · intro hi
       exact absurd (Finset.mem_univ i) hi
@@ -299,11 +299,11 @@ theorem LinearCode.mem_dual_iff {n k : ℕ} (C : LinearCode n k) (v : Fin n → 
       intro i
       simp only [Matrix.mulVec, Matrix.transpose_apply, dotProduct.eq_1]
       rw [Finset.sum_eq_single j]
-      · have hej : e_j j = 1 := if_pos rfl
+      · have hej : e_j j = 1 := ite_eq_left rfl
         rw [hej, mul_one]
       · intro b _ hne
         change C.generatorMatrix b i * e_j b = 0
-        have heb : e_j b = 0 := if_neg (fun h => hne h)
+        have heb : e_j b = 0 := ite_eq_right (fun h => hne h)
         rw [heb, mul_zero]
       · intro habs
         exact absurd (Finset.mem_univ j) habs
@@ -364,7 +364,7 @@ theorem LinearCode.doubleDual_subset_codewords {n k : ℕ} (C : LinearCode n k) 
   -- Step 2: Bridge — w ∈ C.codewords ↔ w ∈ W
   have h_bridge : ∀ x : Fin n → ZMod 2, x ∈ W ↔ x ∈ C.codewords := by
     intro x
-    simp only [W, LinearMap.mem_range, codewords, Set.mem_setOf_eq, Matrix.mulVecLin_apply]
+    simp only [W, LinearMap.mem_range, codewords, Set.mem_ofPred_eq, Matrix.mulVecLin_apply]
     exact ⟨fun ⟨m, hm⟩ => ⟨m, hm.symm⟩, fun ⟨m, hm⟩ => ⟨m, hm.symm⟩⟩
   -- Step 3: Build a nondegenerate reflexive bilinear form B(v,w) = Σᵢ vᵢwᵢ
   have h_form : ∃ B : LinearMap.BilinForm (ZMod 2) (Fin n → ZMod 2),
@@ -407,11 +407,10 @@ theorem LinearCode.doubleDual_subset_codewords {n k : ℕ} (C : LinearCode n k) 
   obtain ⟨B, hB_nondeg, hB_refl, hB_eq⟩ := h_form
   have h_dual : C.dual = ↑(B.orthogonal W) := by
     ext v
-    simp only [dual, Set.mem_setOf_eq, SetLike.mem_coe,
+    simp only [dual, Set.mem_ofPred_eq, SetLike.mem_coe,
       LinearMap.BilinForm.mem_orthogonal_iff]
     constructor
     · intro hv x hx
-      change (B x) v = 0
       rw [hB_eq]
       have hx' := (h_bridge x).mp hx
       rw [show ∑ i, x i * v i = ∑ i, v i * x i from by congr 1; ext i; ring]
@@ -426,11 +425,10 @@ theorem LinearCode.doubleDual_subset_codewords {n k : ℕ} (C : LinearCode n k) 
   -- Step 5: C.doubleDual = ↑(B.orthogonal (B.orthogonal W))
   have h_ddual : C.doubleDual = ↑(B.orthogonal (B.orthogonal W)) := by
     ext u
-    simp only [doubleDual, Set.mem_setOf_eq, SetLike.mem_coe,
+    simp only [doubleDual, Set.mem_ofPred_eq, SetLike.mem_coe,
       LinearMap.BilinForm.mem_orthogonal_iff]
     constructor
     · intro hu v hv
-      change (B v) u = 0
       rw [hB_eq]
       have hv' : v ∈ C.dual := h_dual ▸ hv
       rw [show ∑ i, v i * u i = ∑ i, u i * v i from by congr 1; ext i; ring]

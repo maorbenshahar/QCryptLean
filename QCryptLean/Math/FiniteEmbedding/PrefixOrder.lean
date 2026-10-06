@@ -113,7 +113,11 @@ theorem prefixSequenceBackward_forward {N r : ℕ} (T : Finset (Fin N))
   intro k
   simp only [prefixSequenceBackward, rebuildPrefixSequence, prefixSequenceForward,
     Equiv.trans_apply]
-  rw [← sumEquiv_eq_sumCongr_rightPerm]
+  have h := congrArg (fun e : Equiv.Perm (Fin r ⊕ Fin (T.card - r)) =>
+    prefixTargetEquiv T u (e ((prefixDomainEquiv T u).symm k)))
+      (sumEquiv_eq_sumCongr_rightPerm (prefixComparison T u q)
+        (prefixComparison_apply_left T u q))
+  refine h.symm.trans ?_
   simp [prefixComparison]
 
 /-- Extracting after rebuilding recovers the supplied residual permutation. -/

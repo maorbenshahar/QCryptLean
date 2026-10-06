@@ -151,7 +151,7 @@ theorem bb84_bellPeLabelledRhoEtilde_acceptSplit_phaseBadBranch_traceNorm_le_ofS
           Op (signalDim ^ (n - bb84KeyRoundCount n m) *
             (1 * (signalDim ^ n)))).trace).re ≤
       E := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   have hsame : ∀ x : Fin n → Fin signalDim,
       (Matrix.of fun i j : Fin (signalDim ^ (n - bb84KeyRoundCount n m) *
             (1 * (signalDim ^ n))) =>
@@ -225,7 +225,7 @@ theorem bb84_bellPeLabelledRhoEtilde_acceptSplit_phaseBadBranch_traceNorm_le_ofS
           Op (signalDim ^ (n - bb84KeyRoundCount n m) *
             (1 * (signalDim ^ n)))).trace).re ≤
       E := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   have hsame : ∀ x : Fin n → Fin signalDim,
       (Matrix.of fun i j : Fin (signalDim ^ (n - bb84KeyRoundCount n m) *
             (1 * (signalDim ^ n))) =>

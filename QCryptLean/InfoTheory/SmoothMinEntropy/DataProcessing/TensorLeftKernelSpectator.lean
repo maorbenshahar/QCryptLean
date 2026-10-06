@@ -178,8 +178,8 @@ lemma partialTraceB_coarsen_blocks {Xc Yc : Type*} [Fintype Xc] [Fintype Yc] [De
     Quantum.TensorProducts.partialTraceB_finset_sum]
   refine Finset.sum_congr rfl (fun x _ => ?_)
   by_cases hx : g x = y
-  · rw [if_pos hx, if_pos hx]; exact hblocks x
-  · rw [if_neg hx, if_neg hx,
+  · rw [ite_eq_left hx, ite_eq_left hx]; exact hblocks x
+  · rw [ite_eq_right hx, ite_eq_right hx,
       show (0 : Op (dE * dV)) = (0 : ℂ) • (0 : Op (dE * dV)) by rw [zero_smul],
       Quantum.TensorProducts.partialTraceB_smul, zero_smul]
 

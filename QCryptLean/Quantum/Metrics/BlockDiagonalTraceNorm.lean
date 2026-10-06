@@ -216,7 +216,7 @@ private lemma reindex_prodCongr_blockDiagonal
   by_cases hjj : j = j'
   · subst hjj; simp
   · have hsig : σ.symm j ≠ σ.symm j' := fun h => hjj (σ.symm.injective h)
-    rw [if_neg hjj, if_neg hsig]
+    rw [ite_eq_right hjj, ite_eq_right hsig]
 
 
 /-!

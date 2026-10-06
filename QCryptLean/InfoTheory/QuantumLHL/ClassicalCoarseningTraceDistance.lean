@@ -89,11 +89,11 @@ lemma CQState.traceNorm_coarsen_joint_diff_le
         ((CQState.coarsen g ρ).toJointDensity.toOp -
           (CQState.coarsen g ρ').toJointDensity.toOp) ≤
       traceNorm (ρ.toJointDensity.toOp - ρ'.toJointDensity.toOp) := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
-  haveI : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Y) :=
+  have : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Y) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [traceNorm_joint_diff_eq_sum (CQState.coarsen g ρ) (CQState.coarsen g ρ'),
     traceNorm_joint_diff_eq_sum ρ ρ']
@@ -115,11 +115,11 @@ lemma CQState.traceDistanceGen_coarsen_le
         (CQState.coarsen g ρ).toJointDensity.toOp
         (CQState.coarsen g ρ').toJointDensity.toOp ≤
       traceDistanceGen ρ.toJointDensity.toOp ρ'.toJointDensity.toOp := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
-  haveI : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Y) :=
+  have : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Y) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   have hnorm := CQState.traceNorm_coarsen_joint_diff_le g ρ ρ'
   have htrρ := CQState.coarsen_joint_trace_re_eq g ρ

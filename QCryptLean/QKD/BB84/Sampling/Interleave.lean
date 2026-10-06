@@ -116,7 +116,10 @@ theorem shuffleZSequenceInverse_forward {N : ℕ} (a b : Fin N → Basis)
   unfold shuffleZSequenceInverse shuffleZSequenceForward
   apply (shuffleZSlotOrderEquiv a b o).injective
   apply Subtype.ext
-  simp [matchedZInclusion]
+  simp only [Equiv.apply_symm_apply]
+  change (shufflePartitionOrder a b o).symm
+    (shufflePartitionOrder a b o (shuffleZSlotOrderEquiv a b o k).1) = _
+  exact Equiv.symm_apply_apply _ _
 
 /-- Forward Z-sequence reading after inverse ranking is the identity. -/
 theorem shuffleZSequenceForward_inverse {N : ℕ} (a b : Fin N → Basis)
@@ -124,7 +127,8 @@ theorem shuffleZSequenceForward_inverse {N : ℕ} (a b : Fin N → Basis)
     shuffleZSequenceForward a b o (shuffleZSequenceInverse a b o i) = i := by
   unfold shuffleZSequenceInverse shuffleZSequenceForward
   apply Subtype.ext
-  simp [matchedZInclusion]
+  simp only [Equiv.apply_symm_apply]
+  rfl
 
 /-- Ordered enumeration of matched-Z values read from their increasing shuffled slots. -/
 def shuffleZSequenceEquiv {N : ℕ} (a b : Fin N → Basis) (o : Shuffle a b) :
@@ -164,7 +168,8 @@ theorem shuffleXSequenceInverse_mem {N : ℕ} (a b : Fin N → Basis)
   intro hZSlot
   have hZ : i.1 ∈ MatchedZ a b := by
     have := (Finset.mem_filter.mp hZSlot).2
-    simpa [matchedXInclusion] using this
+    rw [Equiv.apply_symm_apply] at this
+    exact this
   exact (Finset.disjoint_left.mp (matchedBasis_disjoint a b) hZ i.2)
 
 /-- Forward read of the matched-X sequence. -/
@@ -187,7 +192,10 @@ theorem shuffleXSequenceInverse_forward {N : ℕ} (a b : Fin N → Basis)
   unfold shuffleXSequenceInverse shuffleXSequenceForward
   apply (shuffleXSlotOrderEquiv a b o).injective
   apply Subtype.ext
-  simp [matchedXInclusion]
+  simp only [Equiv.apply_symm_apply]
+  change (shufflePartitionOrder a b o).symm
+    (shufflePartitionOrder a b o (shuffleXSlotOrderEquiv a b o k).1) = _
+  exact Equiv.symm_apply_apply _ _
 
 /-- Forward X-sequence reading after inverse ranking is the identity. -/
 theorem shuffleXSequenceForward_inverse {N : ℕ} (a b : Fin N → Basis)
@@ -195,7 +203,8 @@ theorem shuffleXSequenceForward_inverse {N : ℕ} (a b : Fin N → Basis)
     shuffleXSequenceForward a b o (shuffleXSequenceInverse a b o i) = i := by
   unfold shuffleXSequenceInverse shuffleXSequenceForward
   apply Subtype.ext
-  simp [matchedXInclusion]
+  simp only [Equiv.apply_symm_apply]
+  rfl
 
 /-- Ordered enumeration of matched-X values read from their increasing shuffled slots. -/
 def shuffleXSequenceEquiv {N : ℕ} (a b : Fin N → Basis) (o : Shuffle a b) :
@@ -250,7 +259,7 @@ theorem shuffleInterleaveBackward_forward {N : ℕ} (a b : Fin N → Basis)
     change (shufflePartitionOrder a b o (shuffleZSlotOrderEquiv a b o j).1).1 =
       (o k).1
     have hslot : (shuffleZSlotOrderEquiv a b o j).1 = t := by
-      simpa [e, shuffleZSlotOrderEquiv] using hs'.symm
+      exact hs'.symm
     rw [hslot]
     simp [t, shufflePartitionOrder]
   · change matchedXInclusion a b (shuffleXSequenceForward a b o j) = o k
@@ -258,7 +267,7 @@ theorem shuffleInterleaveBackward_forward {N : ℕ} (a b : Fin N → Basis)
     change (shufflePartitionOrder a b o (shuffleXSlotOrderEquiv a b o j).1).1 =
       (o k).1
     have hslot : (shuffleXSlotOrderEquiv a b o j).1 = t := by
-      simpa [e, shuffleXSlotOrderEquiv] using hs'.symm
+      exact hs'.symm
     rw [hslot]
     simp [t, shufflePartitionOrder]
 
@@ -451,8 +460,7 @@ theorem shuffleInterleave_basisLists {N : ℕ} (a b : Fin N → Basis)
       _ = ((List.ofFn fun k : Fin ((MatchedZ a b).card + (MatchedX a b).card) => k).filter
           fun k => decide (k ∈ (shuffleZSlotFinset a b o)ᶜ)).map (fun k => (q k).1) := by
             apply congrArg (List.map fun k => (q k).1)
-            simpa [shuffleXSlotOrderEquiv] using
-              orderedFilter _ _ ((shuffleZSlotFinset a b o)ᶜ)
+            exact orderedFilter _ _ ((shuffleZSlotFinset a b o)ᶜ)
                 (interleaveSubset_compl_card a b (shuffleZSlots a b o))
       _ = (List.ofFn fun k : Fin ((MatchedZ a b).card + (MatchedX a b).card) =>
           (q k).1).filter fun i => decide (a i = Basis.x) := by

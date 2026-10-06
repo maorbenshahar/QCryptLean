@@ -300,9 +300,9 @@ private lemma loewner_conjTranspose_mul_sq {d : ℕ} [NeZero d]
     -- We need CStarAlgebra + StarOrderedRing for the C* bound
     -- The scoped instances give CStarRing + NormedAlgebra, and we manually
     -- build CStarAlgebra (which also requires StarOrderedRing for the bound).
-    letI : CStarAlgebra (Op d) := { }
+    let : CStarAlgebra (Op d) := { }
     have h_le : star A * A ≤ algebraMap ℝ _ (‖A‖ ^ 2) :=
-      CStarAlgebra.star_mul_le_algebraMap_norm_sq
+      CStarAlgebra.star_mul_le_algebraMap_norm_sq A
     have h_le2 : Aᴴ * A ≤ ‖A‖ ^ 2 • (1 : Op d) := by
       rwa [star_eq_conjTranspose, Algebra.algebraMap_eq_smul_one] at h_le
     have h_psd := Matrix.le_iff.mp h_le2
@@ -354,7 +354,7 @@ lemma traceNorm_mul_le_opNorm_mul_traceNorm {d : ℕ} [NeZero d]
   -- Step 3: Loewner bound B†A†AB ≤ ‖A‖² • B†B
   have h_loewner := loewner_conjTranspose_mul_sq A B
   -- Step 4: CFC.sqrt monotonicity (needs CStarAlgebra instance)
-  letI : CStarAlgebra (Op d) := { }
+  let : CStarAlgebra (Op d) := { }
   have h_sqrt_le := CFC.sqrt_le_sqrt _ _ h_loewner
   -- Step 5: CFC.sqrt of scalar multiple
   have h_nn_BB : (0 : Op d) ≤ B.conjTranspose * B := (posSemidef_conjTranspose_mul_self B).nonneg

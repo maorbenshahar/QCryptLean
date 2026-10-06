@@ -75,7 +75,7 @@ lemma bb84RealPassDifferKraus_adjoint_mul (n m ℓ ℓEV eveDim : ℕ) [NeZero e
             (finProdFinEquiv (finFunctionFinEquiv k.2, r)) (1 : ℂ)
       else 0 := by
   by_cases h : bb84SiftedKeyStringsDiffer peSel ec k.2 = true
-  · simp only [bb84RealPassDifferKraus, h, if_true, Bool.true_and]
+  · simp only [bb84RealPassDifferKraus, h, ite_true, Bool.true_and]
     exact bb84.retainedSiftedPEAnnouncePassBranchKraus_adjoint_mul n m ℓ ℓEV eveDim peSel xSel
       leakEC ec δ Q k.1 k.2
   · simp [bb84RealPassDifferKraus, h]
@@ -93,7 +93,7 @@ lemma bb84IdealPassDifferKraus_adjoint_mul (n m ℓ ℓEV eveDim : ℕ) [NeZero 
             (finProdFinEquiv (finFunctionFinEquiv k.1, r)) (1 : ℂ)
       else 0 := by
   by_cases h : bb84SiftedKeyStringsDiffer peSel ec k.1 = true
-  · simp only [bb84IdealPassDifferKraus, h, if_true, Bool.true_and]
+  · simp only [bb84IdealPassDifferKraus, h, ite_true, Bool.true_and]
     exact bb84.retainedSiftedPEAnnounceIdealPassKraus_adjoint_mul n m ℓ ℓEV eveDim peSel xSel
       leakEC ec δ Q k.1 k.2.1 k.2.2
   · simp [bb84IdealPassDifferKraus, h]
@@ -501,7 +501,7 @@ theorem bb84SiftedPEAnnounceEveVisible_baseChannel_mapTensorId_diff_eq_passOutpu
           ec Q δ τ -
         bb84SiftedPEAnnounceEveVisibleIdealPassOutput (m := m) ℓ ℓEV eveDim pre peSel xSel
             leakEC ec Q δ τ := by
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ *
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ *
       (bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec Q δ).transcriptDim *
       eveDim) := by
     change NeZero (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC eveDim)

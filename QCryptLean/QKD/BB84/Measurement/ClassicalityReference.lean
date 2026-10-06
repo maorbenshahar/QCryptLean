@@ -92,8 +92,10 @@ theorem weightedMeasurementSchedule_honestRegistersDiagonal
         (finishedStreamEquiv Unit N (q .alice)),
       ← finishedStreamEquiv_symm_apply Unit N
         (finishedStreamEquiv Unit N (q .bob))]
-    simp only [Equiv.symm_apply_apply]
-    exact (TwoParty.pairEquiv _ _).symm_apply_apply q
+    exact (congrArg₂ (fun a b => (TwoParty.pairEquiv _ _).symm (a, b))
+      ((finishedStreamEquiv Unit N).symm_apply_apply _)
+      ((finishedStreamEquiv Unit N).symm_apply_apply _)).trans
+        ((TwoParty.pairEquiv _ _).symm_apply_apply q)
   have hrow' :
       (weightedScheduleOutputEquiv Unit N).symm ((a'.1, a'.2), (b'.1, b'.2)) =
         (Boundary.leafSpaceEquiv
@@ -106,8 +108,10 @@ theorem weightedMeasurementSchedule_honestRegistersDiagonal
         (finishedStreamEquiv Unit N (q' .alice)),
       ← finishedStreamEquiv_symm_apply Unit N
         (finishedStreamEquiv Unit N (q' .bob))]
-    simp only [Equiv.symm_apply_apply]
-    exact (TwoParty.pairEquiv _ _).symm_apply_apply q'
+    exact (congrArg₂ (fun a b => (TwoParty.pairEquiv _ _).symm (a, b))
+      ((finishedStreamEquiv Unit N).symm_apply_apply _)
+      ((finishedStreamEquiv Unit N).symm_apply_apply _)).trans
+        ((TwoParty.pairEquiv _ _).symm_apply_apply q')
   change (weightedMeasurementSchedule pA pB N).denote rho
     ((weightedScheduleOutputEquiv Unit N).symm ((a.1, a.2), (b.1, b.2)))
     ((weightedScheduleOutputEquiv Unit N).symm ((a'.1, a'.2), (b'.1, b'.2))) = 0 at hdiag
@@ -156,7 +160,14 @@ theorem weightedMeasurementSchedule_recordsDiagonal_mapTensorId
           (Fintype.equivFin (weightedStreamSystem Unit N).total)
           (Fintype.equivFin (weightedStreamSystem Unit N).total) ρ := by
     ext i j
-    simp [ρ, Matrix.reindex_apply]
+    change W (finProdFinEquiv (i, s)) (finProdFinEquiv (j, t)) =
+      W (finProdFinEquiv
+        ((Fintype.equivFin (weightedStreamSystem Unit N).total)
+          ((Fintype.equivFin (weightedStreamSystem Unit N).total).symm i), s))
+        (finProdFinEquiv
+          ((Fintype.equivFin (weightedStreamSystem Unit N).total)
+            ((Fintype.equivFin (weightedStreamSystem Unit N).total).symm j), t))
+    simp only [Equiv.apply_symm_apply]
   rw [hblock]
   calc
     coordinateLinear

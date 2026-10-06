@@ -21,7 +21,7 @@ need:
 §1a/§1c build on `SL-Unit` (`commutant_unitaryTensorPow_eq_commutant_tensorPow`,
 `SchurWeylUnitarySpan.lean`), consumed here, not re-derived.
 
-As in `SchurWeylUnitarySpan.lean`, `setOf` (which delaborates to `{T | …}`) is used throughout
+As in `SchurWeylUnitarySpan.lean`, `Set.ofPred` (which delaborates to `{T | …}`) is used throughout
 instead of the `{T : … | …}` set-builder notation: `open Quantum.Operators` brings the Dirac ket
 `|i:n⟩` notation, whose `|` token (followed by a binder `:`) makes the set-builder form
 unparseable here. The two forms produce identical `Set` terms.
@@ -48,10 +48,10 @@ theorem commutant_unitaryTensorPow_eq_permSpan (dR n : ℕ) [NeZero dR] [NeZero 
         (Set.range fun U : Matrix.unitaryGroup (Fin dR) ℂ => Op.tensorPow (U : Op dR) n)
       = commutant (dR ^ n) (Set.range fun A : Op dR => Op.tensorPow A n) := by
     apply SetLike.coe_injective
-    change setOf (fun T : Op (dR ^ n) => ∀ Y ∈
+    change Set.ofPred (fun T : Op (dR ^ n) => ∀ Y ∈
           (Set.range fun U : Matrix.unitaryGroup (Fin dR) ℂ => Op.tensorPow (U : Op dR) n),
             Commute Y T)
-        = setOf (fun T : Op (dR ^ n) => ∀ Y ∈ (Set.range fun A : Op dR => Op.tensorPow A n),
+        = Set.ofPred (fun T : Op (dR ^ n) => ∀ Y ∈ (Set.range fun A : Op dR => Op.tensorPow A n),
             Commute Y T)
     simp only [Set.forall_mem_range]
     exact commutant_unitaryTensorPow_eq_commutant_tensorPow dR n
@@ -66,10 +66,10 @@ representations, and conversely each raw `P_R(π)` already lies in `permSpan dR 
 private theorem span_tensor_permSpan_eq_span_tensor_permRep
     (dA dR n : ℕ) [NeZero dA] [NeZero dR] [NeZero n] :
     Submodule.span ℂ
-        (setOf fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (M : Op (dR ^ n)),
+        (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (M : Op (dR ^ n)),
             M ∈ permSpan dR n ∧ T = Op.tensor X M)
       = Submodule.span ℂ
-          (setOf fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
+          (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
               T = Op.tensor X (permutationRepresentation dR n π)) := by
   apply le_antisymm
   · rw [Submodule.span_le]
@@ -103,27 +103,27 @@ count). Composes `SL-TensorLift` (`commutant_pairedTensorFamily_eq_tensorCommuta
 representations via `span_tensor_permSpan_eq_span_tensor_permRep`. -/
 theorem commutant_pairedUnitaryTensorPow_eq_tensorPermSpan (dA dR n : ℕ)
     [NeZero dA] [NeZero dR] [NeZero n] :
-    (setOf fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
+    (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
         Commute (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n)) T)
       = (Submodule.span ℂ
-          (setOf fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
+          (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
               T = Op.tensor X (permutationRepresentation dR n π))
         : Set (Op (dA ^ n * dR ^ n))) := by
   rw [← span_tensor_permSpan_eq_span_tensor_permRep dA dR n]
   have hbase := commutant_pairedTensorFamily_eq_tensorCommutantSpan (dA := dA) (dR := dR) (n := n)
     (Set.range fun U : Matrix.unitaryGroup (Fin dR) ℂ => Op.tensorPow (U : Op dR) n)
-  have hLHS : (setOf fun T : Op (dA ^ n * dR ^ n) => ∀ S ∈
+  have hLHS : (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∀ S ∈
         (Set.range fun U : Matrix.unitaryGroup (Fin dR) ℂ => Op.tensorPow (U : Op dR) n),
         Commute (Op.tensor (1 : Op (dA ^ n)) S) T)
-      = (setOf fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
+      = (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
         Commute (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n)) T) := by
-    ext T; simp only [Set.mem_setOf_eq, Set.forall_mem_range]
+    ext T; simp only [Set.mem_ofPred_eq, Set.forall_mem_range]
   rw [hLHS] at hbase
   rw [hbase]
   congr 1
   congr 1
   ext T
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · rintro ⟨X, M, hM, rfl⟩
     refine ⟨X, M, ?_, rfl⟩
@@ -146,7 +146,7 @@ theorem commutant_pairedUnitaryTensorPow_eq_tensorPermSpan (dA dR n : ℕ)
 private theorem exists_sum_tensor_permRep_of_mem_span
     (dA dR n : ℕ) [NeZero dA] [NeZero dR] [NeZero n] (T : Op (dA ^ n * dR ^ n))
     (hT : T ∈ Submodule.span ℂ
-        (setOf fun S : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
+        (Set.ofPred fun S : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
             S = Op.tensor X (permutationRepresentation dR n π))) :
     ∃ M : Equiv.Perm (Fin n) → Op (dA ^ n),
       T = ∑ π : Equiv.Perm (Fin n), Op.tensor (M π) (permutationRepresentation dR n π) := by
@@ -157,7 +157,7 @@ private theorem exists_sum_tensor_permRep_of_mem_span
       rw [Finset.sum_eq_single π₀]
       · simp
       · intro π _ hπ
-        simp only [if_neg hπ]
+        simp only [ite_eq_right hπ]
         have hzero : Op.tensor (0 : Op (dA ^ n)) (permutationRepresentation dR n π)
             = (0 : Op (dA ^ n * dR ^ n)) := by
           rw [show (0 : Op (dA ^ n)) = (0 : ℂ) • (0 : Op (dA ^ n)) by simp,
@@ -206,7 +206,7 @@ theorem maxEntangledUnitaryTwirl_eq_sum_tensor_permRep (dA dR n : ℕ)
   have hComm : ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
       Commute (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n)) T0 :=
     (twirlMap_eq_iff_commute dA dR n T0).mp hFix
-  have hMem : T0 ∈ (setOf fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
+  have hMem : T0 ∈ (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
       Commute (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n)) T) := hComm
   rw [commutant_pairedUnitaryTensorPow_eq_tensorPermSpan dA dR n] at hMem
   obtain ⟨M, hM⟩ := exists_sum_tensor_permRep_of_mem_span dA dR n T0 hMem

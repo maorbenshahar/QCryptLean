@@ -142,7 +142,7 @@ theorem smoothMinEntropyReal_classicalFlag_conditioning_ge_of_ballLift
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (ε : ℝ) (hε : 0 ≤ ε) (ρ_full ρ_acc : CQState X n) (σ : SubDensityOp n)
     {p_acc : ℝ} (hp_pos : 0 < p_acc)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ_acc σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_acc σ)))
     (hlift : ∀ ρ' : CQState X n, CQState.purifiedDistance ρ_full ρ' ≤ ε →
       ∃ ρ'_acc : CQState X n, CQState.purifiedDistance ρ_acc ρ'_acc ≤ ε ∧
         (∀ x : X,
@@ -152,7 +152,7 @@ theorem smoothMinEntropyReal_classicalFlag_conditioning_ge_of_ballLift
       ≤ smoothMinEntropyReal ε ρ_acc σ := by
   unfold smoothMinEntropyReal
   have hcomp := csSup_sub_le_csSup_of_forall_exists_sub_le
-    (setOf (isInSmoothedSetReal ε ρ_full σ)) (setOf (isInSmoothedSetReal ε ρ_acc σ))
+    (Set.ofPred (isInSmoothedSetReal ε ρ_full σ)) (Set.ofPred (isInSmoothedSetReal ε ρ_acc σ))
     (-(Real.log p_acc / Real.log 2))
     (smoothedSetReal_nonempty hε ρ_full σ) hbdd
     (by

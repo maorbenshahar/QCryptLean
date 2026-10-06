@@ -160,10 +160,10 @@ theorem CQState.purifiedDistance_tensorMaxMixed_contract
     CQState.purifiedDistance ρEtensor σEtensor ≤
       CQState.purifiedDistance ρE σE := by
   unfold CQState.purifiedDistance
-  haveI : NeZero ((dE * dR) * Fintype.card X) :=
+  have : NeZero ((dE * dR) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR))
       Fintype.card_ne_zero⟩
-  haveI : NeZero (dE * Fintype.card X) :=
+  have : NeZero (dE * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dE) Fintype.card_ne_zero⟩
   apply purifiedDistance_le_of_fidelityGen_ge
   exact le_of_eq (CQState.fidelityGen_tensorMaxMixed_eq

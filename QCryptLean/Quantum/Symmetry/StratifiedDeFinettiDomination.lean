@@ -145,7 +145,7 @@ discharged by the general square-root purification lemmas
 theorem stratifiedCKRPurification_isPurification {k : ℕ} (n : Fin k → ℕ) [∀ j, NeZero (n j)]
     [NeZero (∑ j, n j)] :
     IsStratifiedCKRDeFinettiPurification (stratifiedCKRPurification n) := by
-  haveI : NeZero ((4 : ℕ) ^ (∑ j, n j)) := ⟨pow_ne_zero _ (by norm_num)⟩
+  have : NeZero ((4 : ℕ) ^ (∑ j, n j)) := ⟨pow_ne_zero _ (by norm_num)⟩
   exact ⟨purificationDensityOp_isPure _, purificationDensityOp_partialTraceB _⟩
 
 /-- **Existence of a stratified CKR de Finetti purification** on a reference register of
@@ -154,7 +154,7 @@ theorem stratified_ckrPurification_exists {k : ℕ} (n : Fin k → ℕ) [∀ j, 
     [NeZero (∑ j, n j)] :
     ∃ (dimR : ℕ) (_ : NeZero dimR) (τ : DensityOp ((4 ^ (∑ j, n j)) * dimR)),
       IsStratifiedCKRDeFinettiPurification τ := by
-  haveI : NeZero ((4 : ℕ) ^ (∑ j, n j)) := ⟨pow_ne_zero _ (by norm_num)⟩
+  have : NeZero ((4 : ℕ) ^ (∑ j, n j)) := ⟨pow_ne_zero _ (by norm_num)⟩
   exact ⟨4 ^ (∑ j, n j), inferInstance, stratifiedCKRPurification n,
     stratifiedCKRPurification_isPurification n⟩
 
@@ -188,7 +188,7 @@ tensored over strata, giving the polynomial degree gain of the product route. -/
 theorem stratifiedDeFinettiPrefactor_le_prod_pow {k : ℕ} (n : Fin k → ℕ) :
     stratifiedDeFinettiPrefactor n ≤ ∏ j, (n j + 1) ^ 3 := by
   unfold stratifiedDeFinettiPrefactor
-  refine Finset.prod_le_prod' fun j => ?_
+  refine Finset.prod_le_prod fun j => ?_
   have h := deFinettiPrefactor_le_pow 4 (n j)
   simpa using h
 
@@ -225,8 +225,8 @@ private theorem bellDiag_conj_diag (N : ℕ) (M : Op (4 ^ N)) (hM : IsIIDBellDia
   ext i j
   rw [Matrix.diagonal_apply]
   by_cases hij : i = j
-  · rw [if_pos hij, hij]
-  · rw [if_neg hij]
+  · rw [ite_eq_left hij, hij]
+  · rw [ite_eq_right hij]
     exact (iidBellDiagonal_iff_bellBasis_diagonal M).mp hM i j hij
 
 /-- Reindexing helper: `∑_j n(rev j) = ∑_j n j`. -/
@@ -533,7 +533,8 @@ theorem stratified_domination_per_index {k : ℕ} (n : Fin k → ℕ) [∀ j, Ne
     have hexp : ∀ g : (∀ j, Equiv.Perm (Fin (n j))),
         M (pidx g) (pidx g) = ∑ kk, (if pidx g = kk then M kk kk else 0) := by
       intro g
-      rw [Finset.sum_ite_eq Finset.univ (pidx g) (fun kk => M kk kk), if_pos (Finset.mem_univ _)]
+      rw [Finset.sum_ite_eq Finset.univ (pidx g) (fun kk => M kk kk),
+        ite_eq_left (Finset.mem_univ _)]
     simp_rw [hexp]
     rw [Finset.sum_comm]
     apply Finset.sum_congr rfl
@@ -747,7 +748,7 @@ theorem stratifiedBellDeFinettiDensity_eq_of_k_eq_one (n : Fin 1 → ℕ) [∀ j
     Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.kroneckerMap_apply]
   simp only [DensityOp.trivial, finProdFinEquiv, Matrix.of_apply, Matrix.cons_val_fin_one,
     mul_one]
-  congr 1 <;> (apply Fin.ext; simp [Fin.divNat, Nat.div_one]; rfl)
+  congr 1 <;> (apply Fin.ext; simp [Fin.divNat, Nat.div_one])
 
 end Quantum.Symmetry
 

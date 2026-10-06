@@ -196,14 +196,14 @@ def permCommutant (dR n : ℕ) [NeZero dR] : Submodule ℂ (Op (dR ^ n)) where
     permutationRepresentation dR n π * M = M * permutationRepresentation dR n π }
   add_mem' := by
     intro a b ha hb π
-    simp only [Set.mem_setOf_eq] at ha hb ⊢
+    simp only [Set.mem_ofPred_eq] at ha hb ⊢
     rw [mul_add, add_mul, ha π, hb π]
   zero_mem' := by
     intro π
     simp only [mul_zero, zero_mul]
   smul_mem' := by
     intro c M hM π
-    simp only [Set.mem_setOf_eq] at hM ⊢
+    simp only [Set.mem_ofPred_eq] at hM ⊢
     rw [mul_smul_comm, smul_mul_assoc, hM π]
 
 /-- **Span-of-tensor-powers conclusion:** the span of the `n`-th tensor powers is exactly the

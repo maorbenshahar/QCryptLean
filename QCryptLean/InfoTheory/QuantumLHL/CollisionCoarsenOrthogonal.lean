@@ -182,20 +182,20 @@ theorem collisionQuantity_coarsen_filterKeep_eq_of_fibreWeightedOrthogonal
       = if keep x then (ρ.stateMap x).toOp else 0 := by
     rw [CQState.filterKeep_stateMap]
     by_cases h : keep x
-    · rw [if_pos h, if_pos h]
-    · rw [if_neg h, if_neg h]; rfl
+    · rw [ite_eq_left h, ite_eq_left h]
+    · rw [ite_eq_right h, ite_eq_right h]; rfl
   have hx' : ((CQState.filterKeep keep ρ).stateMap x').toOp
       = if keep x' then (ρ.stateMap x').toOp else 0 := by
     rw [CQState.filterKeep_stateMap]
     by_cases h : keep x'
-    · rw [if_pos h, if_pos h]
-    · rw [if_neg h, if_neg h]; rfl
+    · rw [ite_eq_left h, ite_eq_left h]
+    · rw [ite_eq_right h, ite_eq_right h]; rfl
   rw [hx, hx']
   by_cases h : keep x
   · by_cases h' : keep x'
-    · rw [if_pos h, if_pos h']; exact horth x x' hg hne
-    · rw [if_neg h', weightedFrobeniusPairing_zero_right]
-  · rw [if_neg h, weightedFrobeniusPairing_zero_left]
+    · rw [ite_eq_left h, ite_eq_left h']; exact horth x x' hg hne
+    · rw [ite_eq_right h', weightedFrobeniusPairing_zero_right]
+  · rw [ite_eq_right h, weightedFrobeniusPairing_zero_left]
 
 /-! ## The pairing factorises over a tensor reference -/
 
@@ -267,11 +267,11 @@ theorem weightedFrobeniusPairing_blockDiagRefOp_stdProj_tensor {dE dC : ℕ}
   rw [hassoc, hleft p M, hleft p' M', Op.tensor_mul]
   by_cases hpp : p = p'
   · subst hpp
-    rw [if_pos rfl, stdKetProj_idem_local, Quantum.TensorProducts.Op.trace_tensor,
+    rw [ite_eq_left rfl, stdKetProj_idem_local, Quantum.TensorProducts.Op.trace_tensor,
       trace_ketbra_normalized _ (stdKet_braket_self p), one_mul,
       show (M * (ν p).toOp ^ (-1/2 : ℝ)) * (M' * (ν p).toOp ^ (-1/2 : ℝ))
         = M * (ν p).toOp ^ (-1/2 : ℝ) * M' * (ν p).toOp ^ (-1/2 : ℝ) from by noncomm_ring]
-  · rw [if_neg hpp, stdKetProj_orthogonal_local hpp]
+  · rw [ite_eq_right hpp, stdKetProj_orthogonal_local hpp]
     simp [Op.tensor]
 
 end InfoTheory.QuantumLHL

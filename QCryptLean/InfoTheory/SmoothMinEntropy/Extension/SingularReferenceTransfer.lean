@@ -147,7 +147,7 @@ theorem smoothMinEntropyReal_ge_of_smul_opLe_of_pos_floor
   set η : ℝ := (∑ x : X, (ρ.stateMap x).trace) - 2 * ε with hηdef
   have hη_pos : 0 < η := by rw [hηdef]; linarith
   have hρ_lower : η + 2 * ε ≤ ∑ x : X, (ρ.stateMap x).trace := by rw [hηdef]; linarith
-  have hbdd' : BddAbove (setOf (isInSmoothedSetReal ε ρ σ')) :=
+  have hbdd' : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ')) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ
         (fun _ hd => CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower hρ hd))

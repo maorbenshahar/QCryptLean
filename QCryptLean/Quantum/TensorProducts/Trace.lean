@@ -480,16 +480,16 @@ lemma quadraticForm_rightBlockVector_eq_sum {n m : ℕ} (M : Op (n * m))
           ∑ j : Fin n, M (finProdFinEquiv (i, k)) (finProdFinEquiv (j, k)) * x j := by
         congr 1; ext i
         rw [Finset.sum_eq_single k]
-        · rw [if_pos rfl]
+        · rw [ite_eq_left rfl]
           congr 1
           congr 1; ext j
           rw [Finset.sum_eq_single k]
-          · rw [if_pos rfl]
+          · rw [ite_eq_left rfl]
           · intro l' _ hl'
-            rw [if_neg hl', mul_zero]
+            rw [ite_eq_right hl', mul_zero]
           · intro hk; exact (hk (Finset.mem_univ k)).elim
         · intro l _ hl
-          rw [if_neg hl, zero_mul]
+          rw [ite_eq_right hl, zero_mul]
         · intro hk; exact (hk (Finset.mem_univ k)).elim
     _ = ∑ i : Fin n, ∑ j : Fin n,
           star (x i) * M (finProdFinEquiv (i, k)) (finProdFinEquiv (j, k)) * x j := by
@@ -660,7 +660,7 @@ theorem partialTraceB_posDef {n m : ℕ} [NeZero m] {ρ : Op (n * m)}
         ∑ k : Fin m, (quadraticForm ρ (rightBlockVector k x)).re :=
     quadraticForm_partialTraceB_re_eq_sum ρ x
   -- every summand is nonnegative; the `k = 0` block is strictly positive.
-  haveI : Nonempty (Fin m) := ⟨⟨0, Nat.pos_of_neZero _⟩⟩
+  have : Nonempty (Fin m) := ⟨⟨0, Nat.pos_of_neZero _⟩⟩
   let k0 : Fin m := ⟨0, Nat.pos_of_neZero _⟩
   have hpos : 0 < (quadraticForm ρ (rightBlockVector k0 x)).re := by
     have hne : rightBlockVector k0 x ≠ 0 := rightBlockVector_ne_zero k0 hx

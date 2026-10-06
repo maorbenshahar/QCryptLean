@@ -196,7 +196,7 @@ lemma hermitianPinv_mul_sq_mul_hermitianPinv :
   by_cases hx : x = 0
   · simp [hx]
   · have hxx : x * x ≠ 0 := mul_ne_zero hx hx
-    simp only [Function.comp_apply, if_neg hxx]
+    simp only [Function.comp_apply, ite_eq_right hxx]
     field_simp
 
 /-- **Existence of a Moore–Penrose pseudoinverse for a Hermitian matrix, with explicit witness.**

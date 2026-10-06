@@ -44,7 +44,7 @@ namespace Matrix.PosDef
 the group inverse of the unit with the nonsingular matrix inverse. -/
 theorem matrix_inv_le_inv_of_le {N : ℕ} {A B : Op N} (hA : A.PosDef) (hB : B.PosDef)
     (h : A ≤ B) : B⁻¹ ≤ A⁻¹ := by
-  letI : CStarAlgebra (Op N) := {}
+  let : CStarAlgebra (Op N) := {}
   have hu := CStarAlgebra.inv_le_inv (a := hA.isUnit.unit) (b := hB.isUnit.unit)
     (by rw [IsUnit.unit_spec]; exact hA.posSemidef.nonneg)
     (by rw [IsUnit.unit_spec, IsUnit.unit_spec]; exact h)
@@ -62,7 +62,7 @@ Inverse antitonicity followed by Löwner–Heinz at exponent `½`
 `hσ.inverseSqrt = CFC.sqrt σ⁻¹`. -/
 theorem opLe_inverseSqrt_antitone {N : ℕ} {A B : Op N} (hA : A.PosDef) (hB : B.PosDef)
     (h : opLe A B) : opLe hB.inverseSqrt hA.inverseSqrt := by
-  letI : CStarAlgebra (Op N) := {}
+  let : CStarAlgebra (Op N) := {}
   have hle : A ≤ B := Matrix.le_iff.mpr (opLe.posSemidef_sub hA.isHermitian hB.isHermitian h)
   exact opLe_of_matrix_le (by
     simpa [Matrix.PosDef.inverseSqrt] using

@@ -166,13 +166,13 @@ theorem smoothMinEntropyReal_le_tensor_own_marginal
     (ε : ℝ) (hε : 0 ≤ ε)
     (block : CQState X n) (tail : CQState Y m)
     (htail_weight : 0 < ∑ y : Y, (tail.stateMap y).trace)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε (CQState.tensor block tail)
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε (CQState.tensor block tail)
       (SubDensityOp.tensor block.quantumMarginal tail.quantumMarginal)))) :
     smoothMinEntropyReal ε block block.quantumMarginal ≤
       smoothMinEntropyReal ε (CQState.tensor block tail)
         (SubDensityOp.tensor block.quantumMarginal tail.quantumMarginal) := by
-  have key : ∀ a ∈ setOf (isInSmoothedSetReal ε block block.quantumMarginal),
-      ∃ b ∈ setOf (isInSmoothedSetReal ε (CQState.tensor block tail)
+  have key : ∀ a ∈ Set.ofPred (isInSmoothedSetReal ε block block.quantumMarginal),
+      ∃ b ∈ Set.ofPred (isInSmoothedSetReal ε (CQState.tensor block tail)
         (SubDensityOp.tensor block.quantumMarginal tail.quantumMarginal)), a - 0 ≤ b := by
     intro a ha
     obtain ⟨blockbar, rfl, hd⟩ := ha

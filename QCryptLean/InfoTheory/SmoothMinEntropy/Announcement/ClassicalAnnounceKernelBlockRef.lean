@@ -242,7 +242,7 @@ theorem minFeasibleLambda_tensorLeftKernel_blockDiagRef_eq
     (hK : ∀ x, (K x).toOp = stdKet dC (ann x) * (stdKet dC (ann x)).dag)
     (ν : Fin dC → SubDensityOp dE) (hν : ∑ p : Fin dC, (ν p).trace ≤ 1) :
     minFeasibleLambda (ρ.tensorLeftKernel K) (blockDiagRef ν hν)
-      = sInf (setOf (fun t : ℝ => 0 ≤ t ∧
+      = sInf (Set.ofPred (fun t : ℝ => 0 ≤ t ∧
           ∀ x : X, opLe (ρ.stateMap x).toOp (Complex.ofReal t • (ν (ann x)).toOp))) := by
   unfold minFeasibleLambda
   congr 1
@@ -313,7 +313,7 @@ theorem smoothMinEntropyReal_tensorLeftKernel_blockDiagRef_ge_of_ballWitness
     (hblock : ∀ x : X,
       opLe (ρbar.stateMap x).toOp (Complex.ofReal ((2 : ℝ) ^ (-k)) • (ν (ann x)).toOp))
     (hbdd : BddAbove
-      (setOf (isInSmoothedSetReal ε (ρ.tensorLeftKernel K) (blockDiagRef ν hν)))) :
+      (Set.ofPred (isInSmoothedSetReal ε (ρ.tensorLeftKernel K) (blockDiagRef ν hν)))) :
     k ≤ smoothMinEntropyReal ε (ρ.tensorLeftKernel K) (blockDiagRef ν hν) := by
   have hKtr : ∀ x, (K x).trace = 1 := fun x => trace_eq_one_of_toOp_eq_stdKetProj (hK x)
   have hmem : isInSmoothedSetReal ε (ρ.tensorLeftKernel K) (blockDiagRef ν hν)

@@ -115,8 +115,8 @@ theorem reindexOp_announceSpaceRelabel_conj {Pub : Type} [Fintype Pub] [Decidabl
     · subst hq
       rw [hsymm, hsymm]
       dsimp only
-      rw [conj_publicIncl_same, conj_publicIncl_same]
-      simp [reindexOp]
+      exact (conj_publicIncl_same B₁ yq M _ _ _ _).trans
+        (conj_publicIncl_same B₂ yq (reindexOp (theta yq) M) ep eq' ap aq).symm
     · rw [conj_publicIncl_ne B₁ yp _ _ _ (Or.inr (by
         rw [hsymm]; exact hq)),
         conj_publicIncl_ne B₂ yp _ _ _ (Or.inr hq)]
@@ -281,7 +281,6 @@ def announceGraded {Y : Type} [Fintype Y] [DecidableEq Y]
     (announceGraded G).space x =
       ⟨⟨x.1.1, (G x.1.1).exits x.1.2⟩, (G x.1.1).systems x.1.2 x.2⟩ := by
   rcases x with ⟨⟨y, e⟩, q⟩
-  rw [Graded.space_apply]
   rfl
 
 /-- The general announced-node relabelling built from exit-graded branch data is the induced
@@ -292,7 +291,6 @@ theorem announceSpaceRelabel_eq_announceGraded {Pub : Type} [Fintype Pub] [Decid
   apply Equiv.ext
   intro x
   obtain ⟨⟨y, e⟩, q⟩ := x
-  rw [Graded.space_apply]
   rfl
 
 /-! ### Recovering the graded data from an exit-respecting equivalence -/
@@ -365,7 +363,6 @@ theorem castGraded_space {B₁ B₂ : Boundary P} (hB : B₁ = B₂) :
   apply Equiv.ext
   intro x
   obtain ⟨e, q⟩ := x
-  rw [Graded.space_apply]
   rfl
 
 theorem castGraded_exits {B₁ B₂ : Boundary P} (hB : B₁ = B₂) :

@@ -120,7 +120,7 @@ theorem minFeasibleLambda_le_essSup_of_integral
     minFeasibleLambda ρ_mix σ_ref ≤
       essSup (fun τ : DensityOp d => minFeasibleLambda (f τ) σ_ref) μ.measure := by
   classical
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   let lam : DensityOp d → ℝ := fun τ => minFeasibleLambda (f τ) σ_ref
   apply le_csInf
   · obtain ⟨C, _, hC_feas⟩ :=
@@ -222,7 +222,7 @@ lemma isFeasible_of_ae_isFeasible_of_integral_subprob
     {B : ℝ} (hB_nonneg : 0 ≤ B)
     (h_ae : ∀ᵐ τ ∂ν, isFeasible (f τ) σ_ref B) :
     isFeasible ρ_mix σ_ref B := by
-  letI : IsFiniteMeasure ν := ⟨hν_le_one.trans_lt ENNReal.one_lt_top⟩
+  let : IsFiniteMeasure ν := ⟨hν_le_one.trans_lt ENNReal.one_lt_top⟩
   have hmass : (ν Set.univ).toReal ≤ 1 := by
     simpa using ENNReal.toReal_mono ENNReal.one_ne_top hν_le_one
   refine ⟨hB_nonneg, fun x v => ?_⟩

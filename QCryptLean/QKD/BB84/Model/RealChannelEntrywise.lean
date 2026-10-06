@@ -111,11 +111,11 @@ theorem retainedPass_kraus_eq_sum (n m ℓ ℓEV eveDim : ℕ) [NeZero eveDim]
   classical
   ext a b
   by_cases h : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp [bb84.retainedSiftedPEAnnouncePassBranchKraus, h, Matrix.kroneckerMap,
       Matrix.single_apply, Matrix.one_apply, finProdFinEquiv_symm_apply,
       Quantum.TensorProducts.sum_single_finProdFinEquiv_apply]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     simp [bb84.retainedSiftedPEAnnouncePassBranchKraus, h]
 
 /-- The general-`m` V2 fail Kraus at the unit Eve slot, in matrix-unit form. Mirror of
@@ -138,11 +138,11 @@ theorem retainedFail_kraus_eq_sum (n m ℓ ℓEV eveDim : ℕ) [NeZero eveDim]
   classical
   ext a b
   by_cases h : ¬ bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp [bb84.retainedSiftedPEAnnounceFailBranchKraus, h, Matrix.kroneckerMap,
       Matrix.single_apply, Matrix.one_apply, finProdFinEquiv_symm_apply,
       Quantum.TensorProducts.sum_single_finProdFinEquiv_apply]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     simp [bb84.retainedSiftedPEAnnounceFailBranchKraus, h]
 
 /-- The general-`m` classical layer with both unit Eve slots stripped. Mirror of
@@ -207,18 +207,18 @@ theorem classicalPostBare_single (n m ℓ ℓEV : ℕ) (peSel xSel : Fin n → B
     rw [retainedPass_kraus_eq_sum, retainedFail_kraus_eq_sum]
     simp only [Finset.univ_unique, Finset.sum_singleton, Fin.default_eq_zero, bb84OutIndex]
     by_cases hg : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
-    · rw [if_pos hg, if_neg (by simpa using hg), if_pos hg]
+    · rw [ite_eq_left hg, ite_eq_right (by simpa using hg), ite_eq_left hg]
       rw [singleKraus_conj_single]
       simp only [Matrix.zero_mul, add_zero]
       by_cases hω : ω = finFunctionFinEquiv.symm c
-      · rw [if_pos (hcω.mpr hω), if_pos hω]
-      · rw [if_neg (fun hh => hω (hcω.mp hh)), if_neg hω]
-    · rw [if_neg hg, if_pos (by simpa using hg), if_neg hg]
+      · rw [ite_eq_left (hcω.mpr hω), ite_eq_left hω]
+      · rw [ite_eq_right (fun hh => hω (hcω.mp hh)), ite_eq_right hω]
+    · rw [ite_eq_right hg, ite_eq_left (by simpa using hg), ite_eq_right hg]
       rw [singleKraus_conj_single]
       simp only [Matrix.zero_mul, zero_add]
       by_cases hω : ω = finFunctionFinEquiv.symm c
-      · rw [if_pos (hcω.mpr hω), if_pos hω]
-      · rw [if_neg (fun hh => hω (hcω.mp hh)), if_neg hω]
+      · rw [ite_eq_left (hcω.mpr hω), ite_eq_left hω]
+      · rw [ite_eq_right (fun hh => hω (hcω.mp hh)), ite_eq_right hω]
   have hL : (bb84.retainedSiftedPEAnnouncePrivacyAmplifyAndAbortLinearMap n m ℓ ℓEV 1 peSel
         xSel leakEC ec δ Q)
       (Matrix.single (finProdFinEquiv (c, (0 : Fin 1)))
@@ -250,9 +250,9 @@ theorem classicalPostBare_single (n m ℓ ℓEV : ℕ) (peSel xSel : Fin n → B
     rw [hadd, Fintype.sum_prod_type (α₁ := ST) (α₂ := Fin n → Fin signalDim)]
     refine Finset.sum_congr rfl fun st _ => ?_
     rw [Finset.sum_eq_single (finFunctionFinEquiv.symm c)]
-    · rw [hbranch st (finFunctionFinEquiv.symm c), if_pos rfl]
+    · rw [hbranch st (finFunctionFinEquiv.symm c), ite_eq_left rfl]
     · intro ω _ hω
-      rw [hbranch st ω, if_neg hω]
+      rw [hbranch st ω, ite_eq_right hω]
     · intro h
       exact absurd (Finset.mem_univ (finFunctionFinEquiv.symm c)) h
   simp only [bb84ClassicalPostBare, LinearMap.comp_apply, Op.castDimLinear, LinearMap.coe_mk,
@@ -364,7 +364,7 @@ theorem announceEveVisible_one_apply (n m ℓ ℓEV : ℕ) [NeZero n] (peSel : F
         (Op.tensor
           (Op.castDim (Nat.mul_one (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC)) B)
           (permAnnounceProjector n π)) := by
-  haveI : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC) :=
     bb84PEAnnounceBaseOutputDim_neZero n m ℓ ℓEV peSel leakEC
   have hB : Op.tensor
       (Op.castDim (Nat.mul_one (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC)) B)
@@ -434,7 +434,9 @@ theorem bb84SymRealChannel_apply_eq_sum (n m ℓ ℓEV : ℕ) [NeZero n] [NeZero
           δ).realProtocolMap (eveDim := 1)
         (bb84SiftedConjChannel n 1 peSel xSel
           (bb84UnitRegisterEmbed n (permuteSignalLinear n π ρ)))) = _
-  rw [siftEmbedPerm_castDim, announceEveVisible_one_apply, ← realProtocolMapBare_apply]
+  rw [siftEmbedPerm_castDim]
+  refine (announceEveVisible_one_apply n m ℓ ℓEV peSel leakEC π _).trans ?_
+  rw [← realProtocolMapBare_apply]
 
 /-! ## The general-`m` flagged two-key output register -/
 

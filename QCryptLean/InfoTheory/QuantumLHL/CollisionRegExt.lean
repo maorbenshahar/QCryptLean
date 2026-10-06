@@ -257,7 +257,7 @@ theorem collisionQuantity_regExt_pure_eq {X : Type*} [Fintype X] {dE dV : ℕ}
       simp
     rw [hlhs]
     simp
-  · haveI : NeZero dV := ⟨hdV.ne'⟩
+  · have : NeZero dV := ⟨hdV.ne'⟩
     rw [collisionQuantity, Finset.mul_sum]
     refine Finset.sum_congr rfl (fun x _ => ?_)
     rw [weightedFrobeniusSq_regExt σE hσ _
@@ -325,7 +325,7 @@ theorem seedKeyExtractor_traceDistanceGen_eq_half_offDiag {S X Z : Type*}
       rw [hcast, Complex.coe_smul]
     rw [seed_visible_stateMap_sub_uniform_toOp_eq (S := S) (Z := Z) H ρ sz, hconv,
       traceNorm_real_smul, abs_of_nonneg (by positivity)]
-  haveI : Nonempty (S × Z) := inferInstance
+  have : Nonempty (S × Z) := inferInstance
   rw [Quantum.Metrics.traceDistanceGen, htrace, abs_zero, mul_zero, add_zero]
   rw [traceNorm_joint_diff_eq_sum (seedKeyExtractorOutputState H ρ)
       (seedUniformOutputState (S := S) (Z := Z) ρ.quantumMarginal)]

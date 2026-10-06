@@ -128,7 +128,7 @@ theorem traceNorm_integral_le_integral_traceNorm_of_isFiniteMeasure
     traceNorm (∫ x, f x ∂μ) ≤ ∫ x, traceNorm (f x) ∂μ := by
   by_cases hμ : μ = 0
   · simp [hμ, Quantum.Channels.traceNorm_zero]
-  · haveI : NeZero μ := ⟨hμ⟩
+  · have : NeZero μ := ⟨hμ⟩
     have havg :=
       traceNorm_average_le_average_traceNorm (μ := μ) (f := f) hf
     have hμnn : 0 ≤ μ.real Set.univ := ENNReal.toReal_nonneg
@@ -198,7 +198,7 @@ theorem traceNorm_integral_le_integral_traceNorm
   have hset :
       ∀ N, traceNorm (∫ x in s N, g x ∂μ) ≤ ∫ x in s N, traceNorm (g x) ∂μ := by
     intro N
-    haveI : Fact (μ (s N) < ⊤) := ⟨hs_finite N⟩
+    have : Fact (μ (s N) < ⊤) := ⟨hs_finite N⟩
     simpa using
       traceNorm_integral_le_integral_traceNorm_of_isFiniteMeasure
         (μ := μ.restrict (s N)) (f := g)

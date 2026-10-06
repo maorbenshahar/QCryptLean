@@ -179,7 +179,7 @@ theorem preservesDiagonalBranches_iff_classicalWeight
         simp [mul_comm]
       rw [hdiag]
       simp [smul_eq_mul, mul_comm]
-    · rw [if_neg hbb']
+    · rw [ite_eq_right hbb']
       exact hI y (Matrix.diagonal d)
         (fun a a' haa' => Matrix.diagonal_apply_ne _ haa') b b' hbb'
   · intro h y rho hrho b b' hbb'
@@ -189,7 +189,7 @@ theorem preservesDiagonalBranches_iff_classicalWeight
       · subst a'
         simp
       · rw [Matrix.diagonal_apply_ne _ haa', hrho a a' haa']
-    rw [hrhoDiag, h y, if_neg hbb']
+    rw [hrhoDiag, h y, ite_eq_right hbb']
 
 /-- A diagonal-preserving observed operation acts on an arbitrary-reference CQ operator by its
 canonical stochastic transition, independently in every reference row/column block. -/
@@ -227,7 +227,7 @@ theorem PreservesDiagonalBranches.operation_tensorId_isClassicalOnFirst
     IsClassicalOnFirst (Alpha := Hout) (Ref := Ref)
       (tensorIdLinear Ref (I.operation y) rho) := by
   intro b b' e e' hne
-  rw [hI.operation_tensorId_apply I rho hrho y b b' e e', if_neg hne]
+  rw [hI.operation_tensorId_apply I rho hrho y b b' e e', ite_eq_right hne]
 
 /-- Outcome-level diagonal preservation is invariant under operational equivalence. -/
 theorem OperationallyEquivalent.preservesDiagonalBranches_iff
@@ -276,8 +276,7 @@ theorem classicalReplacementKraus_complete (I : Instrument Hin Hout Outcome) :
     convert congrArg (fun x : ℝ => (x : ℂ))
       (I.sum_classicalWeight i) using 1
     · simp [Matrix.sum_apply, Matrix.single_apply]
-    · exact Complex.ofReal_one.symm
-  · simp only [Matrix.sum_apply, Matrix.one_apply, hij, if_false]
+  · simp only [Matrix.sum_apply, Matrix.one_apply, hij, ite_false]
     apply Finset.sum_eq_zero
     intro y _
     apply Finset.sum_eq_zero

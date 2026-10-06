@@ -159,7 +159,7 @@ theorem sigmaInclKraus_conjTranspose_mul_of_ne {Y : Type}
         intro hp
         apply hr
         exact eq_of_heq (Sigma.mk.inj_iff.mp ((Sigma.eta p).trans hp)).2.symm
-      rw [sigmaInclKraus_apply, if_neg hp, zero_mul]
+      rw [sigmaInclKraus_apply, ite_eq_right hp, zero_mul]
     · simp
   · intro y _ hy
     apply Finset.sum_eq_zero
@@ -167,7 +167,7 @@ theorem sigmaInclKraus_conjTranspose_mul_of_ne {Y : Type}
     have hp : p ≠ ⟨y, r⟩ := by
       intro hp
       exact hy (congrArg Sigma.fst hp).symm
-    rw [sigmaInclKraus_apply, if_neg hp, zero_mul]
+    rw [sigmaInclKraus_apply, ite_eq_right hp, zero_mul]
   · simp
 
 namespace Boundary
@@ -248,10 +248,10 @@ Chitambar--Leung--Mančinska--Ozols--Winter, arXiv:1210.4583, Section II. -/
   rw [← Matrix.sum_apply, sum_sigmaInclKraus_mul_conjTranspose]
   by_cases hpq : p = q
   · subst q
-    rw [Matrix.one_apply, Matrix.one_apply, if_pos rfl, if_pos rfl]
+    rw [Matrix.one_apply, Matrix.one_apply, ite_eq_left rfl, ite_eq_left rfl]
   · have heq : publicSpaceEquiv next p ≠ publicSpaceEquiv next q :=
       fun h => hpq ((publicSpaceEquiv next).injective h)
-    rw [Matrix.one_apply, Matrix.one_apply, if_neg heq, if_neg hpq]
+    rw [Matrix.one_apply, Matrix.one_apply, ite_eq_right heq, ite_eq_right hpq]
 
 /-! ## Inclusions of complete public exits -/
 
@@ -300,7 +300,7 @@ LOCC tree in Chitambar--Leung--Mančinska--Ozols--Winter, arXiv:1210.4583, Secti
         intro hp
         apply hr
         exact eq_of_heq (Sigma.mk.inj_iff.mp ((Sigma.eta p).trans hp)).2.symm
-      rw [exitKraus_apply, if_neg hp, zero_mul]
+      rw [exitKraus_apply, ite_eq_right hp, zero_mul]
     · simp
   · intro e _ he
     apply Finset.sum_eq_zero
@@ -308,7 +308,7 @@ LOCC tree in Chitambar--Leung--Mančinska--Ozols--Winter, arXiv:1210.4583, Secti
     have hp : p ≠ ⟨e, r⟩ := by
       intro hp
       exact he (congrArg Sigma.fst hp).symm
-    rw [exitKraus_apply, if_neg hp, zero_mul]
+    rw [exitKraus_apply, ite_eq_right hp, zero_mul]
   · simp
 
 /-- At an announced boundary, inclusion of a complete exit factors through the public-outcome
@@ -321,18 +321,14 @@ theorem exitKraus_announce {Y : Type} [Fintype Y] [DecidableEq Y]
     (next : Y → Boundary P) (y : Y) (e : (next y).Exit) :
     exitKraus (Boundary.announce Y next) ⟨y, e⟩ =
       publicInclKraus next y * exitKraus (next y) e := by
-  ext p q
-  simp only [Matrix.mul_apply]
+  apply Matrix.ext
+  intro (p : (Boundary.announce Y next).space) (q : ((next y).system e).total)
+  change exitKraus (Boundary.announce Y next) ⟨y, e⟩ p q =
+    ∑ r : (next y).space, publicInclKraus next y p r * exitKraus (next y) e r q
   rw [Finset.sum_eq_single (⟨e, q⟩ : (next y).space)]
-  · simp only [exitKraus_apply, publicInclKraus_apply, if_pos, mul_one]
-    by_cases hp : p = ⟨⟨y, e⟩, q⟩
-    · subst p
-      simp
-    · rw [if_neg hp, if_neg]
-      intro heq
-      apply hp
-      apply (publicSpaceEquiv next).injective
-      simpa using heq
+  · change (if p = ⟨⟨y, e⟩, q⟩ then (1 : ℂ) else 0) = _
+    simp only [exitKraus_apply, publicInclKraus_apply, ite_eq_left, mul_one]
+    exact if_congr (publicSpaceEquiv next).injective.eq_iff.symm rfl rfl
   · intro r _ hr
     simp [exitKraus, publicInclKraus, sigmaInclKraus, hr]
   · simp

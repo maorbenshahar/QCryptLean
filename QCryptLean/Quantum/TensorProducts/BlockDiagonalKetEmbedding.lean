@@ -78,11 +78,11 @@ lemma blockKetInclusion_dag_mul_same [Finite B] (e : (Fin dB × B) ≃ Fin d) (b
   refine (Finset.sum_eq_single b ?_ ?_).trans ?_
   · intro b' _ hb'
     refine Finset.sum_eq_zero (fun i _ => ?_)
-    simp only [Ket.dag_vec, blockKetInclusion_vec, Equiv.symm_apply_apply, if_neg hb',
+    simp only [Ket.dag_vec, blockKetInclusion_vec, Equiv.symm_apply_apply, ite_eq_right hb',
       mul_zero, map_zero]
   · intro hb; exact absurd (Finset.mem_univ b) hb
   · refine Finset.sum_congr rfl (fun i _ => ?_)
-    simp only [Ket.dag_vec, blockKetInclusion_vec, Equiv.symm_apply_apply, if_true]
+    simp only [Ket.dag_vec, blockKetInclusion_vec, Equiv.symm_apply_apply, ite_true]
 
 /-- **Block-diagonal sum-of-ketbra embedding.** If each block operator is a
 sum-of-ketbra `Σ_k u_{b,k} u_{b,k}†`, then the reindexed block-diagonal operator
@@ -99,15 +99,15 @@ lemma reindex_blockDiagonal_eq_sum_blockKetInclusion_ketbra
   simp only [Matrix.sum_apply, ket_mul_bra_apply, Ket.dag_vec, blockKetInclusion_vec]
   rw [Finset.sum_eq_single (e.symm p).2]
   · by_cases h : (e.symm p).2 = (e.symm q).2
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       refine Finset.sum_congr rfl (fun k _ => ?_)
-      rw [if_pos rfl, if_pos h.symm]
-    · rw [if_neg h]
+      rw [ite_eq_left rfl, ite_eq_left h.symm]
+    · rw [ite_eq_right h]
       refine (Finset.sum_eq_zero (fun k _ => ?_)).symm
-      rw [if_pos rfl, if_neg (fun hc => h hc.symm), map_zero, mul_zero]
+      rw [ite_eq_left rfl, ite_eq_right (fun hc => h hc.symm), map_zero, mul_zero]
   · intro b' _ hb'
     refine Finset.sum_eq_zero (fun k _ => ?_)
-    rw [if_neg (Ne.symm hb'), zero_mul]
+    rw [ite_eq_right (Ne.symm hb'), zero_mul]
   · intro hb; exact absurd (Finset.mem_univ _) hb
 
 end Quantum.TensorProducts

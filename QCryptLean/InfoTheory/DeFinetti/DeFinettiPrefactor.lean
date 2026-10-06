@@ -1,3 +1,4 @@
+import Mathlib.Data.Nat.Choose.Bounds
 import QCryptLean.Math.Combinatorics.PermutationAction
 
 /-!
@@ -76,26 +77,6 @@ theorem deFinettiPrefactor_pos (x n : ℕ) : 0 < deFinettiPrefactor x n := by
 @[simp] theorem deFinettiPrefactor_one (n : ℕ) : deFinettiPrefactor 1 n = 1 := by
   simp [deFinettiPrefactor]
 
-/-- Binomial bound `C(n + k, k) ≤ (n + 1)^k`, restated locally to avoid a heavy
-    import (a copy of `Quantum.Channels.choose_add_le_pow_succ`). -/
-private theorem choose_add_le_pow_succ (n k : ℕ) :
-    Nat.choose (n + k) k ≤ (n + 1) ^ k := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have hid := Nat.add_one_mul_choose_eq (n + k) k
-    have hk : 0 < k + 1 := Nat.succ_pos k
-    change (n + k + 1).choose (k + 1) ≤ (n + 1) ^ (k + 1)
-    apply Nat.le_of_mul_le_mul_right _ hk
-    show (n + k + 1).choose (k + 1) * (k + 1) ≤ (n + 1) ^ (k + 1) * (k + 1)
-    rw [← hid, Nat.pow_add_one']
-    calc
-      (n + k + 1) * (n + k).choose k ≤ (n + k + 1) * (n + 1) ^ k :=
-        Nat.mul_le_mul_left _ ih
-      _ ≤ ((n + 1) * (k + 1)) * (n + 1) ^ k :=
-        Nat.mul_le_mul_right _ (by nlinarith [Nat.zero_le (n * k)])
-      _ = (n + 1) * (n + 1) ^ k * (k + 1) := by ring
-
 /-- The CKR power bound dominates the exact de Finetti prefactor:
     `g_{n,x} = C(n + x - 1, x - 1) ≤ (n + 1)^{x - 1}`.
 
@@ -107,7 +88,7 @@ theorem deFinettiPrefactor_le_pow (x n : ℕ) : deFinettiPrefactor x n ≤ (n + 
   · have heq : deFinettiPrefactor x n = Nat.choose (n + (x - 1)) (x - 1) := by
       rw [deFinettiPrefactor]; congr 1; omega
     rw [heq]
-    exact choose_add_le_pow_succ n (x - 1)
+    exact Nat.choose_add_le_add_one_pow n (x - 1)
 
 /-- The Bell-symmetric prefactor is `C(n + 3, 3)`, the factor of the improved security row. -/
 theorem deFinettiPrefactor_four (n : ℕ) : deFinettiPrefactor 4 n = Nat.choose (n + 3) 3 := rfl

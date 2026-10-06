@@ -1510,8 +1510,8 @@ theorem smoothMinEntropyReal_extension_at_correlated_ref_ge_of_smoothedDominatio
   have hpolyDim_ge1 : (1 : ℝ) ≤ (polyDim : ℝ) := by exact_mod_cast h_polyDim_pos
   have hpenalty_nn : 0 ≤ penalty := by
     rw [hpenalty]; exact div_nonneg (Real.log_nonneg hpolyDim_ge1) hlog2.le
-  set A := setOf (isInSmoothedSetReal ε ρEtilde M_E) with hA
-  set B := setOf (isInSmoothedSetReal ε ρER σER) with hB
+  set A := Set.ofPred (isInSmoothedSetReal ε ρEtilde M_E) with hA
+  set B := Set.ofPred (isInSmoothedSetReal ε ρER σER) with hB
   change sSup A - penalty ≤ sSup B
   have hweight_eq :
       (∑ x : X, (ρER.stateMap x).trace) =
@@ -1583,7 +1583,7 @@ theorem smoothMinEntropyReal_extension_at_correlated_ref_ge_of_smoothedDominatio
             (purifiedDistance_eq_zero_iff _ _).mp hzero
           exact ge_of_eq (conditionalMinEntropyReal_congr_toJointDensity σER hjoint_eq)
       have hA_unbdd :
-          ¬ BddAbove (setOf (isInSmoothedSetReal ε ρEtilde
+          ¬ BddAbove (Set.ofPred (isInSmoothedSetReal ε ρEtilde
             (DensityOp.toSubDensityOp (DensityOp.maxMixed dE)))) :=
         smoothedSetReal_not_bddAbove_of_weight_le_eps_sq_of_posDef ρEtilde
           (DensityOp.toSubDensityOp (DensityOp.maxMixed dE))

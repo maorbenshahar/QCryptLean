@@ -144,36 +144,36 @@ lemma singleQubitPauli_mul (a b c d : ZMod 2) :
   match a, b, c, d with
   -- I * I = I
   | 0, 0, 0, 0 => simp only [singleQubitPauli, mul_one, one_smul,
-      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (0 : ZMod 2) + 0 = 0 by decide]
   -- I * Z = Z
   | 0, 0, 0, 1 => simp only [singleQubitPauli, one_mul, one_smul,
-      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (0 : ZMod 2) + 0 = 0 by decide, show (0 : ZMod 2) + 1 = 1 by decide]
   -- I * X = X
   | 0, 0, 1, 0 => simp only [singleQubitPauli, one_mul, one_smul,
-      show (0 : ZMod 2) * 1 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (0 : ZMod 2) * 1 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (0 : ZMod 2) + 1 = 1 by decide, show (0 : ZMod 2) + 0 = 0 by decide]
   -- I * XZ = XZ
   | 0, 0, 1, 1 => simp only [singleQubitPauli, one_mul, one_smul,
-      show (0 : ZMod 2) * 1 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (0 : ZMod 2) * 1 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (0 : ZMod 2) + 1 = 1 by decide]
   -- Z * I = Z
   | 0, 1, 0, 0 => simp only [singleQubitPauli, mul_one, one_smul,
-      show (1 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (1 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (0 : ZMod 2) + 0 = 0 by decide, show (1 : ZMod 2) + 0 = 1 by decide]
   -- Z * Z = I (using Z² = I)
   | 0, 1, 0, 1 => simp only [singleQubitPauli, pauliZ_sq, one_smul,
-      show (1 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (1 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (0 : ZMod 2) + 0 = 0 by decide, show (1 : ZMod 2) + 1 = 0 by decide]
   -- Z * X = -XZ (anticommutation)
   | 0, 1, 1, 0 => simp only [singleQubitPauli, pauliZX_anticommute, neg_one_smul,
-      show (1 : ZMod 2) * 1 = 1 by decide, if_true,
+      show (1 : ZMod 2) * 1 = 1 by decide, ite_true,
       show (0 : ZMod 2) + 1 = 1 by decide, show (1 : ZMod 2) + 0 = 1 by decide]
   -- Z * XZ = -X
   | 0, 1, 1, 1 =>
       simp only [singleQubitPauli, neg_one_smul,
-        show (1 : ZMod 2) * 1 = 1 by decide, if_true,
+        show (1 : ZMod 2) * 1 = 1 by decide, ite_true,
         show (0 : ZMod 2) + 1 = 1 by decide,
         show (1 : ZMod 2) + 1 = 0 by decide]
       calc Z * (X * Z) = (Z * X) * Z := by rw [mul_assoc]
@@ -184,21 +184,21 @@ lemma singleQubitPauli_mul (a b c d : ZMod 2) :
         _ = -X := by rw [mul_one]
   -- X * I = X
   | 1, 0, 0, 0 => simp only [singleQubitPauli, mul_one, one_smul,
-      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (1 : ZMod 2) + 0 = 1 by decide, show (0 : ZMod 2) + 0 = 0 by decide]
   -- X * Z = XZ
   | 1, 0, 0, 1 => simp only [singleQubitPauli, one_smul,
-      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (0 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (1 : ZMod 2) + 0 = 1 by decide, show (0 : ZMod 2) + 1 = 1 by decide]
   -- X * X = I (using X² = I)
   | 1, 0, 1, 0 => simp only [singleQubitPauli, pauliX_sq, one_smul,
-      show (0 : ZMod 2) * 1 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (0 : ZMod 2) * 1 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (1 : ZMod 2) + 1 = 0 by decide, show (0 : ZMod 2) + 0 = 0 by decide]
   -- X * XZ = Z
   | 1, 0, 1, 1 =>
       simp only [singleQubitPauli, one_smul,
         show (0 : ZMod 2) * 1 = 0 by decide,
-        show (0 : ZMod 2) ≠ 1 by decide, if_false,
+        show (0 : ZMod 2) ≠ 1 by decide, ite_false,
         show (1 : ZMod 2) + 1 = 0 by decide,
         show (0 : ZMod 2) + 1 = 1 by decide]
       calc X * (X * Z) = (X * X) * Z := by rw [mul_assoc]
@@ -206,13 +206,13 @@ lemma singleQubitPauli_mul (a b c d : ZMod 2) :
         _ = Z := by rw [one_mul]
   -- XZ * I = XZ
   | 1, 1, 0, 0 => simp only [singleQubitPauli, mul_one, one_smul,
-      show (1 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, if_false,
+      show (1 : ZMod 2) * 0 = 0 by decide, show (0 : ZMod 2) ≠ 1 by decide, ite_false,
       show (1 : ZMod 2) + 0 = 1 by decide]
   -- XZ * Z = X (using ZZ = I)
   | 1, 1, 0, 1 =>
       simp only [singleQubitPauli, one_smul,
         show (1 : ZMod 2) * 0 = 0 by decide,
-        show (0 : ZMod 2) ≠ 1 by decide, if_false,
+        show (0 : ZMod 2) ≠ 1 by decide, ite_false,
         show (1 : ZMod 2) + 0 = 1 by decide,
         show (1 : ZMod 2) + 1 = 0 by decide]
       calc X * Z * Z = X * (Z * Z) := by rw [mul_assoc]
@@ -221,7 +221,7 @@ lemma singleQubitPauli_mul (a b c d : ZMod 2) :
   -- XZ * X = -Z (anticommutation, XX = I)
   | 1, 1, 1, 0 =>
       simp only [singleQubitPauli, neg_one_smul,
-        show (1 : ZMod 2) * 1 = 1 by decide, if_true,
+        show (1 : ZMod 2) * 1 = 1 by decide, ite_true,
         show (1 : ZMod 2) + 1 = 0 by decide,
         show (1 : ZMod 2) + 0 = 1 by decide]
       calc X * Z * X = X * (Z * X) := by rw [mul_assoc]
@@ -233,7 +233,7 @@ lemma singleQubitPauli_mul (a b c d : ZMod 2) :
   -- XZ * XZ = -I (ZX = -XZ, XX = I, ZZ = I)
   | 1, 1, 1, 1 =>
       simp only [singleQubitPauli, neg_one_smul,
-        show (1 : ZMod 2) * 1 = 1 by decide, if_true,
+        show (1 : ZMod 2) * 1 = 1 by decide, ite_true,
         show (1 : ZMod 2) + 1 = 0 by decide]
       calc X * Z * (X * Z) = X * (Z * (X * Z)) := by rw [mul_assoc]
         _ = X * ((Z * X) * Z) := by rw [mul_assoc]

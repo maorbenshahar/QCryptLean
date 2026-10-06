@@ -55,7 +55,7 @@ lemma trace_compressedState_support_diagonal_re {N : ℕ}
           Matrix.diagonal (fun j => (h j : ℂ)) *
           supportIsometry σ)).trace.re) =
       ∑ j, (ρ.toOp j j).re * h j := by
-  letI : NeZero N := neZero_of_densityOp σ
+  let : NeZero N := neZero_of_densityOp σ
   set S := supportIsometry σ
   set D : Matrix (Fin N) (Fin N) ℂ := Matrix.diagonal (fun j => (h j : ℂ))
   set ρs : DensityOp (positiveSpectrumDim σ) := compressedState σ ρ hρP
@@ -82,7 +82,7 @@ lemma compressedSigma_trace_support_exp_diagonal_eq {N : ℕ}
         NormedSpace.exp (Matrix.diagonal (fun j => (h j : ℂ))) *
         supportIsometry σ)).trace.re =
     ∑ j, (σ.toOp j j).re * Real.exp (h j) := by
-  letI : NeZero N := neZero_of_densityOp σ
+  let : NeZero N := neZero_of_densityOp σ
   set S := supportIsometry σ
   set D : Matrix (Fin N) (Fin N) ℂ :=
     Matrix.diagonal (fun j => (h j : ℂ))

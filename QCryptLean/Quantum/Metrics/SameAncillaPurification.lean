@@ -371,7 +371,7 @@ lemma sameAncillaPurificationDensity_pureKetOf_eq_phase
       ((sameAncillaPurificationDensity σ).pureKetOf
           (sameAncillaPurificationDensity_isPure σ)).vec i =
         Complex.exp (Complex.I * θ) * (sameAncillaPurificationKet σ).vec i := by
-  letI : NeZero d := neZero_of_densityOp σ
+  let : NeZero d := neZero_of_densityOp σ
   change ∃ θ : ℝ, ∀ i : Fin (d * d),
       ((sameAncillaPurificationDensity σ).pureKetOf
           (sameAncillaPurificationDensity_isPure σ)).vec i =
@@ -390,7 +390,7 @@ lemma sameAncillaPurificationDensity_pureKet_left_mul_eq_trace {d : ℕ}
     let hpure := sameAncillaPurificationDensity_isPure σ
     let ψ := τ.pureKetOf hpure
     ψ.dag * (Op.tensor V (1 : Op d)) * ψ = (V * σ.toOp).trace := by
-  letI : NeZero d := neZero_of_densityOp σ
+  let : NeZero d := neZero_of_densityOp σ
   change
     let τ := sameAncillaPurificationDensity σ
     let hpure := sameAncillaPurificationDensity_isPure σ
@@ -500,7 +500,7 @@ lemma sameAncillaPurificationDensity_pureKet_tensorUnitary_overlap_re_le_one
     let ψσ := (sameAncillaPurificationDensity σ).pureKetOf
       (sameAncillaPurificationDensity_isPure σ)
     (ψσ.dag * (Op.tensor U.toOp (1 : Op d)) * ψρ).re ≤ 1 := by
-  letI : NeZero d := neZero_of_densityOp ρ
+  let : NeZero d := neZero_of_densityOp ρ
   change
     let ψρ := (sameAncillaPurificationDensity ρ).pureKetOf
       (sameAncillaPurificationDensity_isPure ρ)
@@ -635,7 +635,7 @@ lemma sameAncillaPurificationDensity_exists_tensorUnitary_overlap_eq_sameAncilla
       let ψσ₀ := sameAncillaPurificationKet σ
       ψσ.dag * (Op.tensor U.toOp (1 : Op d)) * ψρ =
         ψσ₀.dag * (Op.tensor U₀.toOp (1 : Op d)) * ψρ₀ := by
-  letI : NeZero d := neZero_of_densityOp ρ
+  let : NeZero d := neZero_of_densityOp ρ
   change ∃ U : UnitaryOp d,
       let ψρ := (sameAncillaPurificationDensity ρ).pureKetOf
         (sameAncillaPurificationDensity_isPure ρ)
@@ -703,7 +703,7 @@ lemma sameAncillaPurificationDensity_exists_tensorUnitary_overlap_re_eq_sameAnci
       (ψσ.dag * (Op.tensor U.toOp (1 : Op d)) * ψρ).re =
         ((sameAncillaPurificationKet σ).dag * (Op.tensor U₀.toOp (1 : Op d)) *
           sameAncillaPurificationKet ρ).re := by
-  letI : NeZero d := neZero_of_densityOp ρ
+  let : NeZero d := neZero_of_densityOp ρ
   change ∃ U : UnitaryOp d,
       let ψρ := (sameAncillaPurificationDensity ρ).pureKetOf
         (sameAncillaPurificationDensity_isPure ρ)
@@ -733,7 +733,7 @@ theorem sameAncillaPurificationDensity_exists_tensorUnitary_overlap_re_eq_trace_
         (sameAncillaPurificationDensity_isPure σ)
       (ψσ.dag * (Op.tensor U.toOp (1 : Op d)) * ψρ).re =
         (Matrix.trace (CFC.sqrt (CFC.sqrt ρ.toOp * σ.toOp * CFC.sqrt ρ.toOp))).re := by
-  letI : NeZero d := neZero_of_densityOp ρ
+  let : NeZero d := neZero_of_densityOp ρ
   obtain ⟨U₀, hU₀⟩ :=
     sameAncillaPurificationKet_exists_tensorUnitary_overlap_re_eq_trace_cfcSqrt_sandwich ρ σ
   obtain ⟨U, hre⟩ :=
@@ -754,7 +754,7 @@ lemma sameAncillaPurificationDensity_pureKet_tensorUnitary_overlap_norm_eq_canon
     ‖(ψτ.dag * Op.tensor V (1 : Op d) * ψρ : ℂ)‖ =
       ‖((sameAncillaPurificationKet τ).dag * Op.tensor V (1 : Op d) *
           sameAncillaPurificationKet ρ : ℂ)‖ := by
-  letI : NeZero d := neZero_of_densityOp ρ
+  let : NeZero d := neZero_of_densityOp ρ
   change
     let ψρ := (sameAncillaPurificationDensity ρ).pureKetOf
       (sameAncillaPurificationDensity_isPure ρ)

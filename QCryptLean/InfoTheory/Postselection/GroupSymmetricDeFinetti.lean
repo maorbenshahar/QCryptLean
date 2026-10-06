@@ -69,11 +69,11 @@ theorem deFinetti_groupSymmetric_purified_op_le
         partialTraceB τ_ABE = (deFinettiMixtureFixedMarginal dA dB n μ).toOp ∧
         (((deFinettiPrefactor (∑ i : Fin kA, ∑ j : Fin kB, (mA i) ^ 2 * (mB j) ^ 2) n : ℕ) : ℂ) •
           τ_ABE - Ψ.toOp).PosSemidef := by
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
-  haveI : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
+  have : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
   obtain ⟨κG, hκG_psd, hκG_unit, hκG_comm, hκGinv⟩ :=
     exists_flatten_groupSymmetricTwirl (dA := dA) (dB := dB) (n := n) πA hπA πB hπB
   have hκG_pd : κG.PosDef := (Matrix.PosSemidef.posDef_iff_isUnit hκG_psd).mpr hκG_unit
@@ -115,7 +115,7 @@ theorem deFinetti_groupSymmetric_purified_op_le
   have hPQ_trace : (PG * P).trace = (g : ℂ) :=
     groupBlockedSymmetricTwirl_trace πA hπA πB hπB hxc
   have hgC_ne : ((g : ℕ) : ℂ) ≠ 0 := by
-    haveI : NeZero (∑ i : Fin kA, ∑ j : Fin kB, mA i ^ 2 * mB j ^ 2) :=
+    have : NeZero (∑ i : Fin kA, ∑ j : Fin kB, mA i ^ 2 * mB j ^ 2) :=
       ⟨Nat.cast_ne_zero.mp (by
         rw [← hxc]
         exact groupTwirlProjector_trace_ne_zero (prodRep πA πB)
@@ -166,8 +166,8 @@ theorem deFinetti_groupSymmetric_fixedMarginal_op_le
       IsGroupInvariantMeasure (prodRep πA πB) μ ∧
     (((deFinettiPrefactor (∑ i : Fin kA, ∑ j : Fin kB, (mA i) ^ 2 * (mB j) ^ 2) n : ℕ) : ℂ) •
         (deFinettiMixtureFixedMarginal dA dB n μ).toOp - ρ.toOp).PosSemidef := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
   -- The group-symmetric purification (Lemma `lem:groupPurification`)
   obtain ⟨Ψ, _hΨ_pure, hΨ_marg, hΨ_grp, hΨ_supp⟩ :=

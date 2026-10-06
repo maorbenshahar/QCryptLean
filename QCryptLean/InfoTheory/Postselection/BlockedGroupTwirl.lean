@@ -126,7 +126,7 @@ lemma groupBlockedSymmetric_hasLocalCommutant
       (unitaryCentralizerTensorPower (groupReferenceRep πA hπA πB hπB) n U :
         Op ((dA * dB ^ 2) ^ n)))
       (groupBlockedTwirlProjector πA πB * symmetricProjectorPairedGen dA (dA * dB ^ 2) n) := by
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   apply hasLocalCommutant_unitaryCentralizer_of_joint_fixed
     -- the representation `πA`, viewed as a homomorphism into the matrix monoid
@@ -224,7 +224,7 @@ lemma partialTraceB_groupBlockedTwirl_supported_commute
     (hsupp : groupBlockedTwirlProjector πA πB * X = X) :
     Commute (Op.tensor (partialTraceB X) (1 : Op ((dA * dB ^ 2) ^ n)))
       (groupBlockedTwirlProjector πA πB) := by
-  haveI : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
   let e := pairedToBlockedEquiv dA dB n
   let Y := Matrix.reindex e.symm e.symm X
   have hY : Y.IsHermitian := hX.submatrix e

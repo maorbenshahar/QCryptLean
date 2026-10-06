@@ -110,15 +110,20 @@ private theorem reconstruction_shortage
           (shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega hshort) x = 0
     unfold reconstructionShortageKraus
     refine (Matrix.smul_apply _ _ _ _).trans ?_
-    rw [Matrix.single_apply_of_row_ne]
-    · exact smul_zero _
-    · intro heq
+    have hrow : shortageCompleteOutput N nK mZ mX ell ellEV leakEC eta.1
+        (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j eta) ≠
+        shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega hshort := by
+      intro heq
       have hrc := congrArg (fun y =>
         QKD.BB84.lateSelectionExitEquiv N nK mZ mX
           ((QKD.BB84.exitEquiv N nK mZ mX ell ellEV leakEC) y.1).1) heq
       rw [shortageCompleteOutput_rawControl,
         shortageCompleteOutput_rawControl] at hrc
       exact heta hrc
+    exact (congrArg (fun z : ℂ => _ • z)
+      (Matrix.single_apply_of_row_ne hrow
+        ((r, Sum.inr j) : ReconstructionInput N nK mZ mX ell ellEV leakEC)
+        x (1 : ℂ))).trans (smul_zero _)
   -- The right-hand side reads `sigma` on the diagonal.
   change _ = ∑ j : Fin (nK + mZ + mX),
     ((totalFailureControlKernel N nK mZ mX pA pB j omega).toReal : ℂ) *
@@ -160,11 +165,11 @@ private theorem reconstruction_shortage
       rw [Pi.single_apply]
       by_cases hx : x = x0
       · subst x
-        rw [if_pos rfl]
+        rw [ite_eq_left rfl]
         refine (congrArg (fun z : ℂ => (_ : ℂ) • z)
           (Matrix.single_apply_same _ _ (1 : ℂ))).trans ?_
         exact mul_one _
-      · rw [if_neg hx]
+      · rw [ite_eq_right hx]
         exact (congrArg (fun z : ℂ => (_ : ℂ) • z)
           (Matrix.single_apply_of_col_ne _ _ (Ne.symm hx) (1 : ℂ))).trans (smul_zero _)
     rw [Fintype.sum_eq_single eta0 fun eta heta =>
@@ -239,7 +244,7 @@ private theorem program_denote_shortage_eq_abort
       simpa [QKD.BB84.lateSelectionExitEquiv] using hshortE
     change (Measurement.lateSelectionLeaf N nK mZ mX
       ⟨a, b, order⟩).system leaf = _
-    rw [QKD.BB84.lateSelectionLeaf_system, if_neg h']
+    rw [QKD.BB84.lateSelectionLeaf_system, ite_eq_right h']
   have hout : QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC e =
       .leaf Measurement.lateSelectionAbortSystem := by
     simp [QKD.BB84.completeContinuationBoundary, hshortE]
@@ -254,7 +259,7 @@ private theorem program_denote_shortage_eq_abort
     -- Both exit inclusions pick out the boundary points over the exit `e`.
     simp [Matrix.mul_apply, Boundary.exitKraus_apply]
   unfold QKD.BB84.completeContinuation
-  rw [dif_neg hshortE]
+  rw [dite_eq_right hshortE]
   -- At a shortage exit the continuation is `done`, transported along `hstart` and `hout`.
   simp only [eq_mpr_eq_cast]
   rw [Program.denote_cast_apply hstart rfl]
@@ -383,6 +388,7 @@ private theorem retainedMid_failure_trace
             Sum.inr j) := by
       unfold comparisonPreToRetainedControlEquiv comparisonPreOutputEquiv
       simp
+      rfl
     change (coordinateLinear (comparisonPreInputEquiv N)
         (comparisonPreOutputEquiv N (nK + mZ + mX))
         (comparisonPreInstrument N nK mZ mX pA pB hN).channel)
@@ -426,7 +432,7 @@ private theorem retainedMid_failure_trace
           ((comparisonSelectedToRoundEquiv (nK + mZ + mX)).symm i, Sum.inr j) by
         exact hregroup i i]
       simp only [comparisonPreEntry]
-      rw [if_neg]
+      rw [ite_eq_right]
       intro hc
       apply hi
       calc
@@ -501,14 +507,14 @@ private theorem totalized_failure_mass_formula
       simp [show omega ≠ x by exact Ne.symm hne]
     · simp
   rw [htagged] at hpoint
-  rw [totalizedReconstructedStatusRawLaw, dif_neg hn] at hpoint
+  rw [totalizedReconstructedStatusRawLaw, dite_eq_right hn] at hpoint
   simp only [PMF.bind_apply, PMF.pure_apply, tsum_fintype,
     Fintype.sum_bool, selectionStatusLaw, PMF.ofFintype_apply,
-    selectionStatusWeight, Bool.false_eq_true, if_false, if_true,
+    selectionStatusWeight, Bool.false_eq_true, ite_false, ite_true,
     Prod.mk.injEq, true_and, mul_ite, mul_one, mul_zero] at hpoint
-  simp only [false_and, if_false,
+  simp only [false_and, ite_false,
     Finset.sum_const_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, if_true] at hpoint
+    Finset.mem_univ, ite_true] at hpoint
   simp only [Finset.sum_const_zero, mul_zero, zero_add] at hpoint
   simpa only [mul_assoc] using hpoint
 
@@ -580,7 +586,7 @@ theorem retainedFactorization_shortage_sector
     exact hshort (by simp [HasQuotas])
   let j0 : Fin (nK + mZ + mX) := ⟨0, Nat.pos_of_ne_zero hn⟩
   rw [Finset.sum_eq_single j0]
-  · rw [if_pos (by rfl)]
+  · rw [ite_eq_left (by rfl)]
     have hmass := totalized_failure_complex_mass_formula
       N nK mZ mX pA pB hN omega hshort
     dsimp only at hmass
@@ -597,7 +603,7 @@ theorem retainedFactorization_shortage_sector
       apply hne
       apply Fin.ext
       exact hj0
-    rw [if_neg hj]
+    rw [ite_eq_right hj]
     ring
   · intro hmem
     exact (hmem (Finset.mem_univ j0)).elim

@@ -55,7 +55,7 @@ lemma continuous_cqIncl_apply {X : Type*} [Fintype X] {n : ℕ} (x : X) :
 at most one. -/
 lemma range_cqIncl {X : Type*} [Fintype X] {n : ℕ} :
     Set.range (cqIncl : CQState X n → (X → Op n)) =
-      setOf (fun M : X → Op n => (∀ x, (M x).PosSemidef) ∧ ∑ x, (M x).trace.re ≤ 1) := by
+      Set.ofPred (fun M : X → Op n => (∀ x, (M x).PosSemidef) ∧ ∑ x, (M x).trace.re ≤ 1) := by
   ext M
   constructor
   · rintro ⟨τ, rfl⟩
@@ -86,19 +86,19 @@ lemma cqState_univ_isCompact {X : Type*} [Fintype X] {n : ℕ} :
       isCompact_univ_pi (fun _ => ProperSpace.isCompact_closedBall (0 : ℂ) 1)))
   refine hBox.of_isClosed_subset ?_ ?_
   · -- closedness of the PSD / trace-bounded family
-    have h_psd : ∀ x : X, IsClosed (setOf (fun M : X → Op n => (M x).PosSemidef)) := by
+    have h_psd : ∀ x : X, IsClosed (Set.ofPred (fun M : X → Op n => (M x).PosSemidef)) := by
       intro x
-      simpa only [Set.preimage, Set.mem_setOf_eq] using
+      simpa only [Set.preimage, Set.mem_ofPred_eq] using
         IsClosed.preimage (f := fun M : X → Op n => M x)
           (continuous_apply x) (isClosed_setOf_posSemidef (n := n))
-    have h_trace : IsClosed (setOf (fun M : X → Op n => ∑ x, (M x).trace.re ≤ 1)) := by
+    have h_trace : IsClosed (Set.ofPred (fun M : X → Op n => ∑ x, (M x).trace.re ≤ 1)) := by
       apply isClosed_le ?_ continuous_const
       exact continuous_finsetSum _ (fun x _ =>
         Complex.continuous_re.comp (continuous_apply x).matrix_trace)
-    have hEq : setOf (fun M : X → Op n => (∀ x, (M x).PosSemidef) ∧ ∑ x, (M x).trace.re ≤ 1) =
-        (⋂ x, setOf (fun M : X → Op n => (M x).PosSemidef)) ∩
-          setOf (fun M : X → Op n => ∑ x, (M x).trace.re ≤ 1) := by
-      ext M; simp only [Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter]
+    have hEq : Set.ofPred (fun M : X → Op n => (∀ x, (M x).PosSemidef) ∧ ∑ x, (M x).trace.re ≤ 1) =
+        (⋂ x, Set.ofPred (fun M : X → Op n => (M x).PosSemidef)) ∩
+          Set.ofPred (fun M : X → Op n => ∑ x, (M x).trace.re ≤ 1) := by
+      ext M; simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
     rw [hEq]
     exact (isClosed_iInter h_psd).inter h_trace
   · -- containment in the compact entry box
@@ -133,8 +133,8 @@ lemma continuous_cqState_purifiedDistance
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (ρ : CQState X n) :
     Continuous (fun τ : CQState X n => CQState.purifiedDistance ρ τ) := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   have hJcont : Continuous (fun τ : CQState X n => τ.toJointDensity.toOp) :=
     continuous_cqState_toJointDensity_toOp
   rw [continuous_iff_continuousAt]
@@ -181,8 +181,8 @@ Ambient compactness is `cqState_univ_isCompact`, proved via the entrywise PSD bo
 theorem cqEpsilonBall_isCompact
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (ρ : CQState X n) (ε : ℝ) :
-    IsCompact (setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
-  have hclosed : IsClosed (setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) :=
+    IsCompact (Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
+  have hclosed : IsClosed (Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) :=
     isClosed_Iic.preimage (continuous_cqState_purifiedDistance ρ)
   exact cqState_univ_isCompact.of_isClosed_subset hclosed (Set.subset_univ _)
 
@@ -234,14 +234,14 @@ lemma continuous_minFeasibleLambda_of_posDef
     subst hn
     have hconst : (fun τ : CQState X 0 => minFeasibleLambda τ σ) = fun _ => 0 := by
       funext τ
-      have hset : setOf (isFeasible τ σ) = Set.Ici (0 : ℝ) := by
+      have hset : Set.ofPred (isFeasible τ σ) = Set.Ici (0 : ℝ) := by
         ext t
-        simp only [Set.mem_setOf_eq, Set.mem_Ici, isFeasible]
+        simp only [Set.mem_ofPred_eq, Set.mem_Ici, isFeasible]
         refine ⟨fun h => h.1, fun ht => ⟨ht, fun x v => ?_⟩⟩
         simp [quadraticForm, dotProduct]
       rw [minFeasibleLambda, hset, csInf_Ici]
     rw [hconst]; exact continuous_const
-  · haveI : NeZero n := ⟨hn.ne'⟩
+  · have : NeZero n := ⟨hn.ne'⟩
     -- A fixed Löwner constant `C ≥ 0` with `1 ⪯ C·σ` (from `σ ≻ 0`).
     obtain ⟨C, hC0, hC1⟩ :=
       Matrix.PosDef.exists_smul_opLe_of_posSemidef hσ_pd (Matrix.PosSemidef.one (n := Fin n))
@@ -346,7 +346,7 @@ lemma weight_pos_on_ball_of_bddAboveReal
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (ρ : CQState X n) (σ : SubDensityOp n)
     (hσ_pd : σ.toOp.PosDef) (ε : ℝ) (hε_pos : 0 < ε)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)))
     {τ : CQState X n} (hτ : CQState.purifiedDistance ρ τ ≤ ε) :
     0 < ∑ x : X, (τ.stateMap x).trace := by
   -- Boundedness of the smoothed set forces `ε² < weight(ρ)`.
@@ -375,22 +375,22 @@ continuous on the purified-distance ε-ball (Tomamichel 2016 §6.2.2).  Two case
 theorem continuousOn_conditionalMinEntropyReal_of_bddAbove
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (ρ : CQState X n) (σ : SubDensityOp n) (hσ_pd : σ.toOp.PosDef) (ε : ℝ)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ))) :
     ContinuousOn (fun τ : CQState X n => conditionalMinEntropyReal τ σ)
-      (setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
+      (Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
   by_cases hε_pos : 0 < ε
   · -- `conditionalMinEntropyReal τ σ = -log (minFeasibleLambda τ σ) / log 2`.
     have hg_cont : Continuous (fun τ : CQState X n => minFeasibleLambda τ σ) :=
       continuous_minFeasibleLambda_of_posDef σ hσ_pd
     -- `minFeasibleLambda` is strictly positive on the ball (positive weight + `σ ≻ 0`).
-    have hpos : ∀ τ ∈ setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε),
+    have hpos : ∀ τ ∈ Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε),
         0 < minFeasibleLambda τ σ := by
       intro τ hτ
       exact minFeasibleLambda_pos_of_posDef_of_weight_pos τ σ hσ_pd
         (weight_pos_on_ball_of_bddAboveReal ρ σ hσ_pd ε hε_pos hbdd hτ)
     -- `log ∘ minFeasibleLambda` is continuous on the ball (image avoids `0`).
     have hlog : ContinuousOn (fun τ : CQState X n => Real.log (minFeasibleLambda τ σ))
-        (setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
+        (Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
       refine Real.continuousOn_log.comp hg_cont.continuousOn ?_
       intro τ hτ
       exact Set.mem_compl_singleton_iff.mpr (hpos τ hτ).ne'
@@ -398,13 +398,13 @@ theorem continuousOn_conditionalMinEntropyReal_of_bddAbove
     exact hlog.neg.div_const (Real.log 2)
   · -- `ε ≤ 0`: the ball forces `P(ρ, τ) = 0`, so the objective is constant on it.
     push Not at hε_pos
-    haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-    haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+    have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+    have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
     have heqon : Set.EqOn (fun τ : CQState X n => conditionalMinEntropyReal τ σ)
         (fun _ : CQState X n => conditionalMinEntropyReal ρ σ)
-        (setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
+        (Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε)) := by
       intro τ hτ
-      simp only [Set.mem_setOf_eq] at hτ
+      simp only [Set.mem_ofPred_eq] at hτ
       have hP_nn : 0 ≤ CQState.purifiedDistance ρ τ := by
         unfold CQState.purifiedDistance
         exact purifiedDistance_nonneg ρ.toJointDensity τ.toJointDensity
@@ -421,10 +421,10 @@ lemma conditionalMinEntropyReal_image_epsilonBall_eq
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (ρ : CQState X n) (σ : SubDensityOp n) (ε : ℝ) :
     (fun τ : CQState X n => conditionalMinEntropyReal τ σ) ''
-        (setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε))
-      = setOf (isInSmoothedSetReal ε ρ σ) := by
+        (Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε))
+      = Set.ofPred (isInSmoothedSetReal ε ρ σ) := by
   ext h
-  simp only [Set.mem_image, Set.mem_setOf_eq, isInSmoothedSetReal]
+  simp only [Set.mem_image, Set.mem_ofPred_eq, isInSmoothedSetReal]
   constructor
   · rintro ⟨τ, hd, hval⟩
     exact ⟨τ, hval.symm, hd⟩
@@ -444,11 +444,11 @@ Combines compactness of the ε-ball (`cqEpsilonBall_isCompact`), continuity of t
 theorem smoothMinEntropyReal_sSup_attained_of_bddAbove
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ} [NeZero n]
     (ε : ℝ) (hε : 0 ≤ ε) (ρ : CQState X n) (σ : SubDensityOp n) (hσ_pd : σ.toOp.PosDef)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ))) :
     ∃ ρ' : CQState X n,
       CQState.purifiedDistance ρ ρ' ≤ ε ∧
         conditionalMinEntropyReal ρ' σ = smoothMinEntropyReal ε ρ σ := by
-  have hne : ((setOf (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε))).Nonempty := by
+  have hne : ((Set.ofPred (fun τ : CQState X n => CQState.purifiedDistance ρ τ ≤ ε))).Nonempty := by
     refine ⟨ρ, ?_⟩
     change CQState.purifiedDistance ρ ρ ≤ ε
     rw [CQState.purifiedDistance_self_zero]

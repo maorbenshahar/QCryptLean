@@ -130,8 +130,8 @@ lemma traceNorm_uniformOutput_diff
         ((uniformOutputState (Z := Z) σ₁ : CQState Z n).toJointDensity.toOp -
           (uniformOutputState (Z := Z) σ₂ : CQState Z n).toJointDensity.toOp) =
       traceNorm (σ₁.toOp - σ₂.toOp) := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [uniformOutput_toOp_diff_eq, traceNorm_blockDiagonal]
   -- ∑ z : Z, traceNorm ((1/|Z| : ℂ) • (σ₁.toOp − σ₂.toOp)) = traceNorm (σ₁.toOp − σ₂.toOp)
@@ -168,8 +168,8 @@ lemma traceDistanceGen_uniformOutput_eq
         (uniformOutputState (Z := Z) σ₁ : CQState Z n).toJointDensity.toOp
         (uniformOutputState (Z := Z) σ₂ : CQState Z n).toJointDensity.toOp =
       traceDistanceGen σ₁.toOp σ₂.toOp := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   unfold traceDistanceGen
   congr 1
@@ -225,8 +225,8 @@ lemma traceNorm_joint_diff_eq_sum
       ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
     traceNorm (ρ.toJointDensity.toOp - ρ'.toJointDensity.toOp) =
       ∑ x : X, traceNorm ((ρ.stateMap x).toOp - (ρ'.stateMap x).toOp) := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [toJointDensity_toOp_diff_eq]
   exact traceNorm_blockDiagonal _
@@ -252,8 +252,8 @@ lemma traceNorm_marginal_diff_le_joint
       ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
     traceNorm ((ρ.quantumMarginal).toOp - (ρ'.quantumMarginal).toOp) ≤
       traceNorm (ρ.toJointDensity.toOp - ρ'.toJointDensity.toOp) := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [quantumMarginal_diff_eq_sum, traceNorm_joint_diff_eq_sum]
   exact traceNorm_sum_le _ _
@@ -295,8 +295,8 @@ lemma traceDistanceGen_marginal_le_joint
       ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
     traceDistanceGen (ρ.quantumMarginal).toOp (ρ'.quantumMarginal).toOp ≤
       traceDistanceGen ρ.toJointDensity.toOp ρ'.toJointDensity.toOp := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   unfold traceDistanceGen
   have htn := traceNorm_marginal_diff_le_joint ρ ρ'

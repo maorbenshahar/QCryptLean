@@ -118,7 +118,7 @@ raise `H_min^ε(A|C)`, hence lower its negation. This is the sign flip of
 side-condition; `SmoothBipartiteRegularity.lean` discharges that hypothesis for `ε' < 1`. -/
 lemma smoothMaxEntropyDual_antitone_eps {dA dB : ℕ} [NeZero (dA * (dA * dB))]
     {ε ε' : ℝ} (hε : 0 ≤ ε) (h : ε ≤ ε') (ρ : DensityOp (dA * dB))
-    (hbdd : BddAbove (setOf (isInSmoothBipartiteMinSet ε'
+    (hbdd : BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε'
       (DensityOp.toSubDensityOp (canonicalPurification ρ).marginalAC)))) :
     smoothMaxEntropyDual ε' ρ ≤ smoothMaxEntropyDual ε ρ :=
   neg_le_neg (smoothBipartiteMinEntropyOptReal_monotone_eps hε h _ hbdd)

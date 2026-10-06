@@ -46,8 +46,8 @@ theorem quantum_seedKey_LHL_smooth_of_refOptimisedFloor
         (seedUniformOutputState (S := S) (Z := Z)
           ρ.quantumMarginal).toJointDensity.toOp ≤
       (1 / 2) * Real.sqrt ((Fintype.card Z : ℝ) * 2 ^ (-k)) + 2 * ε := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   set f : ℝ → ℝ := fun t =>
       (1 / 2) * Real.sqrt ((Fintype.card Z : ℝ) * 2 ^ (-t)) + 2 * ε with hf_def

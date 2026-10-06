@@ -59,7 +59,7 @@ character → spectral → polar → finite-root-density chain:
 4. **Density step** (`commute_tensorPow_of_commute_unitaryTensorPow`, the internal theorem
    closing the load-bearing inclusion). For arbitrary `A`, the map
    `z ↦ [Op.tensorPow (A + z•1) n, T]` is continuous in `z ∈ ℂ`, vanishes off the finite root
-   set of `(-A).charpoly` (`Matrix.eval_charpoly`, `Polynomial.finite_setOf_isRoot`), and that
+   set of `(-A).charpoly` (`Matrix.eval_charpoly`, `Polynomial.finite_setOfPred_isRoot`), and that
    complement is dense (`Dense.sdiff_finite`); by `Continuous.ext_on` the map vanishes
    identically, in particular at `z = 0`.
 -/
@@ -297,14 +297,14 @@ theorem commute_tensorPow_of_commute_unitaryTensorPow
       ext i j
       simp [Matrix.diagonal_apply, Matrix.smul_apply, Matrix.one_apply]
     rw [sub_neg_eq_add, hse, add_comm]
-  set bad : Set ℂ := setOf (fun z : ℂ => ¬ IsUnit (A + z • (1 : Op dR))) with hbaddef
-  have hbad_eq : bad = setOf (fun z : ℂ => ((-A).charpoly).IsRoot z) := by
+  set bad : Set ℂ := Set.ofPred (fun z : ℂ => ¬ IsUnit (A + z • (1 : Op dR))) with hbaddef
+  have hbad_eq : bad = Set.ofPred (fun z : ℂ => ((-A).charpoly).IsRoot z) := by
     ext z
-    simp only [hbaddef, Set.mem_setOf_eq, Polynomial.IsRoot.def, Matrix.eval_charpoly, hscalar z]
+    simp only [hbaddef, Set.mem_ofPred_eq, Polynomial.IsRoot.def, Matrix.eval_charpoly, hscalar z]
     rw [(A + z • (1 : Op dR)).isUnit_iff_isUnit_det, isUnit_iff_ne_zero, not_not]
   have hbad_finite : bad.Finite := by
     rw [hbad_eq]
-    exact Polynomial.finite_setOf_isRoot ((Matrix.charpoly_monic (-A)).ne_zero)
+    exact Polynomial.finite_setOfPred_isRoot ((Matrix.charpoly_monic (-A)).ne_zero)
   have hdense : Dense badᶜ := by
     have hd : Dense ((Set.univ : Set ℂ) \ bad) := Dense.sdiff_finite dense_univ hbad_finite
     rwa [← Set.compl_eq_univ_sdiff] at hd
@@ -329,15 +329,15 @@ The unitary family is quantified exactly as in the `twirlMap_eq_iff_commute`, so
 paired-register composite (`Op.tensor (1 : Op (dA^n)) ·` via
 `commutant_pairedTensorFamily_eq_tensorCommutantSpan`) type-checks against this output directly. -/
 theorem commutant_unitaryTensorPow_eq_commutant_tensorPow (dR n : ℕ) [NeZero dR] :
-    -- `setOf` (which delaborates to `{T | …}`) is used instead of the `{T : … | …}`
+    -- `Set.ofPred` (which delaborates to `{T | …}`) is used instead of the `{T : … | …}`
     -- set-builder notation because `open Quantum.Operators` brings the Dirac ket `|·⟩`
     -- notation, whose `|` token shadows the set-builder separator. The two forms produce
     -- the identical `Set (Op (dR ^ n))`.
-    setOf (fun T : Op (dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
+    Set.ofPred (fun T : Op (dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
         Commute (Op.tensorPow (U : Op dR) n) T)
-      = setOf (fun T : Op (dR ^ n) => ∀ A : Op dR, Commute (Op.tensorPow A n) T) := by
+      = Set.ofPred (fun T : Op (dR ^ n) => ∀ A : Op dR, Commute (Op.tensorPow A n) T) := by
   ext T
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   constructor
   · intro _hUnit _A
     exact commute_tensorPow_of_commute_unitaryTensorPow dR n T _hUnit _A

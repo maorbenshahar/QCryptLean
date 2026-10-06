@@ -70,8 +70,8 @@ theorem residual_subsingleton {B : Boundary TwoParty.Party} (L : QKD.OutputLayou
     (hAR : ∀ e, Subsingleton (L.AliceResidual e))
     (hBR : ∀ e, Subsingleton (L.BobResidual e))
     (e : B.Exit) : Subsingleton (L.Residual e) := by
-  haveI := hAR e
-  haveI := hBR e
+  have := hAR e
+  have := hBR e
   refine ⟨fun x y => ?_⟩
   apply Prod.ext
   · apply Prod.ext <;> exact Subsingleton.elim _ _
@@ -222,7 +222,7 @@ theorem toOutputLayout_residual_subsingleton (h : RegisterKeyed L a b) (hab : a 
 ownership of the two keys is therefore genuine: no third party retains output information. -/
 theorem toOutputLayout_spectators_subsingleton (h : RegisterKeyed L a b) (hab : a ≠ b)
     (e : B.Exit) : Subsingleton ((h.toOutputLayout hab).Spectators e) := by
-  haveI := h.toOutputLayout_residual_subsingleton hab e
+  have := h.toOutputLayout_residual_subsingleton hab e
   refine ⟨fun s s' => ?_⟩
   have hpair : (⟨⟨(), ()⟩, s⟩ : (h.toOutputLayout hab).Residual e) = ⟨⟨(), ()⟩, s'⟩ :=
     Subsingleton.elim _ _
@@ -261,7 +261,7 @@ private theorem residual_recoordinatization (h : RegisterKeyed L a b) (hab : a �
     haveI : Unique ((h.toOutputLayout hab).toBoundaryKeyLayout.Residual e) :=
       uniqueOfSubsingleton (Classical.arbitrary _)
     exact Equiv.ofUnique _ _
-  · haveI : Subsingleton ((h.toOutputLayout hab).toBoundaryKeyLayout.Residual e) :=
+  · have : Subsingleton ((h.toOutputLayout hab).toBoundaryKeyLayout.Residual e) :=
       h.toOutputLayout_residual_subsingleton hab e
     exact Subsingleton.elim _ _
 
@@ -291,7 +291,7 @@ theorem toOutputLayout_acceptCoordinates_symm (h : RegisterKeyed L a b) (hab : a
     ((h.toOutputLayout hab).toBoundaryKeyLayout.acceptCoordinates h₂).symm (x, y, u) =
       (L.acceptCoordinates h₁).symm (x, y, w) := by
   obtain ⟨residual, hres⟩ := h.residual_recoordinatization hab
-  haveI : Subsingleton ((h.toOutputLayout hab).toBoundaryKeyLayout.Residual e) :=
+  have : Subsingleton ((h.toOutputLayout hab).toBoundaryKeyLayout.Residual e) :=
     h.toOutputLayout_residual_subsingleton hab e
   rw [Subsingleton.elim u (residual e w)]
   exact BoundaryKeyLayout.acceptCoordinates_symm_congr L _ residual

@@ -1,6 +1,6 @@
 import QCryptLean.Quantum.Operators.Types
 import Mathlib.Data.Matrix.Basic
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.LinearAlgebra.Matrix.DotProduct
 
 /-!

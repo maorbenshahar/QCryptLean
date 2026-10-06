@@ -226,7 +226,7 @@ variable {dA dB n K : ℕ} [NeZero dA] [NeZero dB] [NeZero n] [NeZero K]
     protocol satisfies Definition 4 with `ε_sec = 0`. Shows Definition 4 is satisfiable. -/
 theorem isFixedMarginalSecret_zero (σA : DensityOp dA) :
     IsFixedMarginalSecret (0 : Op (dA ^ n * dB ^ n) →ₗ[ℂ] Op K) σA 0 := by
-  haveI := neZero_inputDim dA dB n
+  have := neZero_inputDim dA dB n
   intro eveDim _ ρ _
   have hzero : mapTensorId (0 : Op (dA ^ n * dB ^ n) →ₗ[ℂ] Op K) ρ.toOp = 0 := by
     ext p q
@@ -239,7 +239,7 @@ theorem IsFixedMarginalSecret.mono {Δ : Op (dA ^ n * dB ^ n) →ₗ[ℂ] Op K}
     {σA : DensityOp dA} {εsec εsec' : ℝ} (hle : εsec ≤ εsec')
     (h : IsFixedMarginalSecret Δ σA εsec) :
     IsFixedMarginalSecret Δ σA εsec' := by
-  haveI := neZero_inputDim dA dB n
+  have := neZero_inputDim dA dB n
   intro eveDim _ ρ hρ
   exact le_trans (h eveDim ρ hρ) hle
 
@@ -252,7 +252,7 @@ theorem exists_fixedMarginal_input [NeZero n] (σA : DensityOp dA)
     (eveDim : ℕ) [NeZero eveDim] :
     ∃ ρ : DensityOp (dA ^ n * dB ^ n * eveDim),
       partialTraceB (partialTraceB ρ.toOp) = (σA.tensorPowGen n).toOp := by
-  haveI : NeZero (dB ^ n) := ⟨pow_ne_zero n (NeZero.ne dB)⟩
+  have : NeZero (dB ^ n) := ⟨pow_ne_zero n (NeZero.ne dB)⟩
   refine ⟨((σA.tensorPowGen n).tensor (DensityOp.maxMixed (dB ^ n))).tensor
       (DensityOp.maxMixed eveDim), ?_⟩
   have h1 : partialTraceB

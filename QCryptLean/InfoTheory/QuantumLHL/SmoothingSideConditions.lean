@@ -90,8 +90,8 @@ lemma quantum_LHL_of_isFeasible
         ((extractorOutputState H ρ).toJointDensity.toOp -
           (uniformOutputState (Z := Z) ρ.quantumMarginal).toJointDensity.toOp) ≤
       Real.sqrt ((Fintype.card Z : ℝ) * t) := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [cqState_joint_traceNorm_eq_sum_blocks]
   exact (joint_traceNorm_sum_blocks_le_sqrt_card_mul_lambda_subNorm
@@ -168,8 +168,8 @@ lemma quantum_LHL_zero_floor
         ((extractorOutputState H ρ).toJointDensity.toOp -
           (uniformOutputState (Z := Z) ρ.quantumMarginal).toJointDensity.toOp) ≤
       Real.sqrt ((Fintype.card Z : ℝ)) := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [cqState_joint_traceNorm_eq_sum_blocks]
   have h := sum_traceNorm_sub_uniform_le

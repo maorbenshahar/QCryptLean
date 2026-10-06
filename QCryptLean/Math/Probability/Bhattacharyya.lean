@@ -88,8 +88,8 @@ lemma sqrt_pq_one_sub_one_sub_add_sqrt_one_sub_le_sqrt_one_sub_pp_one_sub_qq
   have h1q : 0 ≤ 1 - q := sub_nonneg.mpr hq1
   have h1p' : 0 ≤ 1 - p' := sub_nonneg.mpr hp'1
   have h1q' : 0 ≤ 1 - q' := sub_nonneg.mpr hq'1
-  have hpp'_le : p * p' ≤ 1 := mul_le_one₀ hp1 hp'0 hp'1
-  have hqq'_le : q * q' ≤ 1 := mul_le_one₀ hq1 hq'0 hq'1
+  have hpp'_le : p * p' ≤ 1 := (mul_le_of_le_one_left hp'0 hp1).trans hp'1
+  have hqq'_le : q * q' ≤ 1 := (mul_le_of_le_one_left hq'0 hq1).trans hq'1
   have h1pp' : 0 ≤ 1 - p * p' := sub_nonneg.mpr hpp'_le
   have h1qq' : 0 ≤ 1 - q * q' := sub_nonneg.mpr hqq'_le
   have h_prod_nn : 0 ≤ (1 - p * p') * (1 - q * q') := mul_nonneg h1pp' h1qq'

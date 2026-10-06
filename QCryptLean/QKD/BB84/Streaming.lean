@@ -61,16 +61,13 @@ theorem program_eq_schedule_graft_classicalContinuation
     | zero => rfl
     | succ m ih =>
         rw [Measurement.weightedMeasurementScheduleAux_succ]
-        simp only [Program.graft_priv]
         apply congrArg (Program.priv
           (Measurement.weightedStreamAliceAction pA F m))
         apply congrArg (Program.priv
           (Measurement.weightedStreamBobAction pA pB F m))
         have h : Measurement.weightedStreamSystem (F × Measurement.StoredRecord) m =
             (Measurement.weightedStreamBobAction pA pB F m).out := by
-          simp only [Measurement.weightedStreamBobAction, Measurement.weightedStreamAliceAction,
-            PrivateAction.out_ofInstrument, Measurement.weightedStreamSystem,
-            TwoParty.set_alice, TwoParty.set_bob]
+          exact (Measurement.weightedStreamBobAction_out pA pB F m).symm
         refine (congrArg (fun p : Program
           (Measurement.weightedStreamBobAction pA pB F m).out B => p.graft l)
           (Program.graft_castInput h

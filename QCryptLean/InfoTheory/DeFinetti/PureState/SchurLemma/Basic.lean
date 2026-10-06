@@ -65,7 +65,7 @@ lemma coherentStateDensityOp_entry_integrable {d n : ℕ} [NeZero d] [NeZero n]
     MeasureTheory.Integrable
       (fun g : unitaryGroup (Fin d) ℂ => (coherentStateDensityOp g n).toOp i j)
       (haarProbUnitary d) := by
-  haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary d) :=
+  have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary d) :=
     haarProbUnitary_isProbability d
   exact (coherentStateDensityOp_entry_continuous i j).integrable_of_hasCompactSupport
     (HasCompactSupport.of_compactSpace _)
@@ -91,7 +91,7 @@ lemma coherentStateKet_perm_fixed {d n : ℕ} [NeZero d] [NeZero n]
   rw [Finset.sum_eq_single x₀]
   · simp only [show e.symm x₀ = f_i ∘ ⇑σ from by simp [x₀],
       show (f_i ∘ ⇑σ) ∘ ⇑σ.symm = f_i from by ext k; simp,
-      if_true, one_mul]
+      ite_true, one_mul]
     conv_lhs =>
       arg 2; ext j
       rw [show (⟨↑(e (f_i ∘ ⇑σ)) / d ^ (n - 1 - ↑j) % d, _⟩ : Fin d) =
@@ -113,7 +113,7 @@ lemma coherentStateKet_perm_fixed {d n : ℕ} [NeZero d] [NeZero n]
         (fun j _ => by simp [Fin.revPerm_apply])
   · intro x _ hx
     simp only [ite_mul, one_mul, zero_mul]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h; exact hx (show x = x₀ by
       have heq : e.symm x = f_i ∘ ⇑σ := by
         funext k
@@ -169,7 +169,7 @@ lemma coherentStateDensityOp_integrable (d n : ℕ) [NeZero d] [NeZero n] :
     MeasureTheory.Integrable
       (fun g : unitaryGroup (Fin d) ℂ => (coherentStateDensityOp g n).toOp)
       (haarProbUnitary d) := by
-  haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary d) :=
+  have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary d) :=
     haarProbUnitary_isProbability d
   exact (continuous_matrix (fun i j =>
     coherentStateDensityOp_entry_continuous i j)).integrable_of_hasCompactSupport
@@ -272,7 +272,7 @@ lemma coherent_integral_trace (d n : ℕ) [NeZero d] [NeZero n] :
       ∂(haarProbUnitary d) := by
     let trace_CLM : Op (d ^ n) →L[ℝ] ℂ :=
       (Matrix.traceLinearMap (Fin (d ^ n)) ℝ ℂ).toContinuousLinearMap
-    haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary d) :=
+    have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary d) :=
       haarProbUnitary_isProbability d
     have h_int : MeasureTheory.Integrable
         (fun g : unitaryGroup (Fin d) ℂ => (coherentStateDensityOp g n).toOp)
@@ -375,7 +375,7 @@ lemma integralTensorPower_deFinetti_haar_eq_coherent_integral {d n : ℕ} [NeZer
     coherentSingleCopy_measurable h_f_cont.stronglyMeasurable]
   simp_rw [h_tensor_eq]
   symm
-  haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
   have h_M_cont : Continuous (fun g : unitaryGroup (Fin d) ℂ =>
       (coherentStateDensityOp g n).toOp) :=
     continuous_matrix (fun a b => coherentStateDensityOp_entry_continuous a b)

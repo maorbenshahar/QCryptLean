@@ -123,9 +123,9 @@ theorem diamondNorm_reindex_conj_eq {a a' b b' : ℕ}
     diamondNorm (((Matrix.reindexLinearEquiv ℂ ℂ eOut eOut).toLinearMap.comp Δ).comp
         (Matrix.reindexLinearEquiv ℂ ℂ eIn eIn).toLinearMap) = diamondNorm Δ := by
   obtain rfl : a = a' := by simpa using Fintype.card_congr eIn
-  haveI : NeZero (a * a) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (b * a) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (b' * a) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
+  have : NeZero (a * a) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
+  have : NeZero (b * a) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
+  have : NeZero (b' * a) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   set RI := (Matrix.reindexLinearEquiv ℂ ℂ eIn eIn).toLinearMap with hRI
   set RI' := (Matrix.reindexLinearEquiv ℂ ℂ eIn.symm eIn.symm).toLinearMap with hRI'
   set RO := (Matrix.reindexLinearEquiv ℂ ℂ eOut eOut).toLinearMap with hRO

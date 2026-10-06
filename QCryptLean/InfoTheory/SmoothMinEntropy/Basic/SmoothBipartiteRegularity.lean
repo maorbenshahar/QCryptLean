@@ -87,7 +87,7 @@ Uniform bound `log₂(dA / (1 − ε²))`: every ball member has trace at least 
 turns that into the stated bound. See the module docstring for why `ε < 1` cannot be dropped. -/
 theorem smoothBipartiteMinSet_bddAbove_of_normalized {dA dC : ℕ} [NeZero dA] [NeZero dC]
     (ρ : SubDensityOp (dA * dC)) (hρ : ρ.trace = 1) {ε : ℝ} (hε : 0 ≤ ε) (hε1 : ε < 1) :
-    BddAbove (setOf (isInSmoothBipartiteMinSet ε ρ)) := by
+    BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε ρ)) := by
   have hsq : ε ^ 2 < 1 := by nlinarith
   refine ⟨-Real.log ((1 - ε ^ 2) / (dA : ℝ)) / Real.log 2, ?_⟩
   rintro h ⟨ρ', hd, rfl⟩

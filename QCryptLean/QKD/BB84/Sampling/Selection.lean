@@ -111,14 +111,10 @@ theorem selectedRoleValue_injective
       (Fin.cast (List.length_take_of_le h.2).symm i)
   have hzValue : Function.Injective zValue := by
     intro i j hij
-    apply Fin.ext
-    have hindex := hzPrefix.injective_get hij
-    simpa [zValue] using congrArg Fin.val hindex
+    exact Fin.cast_injective _ (hzPrefix.injective_get hij)
   have hxValue : Function.Injective xValue := by
     intro i j hij
-    apply Fin.ext
-    have hindex := hxPrefix.injective_get hij
-    simpa [xValue] using congrArg Fin.val hindex
+    exact Fin.cast_injective _ (hxPrefix.injective_get hij)
   have hzx : ∀ i j, zValue i ≠ xValue j := by
     intro i j hij
     have hziPrefix : zValue i ∈ zPrefix (nK := nK) (mZ := mZ) omega := by

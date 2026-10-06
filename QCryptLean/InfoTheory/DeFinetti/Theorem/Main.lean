@@ -55,8 +55,8 @@ private lemma deFinetti_purified_bound {d n : ℕ} [NeZero d] [NeZero n]
   --       for each τ in the support, (Tr_B τ)^⊗k = Tr_B^{⊗k}(τ^⊗k) (partial trace
   --       distributes over tensor products), then integrate both sides.
   --   The inequality is partialTraceB_contracts_traceDistance (CPTP contraction).
-  haveI : NeZero (d * d) := ⟨Nat.mul_pos (NeZero.pos d) (NeZero.pos d) |>.ne'⟩
-  haveI : NeZero ((d * d) ^ n) := ⟨pow_ne_zero n (NeZero.ne (d * d))⟩
+  have : NeZero (d * d) := ⟨Nat.mul_pos (NeZero.pos d) (NeZero.pos d) |>.ne'⟩
+  have : NeZero ((d * d) ^ n) := ⟨pow_ne_zero n (NeZero.ne (d * d))⟩
   obtain ⟨ν, hν⟩ := deFinetti_paired Ψ _hsym
   let μ : DensityMeasure d := partialTraceBDensityMeasure ν
   refine ⟨μ, fun k _ _ hk => ?_⟩
@@ -73,9 +73,9 @@ private lemma deFinetti_purified_bound {d n : ℕ} [NeZero d] [NeZero n]
   --            ≤ D(Ψ'_k, ∫τ^⊗k dν) ≤ 2k·d²/n.
   -- Steps (a) and (b) are the main work; (c) is already proved.
   -- Key: (d*d)^k = d^k * d^k, so we can apply partialTraceB to factor out the "B" copies.
-  haveI : NeZero (d ^ k) := ⟨pow_ne_zero k (NeZero.ne d)⟩
-  haveI : NeZero ((d * d) ^ k) := ⟨pow_ne_zero k (NeZero.ne (d * d))⟩
-  haveI : NeZero (d ^ k * d ^ k) :=
+  have : NeZero (d ^ k) := ⟨pow_ne_zero k (NeZero.ne d)⟩
+  have : NeZero ((d * d) ^ k) := ⟨pow_ne_zero k (NeZero.ne (d * d))⟩
+  have : NeZero (d ^ k * d ^ k) :=
     ⟨Nat.mul_pos (Nat.pos_of_ne_zero (NeZero.ne (d ^ k)))
       (Nat.pos_of_ne_zero (NeZero.ne (d ^ k))) |>.ne'⟩
   -- Deinterleave: (d*d)^k → d^k * d^k via interleavingEquiv (correct index separation)

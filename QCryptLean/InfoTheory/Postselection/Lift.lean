@@ -124,8 +124,8 @@ lemma PMQKDProtocol.mapTensorId_roundDifferenceMap_eq_acceptProj_sub
         mapTensorId (k := k) (P.variantIdeal l')
           (Matrix.reindex (Equiv.finProdCongrExt (roundGroupEquiv dA dB n) k)
             (Equiv.finProdCongrExt (roundGroupEquiv dA dB n) k) X)) := by
-  haveI := P.keyDim_neZero
-  haveI := P.annDim_neZero
+  have := P.keyDim_neZero
+  have := P.annDim_neZero
   conv_lhs => rw [← P.acceptProj_comp_roundDifferenceMap l']
   rw [← mapTensorId_comp, PMQKDProtocol.roundDifferenceMap_eq_sub,
     mapTensorId_linearMap_sub, mapTensorId_sub,
@@ -146,13 +146,13 @@ theorem PMQKDProtocol.mapTensorId_roundDifferenceMap_trace_zero
     haveI : NeZero ((dA * dB) ^ n) :=
       ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
     (mapTensorId (k := (dA * dB) ^ n) (P.roundDifferenceMap l') Y).trace = 0 := by
-  haveI := P.keyDim_neZero
-  haveI := P.annDim_neZero
-  haveI : NeZero (P.keyDim * P.annDim) :=
+  have := P.keyDim_neZero
+  have := P.annDim_neZero
+  have : NeZero (P.keyDim * P.annDim) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
-  haveI : NeZero (dA ^ n * dB ^ n) :=
+  have : NeZero (dA ^ n * dB ^ n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (pow_pos (NeZero.pos dA) n) (pow_pos (NeZero.pos dB) n))⟩
   let e := roundGroupEquiv dA dB n
   rw [P.roundDifferenceMap_eq_sub, mapTensorId_linearMap_sub, Matrix.trace_sub]
@@ -184,8 +184,8 @@ lemma PMQKDProtocol.re_trace_acceptIdeal_eq_re_trace_acceptReal
       (Equiv.finProdCongrExt (roundGroupEquiv dA dB n) ((dA * dB) ^ n)) Y
     (mapTensorId P.acceptProj (mapTensorId (P.variantIdeal l') Y')).trace.re =
       (mapTensorId P.acceptProj (mapTensorId (P.variantReal l') Y')).trace.re := by
-  haveI := P.keyDim_neZero
-  haveI := P.annDim_neZero
+  have := P.keyDim_neZero
+  have := P.annDim_neZero
   have h := P.mapTensorId_roundDifferenceMap_trace_zero l' Y
   rw [P.mapTensorId_roundDifferenceMap_eq_acceptProj_sub, mapTensorId_sub,
     Matrix.trace_sub] at h
@@ -203,11 +203,11 @@ theorem PMQKDProtocol.differenceMap_conjTranspose (P : PMQKDProtocol dA dB n) (l
     haveI : NeZero (P.keyDim * P.annDim) :=
       ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
     P.differenceMap l' Mᴴ = (P.differenceMap l' M)ᴴ := by
-  haveI : NeZero (dA ^ n * dB ^ n) :=
+  have : NeZero (dA ^ n * dB ^ n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (pow_pos (NeZero.pos dA) n) (pow_pos (NeZero.pos dB) n))⟩
-  haveI := P.keyDim_neZero
-  haveI := P.annDim_neZero
-  haveI : NeZero (P.keyDim * P.annDim) :=
+  have := P.keyDim_neZero
+  have := P.annDim_neZero
+  have : NeZero (P.keyDim * P.annDim) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
   simp only [PMQKDProtocol.differenceMap, LinearMap.sub_apply, Matrix.conjTranspose_sub]
   rw [cptp_preserves_conjTranspose _ (P.variantReal_isCPTP l') M,
@@ -223,9 +223,9 @@ theorem PMQKDProtocol.roundDifferenceMap_conjTranspose (P : PMQKDProtocol dA dB 
     haveI : NeZero (P.keyDim * P.annDim) :=
       ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
     P.roundDifferenceMap l' Mᴴ = (P.roundDifferenceMap l' M)ᴴ := by
-  haveI := P.keyDim_neZero
-  haveI := P.annDim_neZero
-  haveI : NeZero (P.keyDim * P.annDim) :=
+  have := P.keyDim_neZero
+  have := P.annDim_neZero
+  have : NeZero (P.keyDim * P.annDim) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
   exact P.differenceMap_conjTranspose l' (Matrix.reindex (roundGroupEquiv dA dB n)
     (roundGroupEquiv dA dB n) M)
@@ -317,9 +317,9 @@ theorem postselection_referenceBound_of_iidSecurityProof
         hashingError l' (smoothMinEntropy (εbar + Real.sqrt (2 * εAT)) mixCQ mixRef) +
           2 * (εbar + Real.sqrt (2 * εAT))) :
     SatisfiesReferenceBound P l' μ (coherentIIDSecrecy εAT εPA εbar) := by
-  haveI := P.rawKeyDim_neZero
-  haveI := hproof.condDim_neZero
-  haveI := hmixCondDim
+  have := P.rawKeyDim_neZero
+  have := hproof.condDim_neZero
+  have := hmixCondDim
   have hpa : hashingError P.l
       (⨅ σ : hproof.S, smoothMinEntropy εbar (hproof.rawKeyCQ σ) (hproof.ref σ)) ≤
         εPA := by
@@ -384,9 +384,9 @@ theorem deFinetti_groupSymmetric_traceNorm_le
         (deFinettiPrefactor (∑ i : Fin kA, ∑ j : Fin kB, (mA i) ^ 2 * (mB j) ^ 2) n : ℝ) *
           Quantum.Metrics.traceNorm (Quantum.Channels.mapTensorId Δ
             (deFinettiMixturePurification dA dB n μ).toOp) := by
-  haveI hABn : NeZero ((dA * dB) ^ n) :=
+  have hABn : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
-  haveI hAn : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
+  have hAn : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
   have hπG : IsUnitaryRep (prodRep πA πB) := prodRep_isUnitaryRep πA hπA πB hπB
   -- the group twirl of the round marginal, and a purification of it
   set σg : DensityOp ((dA * dB) ^ n) :=
@@ -551,11 +551,11 @@ theorem groupInvariant_postselection_security_of_referenceBound
     P.IsSecretAt l' σA
       ((deFinettiPrefactor (∑ i : Fin kA, ∑ j : Fin kB, (mA i) ^ 2 * (mB j) ^ 2) n : ℝ) *
         bound) := by
-  haveI := P.keyDim_neZero
-  haveI := P.annDim_neZero
-  haveI : NeZero (P.keyDim * P.annDim) :=
+  have := P.keyDim_neZero
+  have := P.annDim_neZero
+  have : NeZero (P.keyDim * P.annDim) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
   set e := roundGroupEquiv dA dB n with he_def
   set Δ := P.roundDifferenceMap l' with hΔ_def
@@ -651,9 +651,9 @@ theorem permInvariant_postselection_security_of_referenceBound
     (fun _ : Fin 1 => dA) (fun _ : Fin 1 => dB) hxA hxB bound l'
     (fun μ hμ _ => href μ hμ) hperm
     (fun W hW => by
-      haveI := P.keyDim_neZero
-      haveI := P.annDim_neZero
-      haveI : NeZero (P.keyDim * P.annDim) :=
+      have := P.keyDim_neZero
+      have := P.annDim_neZero
+      have : NeZero (P.keyDim * P.annDim) :=
         ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
       exact isIIDGroupInvariantMap_const_of_toOp_eq_one
         (Δ := P.roundDifferenceMap l') W

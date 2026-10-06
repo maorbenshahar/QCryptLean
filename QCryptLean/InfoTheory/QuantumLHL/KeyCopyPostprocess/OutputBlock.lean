@@ -211,7 +211,7 @@ lemma keyCopyPostprocessOutputBlock_sum_hash_smul_partialTraceA_sum_ite_apply
   rw [Finset.sum_eq_single (hash s ω)]
   · simp [keyCopyPostprocessOutputBlock_apply, partialTraceA]
   · intro z _ hz
-    rw [if_neg]
+    rw [ite_eq_right]
     · rfl
     · exact hz.symm
   · intro hmem

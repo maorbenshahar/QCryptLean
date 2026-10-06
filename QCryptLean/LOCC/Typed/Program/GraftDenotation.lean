@@ -83,11 +83,14 @@ exit inclusion recovers the continuation Kraus matrix. -/
     (b : (k ()).Branch) :
     controlledContinuationKraus k () b * Boundary.exitKraus (.leaf R) () =
       (k ()).kraus b := by
-  rw [controlledContinuationKraus, Boundary.graftInclKraus_leaf]
-  change (1 : Op (C ()).space) * ((k ()).kraus b *
+  change Boundary.graftInclKraus (.leaf R) C () * ((k ()).kraus b *
     (Boundary.exitKraus (.leaf R) ())ᴴ) * Boundary.exitKraus (.leaf R) () = _
-  rw [Matrix.one_mul, Matrix.mul_assoc,
-    Boundary.exitKraus_conjTranspose_mul_self, Matrix.mul_one]
+  rw [Boundary.graftInclKraus_leaf]
+  let K : Matrix (C ()).space R.total ℂ := (k ()).kraus b
+  let E : Matrix (Boundary.leaf R).space R.total ℂ := Boundary.exitKraus (.leaf R) ()
+  have hE : Eᴴ * E = 1 := Boundary.exitKraus_conjTranspose_mul_self (.leaf R) ()
+  change (1 : Op (C ()).space) * (K * Eᴴ) * E = K
+  rw [Matrix.one_mul, Matrix.mul_assoc, hE, Matrix.mul_one]
 
 /-- Restricting a controlled continuation on an announced base boundary to the matching public
 block is the corresponding child controlled continuation, included into the matching grafted
@@ -184,11 +187,17 @@ theorem controlledContinuation_comp_denote_done (R : MultipartiteSystem P)
     · intro he
       exact (he (Finset.mem_univ ())).elim
   rw [houter]
-  simp only [Branch, Fintype.sum_unique, LinearMap.sum_apply]
+  change (∑ b : (k ()).Branch, matrixConjLinear (controlledContinuationKraus k () b))
+    ((∑ _ : Unit, matrixConjLinear ((Program.done : Program R (.leaf R)).kraus ())) ρ) = _
+  simp only [Fintype.sum_unique, LinearMap.sum_apply]
   have hdone : (Program.done : Program R (.leaf R)).kraus () =
       Boundary.exitKraus (.leaf R) () := by
     exact Matrix.mul_one _
   rw [hdone]
+  let L : (k ()).Branch → Op R.total →ₗ[ℂ] Op (C ()).space :=
+    fun b => matrixConjLinear ((k ()).kraus b)
+  change _ = (∑ b, L b) ρ
+  rw [LinearMap.sum_apply]
   apply Finset.sum_congr rfl
   intro b _
   change ((matrixConjLinear (controlledContinuationKraus k () b)).comp
@@ -216,7 +225,14 @@ theorem controlledContinuation_comp_publicInclKraus
     matrixConjLinear
       (Boundary.publicInclKraus (fun z => (next z).graft fun f => C ⟨z, f⟩) y)
       (controlledContinuation (fun f => k ⟨y, f⟩) ρ)
-  rw [controlledContinuation_eq_krausSum, controlledContinuation_eq_krausSum]
+  refine (congrArg (fun L : Op (Boundary.announce Y next).space →ₗ[ℂ]
+      Op ((Boundary.announce Y next).graft C).space =>
+    L (matrixConjLinear (Boundary.publicInclKraus next y) ρ))
+    (controlledContinuation_eq_krausSum k)).trans ?_
+  refine Eq.trans ?_ (congrArg (fun L : Op (next y).space →ₗ[ℂ]
+      Op ((next y).graft (fun f => C ⟨y, f⟩)).space => matrixConjLinear
+    (Boundary.publicInclKraus (fun z => (next z).graft fun f => C ⟨z, f⟩) y) (L ρ))
+    (controlledContinuation_eq_krausSum (fun f => k ⟨y, f⟩))).symm
   have hsigma :
       (∑ e : (Boundary.announce Y next).Exit,
         ∑ b : (k e).Branch, matrixConjLinear (controlledContinuationKraus k e b)) =
@@ -323,7 +339,7 @@ theorem controlledContinuationKraus_apply_eq_zero_of_exit_ne {B : Boundary P}
     Boundary.graftInclKraus_apply, Equiv.apply_symm_apply]
   apply Finset.sum_eq_zero
   intro q _
-  rw [if_neg, zero_mul]
+  rw [ite_eq_right, zero_mul]
   intro heq
   exact h (congrArg Sigma.fst heq)
 
@@ -396,7 +412,7 @@ theorem controlledContinuation_sameExit {B : Boundary P}
       rw [Finset.sum_eq_single x]
       · simp
       · intro y _ hy
-        rw [if_neg]
+        rw [ite_eq_right]
         intro hxy
         apply hy
         exact eq_of_heq ((Sigma.mk.inj_iff.mp hxy).2.symm)

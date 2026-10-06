@@ -311,11 +311,11 @@ private lemma bb84_honest_singleRound_diag (Q : ℝ) (pe x : Bool) (k : Fin sign
     fin_cases k <;> simp [Fin.ext_iff]
   unfold bb84SiftedSinglePairOp
   by_cases h : (pe && x) = true
-  · rw [if_pos h, bb84HadamardPair_hermitian,
+  · rw [ite_eq_left h, bb84HadamardPair_hermitian,
       show bb84HadamardPair * bb84HonestSourceSingle Q * bb84HadamardPair
           = bb84HonestSourceSingle Q from hadamardPair_honestSourceSingle_conj Q]
     exact hdiag
-  · rw [if_neg h, Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
+  · rw [ite_eq_right h, Matrix.conjTranspose_one, Matrix.one_mul, Matrix.mul_one]
     exact hdiag
 
 /-- **Round factorization of the honest diagonal weight.** The computational-basis diagonal entry
@@ -582,8 +582,8 @@ private lemma bb84_honest_decode_bound (n leakEC : ℕ) (Q : ℝ) (hQ0 : 0 ≤ Q
   have hnum_le : ∀ a b, num a b ≤ den a := by
     intro a b; simp only [hnum, hden]; refine Finset.sum_le_sum fun ω _ => ?_
     by_cases h : aliceKeyString peSel ω = a ∧ bobKeyString peSel ω = b
-    · rw [if_pos h, if_pos h.1]
-    · rw [if_neg h]; split_ifs
+    · rw [ite_eq_left h, ite_eq_left h.1]
+    · rw [ite_eq_right h]; split_ifs
       · exact bb84_honest_nonneg n Q hQ0 hQ1 peSel xSel ω
       · exact le_refl 0
   have herrW : ∀ a b, num a b = bb84HonestKeyErrWeight n Q peSel xSel a b * den a := by
@@ -786,16 +786,16 @@ private lemma bb84_completeness_of_bandFail_le (n ℓEV leakEC : ℕ)
     · -- The decode succeeds, so the EV tags coincide and only the PE test can reject.
       have hEV : evVerified ℓEV peSel ec t ω = true := by
         simp [evVerified, hd]
-      rw [if_pos hd, add_zero]
+      rw [ite_eq_left hd, add_zero]
       by_cases hp : bb84SiftedLocalPETestPassed peSel xSel δ Q ω = true
       · have ha : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q t ω = true := by
           simp [bb84SiftedLocalPEAndEVPassed, hp, hEV]
-        rw [if_pos ⟨ha, hd⟩, if_pos hp]
-      · rw [if_neg hp]
+        rw [ite_eq_left ⟨ha, hd⟩, ite_eq_left hp]
+      · rw [ite_eq_right hp]
         split_ifs
         · exact hw_nonneg ω
         · exact le_refl _
-    · rw [if_neg (fun h : _ ∧ _ => hd h.2), if_neg hd]
+    · rw [ite_eq_right (fun h : _ ∧ _ => hd h.2), ite_eq_right hd]
       linarith
   -- The PE-failure mass is at most the sum of the two exact band-failure masses, hence at most
   -- `eZ + eX` by the tail hypotheses.
@@ -823,9 +823,9 @@ private lemma bb84_completeness_of_bandFail_le (n ℓEV leakEC : ℕ)
           · have hband := hp
             rw [bb84SiftedLocalPETestPassed] at hband
             simp only [Bool.and_eq_true, decide_eq_true_eq] at hband
-            rw [if_pos hp, if_pos hband.1.2, if_pos hband.2.2]
+            rw [ite_eq_left hp, ite_eq_left hband.1.2, ite_eq_left hband.2.2]
             norm_num
-          · rw [if_neg hp]
+          · rw [ite_eq_right hp]
             have hZi : (0 : ℝ) ≤ if |(bb84SiftedZTestErrorCount peSel xSel ω : ℝ) /
                   (bb84SiftedZTestSampleSize peSel xSel : ℝ) - Q| ≤ δ then 0 else w ω := by
               split_ifs
@@ -847,8 +847,8 @@ private lemma bb84_completeness_of_bandFail_le (n ℓEV leakEC : ℕ)
                 simp only [Bool.and_eq_true, decide_eq_true_eq]
                 exact ⟨⟨hZnonempty, h1⟩, ⟨hXnonempty, h2⟩⟩)
             rcases not_and_or.mp hone with h | h
-            · rw [if_neg h]; linarith
-            · rw [if_neg h]; linarith
+            · rw [ite_eq_right h]; linarith
+            · rw [ite_eq_right h]; linarith
       _ = (1 - Math.Concentration.BinomialPassSum.binomialPassSum
               (bb84SiftedZTestSampleSize peSel xSel) Q δ q)
           + (1 - Math.Concentration.BinomialPassSum.binomialPassSum

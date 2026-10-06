@@ -69,9 +69,9 @@ theorem traceNorm_mapTensorId_le_diamondNorm {d n dimOut k : ℕ}
     [NeZero d] [NeZero n] [NeZero dimOut] [NeZero k] [NeZero (d ^ n)]
     (Δ : Op (d ^ n) →ₗ[ℂ] Op dimOut) (ρ : DensityOp (d ^ n * k)) :
     traceNorm (mapTensorId Δ ρ.toOp) ≤ diamondNorm Δ := by
-  haveI : NeZero (d ^ n * d ^ n) :=
+  have : NeZero (d ^ n * d ^ n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (dimOut * d ^ n) :=
+  have : NeZero (dimOut * d ^ n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   set Ψ : DensityOp (d ^ n * d ^ n) := purificationDensityOp ρ.partialTraceB with hΨ_def
   have hΨ_pure : Ψ.IsPure := purificationDensityOp_isPure _
@@ -112,9 +112,9 @@ theorem traceNorm_mapTensorId_le_diamondNorm_of_hermitianPreserving {dIn dOut k 
     (hHP : ∀ M : Op dIn, Δ M.conjTranspose = (Δ M).conjTranspose)
     (W : Op (dIn * k)) (hW : traceNorm W ≤ 1) :
     traceNorm (mapTensorId Δ W) ≤ diamondNorm Δ := by
-  haveI : NeZero (dIn * dIn) :=
+  have : NeZero (dIn * dIn) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (dOut * dIn) :=
+  have : NeZero (dOut * dIn) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   refine Quantum.Metrics.KitaevWatrous.kw_nonhermitian_reduction_ancilla Δ (diamondNorm Δ)
     (diamondNorm_nonneg Δ) hHP (fun ρ hρ htr => ?_) W hW

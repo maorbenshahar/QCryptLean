@@ -62,7 +62,7 @@ theorem SubDensityOp.sum_re_inner_le_fidelity_of_sumKetbra_fintype
     (hσ : σ.toOp = ∑ l, ((w l) * (w l).dag : Op d)) :
     (∑ l, ((v l).dag * (w l) : ℂ)).re ≤
       Quantum.Metrics.fidelity ρ.toPosSemidefOp σ.toPosSemidefOp := by
-  haveI : NeZero (Fintype.card L) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (Fintype.card L) := ⟨Fintype.card_ne_zero⟩
   set e := Fintype.equivFin L with he
   have hρ' : ρ.toOp = ∑ k, ((v (e.symm k)) * (v (e.symm k)).dag : Op d) := by
     rw [hρ, ← Equiv.sum_comp e.symm]

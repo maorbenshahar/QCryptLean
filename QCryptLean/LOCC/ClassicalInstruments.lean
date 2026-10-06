@@ -177,7 +177,7 @@ def hashForget {p q : ℕ} (f : Fin p → Fin q) : LocalInstrument p q (Fin p) w
     simp_rw [hx]
     ext i j
     simp only [Matrix.sum_apply, Matrix.single_apply, Matrix.one_apply]
-    simp only [ite_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ite_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 /-! ## 3. The columns of the three instruments
 
@@ -218,7 +218,7 @@ theorem seededReadout_kraus_col {d Nr Nv : ℕ} [NeZero Nr] (w : Fin Nr → Fin 
     simp only [seededReadout, Matrix.smul_apply, Matrix.diagonal_apply, Equiv.apply_symm_apply,
       Equiv.symm_apply_apply, smul_eq_mul]
     simp
-  · simp only [seededReadout, Matrix.smul_apply, Matrix.diagonal_apply, if_neg h, smul_eq_mul,
+  · simp only [seededReadout, Matrix.smul_apply, Matrix.diagonal_apply, ite_eq_right h, smul_eq_mul,
       mul_zero]
 
 theorem seededReadout_kraus_col_zero {d Nr Nv : ℕ} [NeZero Nr] (w : Fin Nr → Fin d → Fin Nv)
@@ -232,9 +232,10 @@ theorem seededReadout_kraus_col_zero {d Nr Nv : ℕ} [NeZero Nr] (w : Fin Nr →
       intro hc
       refine ho (finProdFinEquiv.symm (outcomeDigit (Nr * Nv) o)).1 ?_
       rw [hc, Prod.mk.eta, Equiv.apply_symm_apply, Equiv.symm_apply_apply]
-    simp only [seededReadout, Matrix.smul_apply, Matrix.diagonal_apply, if_neg hne, smul_eq_mul]
+    simp only [seededReadout, Matrix.smul_apply, Matrix.diagonal_apply, ite_eq_right hne,
+      smul_eq_mul]
     simp
-  · simp only [seededReadout, Matrix.smul_apply, Matrix.diagonal_apply, if_neg h, smul_eq_mul,
+  · simp only [seededReadout, Matrix.smul_apply, Matrix.diagonal_apply, ite_eq_right h, smul_eq_mul,
       mul_zero]
 
 end LOCC

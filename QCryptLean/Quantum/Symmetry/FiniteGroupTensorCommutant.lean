@@ -96,7 +96,7 @@ theorem span_centralizer_tensorPow_eq {G : Type*} [Group G] [Finite G]
     {d n : ℕ} [NeZero d] [NeZero n] (ρ : G →* Op d) :
     Submodule.span ℂ (Set.range fun A : commutant d (Set.range ρ) =>
       Op.tensorPow (A : Op d) n) = commutant (d ^ n) (Set.range (tensorWreathRep ρ n)) := by
-  letI := Fintype.ofFinite G
+  let := Fintype.ofFinite G
   apply le_antisymm
   · rw [Submodule.span_le]
     rintro _ ⟨A, rfl⟩
@@ -136,7 +136,7 @@ theorem commutant_centralizer_tensorPow_eq {G : Type*} [Group G] [Finite G]
     {d n : ℕ} [NeZero d] [NeZero n] (ρ : G →* Op d) :
     commutant (d ^ n) (Set.range fun A : commutant d (Set.range ρ) =>
       Op.tensorPow (A : Op d) n) = Submodule.span ℂ (Set.range (tensorWreathRep ρ n)) := by
-  haveI : Finite (SemidirectProduct (Fin n → G) (Equiv.Perm (Fin n))
+  have : Finite (SemidirectProduct (Fin n → G) (Equiv.Perm (Fin n))
       (wordPermutationAction G n)) := Finite.of_equiv _ SemidirectProduct.equivProd.symm
   rw [commutant_span, span_centralizer_tensorPow_eq, finiteGroup_bicommutant]
 
@@ -179,7 +179,7 @@ theorem hasLocalCommutant_unitaryCentralizer_tensorPow {G : Type*} [Group G] [Fi
     {U : Matrix.unitaryGroup (Fin b) ℂ // ∀ g, Commute (ρ g) (U : Op b)} =>
       Op.tensorPow (U.val : Op b) n
   apply hasLocalCommutant_of_span _ Q
-    (setOf fun T => ∃ (X : Op (a ^ n)) (M : Op (b ^ n)),
+    (Set.ofPred fun T => ∃ (X : Op (a ^ n)) (M : Op (b ^ n)),
       (∀ Y ∈ R, Commute Y M) ∧ T = Op.tensor X M)
   · intro T hT
     apply (Set.ext_iff.mp (commutant_pairedTensorFamily_eq_tensorCommutantSpan
@@ -227,9 +227,9 @@ def unitaryCentralizer {G : Type*} [Group G] {d : ℕ} (ρ : G →* Op d) :
 /-- The unitary centralizer is a closed subgroup. -/
 lemma isClosed_unitaryCentralizer {G : Type*} [Group G] {d : ℕ}
     (ρ : G →* Op d) : IsClosed (unitaryCentralizer ρ : Set (Matrix.unitaryGroup (Fin d) ℂ)) := by
-  change IsClosed (setOf fun U : Matrix.unitaryGroup (Fin d) ℂ => ∀ g,
+  change IsClosed (Set.ofPred fun U : Matrix.unitaryGroup (Fin d) ℂ => ∀ g,
     ρ g * (U : Op d) = (U : Op d) * ρ g)
-  simp only [Set.setOf_forall]
+  simp only [Set.ofPred_forall]
   exact isClosed_iInter fun g =>
     isClosed_eq (continuous_const.matrix_mul continuous_subtype_val)
       (continuous_subtype_val.matrix_mul continuous_const)

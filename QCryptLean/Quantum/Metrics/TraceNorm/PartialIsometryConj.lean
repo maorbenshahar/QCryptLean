@@ -132,9 +132,9 @@ private lemma projection_complement_isometry {d : ℕ}
     rw [lhs_eq2, hs_def, Finset.sum_filter]
     refine Finset.sum_congr rfl fun i _ => ?_
     rcases hμ01 i with h | h
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       simp [h]
-    · rw [if_neg (by rw [h]; norm_num)]
+    · rw [ite_eq_right (by rw [h]; norm_num)]
       simp [h]
   · -- (s.card : ℝ) = d - R.trace.re
     have htrace : R.trace = ∑ i, ((μ i : ℝ) : ℂ) := by

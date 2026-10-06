@@ -65,7 +65,7 @@ structure IsBellCKRDeFinettiPurification {n dimR : ℕ} [NeZero n]
 it is pure and its `4^n` marginal equals `bb84BellDeFinettiDensity n`. -/
 theorem bb84BellCKRDeFinettiPurification_isPurification (n : ℕ) [NeZero n] :
     IsBellCKRDeFinettiPurification (bb84BellCKRDeFinettiPurification n) := by
-  haveI : NeZero ((4 : ℕ) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
+  have : NeZero ((4 : ℕ) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
   refine ⟨?_, ?_⟩
   · exact InfoTheory.DeFinetti.purificationDensityOp_isPure _
   · exact InfoTheory.DeFinetti.purificationDensityOp_partialTraceB _

@@ -79,9 +79,10 @@ is assumed. -/
     (rho : Op alpha) (a b : alpha) :
     ((nondemolitionReadout f).operation y rho) a b =
       if f a = y ∧ f b = y then rho a b else 0 := by
+  change (∑ _ : Unit, matrixConjLinear (nondemolitionReadoutKraus f y) rho) a b = _
+  rw [Fintype.sum_unique]
   by_cases ha : f a = y <;> by_cases hb : f b = y <;>
-    simp [Instrument.operation, nondemolitionReadout, matrixConjLinear,
-      Matrix.mul_apply, nondemolitionReadoutKraus_apply, ha, hb]
+    simp [matrixConjLinear, Matrix.mul_apply, nondemolitionReadoutKraus_apply, ha, hb]
 
 /-! ## Deterministic processing with the input value forgotten -/
 
@@ -122,7 +123,7 @@ theorem functionAndForgetKraus_complete [Fintype alpha] [DecidableEq alpha]
   simp_rw [ha]
   ext i j
   simp only [Matrix.sum_apply, Matrix.single_apply, Matrix.one_apply]
-  simp only [ite_and, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [ite_and, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 /-- Apply the deterministic classical function `f` and discard the old basis value.
 

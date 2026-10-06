@@ -101,8 +101,8 @@ theorem bb84_rhoEtilde_eq_haar_integral_blocks {n : ℕ} [NeZero n] [NeZero (4 ^
         ∫ ψ : DensityOp (signalDim * signalDim),
           ((bb84PairedHaarPerSigmaFamily eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp i j
           ∂(deFinetti_haarMeasure (signalDim * signalDim)).measure := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI : NeZero (signalDim * signalDim) := ⟨by norm_num⟩
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero (signalDim * signalDim) := ⟨by norm_num⟩
   intro x i j
   by_cases hpe : bb84SiftedLocalPETestPassed peSel xSel δ Q x
   · -- Accepting branch: the pipeline reads each input block-entry through a fixed ℂ-linear
@@ -138,7 +138,7 @@ theorem bb84_rhoEtilde_eq_haar_integral_blocks {n : ℕ} [NeZero n] [NeZero (4 ^
           (bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
               τ).toCQState.stateMap x
         else (0 : SubDensityOp _)) = _
-      rw [if_pos hpe]
+      rw [ite_eq_left hpe]
       rfl
     -- Each input block-entry is read by `L`.
     have hgen : ∀ (τ : DensityOp (signalDim ^ n * signalDim ^ n)),
@@ -179,7 +179,7 @@ theorem bb84_rhoEtilde_eq_haar_integral_blocks {n : ℕ} [NeZero n] [NeZero (4 ^
           (bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
             (pairedDeFinettiState signalDim n)).toCQState.stateMap x
         else (0 : SubDensityOp _)).toOp) i j = 0
-      rw [if_neg hpe]
+      rw [ite_eq_right hpe]
       rfl
     rw [hLHS]
     refine (MeasureTheory.integral_eq_zero_of_ae
@@ -189,7 +189,7 @@ theorem bb84_rhoEtilde_eq_haar_integral_blocks {n : ℕ} [NeZero n] [NeZero (4 ^
           (densityOp_reindex (interleavingEquiv signalDim n).symm
             (ψ.tensorPowGen n))).toCQState.stateMap x
       else (0 : SubDensityOp _)).toOp) i j = 0
-    rw [if_neg hpe]
+    rw [ite_eq_right hpe]
     rfl
 
 /-! ## 3. The accept-weight trace-out identity -/
@@ -222,8 +222,8 @@ theorem bb84_rhoEtilde_acceptWeight_eq_ckrMixture {n : ℕ} [NeZero n] [NeZero (
       ∑ ω : Fin n → Fin signalDim,
         ((bb84SiftedLocalPEAcceptedPostMeasurementCQState eveDim pre hpre peSel xSel
             (Quantum.Channels.ckrMixtureMeasure signalDim) Q δ).stateMap ω).trace := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hN' : NeZero (eveDim * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hN' : NeZero (eveDim * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   -- `integralTensorPower n ckrMixtureMeasure = ckrDeFinettiState` (Nahar et al. B13).
   have hμ : InfoTheory.DeFinetti.integralTensorPower n

@@ -70,9 +70,9 @@ lemma opLe_toOp_dim_smul_maxMixed {dC : ℕ} [NeZero dC] (K : SubDensityOp dC) :
 private lemma minFeasibleLambda_eq_zero_of_no_feasible {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) (h : ¬ hasFeasibleLambda ρ σ) :
     minFeasibleLambda ρ σ = 0 := by
-  have hempty : setOf (isFeasible ρ σ) = ∅ := by
+  have hempty : Set.ofPred (isFeasible ρ σ) = ∅ := by
     ext t
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     exact fun ht => h ⟨t, ht⟩
   rw [minFeasibleLambda, hempty, Real.sInf_empty]
 
@@ -225,9 +225,9 @@ lemma CQState.purifiedDistance_tensorRightKernel_le
     (ρ σ : CQState X dE) (K : X → SubDensityOp dC) (hK : ∀ x, (K x).trace = 1) :
     CQState.purifiedDistance (ρ.tensorRightKernel K) (σ.tensorRightKernel K) ≤
       CQState.purifiedDistance ρ σ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
-  haveI : NeZero ((dE * dC) * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
+  have : NeZero ((dE * dC) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne (dE * dC)) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   apply purifiedDistance_le_of_fidelityGen_ge
@@ -467,9 +467,9 @@ lemma CQState.purifiedDistance_tensorLeftKernel_le
     (ρ σ : CQState X dE) (K : X → SubDensityOp dC) (hK : ∀ x, (K x).trace = 1) :
     CQState.purifiedDistance (ρ.tensorLeftKernel K) (σ.tensorLeftKernel K) ≤
       CQState.purifiedDistance ρ σ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
-  haveI : NeZero ((dC * dE) * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
+  have : NeZero ((dC * dE) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne (dC * dE)) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   apply purifiedDistance_le_of_fidelityGen_ge
@@ -553,11 +553,11 @@ theorem smoothMinEntropyReal_tensorRightKernel_ge_sub_log
     (hdom : ∀ x, opLe (K x).toOp
       ((c : ℂ) • (DensityOp.toSubDensityOp (DensityOp.maxMixed dC)).toOp))
     (hbdd : BddAbove
-      (setOf (isInSmoothedSetReal ε (ρ.tensorRightKernel K) (σ.tensorMaxMixed dC)))) :
+      (Set.ofPred (isInSmoothedSetReal ε (ρ.tensorRightKernel K) (σ.tensorMaxMixed dC)))) :
     smoothMinEntropyReal ε ρ σ - Real.log c / Real.log 2 ≤
       smoothMinEntropyReal ε (ρ.tensorRightKernel K) (σ.tensorMaxMixed dC) := by
-  have key : ∀ a ∈ setOf (isInSmoothedSetReal ε ρ σ),
-      ∃ b ∈ setOf (isInSmoothedSetReal ε (ρ.tensorRightKernel K) (σ.tensorMaxMixed dC)),
+  have key : ∀ a ∈ Set.ofPred (isInSmoothedSetReal ε ρ σ),
+      ∃ b ∈ Set.ofPred (isInSmoothedSetReal ε (ρ.tensorRightKernel K) (σ.tensorMaxMixed dC)),
         a - Real.log c / Real.log 2 ≤ b := by
     intro a ha
     obtain ⟨blockbar, rfl, hd⟩ := ha
@@ -578,11 +578,11 @@ theorem smoothMinEntropyReal_tensorLeftKernel_ge_sub_log
     (hdom : ∀ x, opLe (K x).toOp
       ((c : ℂ) • (DensityOp.toSubDensityOp (DensityOp.maxMixed dC)).toOp))
     (hbdd : BddAbove
-      (setOf (isInSmoothedSetReal ε (ρ.tensorLeftKernel K) (σ.maxMixedTensor dC)))) :
+      (Set.ofPred (isInSmoothedSetReal ε (ρ.tensorLeftKernel K) (σ.maxMixedTensor dC)))) :
     smoothMinEntropyReal ε ρ σ - Real.log c / Real.log 2 ≤
       smoothMinEntropyReal ε (ρ.tensorLeftKernel K) (σ.maxMixedTensor dC) := by
-  have key : ∀ a ∈ setOf (isInSmoothedSetReal ε ρ σ),
-      ∃ b ∈ setOf (isInSmoothedSetReal ε (ρ.tensorLeftKernel K) (σ.maxMixedTensor dC)),
+  have key : ∀ a ∈ Set.ofPred (isInSmoothedSetReal ε ρ σ),
+      ∃ b ∈ Set.ofPred (isInSmoothedSetReal ε (ρ.tensorLeftKernel K) (σ.maxMixedTensor dC)),
         a - Real.log c / Real.log 2 ≤ b := by
     intro a ha
     obtain ⟨blockbar, rfl, hd⟩ := ha

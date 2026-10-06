@@ -150,7 +150,7 @@ theorem mul_single_eq_single {D M : ℕ} (A : Op D) (P P' : Fin D) (w : Fin M) (
   ext i j
   rw [Matrix.mul_apply]
   simp only [Matrix.single_apply, ite_and, mul_ite, mul_one, mul_zero]
-  rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ P), h i]
+  rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ P), h i]
   by_cases hj : w = j <;> by_cases hi : P' = i <;> simp [hj, hi]
 
 /-! ## Generic: columns of a tensor product -/

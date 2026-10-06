@@ -258,7 +258,7 @@ lemma binomial_upper_tail (n : ℕ) (hn : n ≠ 0) (p ε : ℝ)
         refine Finset.sum_eq_zero fun k hk => ?_
         have hk_le : (k : ℝ) ≤ (n : ℝ) :=
           mod_cast Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
-        rw [if_neg (not_le.mpr (lt_of_le_of_lt (div_le_one hn_pos |>.mpr hk_le) hpe1))]
+        rw [ite_eq_right (not_le.mpr (lt_of_le_of_lt (div_le_one hn_pos |>.mpr hk_le) hpe1))]
       rw [hzero]
       exact (Real.exp_pos _).le
 
@@ -297,7 +297,7 @@ lemma binomial_lower_tail (n : ℕ) (hn : n ≠ 0) (p ε : ℝ)
         · exact hw
         · rfl
       · subst hke
-        rw [if_neg (not_le.mpr (by rw [div_self hn_pos.ne']; linarith))]
+        rw [ite_eq_right (not_le.mpr (by rw [div_self hn_pos.ne']; linarith))]
     rw [hzero]
     exact (Real.exp_pos _).le
   · rcases lt_or_ge (p - ε) 0 with hneg | hpe0
@@ -309,7 +309,7 @@ lemma binomial_lower_tail (n : ℕ) (hn : n ≠ 0) (p ε : ℝ)
             else 0) = 0 := by
         refine Finset.sum_eq_zero fun k _ => ?_
         have hkn : (0 : ℝ) ≤ (k : ℝ) / n := by positivity
-        rw [if_neg (not_le.mpr (by linarith))]
+        rw [ite_eq_right (not_le.mpr (by linarith))]
       rw [hzero]
       exact (Real.exp_pos _).le
     · -- KL-rate Chernoff tail at reference rate `p`, upgraded to the Hoeffding rate by Pinsker.
@@ -356,11 +356,11 @@ lemma binomial_lowerTailSum_mono_threshold
     positivity
   by_cases h_le : (k : ℝ) / n ≤ a
   · have h_le' : (k : ℝ) / n ≤ b := h_le.trans hab
-    rw [if_pos h_le, if_pos h_le']
-  · rw [if_neg h_le]
+    rw [ite_eq_left h_le, ite_eq_left h_le']
+  · rw [ite_eq_right h_le]
     by_cases h_le' : (k : ℝ) / n ≤ b
-    · rw [if_pos h_le']; exact hw_nonneg
-    · rw [if_neg h_le']
+    · rw [ite_eq_left h_le']; exact hw_nonneg
+    · rw [ite_eq_right h_le']
 
 /-! ## Step 5: Two-tail union bound -/
 
@@ -395,19 +395,19 @@ lemma binomial_two_tail_le (n : ℕ) (hn : n ≠ 0) (p ε_up ε_lo : ℝ)
       have h1pk : 0 ≤ (1 - p) ^ (n - k) := pow_nonneg (by linarith) _
       positivity
     by_cases hor : ((k : ℝ) / n ≤ p - ε_lo ∨ p + ε_up ≤ (k : ℝ) / n)
-    · rw [if_pos hor]
+    · rw [ite_eq_left hor]
       rcases hor with hlo | hup
-      · rw [if_pos hlo]
+      · rw [ite_eq_left hlo]
         by_cases hup' : (p + ε_up ≤ (k : ℝ) / n)
-        · rw [if_pos hup']; linarith
-        · rw [if_neg hup']; linarith
+        · rw [ite_eq_left hup']; linarith
+        · rw [ite_eq_right hup']; linarith
       · by_cases hlo' : ((k : ℝ) / n ≤ p - ε_lo)
-        · rw [if_pos hlo', if_pos hup]; linarith
-        · rw [if_neg hlo', if_pos hup]; linarith
-    · rw [if_neg hor]
+        · rw [ite_eq_left hlo', ite_eq_left hup]; linarith
+        · rw [ite_eq_right hlo', ite_eq_left hup]; linarith
+    · rw [ite_eq_right hor]
       have hlo_neg : ¬ ((k : ℝ) / n ≤ p - ε_lo) := fun h => hor (Or.inl h)
       have hup_neg : ¬ (p + ε_up ≤ (k : ℝ) / n) := fun h => hor (Or.inr h)
-      rw [if_neg hlo_neg, if_neg hup_neg]; norm_num
+      rw [ite_eq_right hlo_neg, ite_eq_right hup_neg]; norm_num
   calc ∑ k ∈ Finset.range (n + 1),
           (if ((k : ℝ) / n ≤ p - ε_lo ∨ p + ε_up ≤ (k : ℝ) / n) then
             (n.choose k : ℝ) * p ^ k * (1 - p) ^ (n - k)
@@ -478,9 +478,9 @@ theorem binomial_failProb_le_half_margin
       have h1pk : 0 ≤ (1 - p) ^ (n - k) := pow_nonneg (by linarith) _
       positivity
     by_cases h_pass : |(k : ℝ) / (n : ℝ) - Q| ≤ δ
-    · rw [if_pos h_pass]
+    · rw [ite_eq_left h_pass]
       split_ifs <;> [exact hw_nonneg; exact le_refl 0]
-    · rw [if_neg h_pass]
+    · rw [ite_eq_right h_pass]
       -- |k/n - Q| > δ, so either k/n - Q > δ or k/n - Q < -δ.
       rw [not_le] at h_pass
       have h_or : (k : ℝ) / n - Q > δ ∨ (k : ℝ) / n - Q < -δ := by
@@ -491,11 +491,11 @@ theorem binomial_failProb_le_half_margin
       rcases h_or with hUp | hLo
       · -- k/n > Q + δ, and since p ≤ Q, k/n - p ≥ (Q + δ) - p ≥ δ, hence p + δ ≤ k/n.
         have hk_up : p + δ ≤ (k : ℝ) / n := by linarith
-        rw [if_pos (Or.inr hk_up)]
+        rw [ite_eq_left (Or.inr hk_up)]
       · -- k/n < Q - δ, and since p ≥ Q - δ/2, p - k/n > p - (Q - δ) ≥ -δ/2 + δ = δ/2.
         -- So k/n ≤ p - δ/2.
         have hk_lo : (k : ℝ) / n ≤ p - δ / 2 := by linarith
-        rw [if_pos (Or.inl hk_lo)]
+        rw [ite_eq_left (Or.inl hk_lo)]
   -- Apply the two-tail bound.
   have hSum_le :
       ∑ k ∈ Finset.range (n + 1),

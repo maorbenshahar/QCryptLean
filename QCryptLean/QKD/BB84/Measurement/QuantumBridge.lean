@@ -239,7 +239,7 @@ theorem selectedMeasurement_joinSubsetPerm_eq_native
       QKD.BB84.Model.siftPermHalf
     simp_rw [hmask]
     simp only [id_eq, diagonal_mul]
-    rw [if_pos trivial, one_mul]
+    rw [ite_eq_left trivial, one_mul]
     change
       (((Quantum.TensorProducts.tensorFamily
           (fun k => basisUnitary (packedRoleBasis k)) :
@@ -254,7 +254,7 @@ theorem selectedMeasurement_joinSubsetPerm_eq_native
       (finFunctionFinEquiv (x ∘ (pi.symm : Fin (nK + mZ + mX) → _)))]
     · simp
     · intro y hy
-      rw [if_neg]
+      rw [ite_eq_right]
       · simp
       · intro heq
         apply hy
@@ -281,8 +281,8 @@ theorem selectedMeasurement_joinSubsetPerm_eq_native
     · rintro ⟨k, rfl⟩
       exact ⟨pi.symm k, rfl⟩
     · rintro ⟨k, rfl⟩
-      exact ⟨pi k, by simp [Math.FiniteEmbedding.joinSubsetPerm,
-        increasingSubsetEmbedding]⟩
+      exact ⟨pi k, congrArg (fun i => ((Math.FiniteEmbedding.increasingSubsetEquiv S) i).val)
+        (pi.symm_apply_apply k)⟩
   have hSetRange :
       Set.range (Math.FiniteEmbedding.joinSubsetPerm S pi) =
         Set.range (increasingSubsetEmbedding S) := by
@@ -294,13 +294,13 @@ theorem selectedMeasurement_joinSubsetPerm_eq_native
   let complementPerm : Equiv.Perm (Fin (N - (nK + mZ + mX))) :=
     (Math.FiniteEmbedding.embeddingComplementEquiv
         (Math.FiniteEmbedding.joinSubsetPerm S pi)).trans
-      ((Equiv.setCongr hSetComplement).trans
+      ((Set.equivOfEq hSetComplement).trans
         (Math.FiniteEmbedding.embeddingComplementEquiv
           (increasingSubsetEmbedding S)).symm)
   have hComplement (j : Fin (N - (nK + mZ + mX))) :
       Math.FiniteEmbedding.embeddingComplementEquiv
           (increasingSubsetEmbedding S) (complementPerm j) =
-        Equiv.setCongr hSetComplement
+        Set.equivOfEq hSetComplement
           (Math.FiniteEmbedding.embeddingComplementEquiv
             (Math.FiniteEmbedding.joinSubsetPerm S pi) j) := by
     simp [complementPerm]

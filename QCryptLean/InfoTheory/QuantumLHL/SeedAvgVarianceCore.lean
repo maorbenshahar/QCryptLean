@@ -125,7 +125,7 @@ lemma gram_real_psd_with_bounded_norm
     rw [hA_sym x x']
     rcases eq_or_ne x x' with h | h
     · subst h; rfl
-    · rw [if_neg h, if_neg (Ne.symm h)]
+    · rw [ite_eq_right h, ite_eq_right (Ne.symm h)]
   -- (c) `Gs` is PSD as a bilinear form (its bilinear form equals that of `G`).
   have hGs_psd : ∀ c : X → ℝ,
       0 ≤ ∑ x : X, ∑ x' : X, Gs x x' * c x * c x' := by
@@ -148,7 +148,7 @@ lemma gram_real_psd_with_bounded_norm
           (∑ x' : X, (if x = x' then (1:ℝ) else 0) * c x * c x') = (c x)^2 := by
         rw [Finset.sum_eq_single x]
         · simp [sq]
-        · intro x' _ hne; rw [if_neg (Ne.symm hne)]; ring
+        · intro x' _ hne; rw [ite_eq_right (Ne.symm hne)]; ring
         · intro h; exact (h (Finset.mem_univ x)).elim
       rw [show (c x)^2 - (∑ x' : X, A x x' * c x * c x')
           = (∑ x' : X, (if x = x' then (1:ℝ) else 0) * c x * c x')
@@ -174,8 +174,8 @@ lemma gram_real_psd_with_bounded_norm
     have hdelta :
         (∑ x' : X, (if x = x' then (1:ℝ) else 0) * Gs x x') = G x x := by
       rw [Finset.sum_eq_single x]
-      · rw [if_pos rfl, one_mul]; simp only [hGs_def]; ring
-      · intro x' _ hne; rw [if_neg (Ne.symm hne)]; ring
+      · rw [ite_eq_left rfl, one_mul]; simp only [hGs_def]; ring
+      · intro x' _ hne; rw [ite_eq_right (Ne.symm hne)]; ring
       · intro h; exact (h (Finset.mem_univ x)).elim
     rw [show G x x - (∑ x' : X, A x x' * Gs x x')
         = (∑ x' : X, (if x = x' then (1:ℝ) else 0) * Gs x x')

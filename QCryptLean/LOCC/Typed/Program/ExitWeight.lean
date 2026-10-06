@@ -52,8 +52,8 @@ theorem exitWeight_congr (B : Boundary P) {E E' : B.Exit → Prop} [DecidablePre
     B.exitWeight E M = B.exitWeight E' M := by
   refine Finset.sum_congr rfl fun q _ => ?_
   by_cases hq : E q.1
-  · rw [if_pos hq, if_pos ((h q.1).mp hq)]
-  · rw [if_neg hq, if_neg (fun h' => hq ((h q.1).mpr h'))]
+  · rw [ite_eq_left hq, ite_eq_left ((h q.1).mp hq)]
+  · rw [ite_eq_right hq, ite_eq_right (fun h' => hq ((h q.1).mpr h'))]
 
 /-- **Complementary exit sets partition the trace.** -/
 theorem exitWeight_add_exitWeight_not (B : Boundary P) (E : B.Exit → Prop) [DecidablePred E]
@@ -94,10 +94,10 @@ theorem exitWeight_eq_sum_of_diag {ι : Type} [Fintype ι] (B : Boundary P) (E :
     _ = ∑ q : B.space, ∑ i, if p i = q then (if E q.1 then (w i).re else 0) else 0 := by
       refine Finset.sum_congr rfl fun q _ => ?_
       by_cases hq : E q.1
-      · rw [if_pos hq, Complex.re_sum]
+      · rw [ite_eq_left hq, Complex.re_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
         split_ifs <;> simp
-      · rw [if_neg hq]
+      · rw [ite_eq_right hq]
         symm
         exact Finset.sum_eq_zero fun i _ => by split_ifs <;> rfl
     _ = ∑ i, ∑ q : B.space, if p i = q then (if E q.1 then (w i).re else 0) else 0 :=

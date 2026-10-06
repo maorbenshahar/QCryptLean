@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Logic.Equiv.Prod
 import Mathlib.LinearAlgebra.Matrix.Trace
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 
 /-!
 # Finite register families

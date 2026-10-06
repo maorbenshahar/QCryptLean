@@ -179,13 +179,13 @@ lemma CQState.purifiedDistance_dephasedMixtureCQ_le
         (dephasedMixtureCQ S comp weight hwn hwl hws)
         (dephasedMixtureCQ S comp' weight hwn hwl hws) ≤ ε := by
   classical
-  haveI : Nonempty {s // s ∈ S} := ⟨⟨hS.choose, hS.choose_spec⟩⟩
-  haveI : Nonempty (X × {s // s ∈ S}) :=
+  have : Nonempty {s // s ∈ S} := ⟨⟨hS.choose, hS.choose_spec⟩⟩
+  have : Nonempty (X × {s // s ∈ S}) :=
     ⟨(Classical.arbitrary X, ⟨hS.choose, hS.choose_spec⟩)⟩
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
-  haveI : NeZero (Fintype.card (X × {s // s ∈ S})) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (X × {s // s ∈ S})) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card (X × {s // s ∈ S})) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (X × {s // s ∈ S})) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   set mix := dephasedMixtureCQ S comp weight hwn hwl hws with hmix
   set mix' := dephasedMixtureCQ S comp' weight hwn hwl hws with hmix'

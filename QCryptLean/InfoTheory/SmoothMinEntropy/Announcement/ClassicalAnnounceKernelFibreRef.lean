@@ -108,8 +108,8 @@ lemma coarsenBlock_pairMap_toOp {X Y : Type*} [Fintype X] [DecidableEq Y] {dE dC
   rw [CQState.coarsenBlock_toOp]
   refine Finset.sum_congr rfl fun x _ => ?_
   by_cases hx : g x = y ∧ ann x = p
-  · rw [if_pos (Prod.ext hx.1 hx.2), if_pos hx]
-  · rw [if_neg (fun h => hx ⟨congrArg Prod.fst h, congrArg Prod.snd h⟩), if_neg hx]
+  · rw [ite_eq_left (Prod.ext hx.1 hx.2), ite_eq_left hx]
+  · rw [ite_eq_right (fun h => hx ⟨congrArg Prod.fst h, congrArg Prod.snd h⟩), ite_eq_right hx]
 
 /-- The fibre sums are Hermitian, being the blocks of a CQ state. -/
 lemma fibreSum_isHermitian {X Y : Type*} [Fintype X] [DecidableEq Y] {dE dC : ℕ}
@@ -141,32 +141,32 @@ lemma coarsen_tensorLeftKernel_stateMap_toOp_eq_blockDiagOp
     rw [tensor_sum_op]
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : g x = y ∧ ann x = p
-    · rw [if_pos hx, if_pos hx]
-    · rw [if_neg hx, if_neg hx, tensor_zero_op]
+    · rw [ite_eq_left hx, ite_eq_left hx]
+    · rw [ite_eq_right hx, ite_eq_right hx, tensor_zero_op]
   calc ((CQState.coarsen g (ρ.tensorLeftKernel K)).stateMap y).toOp
       = ∑ x : X, if g x = y then
           Op.tensor (stdKet dC (ann x) * (stdKet dC (ann x)).dag) (ρ.stateMap x).toOp else 0 := by
         rw [CQState.coarsen_stateMap_toOp]
         refine Finset.sum_congr rfl fun x _ => ?_
         by_cases hx : g x = y
-        · rw [if_pos hx, if_pos hx, CQState.tensorLeftKernel_stateMap,
+        · rw [ite_eq_left hx, ite_eq_left hx, CQState.tensorLeftKernel_stateMap,
             show ((K x).tensor (ρ.stateMap x)).toOp
                 = Op.tensor (K x).toOp (ρ.stateMap x).toOp from rfl, hK x]
-        · rw [if_neg hx, if_neg hx]
+        · rw [ite_eq_right hx, ite_eq_right hx]
     _ = ∑ x : X, ∑ p : Fin dC, if g x = y ∧ ann x = p then
           Op.tensor (stdKet dC p * (stdKet dC p).dag) (ρ.stateMap x).toOp else 0 := by
         refine Finset.sum_congr rfl fun x _ => ?_
         by_cases hx : g x = y
-        · rw [if_pos hx,
+        · rw [ite_eq_left hx,
             show (∑ p : Fin dC, if g x = y ∧ ann x = p then
                   Op.tensor (stdKet dC p * (stdKet dC p).dag) (ρ.stateMap x).toOp else 0)
                 = ∑ p : Fin dC, if ann x = p then
                   Op.tensor (stdKet dC p * (stdKet dC p).dag) (ρ.stateMap x).toOp else 0 from
               Finset.sum_congr rfl fun p _ => by simp [hx]]
           simp
-        · rw [if_neg hx]
+        · rw [ite_eq_right hx]
           refine (Finset.sum_eq_zero fun p _ => ?_).symm
-          exact if_neg (fun h => hx h.1)
+          exact ite_eq_right (fun h => hx h.1)
     _ = ∑ p : Fin dC, ∑ x : X, if g x = y ∧ ann x = p then
           Op.tensor (stdKet dC p * (stdKet dC p).dag) (ρ.stateMap x).toOp else 0 :=
         Finset.sum_comm
@@ -229,7 +229,7 @@ theorem minFeasibleLambda_coarsen_tensorLeftKernel_blockDiagRef_eq
     (hK : ∀ x, (K x).toOp = stdKet dC (ann x) * (stdKet dC (ann x)).dag)
     (ν : Fin dC → SubDensityOp dE) (hν : ∑ p : Fin dC, (ν p).trace ≤ 1) :
     minFeasibleLambda (CQState.coarsen g (ρ.tensorLeftKernel K)) (blockDiagRef ν hν)
-      = sInf (setOf (fun t : ℝ => 0 ≤ t ∧ ∀ (y : Y) (p : Fin dC),
+      = sInf (Set.ofPred (fun t : ℝ => 0 ≤ t ∧ ∀ (y : Y) (p : Fin dC),
           opLe (∑ x : X, if g x = y ∧ ann x = p then (ρ.stateMap x).toOp else 0)
             (Complex.ofReal t • (ν p).toOp))) := by
   unfold minFeasibleLambda
@@ -292,8 +292,8 @@ private lemma fidelity_ite_fibre {n : ℕ} [NeZero n] {P : Prop} [Decidable P]
         (if P then B.toPosSemidefOp else 0)
       = if P then Quantum.Metrics.fidelity A.toPosSemidefOp B.toPosSemidefOp else 0 := by
   by_cases h : P
-  · rw [if_pos h, if_pos h, if_pos h]
-  · rw [if_neg h, if_neg h, if_neg h]
+  · rw [ite_eq_left h, ite_eq_left h, ite_eq_left h]
+  · rw [ite_eq_right h, ite_eq_right h, ite_eq_right h]
     exact Quantum.Metrics.fidelity_eq_zero_of_left_toOp_eq_zero _ _ rfl
 
 /-- **A classical coarsening does not decrease the CQ Uhlmann fidelity.**
@@ -317,8 +317,8 @@ lemma CQState.fidelity_toJointDensity_le_coarsen
     rw [Quantum.Operators.PosSemidefOp.sum_toOp, CQState.coarsen_stateMap_toOp]
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : g x = y
-    · rw [if_pos hx, if_pos hx]
-    · rw [if_neg hx, if_neg hx]
+    · rw [ite_eq_left hx, ite_eq_left hx]
+    · rw [ite_eq_right hx, ite_eq_right hx]
       rfl
   have hkey : ∀ y : Y,
       (∑ x : X, if g x = y then
@@ -357,10 +357,10 @@ theorem CQState.purifiedDistance_coarsen_le
     (g : X → Y) (ρ τ : CQState X n) :
     CQState.purifiedDistance (CQState.coarsen g ρ) (CQState.coarsen g τ) ≤
       CQState.purifiedDistance ρ τ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
-  haveI : NeZero (n * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (n * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   apply purifiedDistance_le_of_fidelityGen_ge
   have htr : ∀ υ : CQState X n,
@@ -430,7 +430,7 @@ theorem smoothMinEntropyReal_coarsen_tensorLeftKernel_blockDiagRef_ge_of_ballWit
       opLe (∑ x : X, if g x = y ∧ ann x = p then (ρbar.stateMap x).toOp else 0)
         (Complex.ofReal ((2 : ℝ) ^ (-k)) • (ν p).toOp))
     (hbdd : BddAbove
-      (setOf (isInSmoothedSetReal ε (CQState.coarsen g (ρ.tensorLeftKernel K))
+      (Set.ofPred (isInSmoothedSetReal ε (CQState.coarsen g (ρ.tensorLeftKernel K))
         (blockDiagRef ν hν)))) :
     k ≤ smoothMinEntropyReal ε (CQState.coarsen g (ρ.tensorLeftKernel K)) (blockDiagRef ν hν) := by
   have hmem : isInSmoothedSetReal ε (CQState.coarsen g (ρ.tensorLeftKernel K)) (blockDiagRef ν hν)
@@ -456,7 +456,7 @@ theorem smoothMinEntropyReal_coarsen_tensorLeftKernel_blockDiagRef_ge_of_fineBal
       opLe (∑ x : X, if g x = y ∧ ann x = p then (ρbar.stateMap x).toOp else 0)
         (Complex.ofReal ((2 : ℝ) ^ (-k)) • (ν p).toOp))
     (hbdd : BddAbove
-      (setOf (isInSmoothedSetReal ε (CQState.coarsen g (ρ.tensorLeftKernel K))
+      (Set.ofPred (isInSmoothedSetReal ε (CQState.coarsen g (ρ.tensorLeftKernel K))
         (blockDiagRef ν hν)))) :
     k ≤ smoothMinEntropyReal ε (CQState.coarsen g (ρ.tensorLeftKernel K)) (blockDiagRef ν hν) := by
   refine smoothMinEntropyReal_coarsen_tensorLeftKernel_blockDiagRef_ge_of_ballWitness

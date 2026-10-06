@@ -50,9 +50,9 @@ lemma rank_integral_purificationDensityOp_tensorPowGen_groupSymmetric_le
     Matrix.rank (∫ σ : DensityOp (dA * dB),
       (purificationDensityOp (σ.tensorPowGen n)).toOp ∂μ.measure) ≤
       deFinettiPrefactor (∑ i : Fin kA, ∑ j : Fin kB, (mA i) ^ 2 * (mB j) ^ 2) n := by
-  haveI hAB : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI hABn : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
-  haveI hsq : NeZero (((dA * dB) ^ n) * ((dA * dB) ^ n)) := ⟨Nat.mul_ne_zero (NeZero.ne _)
+  have hAB : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have hABn : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
+  have hsq : NeZero (((dA * dB) ^ n) * ((dA * dB) ^ n)) := ⟨Nat.mul_ne_zero (NeZero.ne _)
     (NeZero.ne _)⟩
   have hπG : IsUnitaryRep (prodRep πA πB) := prodRep_isUnitaryRep πA hπA πB hπB
   have hint := InfoTheory.DeFinetti.integrable_purificationDensityOp_tensorPowGen
@@ -200,14 +200,14 @@ lemma exists_isPure_partialTraceB_eq_integral_groupSymmetric
       ψ.IsPure ∧ partialTraceB ψ.toOp =
         ∫ σ : DensityOp (dA * dB),
           (purificationDensityOp (σ.tensorPowGen n)).toOp ∂μ.measure := by
-  haveI hAB : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI hABn : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
-  haveI hsq : NeZero (((dA * dB) ^ n) * ((dA * dB) ^ n)) :=
+  have hAB : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have hABn : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
+  have hsq : NeZero (((dA * dB) ^ n) * ((dA * dB) ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI gpos : NeZero (deFinettiPrefactor
+  have gpos : NeZero (deFinettiPrefactor
       (∑ i : Fin kA, ∑ j : Fin kB, (mA i) ^ 2 * (mB j) ^ 2) n) :=
     ⟨(deFinettiPrefactor_pos _ n).ne'⟩
-  haveI := μ.isProbability
+  have := μ.isProbability
   let ρ := DensityOp.integral μ.measure
     (fun σ : DensityOp (dA * dB) => purificationDensityOp (σ.tensorPowGen n))
     (InfoTheory.DeFinetti.integrable_purificationDensityOp_tensorPowGen μ)
@@ -296,7 +296,7 @@ theorem postselection_referenceBound_of_measureThenHash_groupSymmetric
     (μ : DensityMeasure (dA * dB)) (hμ : IsFixedMarginalMeasure σA μ)
     (hμinv : IsGroupInvariantMeasure (prodRep πA πB) μ) :
     SatisfiesReferenceBound M.toProtocol l' μ (coherentIIDSecrecy εAT εPA εbar) := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   have hacc : ∀ σ ∈ fixedMarginalSet σA \ goodSet, M.pAcc σ ≤ εAT := by
     intro σ hσ
     exact hcondS.2.2 σ ⟨hσ.1, fun hgood => hσ.2 hgood.1⟩
@@ -320,9 +320,9 @@ theorem postselection_referenceBound_of_measureThenHash_groupSymmetric
         · exact add_le_add (hcondLHL σ hσ) le_rfl⟩ }
   have hbad := M.badBranchBlockOp_weight_le_of_pAcc_le μ (C.integrable μ)
     (fixedMarginalSet σA) hμ goodSet hClosed.measurableSet εAT hcondS.1.1 hacc
-  haveI := M.toProtocol.keyDim_neZero
-  haveI := M.toProtocol.annDim_neZero
-  haveI hgx : NeZero (deFinettiPrefactor
+  have := M.toProtocol.keyDim_neZero
+  have := M.toProtocol.annDim_neZero
+  have hgx : NeZero (deFinettiPrefactor
       (∑ i : Fin kA, ∑ j : Fin kB, (mA i) ^ 2 * (mB j) ^ 2) n) :=
     ⟨(deFinettiPrefactor_pos _ n).ne'⟩
   obtain ⟨τ, hτ_pure, hτ_marg, hτ_blocks⟩ :=

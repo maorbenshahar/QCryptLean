@@ -228,8 +228,8 @@ lemma pairedToBlockedEquiv_tensorFamily {a b n : ℕ} [NeZero a] [NeZero b]
       Op.tensor (tensorFamily A) (tensorFamily fun k =>
         Matrix.reindex (finCongr (show b * (a * b) = a * b ^ 2 by ring))
           (finCongr (show b * (a * b) = a * b ^ 2 by ring)) (Op.tensor (B k) (C k))) := by
-  haveI : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
-  haveI : NeZero (a * b ^ 2) := ⟨mul_ne_zero (NeZero.ne a) (pow_ne_zero 2 (NeZero.ne b))⟩
+  have : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
+  have : NeZero (a * b ^ 2) := ⟨mul_ne_zero (NeZero.ne a) (pow_ne_zero 2 (NeZero.ne b))⟩
   rw [pairedToBlockedEquiv, Matrix.reindex_trans_apply, Matrix.reindex_trans_apply,
     ← tensorFamily_tensor_interleaving, Matrix.reindex_reindex_symm,
     reindex_finCongr_tensorFamily (show (a * b) * (a * b) = a * (a * b ^ 2) by ring)]
@@ -311,7 +311,7 @@ lemma symmetricProjectorPairedGen_mul_blockedEntangledSeed (a b n : ℕ)
     [NeZero a] [NeZero b] [NeZero n] :
     symmetricProjectorPairedGen a (a * b ^ 2) n * blockedEntangledSeed a b n =
       blockedEntangledSeed a b n := by
-  haveI : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
+  have : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
   rw [blockedEntangledSeed, mul_smul_comm,
     ← pairedToBlockedEquiv_conjugates_projector, ← Matrix.reindex_mul,
     symmetricProjectorPaired_mul_eq_of_perm_left_invariant _
@@ -323,7 +323,7 @@ lemma blockedEntangledSeed_eq_tensorPow (a b n : ℕ) [NeZero a] [NeZero b] :
       Matrix.reindex (interleavingEquivGen a (a * b ^ 2) n).symm
         (interleavingEquivGen a (a * b ^ 2) n).symm
         (Op.tensorPow (blockedEntangledSeedRound a b) n) := by
-  haveI : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
+  have : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
   rw [blockedEntangledSeedRound, blockedEntangledSeed, ← maxEntangledOp_tensorPow_interleaving,
     pairedToBlockedEquiv, Matrix.reindex_trans_apply, Matrix.reindex_trans_apply,
     Matrix.reindex_reindex_symm, Op.reindex_finCongr_tensorPow

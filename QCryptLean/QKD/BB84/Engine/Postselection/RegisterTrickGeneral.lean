@@ -84,15 +84,15 @@ theorem bb84_announceLinearEveVisible_sum_traceNorm_eq_sum {n m ℓ ℓEV eveDim
         traceNorm (bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV eveDim peSel leakEC π
           (F π)) := by
   classical
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num)) (pow_ne_zero _ (by norm_num)))
       (NeZero.ne _)⟩
-  haveI : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
-  haveI hbe : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * eveDim) :=
+  have : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
+  have hbe : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * eveDim) :=
     bb84EveVisiblePEAnnounceBaseOutputDim_neZero n m ℓ ℓEV peSel leakEC eveDim
-  haveI : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * eveDim * n.factorial) :=
+  have : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * eveDim * n.factorial) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * n.factorial) :=
+  have : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * n.factorial) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   set e := permAnnounceIndexEquiv n with he
   set G : Fin n.factorial → Op (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * eveDim) :=
@@ -355,8 +355,8 @@ theorem bb84_bellTwirl_traceNorm_invariant_stabilized_of_preCov (n m ℓ ℓEV :
           bb84SymSiftedIdealChannelDirect_withPEAnnounce n m ℓ ℓEV Q δ peSel xSel leakEC ec eveDim
               pre)
         M) := by
-  haveI : NeZero (4 ^ n * eveDim) := instNeZeroNatHMul
-  haveI : NeZero (eveDim * dimR) :=
+  have : NeZero (4 ^ n * eveDim) := instNeZeroNatHMul
+  have : NeZero (eveDim * dimR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   set U := bellTwirlUnitary n g with hUdef
   set Mtw := Op.tensor U (1 : Op dimR) * M * (Op.tensor U (1 : Op dimR))ᴴ with hMtwdef

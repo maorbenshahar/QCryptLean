@@ -289,8 +289,8 @@ theorem QuantumHashFamily.IsUniversal2Star.seedAvg_traceNorm_offDiag_le_genRef
           - (1 / (Fintype.card Z : ℝ)) • (∑ x : X, V x))
       ≤ Real.sqrt (σ.trace.re * (Fintype.card Z : ℝ) * (1 - 1 / (Fintype.card Z : ℝ))
           * collisionQuantity σ V) := by
-  haveI : Nonempty Z := H.outputNonempty
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty Z := H.outputNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : 0 < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos
@@ -313,8 +313,8 @@ theorem QuantumHashFamily.IsUniversal2Star.seedAvg_traceNorm_offDiag_le_genRef
     · rw [hsum]
       refine Finset.sum_congr rfl fun x _ => ?_
       by_cases hx : H.hash s x = m
-      · simp only [hx, if_true, hVt_def]
-      · simp only [hx, if_false, Matrix.mul_zero, Matrix.zero_mul]
+      · simp only [hx, ite_true, hVt_def]
+      · simp only [hx, ite_false, Matrix.mul_zero, Matrix.zero_mul]
     · rw [mul_smul_comm, smul_mul_assoc, hsum]
   -- Each bin's σ-weighted frobenius = the transformed bin's plain frobenius.
   have hLHSeq : ∀ s m, weightedFrobeniusSq σ (Wo s m) = ((Wt s m)ᴴ * (Wt s m)).trace.re := by

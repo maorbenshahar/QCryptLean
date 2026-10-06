@@ -48,10 +48,8 @@ noncomputable def retainedAnalysisSiftedState {n : ℕ}
     (rho : TypedLOCC.Op (FinalStage.rawSystem n).total) :
     TypedLOCC.Op (FinalStage.rawSystem n).total :=
   let h : (bobSiftUnitAnnouncement n peSel xSel pi).out () = FinalStage.rawSystem n := by
-    simp only [bobSiftUnitAnnouncement, PrivateAction.asUnitAnnouncement_out,
-      bobSiftPermutationPrivate, alicePermutationAnnouncement,
-      PrivateAction.out_ofInstrument, AnnouncedAction.out_ofInstrument,
-      FinalStage.rawSystem, TwoParty.set_alice, TwoParty.set_bob]
+    change ((FinalStage.rawSystem n).set .alice (Fin (2 ^ n))).set .bob (Fin (2 ^ n)) = _
+    rw [TwoParty.set_alice, TwoParty.set_bob]
   reindexOp (Equiv.cast (congrArg MultipartiteSystem.total h))
     (matrixConjLinear
       (localKrausLift ((alicePermutationAnnouncement n peSel xSel).out pi) .bob (Fin (2 ^ n))
@@ -117,10 +115,9 @@ theorem retainedAnalysisProgram_denote_apply
           (fun _ => QKD.BB84.Reduction.privateMeasurements n tail) := by
     have hp (pi : Equiv.Perm (Fin n)) : FinalStage.rawSystem n =
         (bobSiftUnitAnnouncement n peSel xSel pi).out () := by
-      simp only [bobSiftUnitAnnouncement, PrivateAction.asUnitAnnouncement_out,
-        bobSiftPermutationPrivate, alicePermutationAnnouncement,
-        PrivateAction.out_ofInstrument, AnnouncedAction.out_ofInstrument,
-        FinalStage.rawSystem, TwoParty.set_alice, TwoParty.set_bob]
+      change FinalStage.rawSystem n =
+        ((FinalStage.rawSystem n).set .alice (Fin (2 ^ n))).set .bob (Fin (2 ^ n))
+      rw [TwoParty.set_alice, TwoParty.set_bob]
     have hm : FinalStage.rawSystem n = (bobPrivateMeasurement n).out := by
       simp only [bobPrivateMeasurement, alicePrivateMeasurement,
         PrivateAction.computationalMeasurement_out]
@@ -133,11 +130,16 @@ theorem retainedAnalysisProgram_denote_apply
     congr 1
     funext u
     cases u
-    rw [Program.graft_castInput (hp pi)]
+    change (cast (congrArg (fun R => Program R (.leaf (FinalStage.rawSystem n))) (hp pi))
+      (privateMeasurements n Program.done)).graft (fun _ => tail) = _
+    refine (Program.graft_castInput (hp pi) (privateMeasurements n Program.done)
+      (fun _ => tail)).trans ?_
+    apply congrArg (cast (congrArg (fun R => Program R
+      (rawClassicalTailBoundary n (mZ + mX) ell ellEV peSel leakEC)) (hp pi)))
     unfold privateMeasurements
-    simp only [PrivateAction.then, Program.graft_priv, Program.graft_castInput hm,
-      Program.graft_done]
-    rfl
+    apply congrArg (Program.priv (alicePrivateMeasurement n))
+    apply congrArg (Program.priv (bobPrivateMeasurement n))
+    exact Program.graft_castInput hm Program.done (fun _ => tail)
   have hPrivate {R : MultipartiteSystem Party} {B : Boundary Party}
       (A : PrivateAction R) (cont : Program A.out B) (sigma : TypedLOCC.Op R.total) :
       (A.then cont).denote sigma =
@@ -168,14 +170,16 @@ theorem retainedAnalysisProgram_denote_apply
           (Equiv.cast (congrArg MultipartiteSystem.total hf))
           (measure (alicePrivateMeasurement n).out .bob
             (measure (FinalStage.rawSystem n) .alice sigma))) x x = sigma x x := by
-      simp only [Matrix.reindex_apply, Matrix.submatrix_apply, ← Equiv.cast_symm,
-        Equiv.cast_apply]
+      change (measure (alicePrivateMeasurement n).out .bob
+        (measure (FinalStage.rawSystem n) .alice sigma))
+        (cast (congrArg MultipartiteSystem.total hf).symm x)
+        (cast (congrArg MultipartiteSystem.total hf).symm x) = _
       have hcoord : cast (congrArg MultipartiteSystem.total hf).symm x =
           cast (congrArg MultipartiteSystem.total hb).symm
             (cast (congrArg MultipartiteSystem.total ha).symm x) := by
-        simp only [cast_cast]
-        rfl
-      rw [hcoord]
+        exact (cast_cast _ _ x).symm
+      refine (congrArg₂ (fun u v => measure (alicePrivateMeasurement n).out .bob
+        (measure (FinalStage.rawSystem n) .alice sigma) u v) hcoord hcoord).trans ?_
       exact (hMeasureDiagonal (alicePrivateMeasurement n).out .bob _ _).trans
         (hMeasureDiagonal (FinalStage.rawSystem n) .alice sigma x)
     dsimp only [QKD.BB84.Reduction.privateMeasurements]
@@ -200,10 +204,8 @@ theorem retainedAnalysisProgram_denote_apply
       (QKD.BB84.Model.siftPermHalf n peSel xSel pi)
   let hout (pi : Equiv.Perm (Fin n)) :
       (bobSiftUnitAnnouncement n peSel xSel pi).out () = FinalStage.rawSystem n := by
-    simp only [bobSiftUnitAnnouncement, PrivateAction.asUnitAnnouncement_out,
-      bobSiftPermutationPrivate, alicePermutationAnnouncement,
-      PrivateAction.out_ofInstrument, AnnouncedAction.out_ofInstrument,
-      FinalStage.rawSystem, TwoParty.set_alice, TwoParty.set_bob]
+    change ((FinalStage.rawSystem n).set .alice (Fin (2 ^ n))).set .bob (Fin (2 ^ n)) = _
+    rw [TwoParty.set_alice, TwoParty.set_bob]
   let weight : ℂ := (Fintype.card (Equiv.Perm (Fin n)) : ℂ)⁻¹
   -- Alice's branch at the outcome `(pi, ())` read off her public announcement `pi` (stated at
   -- the outcome type of the announcement, as `denote_then_publicSpaceEquiv_symm_apply` reads it).
@@ -247,7 +249,12 @@ theorem retainedAnalysisProgram_denote_apply
       (fun _ => B) _ _ () a b).trans ?_
     refine (Program.denote_cast_apply (hout pi) rfl _ _ _ _).trans ?_
     simp only [Equiv.cast_refl, Equiv.refl_apply]
-    rw [hMeasurements, hBob, hAlice]
+    refine (hMeasurements _ a b).trans ?_
+    let F (tau : TypedLOCC.Op ((bobSiftUnitAnnouncement n peSel xSel pi).out ()).total) :=
+      tail.denote (Matrix.reindex (Equiv.cast (congrArg MultipartiteSystem.total (hout pi)))
+        (Equiv.cast (congrArg MultipartiteSystem.total (hout pi))) tau) a b
+    refine (congrArg F (hBob pi () _)).trans ?_
+    refine (congrArg (fun tau => F (matrixConjLinear (KB pi) tau)) (hAlice pi rho)).trans ?_
     refine (congrArg (fun tau :
       TypedLOCC.Op ((bobSiftUnitAnnouncement n peSel xSel pi).out ()).total =>
       tail.denote (Matrix.reindex (Equiv.cast (congrArg MultipartiteSystem.total (hout pi)))
@@ -272,9 +279,9 @@ theorem retainedAnalysisProgram_denote_apply
     rw [hSame]
     by_cases hab : a = b
     · subst b
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       dsimp only [tail]
-      rw [rawClassicalTailProgram_output_apply, if_pos rfl]
+      rw [rawClassicalTailProgram_output_apply, ite_eq_left rfl]
       simp only [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro x _
@@ -284,13 +291,13 @@ theorem retainedAnalysisProgram_denote_apply
     · have hne : E.symm (pi, a) ≠ E.symm (pi, b) := by
         intro h
         exact hab (congrArg Prod.snd (E.symm.injective h))
-      rw [if_neg hne]
+      rw [ite_eq_right hne]
       dsimp only [tail]
-      rw [rawClassicalTailProgram_output_apply, if_neg hab, mul_zero]
+      rw [rawClassicalTailProgram_output_apply, ite_eq_right hab, mul_zero]
   · have hne : E.symm (pi, a) ≠ E.symm (pj, b) := by
       intro h
       exact hpi (congrArg Prod.fst (E.symm.injective h))
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     exact hCross pi pj hpi a b
 
 /-- Complete-output reference blocks of the actual retained-analysis program.
@@ -395,18 +402,18 @@ theorem retainedAnalysisProgram_denote_eq_sum
     mul_ite, mul_one, mul_zero, Equiv.apply_eq_iff_eq, Prod.mk.injEq]
   by_cases hqq : (retainedAnalysisOutputDataEquiv nK mZ mX ell ellEV leakEC).symm (pi, a) = q'
   · subst hqq
-    simp only [if_true, Equiv.apply_eq_iff_eq, Prod.mk.injEq, and_self]
+    simp only [ite_true, Equiv.apply_eq_iff_eq, Prod.mk.injEq, and_self]
     rw [Finset.sum_eq_single pi]
     · simp only [true_and]
     · intro pj _ hpj
       exact Finset.sum_eq_zero fun x _ => Finset.sum_eq_zero fun st _ => by simp [hpj]
     · intro h
       exact absurd (Finset.mem_univ pi) h
-  · rw [if_neg hqq]
+  · rw [ite_eq_right hqq]
     symm
     refine Finset.sum_eq_zero fun pj _ => Finset.sum_eq_zero fun x _ =>
       Finset.sum_eq_zero fun st _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨⟨rfl, hb⟩, hq'⟩
     exact hqq (by rw [← hq', hb])
 
@@ -468,16 +475,13 @@ theorem reindex_retainedAnalysisSiftedState {n : ℕ}
     rw [hliftB, hliftA, Quantum.TensorProducts.Op.tensor_mul]
     simp only [one_mul, mul_one]
   let hout : (bobSiftUnitAnnouncement n peSel xSel pi).out () = FinalStage.rawSystem n := by
-    simp only [bobSiftUnitAnnouncement, PrivateAction.asUnitAnnouncement_out,
-      bobSiftPermutationPrivate, alicePermutationAnnouncement,
-      PrivateAction.out_ofInstrument, AnnouncedAction.out_ofInstrument,
-      FinalStage.rawSystem, TwoParty.set_alice, TwoParty.set_bob]
+    change ((FinalStage.rawSystem n).set .alice (Fin (2 ^ n))).set .bob (Fin (2 ^ n)) = _
+    rw [TwoParty.set_alice, TwoParty.set_bob]
   have hcoord (i : Fin (2 ^ n * 2 ^ n)) :
       cast (congrArg MultipartiteSystem.total hout).symm (e.symm i) = eB.symm i := by
     change cast (congrArg MultipartiteSystem.total hout.symm)
       ((FinalStage.rawSystem n).pairEquiv.symm (finProdFinEquiv.symm i)) = _
-    rw [MultipartiteSystem.cast_pairEquiv_symm hout.symm]
-    rfl
+    exact MultipartiteSystem.cast_pairEquiv_symm hout.symm (finProdFinEquiv.symm i)
   have htransport (tau : TypedLOCC.Op ((bobSiftUnitAnnouncement n peSel xSel pi).out ()).total) :
       Matrix.reindex e e (reindexOp (Equiv.cast (congrArg MultipartiteSystem.total hout)) tau) =
         Matrix.reindex eB eB tau := by
@@ -486,8 +490,8 @@ theorem reindex_retainedAnalysisSiftedState {n : ℕ}
       (cast (congrArg MultipartiteSystem.total hout).symm (e.symm j)) = _
     rw [hcoord, hcoord]
     rfl
-  unfold retainedAnalysisSiftedState
-  rw [htransport]
+  refine (htransport (matrixConjLinear kb
+    (matrixConjLinear ka (Matrix.reindex e.symm e.symm sigma)))).trans ?_
   change coordinateLinear e eB ((matrixConjLinear kb).comp (matrixConjLinear ka)) sigma = _
   rw [← matrixConjLinear_mul]
   refine (congrArg (fun F => F sigma) (coordinateMatrixConj_eq e eB (kb * ka))).trans ?_
@@ -523,9 +527,9 @@ theorem retainedAnalysisReal_referenceBlock_eq_program
           (retainedAnalysisProgram nK mZ mX ell ellEV leakEC ec delta Q).denote)
         (retainedAnalysisRoundReferenceToBlock W)
         (finProdFinEquiv (eOut q, s)) (finProdFinEquiv (eOut q', t)) := by
-  letI := retainedAnalysisRoundDimNeZero (nK + mZ + mX)
-  letI := retainedAnalysisBlockDimNeZero (nK + mZ + mX)
-  letI := retainedAnalysisOutputDimNeZero nK mZ mX ell ellEV leakEC
+  let := retainedAnalysisRoundDimNeZero (nK + mZ + mX)
+  let := retainedAnalysisBlockDimNeZero (nK + mZ + mX)
+  let := retainedAnalysisOutputDimNeZero nK mZ mX ell ellEV leakEC
   dsimp only
   rw [Quantum.Channels.mapTensorId_apply_eq_apply_block]
   rw [Quantum.Channels.mapTensorId_apply_eq_apply_block]

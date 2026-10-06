@@ -148,8 +148,8 @@ theorem krausAdjoint_partialTraceBKraus (M : Op n) :
     simp only [and_self, ite_true]
     rw [Finset.sum_ite_eq Finset.univ b (fun _ => M a c)]
     simp
-  · rw [if_neg hbd, mul_zero]
-    exact Finset.sum_eq_zero fun k _ => if_neg fun ⟨h1, h2⟩ => hbd (h1.trans h2.symm)
+  · rw [ite_eq_right hbd, mul_zero]
+    exact Finset.sum_eq_zero fun k _ => ite_eq_right fun ⟨h1, h2⟩ => hbd (h1.trans h2.symm)
 
 /-- **Partial-trace trace pairing**: `Tr(Tr_R(X) · M) = Tr(X · (M ⊗ 1_R))`. -/
 theorem trace_partialTraceB_mul (X : Op (n * m)) (M : Op n) :

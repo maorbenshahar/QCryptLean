@@ -65,7 +65,7 @@ theorem kraus_gram_apply {K R : Type} [Fintype K] [DecidableEq K]
   rw [Matrix.mul_apply]
   by_cases h : i.1 = oldAlice ∧ i.2.1 = oldBob ∧ j.1 = oldAlice ∧
       j.2.1 = oldBob ∧ i.2.2 = j.2.2
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     let out : K × K × R := (fresh, fresh, i.2.2)
     rw [Finset.sum_eq_single out]
     · simpa [out, kraus, h.1, h.2.1, h.2.2.1, h.2.2.2.1,
@@ -82,7 +82,7 @@ theorem kraus_gram_apply {K R : Type} [Fintype K] [DecidableEq K]
         · simp [ho]
       rw [Matrix.conjTranspose_apply, hzero, star_zero, zero_mul]
     · simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro out _
     simp only [Matrix.conjTranspose_apply, kraus, Matrix.smul_apply,
@@ -108,7 +108,7 @@ theorem kraus_complete {K R : Type} [Fintype K] [DecidableEq K]
   simp_rw [kraus_gram_apply]
   by_cases hij : i = j
   · subst j
-    rw [Matrix.one_apply, if_pos rfl]
+    rw [Matrix.one_apply, ite_eq_left rfl]
     simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     rw [Finset.sum_eq_single i.1]
     · rw [Finset.sum_eq_single i.2.1]
@@ -121,14 +121,14 @@ theorem kraus_complete {K R : Type} [Fintype K] [DecidableEq K]
       have hne' : i.1 ≠ oldAlice := fun h => hne h.symm
       simp [hne']
     · simp
-  · rw [Matrix.one_apply, if_neg hij]
+  · rw [Matrix.one_apply, ite_eq_right hij]
     apply Finset.sum_eq_zero
     intro fresh _
     apply Finset.sum_eq_zero
     intro oldAlice _
     apply Finset.sum_eq_zero
     intro oldBob _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     apply hij
     exact Prod.ext (h.1.trans h.2.2.1.symm)
@@ -144,11 +144,11 @@ private theorem kraus_row {K R : Type} [Fintype K] [DecidableEq K]
   funext input
   rw [kraus_apply]
   by_cases hab : a = fresh ∧ b = fresh
-  · rw [if_pos hab, Pi.single_apply, mul_ite, mul_one, mul_zero]
+  · rw [ite_eq_left hab, Pi.single_apply, mul_ite, mul_one, mul_zero]
     refine if_congr ?_ rfl rfl
     obtain ⟨x, y, w⟩ := input
     simp only [hab, Prod.mk.injEq, true_and, eq_comm (a := u)]
-  · rw [if_neg hab, if_neg fun h => hab ⟨h.1, h.2.1⟩, mul_zero, Pi.zero_apply]
+  · rw [ite_eq_right hab, ite_eq_right fun h => hab ⟨h.1, h.2.1⟩, mul_zero, Pi.zero_apply]
 
 /-- One replacement Kraus sandwich in explicit key and residual coordinates. -/
 theorem kraus_sandwich_apply {K R : Type} [Fintype K] [DecidableEq K]
@@ -164,17 +164,17 @@ theorem kraus_sandwich_apply {K R : Type} [Fintype K] [DecidableEq K]
   change matrixConjLinear (kraus (R := R) (fresh, oldAlice, oldBob)) rho (a, b, u) (a', b', v) = _
   by_cases h : a = fresh ∧ b = fresh ∧ a' = fresh ∧ b' = fresh
   · -- Both rows are fresh-key rows: the entry is `weight² · ρ`.
-    rw [if_pos h, matrixConjLinear_apply_of_row_eq_single _ _
-      ((kraus_row _ _ _ _ _ u).trans (if_pos ⟨h.1, h.2.1⟩))
-      ((kraus_row _ _ _ _ _ v).trans (if_pos h.2.2)), star_weight, mul_right_comm,
+    rw [ite_eq_left h, matrixConjLinear_apply_of_row_eq_single _ _
+      ((kraus_row _ _ _ _ _ u).trans (ite_eq_left ⟨h.1, h.2.1⟩))
+      ((kraus_row _ _ _ _ _ v).trans (ite_eq_left h.2.2)), star_weight, mul_right_comm,
       weight_mul_self]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     by_cases hrow : a = fresh ∧ b = fresh
     · -- The column row is not a fresh-key row, so it vanishes.
       exact matrixConjLinear_apply_eq_zero_of_row_right _ _ _
-        ((kraus_row _ _ _ _ _ v).trans (if_neg fun hcol => h ⟨hrow.1, hrow.2, hcol⟩))
+        ((kraus_row _ _ _ _ _ v).trans (ite_eq_right fun hcol => h ⟨hrow.1, hrow.2, hcol⟩))
     · exact matrixConjLinear_apply_eq_zero_of_row_left _ _
-        ((kraus_row _ _ _ _ _ u).trans (if_neg hrow)) _
+        ((kraus_row _ _ _ _ _ u).trans (ite_eq_right hrow)) _
 
 /-- Shared-key replacement as a one-outcome finite Kraus instrument. -/
 noncomputable def instrument (K R : Type) [Fintype K] [DecidableEq K] [Nonempty K]
@@ -216,7 +216,7 @@ theorem channel_apply (K R : Type) [Fintype K] [DecidableEq K] [Nonempty K]
   simp_rw [kraus_sandwich_apply]
   by_cases h : a = b ∧ a' = b' ∧ a = a'
   · rcases h with ⟨rfl, rfl, rfl⟩
-    rw [if_pos ⟨rfl, rfl, rfl⟩]
+    rw [ite_eq_left ⟨rfl, rfl, rfl⟩]
     simp only [and_self]
     rw [Finset.sum_eq_single a]
     · simp [Finset.mul_sum]
@@ -224,14 +224,14 @@ theorem channel_apply (K R : Type) [Fintype K] [DecidableEq K] [Nonempty K]
       have hne' : a ≠ fresh := fun h => hne h.symm
       simp [hne']
     · simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro fresh _
     apply Finset.sum_eq_zero
     intro oldAlice _
     apply Finset.sum_eq_zero
     intro oldBob _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro hf
     exact h ⟨hf.1.trans hf.2.1.symm, hf.2.2.1.trans hf.2.2.2.symm,
       hf.1.trans hf.2.2.1.symm⟩

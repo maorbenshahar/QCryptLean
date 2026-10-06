@@ -67,7 +67,7 @@ lemma coherent_bilinear_form_identity (d n : ℕ) [NeZero d] [NeZero n]
       ((coherentStateKet g n).dag * coherentStateKet k n) *
       ((coherentStateKet k n).dag * coherentStateKet h n)
       ∂(haarProbUnitary d) := by
-    haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+    have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
     have h_int := coherentStateDensityOp_integrable d n
     -- CLM 1: M ↦ M *ᵥ (coherentStateKet h n).vec
     let C1 : Op (d ^ n) →L[ℝ] (Fin (d ^ n) → ℂ) := LinearMap.toContinuousLinearMap
@@ -124,7 +124,7 @@ lemma coherent_bilinear_form_identity (d n : ℕ) [NeZero d] [NeZero n]
   -- Step 2: Haar shift k → g*k and overlap simplification:
   -- ⟨v_g|v_{gk}⟩ = k₀₀^n (by overlap_hg_h_eq_conj_entry_pow)
   -- ⟨v_{gk}|v_h⟩ = ((gk)†h)₀₀^n = (∑_b k̄_{b0}(g†h)_{b0})^n
-  haveI : (haarProbUnitary d).IsMulLeftInvariant := by
+  have : (haarProbUnitary d).IsMulLeftInvariant := by
     unfold haarProbUnitary haarOnUnitary; infer_instance
   -- After Haar shift and using overlap formulas:
   have h_shifted :
@@ -194,7 +194,7 @@ lemma coherent_bilinear_form_identity (d n : ℕ) [NeZero d] [NeZero n]
       congr 1; ext p; ring
     simp_rw [h_rearrange]
     -- Interchange ∫ and ∑ (finite sum)
-    haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+    have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
     rw [MeasureTheory.integral_finsetSum _ (fun p _ => by
       apply Continuous.integrable_of_hasCompactSupport
       · exact continuous_const.mul ((continuous_subtype_val.matrix_elem 0 0).pow n |>.mul
@@ -227,7 +227,7 @@ lemma coherent_bilinear_form_identity (d n : ℕ) [NeZero d] [NeZero n]
   congr 1
   -- Goal: ∫ k₀₀^n * conj(k₀₀)^n dk = I_op 0 0
   -- Step 4b: I_op 0 0 = ∫ (coh k n).toOp 0 0 dk (CLM interchange)
-  haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
   have h_int := coherentStateDensityOp_integrable d n
   let L : Op (d ^ n) →L[ℝ] ℂ := LinearMap.toContinuousLinearMap
     { toFun := fun M => M (0 : Fin (d ^ n)) (0 : Fin (d ^ n))
@@ -468,7 +468,7 @@ lemma symmetricProjector_entry_zero (d n : ℕ) [NeZero d] [NeZero n] :
     simp only [Math.RepresentationTheory.permutationRepresentation]
     simp only [Matrix.of_apply]
     -- Goal: if finFunctionFinEquiv.symm 0 = (finFunctionFinEquiv.symm 0) ∘ σ.symm then 1 else 0 = 1
-    rw [if_pos]
+    rw [ite_eq_left]
     -- Goal: finFunctionFinEquiv.symm 0 = (finFunctionFinEquiv.symm 0) ∘ σ.symm
     ext j
     simp [finFunctionFinEquiv_symm_apply_val]
@@ -496,7 +496,7 @@ lemma haar_entry_moment_pow (d n : ℕ) [NeZero d] [NeZero n] :
     fun g => (coherentDensityOp_entry_zero_eq g).symm
   simp_rw [h_entry]
   -- Step 2: Pull entry selection through the Bochner integral using ContinuousLinearMap
-  haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
   have h_int := coherentStateDensityOp_integrable d n
   let L : Op (d ^ n) →L[ℝ] ℂ := LinearMap.toContinuousLinearMap
     { toFun := fun M => M (0 : Fin (d ^ n)) (0 : Fin (d ^ n))
@@ -526,7 +526,7 @@ lemma haar_moment_overlap_integral (d n : ℕ) [NeZero d] [NeZero n] :
       ∂(haarProbUnitary d)
     ∂(haarProbUnitary d) =
     (↑(Nat.choose (n + d - 1) (d - 1)) : ℂ)⁻¹ := by
-  haveI : IsProbabilityMeasure (haarProbUnitary d) :=
+  have : IsProbabilityMeasure (haarProbUnitary d) :=
     haarProbUnitary_isProbability d
   have hLI : (haarProbUnitary d).IsMulLeftInvariant := by
     unfold haarProbUnitary haarOnUnitary; infer_instance
@@ -717,7 +717,7 @@ theorem schur_integral_trace (d n : ℕ) [NeZero d] [NeZero n]
     have h_entry_int : ∀ i j, MeasureTheory.Integrable (fun g => A g i j) μ :=
       fun i j => coherentStateDensityOp_entry_integrable i j
     -- Probability measure instance for integrability
-    haveI : MeasureTheory.IsProbabilityMeasure μ := by
+    have : MeasureTheory.IsProbabilityMeasure μ := by
       rw [hμ_def]; exact haarProbUnitary_isProbability d
     -- Matrix-valued integrability
     have h_A_int : MeasureTheory.Integrable A μ :=

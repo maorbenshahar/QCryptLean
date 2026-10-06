@@ -44,7 +44,7 @@ noncomputable local instance instCStarAlgebraMatrix (n : Type*) [Fintype n] [Dec
 lemma diagonal_isHermitian_of_real {n : Type*} [Finite n] [DecidableEq n]
     (h : n → ℝ) :
     (Matrix.diagonal (fun j => (h j : ℂ))).IsHermitian := by
-  letI := Fintype.ofFinite n
+  let := Fintype.ofFinite n
   rw [Matrix.IsHermitian, Matrix.diagonal_conjTranspose]
   congr 1
   ext j

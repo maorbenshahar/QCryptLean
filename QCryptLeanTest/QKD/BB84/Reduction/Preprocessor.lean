@@ -42,7 +42,7 @@ theorem pureZ_oneX_successMass_zero :
   apply Finset.sum_eq_zero
   intro omega _
   by_cases hq : HasQuotas 0 0 1 omega
-  · simp only [hq, if_true]
+  · simp only [hq, ite_true]
     have hxLength : 0 < (xOrder omega).length :=
       lt_of_lt_of_le Nat.zero_lt_one hq.2
     let i : Fin 1 := (xOrder omega).get ⟨0, hxLength⟩
@@ -77,7 +77,7 @@ theorem successKraus_shortageControl_zero
     (a : ComparisonPreInput N) :
     comparisonPreSuccessKraus N nK mZ mX pA pB S t
         (x, Sum.inr j) a = 0 := by
-  simp [comparisonPreSuccessKraus]
+  exact ite_eq_right Sum.inr_ne_inl
 
 /-- A failure Kraus matrix has no entry in a retained-subset control row. -/
 theorem failureKraus_successControl_zero
@@ -89,7 +89,7 @@ theorem failureKraus_successControl_zero
     comparisonPreFailureKraus N nK mZ mX pA pB j a
         (x, Sum.inl S) a' = 0 := by
   by_cases hj : j.val = 0
-  · simp only [comparisonPreFailureKraus, hj, if_pos]
+  · simp only [comparisonPreFailureKraus, hj, ite_eq_left]
     refine (Matrix.smul_apply _ _ _ _).trans ?_
     refine (congrArg (fun z : ℂ => (_ : ℂ) • z)
       (Matrix.single_apply_of_row_ne ?_ _ _ (1 : ℂ))).trans (smul_zero _)
@@ -112,7 +112,7 @@ theorem successKraus_uses_selectedSubset
         (selectedInputMarginalInstrument
           (increasingSubsetEmbedding S)).kraus () t
             ((selectedPairNumeralEquiv (nK + mZ + mX)).symm x) a := by
-  simp [comparisonPreSuccessKraus]
+  exact ite_eq_left rfl
 
 /-- A reference-extended operator with an off-diagonal reference block. -/
 def referenceCoherentOperator (N : ℕ) :

@@ -76,8 +76,9 @@ theorem coordinateLinear_reindexOp_cancel
   apply LinearMap.ext
   intro rho
   ext i j
-  simp [coordinateLinear, reindexOp, LinearMap.comp_apply,
-    Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
+  change rho (E'.trans eY (E'.symm (eY.symm i)))
+    (E'.trans eY (E'.symm (eY.symm j))) = rho i j
+  simp only [Equiv.trans_apply, Equiv.apply_symm_apply]
 
 /-- Explicit coordinate changes preserve composition. -/
 theorem coordinateLinear_comp {A B C : Type}

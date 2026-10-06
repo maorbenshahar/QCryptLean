@@ -228,14 +228,22 @@ private theorem one_sub_le_honestTailAcceptance_of_nonempty
     have hle : (Finset.univ.filter (fun i : Fin n => peSel i = true ∧ xSel i = false)).card ≤ n :=
       le_trans (Finset.card_le_card (Finset.filter_subset _ _)) (by simp)
     exact lt_of_lt_of_le hZ hle
-  haveI : NeZero n := ⟨Nat.ne_of_gt hn0⟩
+  have : NeZero n := ⟨Nat.ne_of_gt hn0⟩
   have hq1 : q ≤ 1 := hq
   have hflag (x : (FinalStage.rawSystem n).total) (st : KeyHashSeedPairEV n ℓ ℓEV peSel) :
       rawClassicalTailFlag n m ℓ ℓEV peSel xSel leakEC ec δ Q x st = 0 ↔
         bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 (rawJointOutcomeEquiv n x) =
           true := by
-    rw [rawClassicalTailFlag_eq, QKD.BB84.Model.acceptFlagOf_eq n m ℓ ℓEV peSel xSel leakEC ec δ Q
-      hcount, rawJointOutcomeEquiv_apply]
+    have hvalue := (rawClassicalTailFlag_eq n m ℓ ℓEV peSel xSel leakEC ec δ Q x st).trans
+      (QKD.BB84.Model.acceptFlagOf_eq n m ℓ ℓEV peSel xSel leakEC ec δ Q hcount
+        st.2 (x .alice) (x .bob))
+    have hflagEq : rawClassicalTailFlag n m ℓ ℓEV peSel xSel leakEC ec δ Q x st =
+        if bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2
+          (rawJointOutcomeEquiv n x) then 0 else 1 :=
+      hvalue.trans (congrArg (fun y =>
+        if bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 y then
+          (0 : Fin 2) else 1) (rawJointOutcomeEquiv_apply n x).symm)
+    rw [hflagEq]
     split_ifs with hp <;> simp [hp]
   have hper (st : KeyHashSeedPairEV n ℓ ℓEV peSel) :
       1 - c ≤
@@ -247,11 +255,11 @@ private theorem one_sub_le_honestTailAcceptance_of_nonempty
     rw [← honestRawWeight_eq_honestOutcomeWeight n q peSel xSel x]
     by_cases hp : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2
         (rawJointOutcomeEquiv n x) = true
-    · rw [if_pos ((hflag x st).mpr hp)]
+    · rw [ite_eq_left ((hflag x st).mpr hp)]
       split_ifs
       · exact le_rfl
       · exact honestRawWeight_nonneg hq0 hq1 x
-    · rw [if_neg (fun h => hp h.1), if_neg (fun h => hp ((hflag x st).mp h))]
+    · rw [ite_eq_right (fun h => hp h.1), ite_eq_right (fun h => hp ((hflag x st).mp h))]
   have hsplit : honestTailAcceptance n m ℓ ℓEV peSel xSel leakEC ec δ Q q =
       (Fintype.card (KeyHashSeedPairEV n ℓ ℓEV peSel) : ℝ)⁻¹ *
         ∑ st, ∑ x, if rawClassicalTailFlag n m ℓ ℓEV peSel xSel leakEC ec δ Q x st = 0 then
@@ -318,7 +326,7 @@ theorem one_sub_bb84CompletenessBudgetKL_le_honestTailAcceptance_of_strict_band
       honestTailAcceptance n m ℓ ℓEV peSel xSel leakEC ec δ Q q := by
   by_cases hblocks : 0 < bb84SiftedZTestSampleSize peSel xSel ∧
       0 < bb84SiftedXTestSampleSize peSel xSel
-  · haveI : NeZero n := ⟨by
+  · have : NeZero n := ⟨by
       rintro rfl
       simp [bb84SiftedZTestSampleSize] at hblocks⟩
     exact one_sub_le_honestTailAcceptance_of_nonempty n m ℓ ℓEV leakEC peSel xSel ec q Q δ

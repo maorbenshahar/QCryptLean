@@ -102,11 +102,14 @@ theorem latePublicSelectionProgram_shape (N nK mZ mX : ℕ) :
         Program.announced (completedBasisBobAnnouncement N a) fun b =>
           Program.announced (shuffleAnnouncement N a b) fun order =>
             cast (by
-              simp only [shuffleAnnouncement, completedBasisBobAnnouncement,
-                completedBasisAliceAnnouncement, AnnouncedAction.out_ofInstrument,
-                MultipartiteSystem.set_self, weightedStreamSystem, TwoParty.set_alice,
-                TwoParty.set_bob, CompletedLocalRecord]
-              rfl) (quotaSelectionContinuation N nK mZ mX ⟨a, b, order⟩) := by
+              apply congrArg (fun R =>
+                Program R (lateSelectionLeaf N nK mZ mX ⟨a, b, order⟩))
+              change weightedStreamSystem (finishAcc Unit N) 0 =
+                (((weightedStreamSystem (finishAcc Unit N) 0).set .alice
+                  (CompletedLocalRecord N)).set .bob (CompletedLocalRecord N)).set .alice
+                  (CompletedLocalRecord N)
+              rw [weightedStreamSystem, TwoParty.set_alice, TwoParty.set_bob,
+                TwoParty.set_alice]) (quotaSelectionContinuation N nK mZ mX ⟨a, b, order⟩) := by
   rfl
 
 /-- The physical late-control program is the actual weighted measurement schedule with the
@@ -154,7 +157,7 @@ theorem mismatchAbortExit_metadata :
     let e := lateSelectionExit 1 1 0 0 mismatchControl
     e.1 = mismatchControl.a ∧ e.2.1 = mismatchControl.b ∧
       e.2.2.1 = mismatchControl.order := by
-  simp [lateSelectionExit, mismatchControl]
+  exact ⟨rfl, rfl, rfl⟩
 
 /-- Equal two-round Z bases with the increasing matched order. -/
 def twoZControl : RawControl 2 := defaultRawControl 2
@@ -212,7 +215,7 @@ def lateExitControl (N nK mZ mX : ℕ)
 theorem lateSelectionExit_control (N nK mZ mX : ℕ) (omega : RawControl N) :
     lateExitControl N nK mZ mX (lateSelectionExit N nK mZ mX omega) = omega := by
   rcases omega with ⟨a, b, order⟩
-  simp [lateExitControl, lateSelectionExit]
+  rfl
 
 /-- The successful output constructor and its specified exit carry the same strict-selection raw
 control. -/

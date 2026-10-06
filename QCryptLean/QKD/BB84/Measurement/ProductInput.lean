@@ -66,7 +66,9 @@ def productSource (N : ℕ) (σ : Op (Bit × Bit)) : Op (weightedStreamSystem Un
 @[simp] theorem reindexOp_productSource (N : ℕ) (σ : Op (Bit × Bit)) :
     reindexOp (weightedScheduleUnitInputEquiv N) (productSource N σ) = roundProductOp N σ := by
   ext x x'
-  simp [productSource, reindexOp]
+  exact congrArg₂ (roundProductOp N σ)
+    ((weightedScheduleUnitInputEquiv N).apply_symm_apply x)
+    ((weightedScheduleUnitInputEquiv N).apply_symm_apply x')
 
 /-- **One-round Born weight.**  Alice measures her qubit of one copy of `σ` in basis `θA` and reads
 `x`; Bob measures his in basis `θB` and reads `y`.  For a state this is the joint probability of
@@ -215,16 +217,16 @@ theorem weightedLatePublicSelectionProgram_productSource_success_apply
         (selectedStoredRecords (selectedEmbedding ω h) ω.a uA k).2.1 = packedRoleBasis k ∧
           (selectedStoredRecords (selectedEmbedding ω h) ω.b uB k).2.1 = packedRoleBasis k :=
       selectedEmbedding_basis_lookup ω h k
-    simp only [and_self, if_true, smul_eq_mul]
+    simp only [and_self, ite_true, smul_eq_mul]
     rw [rawControlLaw_toReal_eq]
     simp only [selectedStoredRecords] at hbases ⊢
     simp_rw [(hbases _).1, (hbases _).2]
     ring
-  · rw [if_neg hr]
+  · rw [ite_eq_right hr]
     by_cases hbase : a = ω.a ∧ a' = ω.a ∧ b = ω.b ∧ b' = ω.b
-    · rw [if_pos hbase, if_neg, mul_zero]
+    · rw [ite_eq_left hbase, ite_eq_right, mul_zero]
       rintro ⟨h1, h2⟩
       exact hr ⟨Prod.ext h1 h2, hbase.1, hbase.2.2.1⟩
-    · rw [if_neg hbase]
+    · rw [ite_eq_right hbase]
 
 end QKD.BB84.Measurement

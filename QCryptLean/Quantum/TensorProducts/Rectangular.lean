@@ -393,10 +393,10 @@ theorem eq_tensorRect_single_of_support {n m a b : ℕ}
   by_cases hp : p = p₀
   · by_cases hq : q = q₀
     · subst hp; subst hq; simp
-    · rw [if_neg fun hc => hq hc.2.symm, mul_zero]
+    · rw [ite_eq_right fun hc => hq hc.2.symm, mul_zero]
       by_contra hne
       exact hq (hsupp i j p q hne).2
-  · rw [if_neg fun hc => hp hc.1.symm, mul_zero]
+  · rw [ite_eq_right fun hc => hp hc.1.symm, mul_zero]
     by_contra hne
     exact hp (hsupp i j p q hne).1
 
@@ -499,7 +499,7 @@ lemma tensorRect_one_sandwich_block {b c r : ℕ}
   simp_rw [← Equiv.sum_comp finProdFinEquiv]
   simp only [Fintype.sum_prod_type, Equiv.symm_apply_apply,
     Matrix.one_apply, mul_ite, mul_one, mul_zero, ite_mul, zero_mul,
-    Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, if_true, Matrix.of_apply]
+    Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ite_true, Matrix.of_apply]
 
 end Quantum.TensorProducts
 

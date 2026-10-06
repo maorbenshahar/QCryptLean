@@ -396,8 +396,8 @@ theorem announceInstrument_tensorFamily_interleavedTensorPowGen
       tensorFamily
         (fun a => partialTraceA
           (Op.tensor (F a) (1 : Op d) * ψ.toOp * Op.tensor (F a) (1 : Op d))) := by
-  haveI : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
-  haveI : NeZero ((d * d) ^ n) := NeZero.pow
+  have : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero ((d * d) ^ n) := NeZero.pow
   ext V V'
   obtain ⟨Vf, rfl⟩ : ∃ f : Fin n → Fin d, V = finFunctionFinEquiv f :=
     ⟨finFunctionFinEquiv.symm V, (Equiv.apply_symm_apply _ _).symm⟩

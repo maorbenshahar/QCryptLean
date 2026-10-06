@@ -126,7 +126,7 @@ theorem LocalInstrument.nonempty {dIn dOut : ℕ} [NeZero dIn] {Xo : Type} [Fint
 /-- The outcome count of an instrument on a nonzero-dimensional register is nonzero. -/
 theorem LocalInstrument.card_ne_zero {dIn dOut : ℕ} [NeZero dIn] {Xo : Type} [Fintype Xo]
     (I : LocalInstrument dIn dOut Xo) : Fintype.card Xo ≠ 0 := by
-  haveI := I.nonempty
+  have := I.nonempty
   exact Fintype.card_ne_zero
 
 /-- The instrument whose single Kraus operator keeps the outcome as a coherent record. -/

@@ -81,7 +81,7 @@ private lemma sum_negMulLog_le_log_sub_one_of_zero {n : ℕ}
   have hS_nonempty : S.Nonempty := ⟨k, by simp [S, hk_ne_j]⟩
   have hn_sub_pos_nat : 0 < n - 1 := by
     simpa [hS_card] using Finset.card_pos.mpr hS_nonempty
-  haveI : NeZero n := ⟨by omega⟩
+  have : NeZero n := ⟨by omega⟩
   rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j),
     show Real.negMulLog (r j) = 0 from by rw [hj, Real.negMulLog_zero],
     zero_add]
@@ -120,7 +120,7 @@ private lemma entropy_diff_coupling_bound {n : ℕ} (hn : 1 ≤ n)
       exact Finset.sum_nonneg fun i _ => abs_nonneg (p i - q i)
     linarith only [h_dist_nonneg, h_dist]
   by_cases hn_two : n ≥ 2
-  · haveI : NeZero n := ⟨by omega⟩
+  · have : NeZero n := ⟨by omega⟩
     have hn_cast : (2 : ℝ) ≤ n := Nat.cast_le.mpr hn_two
     have hn_pos : (0 : ℝ) < n := two_pos.trans_le hn_cast
     have h_one_sub_lt_one : 1 - 1 / (n : ℝ) < 1 := sub_lt_self 1 (one_div_pos.mpr hn_pos)
@@ -460,7 +460,7 @@ private lemma sum_entropyTerm_erase_le {n : ℕ}
     intro hn_zero
     subst hn_zero
     exact Fin.elim0 i₀
-  haveI : NeZero n := ⟨hne_zero⟩
+  have : NeZero n := ⟨hne_zero⟩
   by_cases hn_eq_1 : n = 1
   · subst hn_eq_1
     have hi0 : i₀ = 0 := by
@@ -585,7 +585,7 @@ lemma entropy_bound_with_large_eigenvalue {n : ℕ}
     intro hn_zero
     subst hn_zero
     exact Fin.elim0 i_large
-  haveI : NeZero n := ⟨hne_zero⟩
+  have : NeZero n := ⟨hne_zero⟩
   have h_large_le_one : evals i_large ≤ 1 := by
     have h := Finset.single_le_sum (f := evals)
       (fun i _ => hevals_nonneg i) (Finset.mem_univ i_large)

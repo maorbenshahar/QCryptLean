@@ -134,7 +134,7 @@ lemma sum_subgaussian_lower_tail
   simp only [Finset.sum_const, Finset.card_fin, nsmul_eq_mul] at hBound
   have hSetEq : {ω | n * δ ≤ ∑ i, -Y i ω} =
       {ω | n * δ ≤ -(∑ i : Fin n, (samples i ω - trueRate))} := by
-    ext ω; simp only [Set.mem_setOf_eq, hSumNeg]; rfl
+    ext ω; simp only [Set.mem_ofPred_eq, hSumNeg]; rfl
   rw [← hSetEq]
   have hParam : ((‖(1:ℝ) - 0‖₊ / 2) ^ 2 : NNReal) = 1/4 := by
     simp only [sub_zero, nnnorm_one]; norm_num
@@ -222,14 +222,14 @@ theorem hoeffding_sampling_bound
   -- Rewrite using hEvent
   have hSetEq : {ω | |((∑ i : Fin n, samples i ω) / n) - trueRate| > δ} =
                 {ω | |(∑ i : Fin n, Y i ω)| > n * δ} := by
-    ext ω; simp only [Set.mem_setOf_eq]; exact hEvent ω
+    ext ω; simp only [Set.mem_ofPred_eq]; exact hEvent ω
   rw [hSetEq]
   -- Decompose into upper and lower tails
   have hDecomp : {ω | |(∑ i : Fin n, Y i ω)| > n * δ} =
                  {ω | (∑ i : Fin n, Y i ω) > n * δ} ∪
                  {ω | (∑ i : Fin n, Y i ω) < -(n * δ)} := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_union]
+    simp only [Set.mem_ofPred_eq, Set.mem_union]
     exact abs_gt_iff_or
   rw [hDecomp]
   -- Apply union bound and tail bounds
@@ -239,10 +239,10 @@ theorem hoeffding_sampling_bound
     _ ≤ P.real {ω | n * δ ≤ ∑ i, Y i ω} + P.real {ω | n * δ ≤ -(∑ i, Y i ω)} := by
         apply add_le_add
         · apply measureReal_mono'
-          · intro ω h; simp only [Set.mem_setOf_eq] at h ⊢; exact le_of_lt h
+          · intro ω h; simp only [Set.mem_ofPred_eq] at h ⊢; exact le_of_lt h
           · exact measure_ne_top P _
         · apply measureReal_mono'
-          · intro ω h; simp only [Set.mem_setOf_eq] at h ⊢; linarith
+          · intro ω h; simp only [Set.mem_ofPred_eq] at h ⊢; linarith
           · exact measure_ne_top P _
     _ ≤ Real.exp (-2 * δ^2 * n) + Real.exp (-2 * δ^2 * n) := by
         apply add_le_add
@@ -368,8 +368,8 @@ theorem hoeffding_two_test_union_bound
   have hSetEq : {ω | |(∑ i : Fin n, samples₁ i ω) / ↑n - trueRate₁| ≤ δ ∧
       |(∑ i : Fin n, samples₂ i ω) / ↑n - trueRate₂| ≤ δ} = (bad₁ ∪ bad₂)ᶜ := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_compl_iff, Set.mem_union, bad₁, bad₂,
-      Set.mem_setOf_eq, not_or, not_lt]
+    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_union, bad₁, bad₂,
+      Set.mem_ofPred_eq, not_or, not_lt]
   rw [hSetEq]
   -- Apply complement bound, union bound, and two Hoeffding applications
   calc P.real (bad₁ ∪ bad₂)ᶜ

@@ -55,9 +55,9 @@ lemma fidelity_smul_smul {n : ℕ} [NeZero n]
           * (((β : ℂ) • B.toOp))
           * CFC.sqrt (((α : ℂ) • A.toOp))))).re
         = Real.sqrt (α * β) * fidelity A B := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   -- Abbreviations
   set sqrtA : Op n := CFC.sqrt A.toOp
   set sandwich : Op n := sqrtA * B.toOp * sqrtA
@@ -159,9 +159,9 @@ lemma normalizePosSemidefOp_toOp {n : ℕ}
 lemma fidelity_le_sqrt_trace_mul_trace {n : ℕ} [NeZero n]
     (A B : PosSemidefOp n) :
     fidelity A B ≤ Real.sqrt ((Matrix.trace A.toOp).re * (Matrix.trace B.toOp).re) := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   set a : ℝ := (Matrix.trace A.toOp).re with ha_def
   set b : ℝ := (Matrix.trace B.toOp).re with hb_def
   have hA_ps : A.toOp.PosSemidef := posSemidefOp_implies_mathlib A

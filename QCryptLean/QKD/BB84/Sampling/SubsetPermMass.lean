@@ -55,7 +55,8 @@ theorem selectedSubsetPermMass_eq_fiberMass
   cases hselect : select nK mZ mX omega with
   | none => simp [selectSubsetPerm, hselect]
   | some f =>
-      simp [selectSubsetPerm, hselect, embeddingSubsetPermEquiv]
+      simp only [selectSubsetPerm, hselect, Option.map_some, Option.some.injEq]
+      change (if embeddingSubsetPermForward f = (S, π) then _ else _) = _
       have hiff :
           embeddingSubsetPermForward f = (S, π) ↔ f = joinSubsetPerm S π := by
         constructor
@@ -97,7 +98,8 @@ theorem selectSubsetPerm_of_select_some
     (h : select nK mZ mX omega = some f) :
     selectSubsetPerm nK mZ mX omega =
       some (embeddingSubsetPermForward f) := by
-  simp [selectSubsetPerm, h, embeddingSubsetPermEquiv]
+  simp only [selectSubsetPerm, h, Option.map_some]
+  rfl
 
 /-- A failed actual selector remains failed after changing coordinates. -/
 theorem selectSubsetPerm_of_select_none

@@ -53,7 +53,7 @@ lemma Finset.sum_sum_eq_diag_add_offdiag
   refine Finset.sum_congr rfl fun x _ => ?_
   have hdiag : f x x = ∑ x' : α, if x = x' then f x x' else 0 := by
     rw [Finset.sum_ite_eq Finset.univ x (fun x' => f x x'),
-      if_pos (Finset.mem_univ x)]
+      ite_eq_left (Finset.mem_univ x)]
   rw [hdiag, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun x' _ => ?_
   by_cases h : x = x' <;> simp [h]
@@ -72,18 +72,18 @@ private lemma sum_z_collapse_double_iff
   by_cases h : z1 = z2
   · -- exactly one nonzero term at z = z1 = z2
     subst h
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     have : (∑ z : Z, (if z1 = z ∧ z1 = z then f else 0)) =
         ∑ z : Z, if z1 = z then f else 0 := by
       refine Finset.sum_congr rfl fun z _ => ?_
       by_cases hz : z1 = z <;> simp [hz]
     rw [this, Finset.sum_ite_eq Finset.univ z1 (fun _ => f),
-      if_pos (Finset.mem_univ z1)]
+      ite_eq_left (Finset.mem_univ z1)]
   · -- conjunction is never true
-    rw [if_neg h]
+    rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro z _
-    rw [if_neg]
+    rw [ite_eq_right]
     rintro ⟨h1, h2⟩
     exact h (h1.trans h2.symm)
 
@@ -274,10 +274,10 @@ lemma sum_tr_SMzS_sq_le_seed_avg_collision_sum
            else 0) := by
   -- Case-split on emptiness of S; both sides collapse to 0 when S is empty.
   by_cases hS : Nonempty S
-  · haveI := hS
+  · have := hS
     exact sum_tr_SMzS_sq_le_seed_avg_collision_sum_of_nonempty H ρ hσ
   · rw [not_nonempty_iff] at hS
-    haveI := hS
+    have := hS
     have hMz : ∀ z : Z, extractorWeightedOp H ρ z = 0 := by
       intro z
       unfold extractorWeightedOp
@@ -334,8 +334,8 @@ lemma seed_avg_collision_sum_le_diag_plus_offdiag
   have hM_nonneg : ∀ x x' : X, 0 ≤ M x x' := fun x x' =>
     tr_prod_sandwich_re_nonneg hT_herm (hρ_psd x) (hρ_psd x')
   -- Positive cardinalities.
-  haveI := H.seedNonempty
-  haveI := H.outputNonempty
+  have := H.seedNonempty
+  have := H.outputNonempty
   have hS_pos : (0 : ℝ) < (Fintype.card S : ℝ) := by exact_mod_cast Fintype.card_pos
   have hZ_pos : (0 : ℝ) < (Fintype.card Z : ℝ) := by exact_mod_cast Fintype.card_pos
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos
@@ -386,7 +386,7 @@ lemma seed_avg_collision_sum_le_diag_plus_offdiag
   apply Finset.sum_le_sum
   intro x' _
   by_cases hxx' : x ≠ x'
-  · rw [if_pos hxx', if_pos hxx']
+  · rw [ite_eq_left hxx', ite_eq_left hxx']
     -- Goal: (1/|S|) * (cardf x x' * M x x') ≤ (1/|Z|) * M x x'.
     have hU := hH x x' hxx'
     have hM := hM_nonneg x x'
@@ -402,7 +402,7 @@ lemma seed_avg_collision_sum_le_diag_plus_offdiag
         _ = (Fintype.card S : ℝ) := by
             field_simp
     exact mul_le_mul_of_nonneg_right h2 hM
-  · rw [if_neg hxx', if_neg hxx']
+  · rw [ite_eq_right hxx', ite_eq_right hxx']
     simp
 
 /-- **Off-diagonal pair sum bounded by marginal square.**

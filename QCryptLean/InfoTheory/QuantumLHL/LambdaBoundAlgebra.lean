@@ -1,5 +1,5 @@
 import Mathlib.LinearAlgebra.Matrix.Trace
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Ring
 import Mathlib.Algebra.BigOperators.Ring.Finset

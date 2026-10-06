@@ -1,5 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Base
-import Mathlib.Data.ENNReal.Real
+import Mathlib.Basic.ENNReal.Real
 
 /-!
 # Hashing error at extended entropy

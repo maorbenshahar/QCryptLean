@@ -154,7 +154,6 @@ theorem fannes_inequality {n : ℕ} [NeZero n] (hn : n ≥ 2) (ρ σ : DensityOp
   - entropyTerm_lipschitz: Lipschitz bound for entropy term on [ε, 1]
   - eigenvalue_perturbation: ∑|λᵢ - μᵢ| ≤ 2T (from Weyl/Mirsky inequalities)
   -/
-
   -- The bound T*log(n-1) + H(T) is non-negative for T ∈ [0, 1)
   have h_bound_nonneg : 0 ≤ T * Real.log (n - 1) + binaryEntropy T := by
     apply add_nonneg

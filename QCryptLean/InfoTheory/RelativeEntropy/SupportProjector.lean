@@ -184,7 +184,7 @@ lemma supportCoordinateProjector_apply {N : ℕ} (σ : DensityOp N)
         simpa [hrange] using hi_range
       have hi0 : eigenvaluesOf σ i = 0 := by
         simpa [positiveSpectrumIndices] using hi
-      simp only [true_and, hi, if_false]
+      simp only [true_and, hi, ite_false]
       rw [supportCoordinateProjector, Matrix.mul_apply]
       apply Finset.sum_eq_zero
       intro x hx
@@ -192,7 +192,7 @@ lemma supportCoordinateProjector_apply {N : ℕ} (σ : DensityOp N)
         intro h
         exact hi_range ⟨x, h.symm⟩
       simp [supportSelector, Matrix.conjTranspose_apply, hix]
-  · simp only [hik, false_and, if_false]
+  · simp only [hik, false_and, ite_false]
     rw [supportCoordinateProjector, Matrix.mul_apply]
     apply Finset.sum_eq_zero
     intro x hx

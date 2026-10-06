@@ -278,13 +278,13 @@ theorem acceptSandwich_add_abortSandwich_of_transcriptDiag (ℓ D : ℕ)
   by_cases hf : flagDigit D (i : ℕ) = flagDigit D (j : ℕ)
   · have h2 := flagDigit_lt_two D (i : ℕ)
     by_cases h0 : flagDigit D (i : ℕ) = 0
-    · rw [if_pos h0, if_pos (hf ▸ h0 : flagDigit D (j : ℕ) = 0),
-        if_neg (show ¬ flagDigit D (i : ℕ) = 1 by omega),
-        if_neg (show ¬ flagDigit D (j : ℕ) = 1 by omega)]
+    · rw [ite_eq_left h0, ite_eq_left (hf ▸ h0 : flagDigit D (j : ℕ) = 0),
+        ite_eq_right (show ¬ flagDigit D (i : ℕ) = 1 by omega),
+        ite_eq_right (show ¬ flagDigit D (j : ℕ) = 1 by omega)]
       ring
-    · rw [if_neg h0, if_neg (fun hc => h0 (hf.trans hc)),
-        if_pos (show flagDigit D (i : ℕ) = 1 by omega),
-        if_pos (show flagDigit D (j : ℕ) = 1 by rw [← hf]; omega)]
+    · rw [ite_eq_right h0, ite_eq_right (fun hc => h0 (hf.trans hc)),
+        ite_eq_left (show flagDigit D (i : ℕ) = 1 by omega),
+        ite_eq_left (show flagDigit D (j : ℕ) = 1 by rw [← hf]; omega)]
       ring
   · have hρ : ρ i j = 0 := by
       refine h i j fun hmod => hf ?_
@@ -432,7 +432,7 @@ theorem keyReplace_ne_id (ℓ D : ℕ) [NeZero D] (hℓ : 1 ≤ ℓ) :
       (finProdFinEquiv (finProdFinEquiv (v, u), finProdFinEquiv ((0 : Fin 2), (0 : Fin D))))
     rw [hρ] at hentry
     simp only [Op_tensor_apply_finProd, acceptFlagOp, Equiv.symm_apply_apply, Matrix.single_apply,
-      Matrix.one_apply, Matrix.zero_apply, and_self, if_true] at hentry
+      Matrix.one_apply, Matrix.zero_apply, and_self, ite_true] at hentry
     norm_num at hentry
   intro hcon
   rw [hcon] at hzero

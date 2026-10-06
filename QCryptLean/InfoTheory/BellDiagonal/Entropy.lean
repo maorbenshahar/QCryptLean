@@ -51,7 +51,7 @@ theorem bellDephasing_isHermitian (ρ : DensityOp 4) :
 theorem bellDephasing_posSemidef (ρ : DensityOp 4) :
     (bellDephasing ρ).PosSemidef := by
   unfold bellDephasing
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   apply Matrix.PosSemidef.add
   · apply Matrix.PosSemidef.add
     · apply Matrix.PosSemidef.add
@@ -133,7 +133,7 @@ theorem bellDephasing_eigenvalues (ρ : DensityOp 4) :
         DensityOp.fidelitySq ρ (DensityOp.fromPure bellState01 bellState01_normalized),
         DensityOp.fidelitySq ρ (DensityOp.fromPure bellState10 bellState10_normalized),
         DensityOp.fidelitySq ρ (DensityOp.fromPure bellState11 bellState11_normalized)] := by
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   constructor
   · intro i; fin_cases i
     · exact fidelityPureSq_nonneg ρ bellState00 bellState00_normalized
@@ -185,7 +185,7 @@ theorem bellDephasing_entropy (ρ : DensityOp 4) :
           DensityOp.fidelitySq ρ (DensityOp.fromPure bellState01 bellState01_normalized),
           DensityOp.fidelitySq ρ (DensityOp.fromPure bellState10 bellState10_normalized),
           DensityOp.fidelitySq ρ (DensityOp.fromPure bellState11 bellState11_normalized)] := by
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   exact InfoTheory.VonNeumannEntropy.vonNeumannEntropy_eq_shannonEntropy
     (bellDephasingDensity ρ) _ (bellDephasing_eigenvalues ρ)
 

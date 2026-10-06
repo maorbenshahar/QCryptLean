@@ -59,7 +59,7 @@ theorem CQState.purifiedDistance_tensorRight_contract_sameRadius
     CQState.purifiedDistance (ρE.tensor (CQState.const σR))
         (σE.tensor (CQState.const σR)) ≤
       CQState.purifiedDistance ρE σE := by
-  haveI : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
+  have : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   have hsub :
       CQState.purifiedDistance (ρE.tensor (CQState.const σR))
           (σE.tensor (CQState.const σR)) ≤

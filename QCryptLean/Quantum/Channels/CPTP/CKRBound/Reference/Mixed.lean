@@ -150,7 +150,7 @@ theorem integrable_reindexed_tensorPowGen_toOp
   have hF_cont : Continuous fun σ : DensityOp (d * d) =>
       (densityOp_reindex (interleavingEquiv d n).symm (σ.tensorPowGen n)).toOp := by
     simpa using continuous_reindexed_tensorPowGen_toOp (d := d) (n := n)
-  haveI : MeasureTheory.IsProbabilityMeasure ν.measure := ν.isProbability
+  have : MeasureTheory.IsProbabilityMeasure ν.measure := ν.isProbability
   exact hF_cont.integrable_of_compactSpace
 
 /-- Reindexing the integral tensor power commutes with Bochner integration at
@@ -170,7 +170,7 @@ theorem densityOp_reindex_integralTensorPower_toOp
   exact ((Matrix.reindexLinearEquiv ℂ ℂ (interleavingEquiv d n).symm
     (interleavingEquiv d n).symm).toLinearMap.toContinuousLinearMap.integral_comp_comm
       (by
-        haveI := ν.isProbability
+        have := ν.isProbability
         exact InfoTheory.DeFinetti.continuous_tensorPowGen_toOp.integrable_of_compactSpace)).symm
 
 /-- `mapTensorId` commutes with Bochner integration after reindexing by the

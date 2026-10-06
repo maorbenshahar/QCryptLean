@@ -94,7 +94,8 @@ theorem liftAt {P : Type} [Fintype P] [DecidableEq P]
       localKrausLift_apply, ite_mul, zero_mul, Matrix.conjTranspose_apply, RCLike.star_def, ρab]
     simp_rw [hsum]
     simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
-    simp [apply_ite]
+    simp only [apply_ite, map_zero, mul_zero, Finset.sum_ite_eq,
+      Finset.mem_univ, ite_true, Matrix.submatrix_apply]
     rfl
   rw [hlift I, hlift J]
   have hop_entry :=

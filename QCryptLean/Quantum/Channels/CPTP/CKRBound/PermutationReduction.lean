@@ -246,7 +246,7 @@ lemma blockDiagExt_eq_blockDiagExtFamily {d n : ℕ} [NeZero d] [NeZero n]
         (fun i : Fin (Fintype.card (Equiv.Perm (Fin n))) =>
           Math.RepresentationTheory.permutationRepresentation d n
             ((Fintype.equivFin (Equiv.Perm (Fin n))).symm i)) ρ := by
-  haveI : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
+  have : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
     ⟨by simp [Fintype.card_perm, Nat.factorial_ne_zero]⟩
   rfl
 
@@ -254,7 +254,7 @@ lemma blockDiagExt_eq_blockDiagExtFamily {d n : ℕ} [NeZero d] [NeZero n]
 lemma blockDiagExt_posSemidef {d n : ℕ} [NeZero d] [NeZero n]
     (ρ : Op (d ^ n * d ^ n)) (hρ_psd : ρ.PosSemidef) :
     (blockDiagExt ρ).PosSemidef := by
-  haveI : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
+  have : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
     ⟨by simp [Fintype.card_perm, Nat.factorial_ne_zero]⟩
   rw [blockDiagExt_eq_blockDiagExtFamily]
   exact blockDiagExtFamily_posSemidef _ ρ hρ_psd
@@ -276,7 +276,7 @@ lemma mapTensorId_blockDiagExt_eq_blockDiagonal {d n dimOut : ℕ}
       (Matrix.blockDiagonal M).submatrix
         (finProdFinEquiv_assoc_right dimOut (d ^ n) k)
         (finProdFinEquiv_assoc_right dimOut (d ^ n) k) := by
-  haveI : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
+  have : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
     ⟨by simp [Fintype.card_perm, Nat.factorial_ne_zero]⟩
   dsimp only
   rw [blockDiagExt_eq_blockDiagExtFamily]
@@ -297,7 +297,7 @@ lemma blockDiagExt_traceNorm_mapTensorId {d n dimOut : ℕ}
     (ρ : Op (d ^ n * d ^ n)) :
     traceNorm (mapTensorId Δ (blockDiagExt ρ)) =
     traceNorm (mapTensorId Δ ρ) := by
-  haveI : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
+  have : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
     ⟨by simp [Fintype.card_perm, Nat.factorial_ne_zero]⟩
   rw [blockDiagExt_eq_blockDiagExtFamily]
   refine blockDiagExtFamily_traceNorm_mapTensorId Δ
@@ -323,7 +323,7 @@ lemma partialTraceB_blockDiagExt_eq_avg {d n : ℕ} [NeZero d] [NeZero n]
     ∑ π : Equiv.Perm (Fin n),
       permutationRepresentation d n π * partialTraceB ρ *
       (permutationRepresentation d n π)ᴴ := by
-  haveI : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
+  have : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
     ⟨by simp [Fintype.card_perm, Nat.factorial_ne_zero]⟩
   rw [blockDiagExt_eq_blockDiagExtFamily]
   rw [partialTraceB_blockDiagExtFamily_eq_avg

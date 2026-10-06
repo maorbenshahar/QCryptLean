@@ -179,8 +179,8 @@ theorem kerComplIso_mul_conjTranspose :
   rw [lhs_eq2, Finset.sum_filter]
   refine Finset.sum_congr rfl fun i _ => ?_
   rcases eigenvalues_eq_zero_or_one hM hidem i with h | h
-  · rw [if_pos h]; simp [h]
-  · rw [if_neg (by rw [h]; norm_num)]; simp [h]
+  · rw [ite_eq_left h]; simp [h]
+  · rw [ite_eq_right (by rw [h]; norm_num)]; simp [h]
 
 /-- For a Hermitian idempotent, `kerComplIso` lands in the kernel: `M · C = 0`. -/
 theorem kerComplIso_left_annihilate : M * kerComplIso M hM = 0 := by

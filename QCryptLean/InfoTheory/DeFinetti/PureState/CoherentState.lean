@@ -123,7 +123,7 @@ theorem dim_ratio_bound (d n k : ℕ) (hd : 1 ≤ d) (hn : 0 < n) (hk : k ≤ n)
       (Finset.range (d - 1)).prod (fun i => ((↑n - ↑k + 1 + ↑i : ℝ) / (↑n + 1 + ↑i))) := by
     rw [show x ^ (d - 1) = (Finset.range (d - 1)).prod (fun _ => x) from
       by rw [Finset.prod_const, Finset.card_range]]
-    apply Finset.prod_le_prod (f := fun _ => x)
+    apply Finset.prod_le_prod₀ (f := fun _ => x)
     · intro i _; exact hx_nonneg
     · intro i _; exact ratio_factor_lower_bound n k i hk
   -- Step 2: x - 1 = -k/(n+1)
@@ -325,7 +325,7 @@ lemma coherentState_perm_invariant {d n : ℕ} [NeZero d] [NeZero n]
   · -- Main term: the if-condition holds, giving 1 * prod = prod at x₀
     simp only [show e.symm x₀ = f_i ∘ ⇑σ from by simp [x₀],
       show (f_i ∘ ⇑σ) ∘ ⇑σ.symm = f_i from by ext k; simp,
-      if_true, one_mul]
+      ite_true, one_mul]
     -- Remaining: ∏_j g(digit(x₀, j), 0) = ∏_j g(digit(i, j), 0)
     -- Both equal ∏_m g(f_i(m), 0) by reindexing via Fin.rev and σ
     -- Convert digit extraction to finFunctionFinEquiv
@@ -353,7 +353,7 @@ lemma coherentState_perm_invariant {d n : ℕ} [NeZero d] [NeZero n]
   · -- Other terms vanish (permutation matrix has at most one nonzero entry per row)
     intro x _ hx
     simp only [ite_mul, one_mul, zero_mul]
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h; exact hx (show x = x₀ by
       have heq : e.symm x = f_i ∘ ⇑σ := by
         funext k

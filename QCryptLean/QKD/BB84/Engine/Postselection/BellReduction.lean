@@ -99,11 +99,11 @@ theorem bb84_bellSym_ckr_psd_bound_of_bellTwirl_invariant {n dimOut : ℕ} [NeZe
     traceNorm (mapTensorId Δ W0) ≤
       (Nat.choose (n + 3) 3 : ℝ) *
         ckrTensorTraceNorm Δ (bb84BellCKRDeFinettiPurification n) := by
-  haveI hkNZ : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
+  have hkNZ : NeZero (Fintype.card (Equiv.Perm (Fin n))) :=
     ⟨by simp [Fintype.card_perm, Fintype.card_fin, Nat.factorial_ne_zero]⟩
-  haveI hdimR_NZ : NeZero (4 ^ n * Fintype.card (Equiv.Perm (Fin n))) :=
+  have hdimR_NZ : NeZero (4 ^ n * Fintype.card (Equiv.Perm (Fin n))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI : NeZero ((4 ^ n * Fintype.card (Equiv.Perm (Fin n))) * 4 ^ n) :=
+  have : NeZero ((4 ^ n * Fintype.card (Equiv.Perm (Fin n))) * 4 ^ n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have hcov := hΔ.covariance
   -- the combined symmetrization extension `ρ̃ = bellRegExt (blockDiagExt W₀)`

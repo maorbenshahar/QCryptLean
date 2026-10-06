@@ -62,8 +62,8 @@ def walsh (n : ℕ) : RankOneProjectiveBasis (2 ^ n) where
   orthonormal i j := by
     rw [walshKet_orthonormal]
     by_cases h : i = j
-    · rw [if_pos h, if_pos (congrArg (bitIndex n) h)]
-    · rw [if_neg h, if_neg fun hb => h ((bitIndex n).injective hb)]
+    · rw [ite_eq_left h, ite_eq_left (congrArg (bitIndex n) h)]
+    · rw [ite_eq_right h, ite_eq_right fun hb => h ((bitIndex n).injective hb)]
   complete := by
     rw [Equiv.sum_comp (bitIndex n) fun e => walshKet e * (walshKet e).dag]
     exact walshKet_complete

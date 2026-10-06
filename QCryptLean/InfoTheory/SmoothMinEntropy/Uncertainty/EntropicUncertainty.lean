@@ -166,8 +166,8 @@ lemma log_overlap_inv_le_hminReal_add_fidelity_hmax_of_guess_le
           exact lt_of_le_of_ne hnonneg (by
             intro hzero
             simp [← hzero] at hpos)) := by
-  letI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  letI : NeZero (n * Fintype.card X) :=
+  let : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  let : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   let F : ℝ :=
     Quantum.Metrics.fidelity

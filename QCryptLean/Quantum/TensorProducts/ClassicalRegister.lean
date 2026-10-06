@@ -74,7 +74,7 @@ private theorem appendIndexKraus_gram {D N : ℕ} (d d' : Fin D) :
       if d = d' then (1 : Matrix (Fin N) (Fin N) ℂ) else 0 := by
   ext j j'
   rw [Matrix.mul_apply, Finset.sum_eq_single (finProdFinEquiv (j, d))]
-  · rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, if_pos rfl, star_one, one_mul,
+  · rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, ite_eq_left rfl, star_one, one_mul,
       appendIndexKraus_apply,
       if_congr (show (finProdFinEquiv (j, d) = finProdFinEquiv (j', d')) ↔ (j = j' ∧ d = d') by
         rw [EmbeddingLike.apply_eq_iff_eq, Prod.mk.injEq]) rfl rfl]
@@ -83,7 +83,7 @@ private theorem appendIndexKraus_gram {D N : ℕ} (d d' : Fin D) :
       simp [Matrix.one_apply]
     · simp [h]
   · intro i _ hi
-    rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, if_neg hi, star_zero, zero_mul]
+    rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, ite_eq_right hi, star_zero, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -92,7 +92,7 @@ private theorem prependIndexKraus_gram {D N : ℕ} (d d' : Fin D) :
       if d = d' then (1 : Matrix (Fin N) (Fin N) ℂ) else 0 := by
   ext j j'
   rw [Matrix.mul_apply, Finset.sum_eq_single (finProdFinEquiv (d, j))]
-  · rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, if_pos rfl, star_one, one_mul,
+  · rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, ite_eq_left rfl, star_one, one_mul,
       prependIndexKraus_apply,
       if_congr (show (finProdFinEquiv (d, j) = finProdFinEquiv (d', j')) ↔ (j = j' ∧ d = d') by
         rw [EmbeddingLike.apply_eq_iff_eq, Prod.mk.injEq]; tauto) rfl rfl]
@@ -101,7 +101,7 @@ private theorem prependIndexKraus_gram {D N : ℕ} (d d' : Fin D) :
       simp [Matrix.one_apply]
     · simp [h]
   · intro i _ hi
-    rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, if_neg hi, star_zero, zero_mul]
+    rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, ite_eq_right hi, star_zero, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -109,21 +109,21 @@ private theorem prependIndexKraus_gram {D N : ℕ} (d d' : Fin D) :
 is what keeps a branch of a protocol from silently losing weight. -/
 theorem appendIndexKraus_conjTranspose_mul_self (N : ℕ) {D : ℕ} (d : Fin D) :
     (appendIndexKraus N d)ᴴ * appendIndexKraus N d = 1 := by
-  rw [appendIndexKraus_gram, if_pos rfl]
+  rw [appendIndexKraus_gram, ite_eq_left rfl]
 
 theorem prependIndexKraus_conjTranspose_mul_self (N : ℕ) {D : ℕ} (d : Fin D) :
     (prependIndexKraus N d)ᴴ * prependIndexKraus N d = 1 := by
-  rw [prependIndexKraus_gram, if_pos rfl]
+  rw [prependIndexKraus_gram, ite_eq_left rfl]
 
 /-- **Distinct labels have orthogonal images.** With the isometry law this says the label writers
 are an orthonormal family of embeddings, one per classical value. -/
 theorem appendIndexKraus_conjTranspose_mul_of_ne (N : ℕ) {D : ℕ} {d d' : Fin D} (h : d ≠ d') :
     (appendIndexKraus N d)ᴴ * appendIndexKraus N d' = 0 := by
-  rw [appendIndexKraus_gram, if_neg h]
+  rw [appendIndexKraus_gram, ite_eq_right h]
 
 theorem prependIndexKraus_conjTranspose_mul_of_ne (N : ℕ) {D : ℕ} {d d' : Fin D} (h : d ≠ d') :
     (prependIndexKraus N d)ᴴ * prependIndexKraus N d' = 0 := by
-  rw [prependIndexKraus_gram, if_neg h]
+  rw [prependIndexKraus_gram, ite_eq_right h]
 
 private theorem sum_single_mul_conjTranspose {P N : ℕ} (f : Fin N → Fin P) :
     (∑ j : Fin N, Matrix.single (f j) j (1 : ℂ)) *
@@ -280,15 +280,15 @@ theorem conjTranspose_appendIndexKraus_mul_mul {N N' D D' : ℕ} (d : Fin D) (d'
       Matrix.of fun i j => M (finProdFinEquiv (i, d)) (finProdFinEquiv (j, d')) := by
   ext i j
   rw [Matrix.of_apply, Matrix.mul_apply, Finset.sum_eq_single (finProdFinEquiv (j, d'))]
-  · rw [appendIndexKraus_apply, if_pos rfl, mul_one, Matrix.mul_apply,
+  · rw [appendIndexKraus_apply, ite_eq_left rfl, mul_one, Matrix.mul_apply,
       Finset.sum_eq_single (finProdFinEquiv (i, d))]
-    · rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, if_pos rfl, star_one, one_mul]
+    · rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, ite_eq_left rfl, star_one, one_mul]
     · intro p _ hp
-      rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, if_neg hp, star_zero, zero_mul]
+      rw [Matrix.conjTranspose_apply, appendIndexKraus_apply, ite_eq_right hp, star_zero, zero_mul]
     · intro h
       exact absurd (Finset.mem_univ _) h
   · intro q _ hq
-    rw [appendIndexKraus_apply, if_neg hq, mul_zero]
+    rw [appendIndexKraus_apply, ite_eq_right hq, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -298,15 +298,15 @@ theorem conjTranspose_prependIndexKraus_mul_mul {N N' D D' : ℕ} (d : Fin D) (d
       Matrix.of fun i j => M (finProdFinEquiv (d, i)) (finProdFinEquiv (d', j)) := by
   ext i j
   rw [Matrix.of_apply, Matrix.mul_apply, Finset.sum_eq_single (finProdFinEquiv (d', j))]
-  · rw [prependIndexKraus_apply, if_pos rfl, mul_one, Matrix.mul_apply,
+  · rw [prependIndexKraus_apply, ite_eq_left rfl, mul_one, Matrix.mul_apply,
       Finset.sum_eq_single (finProdFinEquiv (d, i))]
-    · rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, if_pos rfl, star_one, one_mul]
+    · rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, ite_eq_left rfl, star_one, one_mul]
     · intro p _ hp
-      rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, if_neg hp, star_zero, zero_mul]
+      rw [Matrix.conjTranspose_apply, prependIndexKraus_apply, ite_eq_right hp, star_zero, zero_mul]
     · intro h
       exact absurd (Finset.mem_univ _) h
   · intro q _ hq
-    rw [prependIndexKraus_apply, if_neg hq, mul_zero]
+    rw [prependIndexKraus_apply, ite_eq_right hq, mul_zero]
   · intro h
     exact absurd (Finset.mem_univ _) h
 
@@ -356,13 +356,13 @@ theorem castRect_mul_appendIndexKraus (sA sB : ℕ) {D : ℕ} (d : Fin D) :
     rw [Nat.div_mod_unique hQpos]
     simp only [hsmall, and_true, Nat.add_comm, eq_comm]
   by_cases hcond : (Fin.cast (Nat.mul_assoc sA sB D).symm i) = finProdFinEquiv (j, d)
-  · rw [if_pos hcond]
+  · rw [ite_eq_left hcond]
     obtain ⟨h1, h2⟩ := key.mp hcond
-    rw [if_pos h1, if_pos h2, one_mul]
-  · rw [if_neg hcond]
+    rw [ite_eq_left h1, ite_eq_left h2, one_mul]
+  · rw [ite_eq_right hcond]
     rcases not_and_or.mp (fun h => hcond (key.mpr h)) with h | h
-    · rw [if_neg h, zero_mul]
-    · rw [if_neg h, mul_zero]
+    · rw [ite_eq_right h, zero_mul]
+    · rw [ite_eq_right h, mul_zero]
 
 /-- **Prepending a label to a joint register is a first-factor operation.** Regrouped as
 `(D · sA) | sB`, prepending the label to the whole `sA · sB` register acts on the first block
@@ -395,13 +395,13 @@ theorem castRect_mul_prependIndexKraus (sA sB : ℕ) {D : ℕ} (d : Fin D) :
     rw [Nat.div_mod_unique hsB]
     simp only [hjm, and_true, Nat.add_comm, eq_comm]
   by_cases hcond : (Fin.cast (Nat.mul_assoc D sA sB) i) = finProdFinEquiv (d, j)
-  · rw [if_pos hcond]
+  · rw [ite_eq_left hcond]
     obtain ⟨h1, h2⟩ := key.mp hcond
-    rw [if_pos h1, if_pos h2, mul_one]
-  · rw [if_neg hcond]
+    rw [ite_eq_left h1, ite_eq_left h2, mul_one]
+  · rw [ite_eq_right hcond]
     rcases not_and_or.mp (fun h => hcond (key.mpr h)) with h | h
-    · rw [if_neg h, zero_mul]
-    · rw [if_neg h, mul_zero]
+    · rw [ite_eq_right h, zero_mul]
+    · rw [ite_eq_right h, mul_zero]
 
 /-- Appending two labels successively appends their ordered pair after canonical reassociation. -/
 theorem appendIndexKraus_comp (N D c : ℕ) (x : Fin c) (t : Fin D) :
@@ -412,7 +412,7 @@ theorem appendIndexKraus_comp (N D c : ℕ) (x : Fin c) (t : Fin D) :
   simp only [Matrix.submatrix_apply, id_eq, Matrix.mul_apply, appendIndexKraus_apply,
     mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq' Finset.univ (finProdFinEquiv (j, t))]
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   refine if_congr ?_ rfl rfl
   simp only [Fin.ext_iff, Fin.val_cast, finProdFinEquiv_val]
   rw [show (x : ℕ) + c * ((t : ℕ) + D * (j : ℕ)) =

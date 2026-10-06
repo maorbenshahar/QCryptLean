@@ -383,19 +383,19 @@ private lemma permutationRepresentation_sumCongr_append {d a b : ℕ} [NeZero d]
         rw [hτr, digit_natAdd i c, digit_natAdd j (σ.symm c)]
         exact congrFun hB c
   by_cases hcond : finFunctionFinEquiv.symm i = finFunctionFinEquiv.symm j ∘ ⇑τ.symm
-  · rw [if_pos hcond]
+  · rw [ite_eq_left hcond]
     obtain ⟨hB, hA⟩ := hiff.mp hcond
     rw [hcondB] at hB
     rw [hcondA] at hA
-    rw [if_pos hB, if_pos hA, mul_one]
-  · rw [if_neg hcond, eq_comm]
+    rw [ite_eq_left hB, ite_eq_left hA, mul_one]
+  · rw [ite_eq_right hcond, eq_comm]
     by_cases hB : condB
     · by_cases hA : condA
       · exact absurd (hiff.mpr ⟨hB, hA⟩) hcond
       · rw [hcondA] at hA
-        rw [if_neg hA, mul_zero]
+        rw [ite_eq_right hA, mul_zero]
     · rw [hcondB] at hB
-      rw [if_neg hB, zero_mul]
+      rw [ite_eq_right hB, zero_mul]
 
 /-- The Young embedding acts fibre-wise: on the flat index `finSigmaFinEquiv ⟨j, r⟩` it applies
 `h j` to the offset `r`, keeping the stratum `j` fixed. -/
@@ -507,7 +507,7 @@ theorem permutationRepresentation_youngPermHom_tensorProdFin {k : ℕ} (n : Fin 
   | zero =>
     intro n h
     have h0 : (∑ j : Fin 0, n j) = 0 := by simp
-    haveI : Subsingleton (Equiv.Perm (Fin (∑ j : Fin 0, n j))) := by
+    have : Subsingleton (Equiv.Perm (Fin (∑ j : Fin 0, n j))) := by
       rw [h0]; infer_instance
     rw [Op.tensorProdFin_zero, Op.castDim_trans, Op.castDim_one,
       show youngPermHom n h = 1 from Subsingleton.elim _ _, permutationRepresentation_one]

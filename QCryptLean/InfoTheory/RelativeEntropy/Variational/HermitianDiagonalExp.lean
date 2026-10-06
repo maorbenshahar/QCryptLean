@@ -69,7 +69,7 @@ lemma exp_log_diag_conj_eq_sigma {N : ℕ}
     let V := eigenbasisOf σ
     let A := V.conjTranspose * diagonal (fun i => (Real.log (eigenvaluesOf σ i) : ℂ)) * V
     NormedSpace.exp A = σ.toOp := by
-  letI : NeZero N := neZero_of_densityOp σ
+  let : NeZero N := neZero_of_densityOp σ
   intro V A
   have hVL : V.conjTranspose * V = 1 := eigenbasisOf_unitary_left σ
   have hVR : V * V.conjTranspose = 1 := eigenbasisOf_unitary_right σ

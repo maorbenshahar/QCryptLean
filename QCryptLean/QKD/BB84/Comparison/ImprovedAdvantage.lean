@@ -286,7 +286,7 @@ theorem LiteratureAdvantageRegion.smoothing_lt_one {p : Parameters}
 theorem LiteratureAdvantageRegion.beta_mem_Ioo {p : Parameters}
     {epsilonAEP epsilonTotal : ℝ} (h : p.LiteratureAdvantageRegion epsilonAEP epsilonTotal) :
     secondOrderSharpBeta bb84SharpVarianceCap p.keyRounds epsilonAEP ∈ Set.Ioo (0 : ℝ) 1 := by
-  haveI : NeZero p.keyRounds := ⟨h.keyRounds_pos.ne'⟩
+  have : NeZero p.keyRounds := ⟨h.keyRounds_pos.ne'⟩
   exact ⟨secondOrderSharpBeta_pos bb84SharpVarianceCap bb84SharpVarianceCap_pos
     p.keyRounds epsilonAEP h.smoothing_pos h.smoothing_lt_one,
     (secondOrderSharpBeta_le_one_sixteenth _ _ _).trans_lt (by norm_num)⟩

@@ -87,7 +87,7 @@ lemma twoPoint_centered_mgf_le_width
   let μ : Measure Bool := twoPointMeasure p
   have hμprob : IsProbabilityMeasure μ :=
     twoPointMeasure_is_probability_measure hp_nonneg hp_le_one
-  letI : IsProbabilityMeasure μ := hμprob
+  let : IsProbabilityMeasure μ := hμprob
   have hmeas : AEMeasurable X μ := (measurable_of_finite X).aemeasurable
   have hbounded : ∀ᵐ q ∂μ, X q ∈ Set.Icc a b := by
     filter_upwards with q

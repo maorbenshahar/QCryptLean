@@ -62,10 +62,12 @@ theorem selectedRecordContinuation_isHonestClassical
     (Measurement.selectedRecordContinuation f).IsHonestClassical := by
   unfold Measurement.selectedRecordContinuation
   refine isHonestClassical_castBoundary (by
-    simp only [Measurement.selectedRecordBobAction, Measurement.selectedRecordAliceAction,
-      PrivateAction.out_ofInstrument, Measurement.weightedStreamSystem,
-      TwoParty.set_alice, TwoParty.set_bob]
-    rfl) _ ?_
+    apply congrArg Boundary.leaf
+    change ((TwoParty.system (Measurement.CompletedLocalRecord M)
+      (Measurement.CompletedLocalRecord M)).set .alice (Measurement.SelectedLocalRecord M n)).set
+      .bob (Measurement.SelectedLocalRecord M n) =
+        TwoParty.system (Measurement.SelectedLocalRecord M n) (Measurement.SelectedLocalRecord M n)
+    rw [TwoParty.set_alice, TwoParty.set_bob]) _ ?_
   unfold Measurement.selectedRecordAliceAction Measurement.selectedRecordBobAction
     PrivateAction.then PrivateAction.run
   exact .priv _ _
@@ -82,9 +84,11 @@ theorem discardCompletedRecords_isHonestClassical (M : ℕ) :
     (Measurement.discardCompletedRecords M).IsHonestClassical := by
   unfold Measurement.discardCompletedRecords
   refine isHonestClassical_castBoundary (by
-    simp only [Measurement.discardCompletedBobAction, Measurement.discardCompletedAliceAction,
-      PrivateAction.out_ofInstrument, Measurement.weightedStreamSystem,
-      TwoParty.set_alice, TwoParty.set_bob]) _ ?_
+    apply congrArg Boundary.leaf
+    change ((TwoParty.system (Measurement.CompletedLocalRecord M)
+      (Measurement.CompletedLocalRecord M)).set .alice Unit).set .bob Unit =
+        TwoParty.system Unit Unit
+    rw [TwoParty.set_alice, TwoParty.set_bob]) _ ?_
   unfold Measurement.discardCompletedAliceAction Measurement.discardCompletedBobAction
     PrivateAction.then PrivateAction.run
   exact .priv _ _
@@ -145,11 +149,15 @@ theorem latePublicSelectionProgram_isHonestClassical (N nK mZ mX : ℕ) :
   refine .announced _ _ hAlice (fun a => .announced _ _ (hBob a)
     (fun b => .announced _ _ (hShuffle a b) (fun order => ?_)))
   refine isHonestClassical_castInput (by
-    simp only [Measurement.shuffleAnnouncement, Measurement.completedBasisBobAnnouncement,
-      Measurement.completedBasisAliceAnnouncement, AnnouncedAction.out_ofInstrument,
-      Measurement.weightedStreamSystem, MultipartiteSystem.set_self,
-      TwoParty.set_alice, TwoParty.set_bob, Measurement.CompletedLocalRecord]
-    rfl) _ (quotaSelectionContinuation_isHonestClassical N nK mZ mX ⟨a, b, order⟩)
+    change TwoParty.system (Measurement.CompletedLocalRecord N)
+      (Measurement.CompletedLocalRecord N) =
+      (((TwoParty.system (Measurement.CompletedLocalRecord N)
+        (Measurement.CompletedLocalRecord N)).set
+        .alice (Measurement.CompletedLocalRecord N)).set .bob
+          (Measurement.CompletedLocalRecord N)).set
+        .alice (Measurement.CompletedLocalRecord N)
+    rw [TwoParty.set_alice, TwoParty.set_bob, TwoParty.set_alice]) _
+    (quotaSelectionContinuation_isHonestClassical N nK mZ mX ⟨a, b, order⟩)
 
 /-- The parameter-estimation announcement loop preserves the recursive classical-storage
 certificate whenever every continuation does. -/
@@ -196,8 +204,7 @@ theorem fusedStage_isHonestClassical
   unfold fusedStage AnnouncedAction.then
   refine .announced _ _ haction (fun _ => ?_)
   exact isHonestClassical_castInput (by
-    simp only [fusedAnnouncement, AnnouncedAction.out_ofInstrument,
-      FinalStage.rawSystem, TwoParty.set_alice]) _ .done
+    exact ((FinalStage.rawSystem n).set_self .alice).symm) _ .done
 
 /-- The full parameter-estimation and fused predecision prefix is honest-classical. -/
 theorem directPreDecisionProgram_isHonestClassical
@@ -232,9 +239,10 @@ theorem finalStageContinuation_isHonestClassical
         (FinalStage.acceptContinuation n ℓ peSel leak scheme seed syn flag) := by
       unfold FinalStage.acceptContinuation
       refine isHonestClassical_castBoundary (by
-        simp only [FinalStage.bobKeyAction, FinalStage.aliceKeyAction,
-          PrivateAction.out_ofInstrument, FinalStage.rawSystem,
-          TwoParty.set_alice, TwoParty.set_bob]) _ ?_
+        apply congrArg Boundary.leaf
+        change ((TwoParty.system (Fin (2 ^ n)) (Fin (2 ^ n))).set .alice (Fin (2 ^ ℓ))).set
+          .bob (Fin (2 ^ ℓ)) = TwoParty.system (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ))
+        rw [TwoParty.set_alice, TwoParty.set_bob]) _ ?_
       exact .priv _ _ hAlice (.priv _ _ hBob .done)
     exact isHonestClassical_castBoundary (by simp [FinalStage.flagBoundary, hflag]) _ haccept
   · next hflag =>
@@ -251,9 +259,10 @@ theorem finalStageContinuation_isHonestClassical
     have habort : (FinalStage.discardKeys n).IsHonestClassical := by
       unfold FinalStage.discardKeys
       refine isHonestClassical_castBoundary (by
-        simp only [FinalStage.discardBobRaw, FinalStage.discardAliceRaw,
-          PrivateAction.out_ofInstrument, FinalStage.rawSystem,
-          TwoParty.set_alice, TwoParty.set_bob]) _ ?_
+        apply congrArg Boundary.leaf
+        change ((TwoParty.system (Fin (2 ^ n)) (Fin (2 ^ n))).set .alice Unit).set .bob Unit =
+          TwoParty.system Unit Unit
+        rw [TwoParty.set_alice, TwoParty.set_bob]) _ ?_
       exact .priv _ _ hAlice (.priv _ _ hBob .done)
     exact isHonestClassical_castBoundary (by simp [FinalStage.flagBoundary, hflag]) _ habort
 
@@ -308,9 +317,11 @@ theorem selectedBitsToRawProgram_isHonestClassical (M n : ℕ) :
     (QKD.BB84.selectedBitsToRawProgram M n).IsHonestClassical := by
   unfold QKD.BB84.selectedBitsToRawProgram
   refine isHonestClassical_castBoundary (by
-    simp only [QKD.BB84.selectedBitsToRawBobAction, QKD.BB84.selectedBitsToRawAliceAction,
-      PrivateAction.out_ofInstrument, Measurement.weightedSelectedRecordSystem,
-      TwoParty.set_alice, TwoParty.set_bob]) _ ?_
+    apply congrArg Boundary.leaf
+    change ((TwoParty.system (Measurement.SelectedLocalRecord M n)
+      (Measurement.SelectedLocalRecord M n)).set .alice (Fin (2 ^ n))).set .bob (Fin (2 ^ n)) =
+        TwoParty.system (Fin (2 ^ n)) (Fin (2 ^ n))
+    rw [TwoParty.set_alice, TwoParty.set_bob]) _ ?_
   unfold QKD.BB84.selectedBitsToRawAliceAction QKD.BB84.selectedBitsToRawBobAction
     PrivateAction.then PrivateAction.run
   exact .priv _ _
@@ -354,7 +365,7 @@ theorem completeContinuation_isHonestClassical
       have h' : Sampling.HasQuotas nK mZ mX ⟨a, b, order⟩ := by
         simpa [QKD.BB84.lateSelectionExitEquiv] using h
       change (Measurement.lateSelectionLeaf N nK mZ mX ⟨a, b, order⟩).system leaf = _
-      rw [QKD.BB84.lateSelectionLeaf_system, if_pos h']
+      rw [QKD.BB84.lateSelectionLeaf_system, ite_eq_left h']
     have hout :
         QKD.BB84.rawClassicalTailBoundary (nK + mZ + mX) (mZ + mX) ℓ ℓEV
             (@Sampling.packedPESel nK mZ mX) leakEC =
@@ -373,7 +384,7 @@ theorem completeContinuation_isHonestClassical
       have h' : ¬Sampling.HasQuotas nK mZ mX ⟨a, b, order⟩ := by
         simpa [QKD.BB84.lateSelectionExitEquiv] using h
       change (Measurement.lateSelectionLeaf N nK mZ mX ⟨a, b, order⟩).system leaf = _
-      rw [QKD.BB84.lateSelectionLeaf_system, if_neg h']
+      rw [QKD.BB84.lateSelectionLeaf_system, ite_eq_right h']
     have hout : (.leaf Measurement.lateSelectionAbortSystem : Boundary TwoParty.Party) =
         QKD.BB84.completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC e := by
       symm

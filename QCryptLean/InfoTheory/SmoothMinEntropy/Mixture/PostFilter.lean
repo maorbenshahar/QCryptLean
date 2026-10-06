@@ -484,7 +484,7 @@ theorem smoothMinEntropyReal_ge_of_deFinetti_postFilter_smoothFloor_ae_subNormal
       _ ≤ Real.sqrt (2 * ε) + εBar := add_le_add hcenter hdist'
       _ = εBar + Real.sqrt (2 * ε) := by ring
   have hbdd : BddAbove
-      (setOf (isInSmoothedSetReal (εBar + Real.sqrt (2 * ε)) ρ_mix σ_ref)) :=
+      (Set.ofPred (isInSmoothedSetReal (εBar + Real.sqrt (2 * ε)) ρ_mix σ_ref)) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ
         (fun _ hd => CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower hρ hd))

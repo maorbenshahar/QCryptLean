@@ -348,7 +348,7 @@ theorem DensityOp.tensorPowGen_IsPure {d : ℕ} [NeZero d] (n : ℕ) [NeZero (d 
     -- Inductive case: tensorPowGen (k+1) = castDim (ρ.tensor (ρ.tensorPowGen k))
     simp only [DensityOp.tensorPowGen]
     apply DensityOp.castDim_IsPure
-    haveI : NeZero (d ^ k) := ⟨pow_ne_zero k (NeZero.ne d)⟩
+    have : NeZero (d ^ k) := ⟨pow_ne_zero k (NeZero.ne d)⟩
     apply DensityOp.tensor_IsPure
     · exact hρ
     · exact ih
@@ -357,7 +357,7 @@ theorem DensityOp.tensorPowGen_IsPure {d : ℕ} [NeZero d] (n : ℕ) [NeZero (d 
 theorem DensityOp.tensorPow_IsPure (n : ℕ) [NeZero (4 ^ n)]
     (ρ : DensityOp 4) (hρ : ρ.IsPure) : (ρ.tensorPow n).IsPure := by
   unfold DensityOp.tensorPow
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   exact DensityOp.tensorPowGen_IsPure n ρ hρ
 
 end Quantum.Operators

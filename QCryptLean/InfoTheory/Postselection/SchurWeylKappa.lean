@@ -189,7 +189,7 @@ theorem maxEntangledKetPaired_perm_fixed (dA dR n : ℕ) [NeZero dA] [NeZero dR]
   set a0 := finFunctionFinEquiv (F1 ∘ ⇑σ) with ha0
   set r0 := finFunctionFinEquiv (F2 ∘ ⇑σ) with hr0
   rw [Finset.sum_eq_single (a0, r0)]
-  · simp only [if_true, one_mul]
+  · simp only [ite_true, one_mul]
     have hiff :
         r0 = finFunctionFinEquiv (castLEfn F1 ∘ ⇑σ)
           ↔ (finProdFinEquiv.symm i).2 = finFunctionFinEquiv (castLEfn F1) := by
@@ -210,8 +210,8 @@ theorem maxEntangledKetPaired_perm_fixed (dA dR n : ℕ) [NeZero dA] [NeZero dR]
     rw [show (fun j => Fin.castLE hdim (finFunctionFinEquiv.symm a0 j))
           = castLEfn F1 ∘ ⇑σ from by rw [ha0, Equiv.symm_apply_apply]; rfl]
     by_cases h : r0 = finFunctionFinEquiv (castLEfn F1 ∘ ⇑σ)
-    · rw [if_pos h, if_pos (hiff.mp h)]
-    · rw [if_neg h, if_neg (fun hc => h (hiff.mpr hc))]
+    · rw [ite_eq_left h, ite_eq_left (hiff.mp h)]
+    · rw [ite_eq_right h, ite_eq_right (fun hc => h (hiff.mpr hc))]
   · intro b _ hb
     rcases (Prod.ext_iff.not.mp hb) with hne
     by_cases h1 : b.1 = a0
@@ -307,11 +307,11 @@ theorem maxEntangledProjectorPaired_partialTraceB_eq_one (dA dR n : ℕ)
   set B := finFunctionFinEquiv (fun jj => Fin.castLE hdim (finFunctionFinEquiv.symm j jj))
   have : (∑ k : Fin (dR ^ n), (if k = A then (1 : ℂ) else 0) * (if k = B then (1 : ℂ) else 0))
       = if A = B then (1 : ℂ) else 0 := by
-    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [this]
   by_cases h : i = j
-  · subst h; rw [if_pos rfl, if_pos rfl]
-  · rw [if_neg h, if_neg (fun hc => h (hemb_inj hc))]
+  · subst h; rw [ite_eq_left rfl, ite_eq_left rfl]
+  · rw [ite_eq_right h, ite_eq_right (fun hc => h (hemb_inj hc))]
 
 /-- **`E4`: `Ω` is invertible when `dA ≤ dR`.** The combinatorial witness route: `Θₙ/dA^n`
 (the normalized maximally-entangled paired projector) is a subnormalized PSD operator supported

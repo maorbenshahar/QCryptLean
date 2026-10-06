@@ -94,9 +94,9 @@ private lemma trace_sqrt_smul_sandwich_eq_sqrt_mul_fidelity {n : ℕ} [NeZero n]
       (CFC.sqrt ((c : ℂ) •
         (sqrtPosSemidefOp A * B.toOp * sqrtPosSemidefOp A)))).re =
       Real.sqrt c * fidelity A B := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   have hinner_psd := sqrt_sandwich_inner_posSemidef A B
   have hsqrt :
       CFC.sqrt ((c : ℂ) •
@@ -115,14 +115,14 @@ private lemma trace_le_sqrt_mul_fidelity_of_opLe {n : ℕ} [NeZero n]
     (A B : PosSemidefOp n) {c : ℝ} (hc : 0 ≤ c)
     (hAB : opLe A.toOp ((c : ℂ) • B.toOp)) :
     (Matrix.trace A.toOp).re ≤ Real.sqrt c * fidelity A B := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   -- `A² ≤ c · √A B √A`, and the square root is operator monotone
   have hsqrt_le :
       CFC.sqrt (A.toOp * A.toOp) ≤
         CFC.sqrt ((c : ℂ) • (sqrtPosSemidefOp A * B.toOp * sqrtPosSemidefOp A)) := by
-    letI : CStarAlgebra (Op n) := {}
+    let : CStarAlgebra (Op n) := {}
     exact CFC.sqrt_le_sqrt _ _ (matrix_le_sq_sqrt_sandwich_smul A B hc hAB)
   have htrace_le := trace_re_le_of_matrix_le _ _ hsqrt_le
   -- `√(A²) = A`, and `Tr √(c · √A B √A) = √c · F(A, B)`

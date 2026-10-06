@@ -139,7 +139,7 @@ theorem serfling_lower_tail
       {ω | empiricalFreqOf seq (sampleFn ω) < populationFreq seq - δ} =
         {ω | populationFreq seqCompl + δ < empiricalFreqOf seqCompl (sampleFn ω)} := by
     ext ω
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [populationFreq_not seq hN_ne, empiricalFreqOf_not seq (sampleFn ω) hn]
     constructor <;> intro h <;> linarith
   rw [hEvent]
@@ -168,7 +168,7 @@ theorem serfling_two_sided
       {ω | δ < |empiricalFreqOf seq (sampleFn ω) - populationFreq seq|} =
         upper ∪ lower := by
     ext ω
-    simp only [Set.mem_setOf_eq, Set.mem_union, upper, lower]
+    simp only [Set.mem_ofPred_eq, Set.mem_union, upper, lower]
     constructor
     · intro h
       rcases (lt_abs.mp h) with hpos | hneg

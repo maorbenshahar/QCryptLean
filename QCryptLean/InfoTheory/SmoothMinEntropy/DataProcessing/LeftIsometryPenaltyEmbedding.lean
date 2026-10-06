@@ -116,7 +116,7 @@ lemma partialTraceB_kronIdLeftIso_conj
       apply Finset.sum_eq_zero
       intro u _
       rw [Matrix.conjTranspose_apply, kronIdLeftIso_apply, Matrix.one_apply,
-        if_neg (fun h => hbj h.symm)]
+        ite_eq_right (fun h => hbj h.symm)]
       simp
     · intro hj
       exact absurd (Finset.mem_univ j) hj
@@ -136,7 +136,7 @@ lemma partialTraceB_kronIdLeftIso_conj
       rw [Finset.sum_mul]
       apply Finset.sum_eq_zero
       intro s _
-      rw [kronIdLeftIso_apply, Matrix.one_apply, if_neg (fun h => hai h.symm)]
+      rw [kronIdLeftIso_apply, Matrix.one_apply, ite_eq_right (fun h => hai h.symm)]
       simp
     · intro hi
       exact absurd (Finset.mem_univ i) hi
@@ -180,7 +180,7 @@ lemma partialTraceB_kronIdLeftIso_conj
   rw [Finset.sum_eq_single u]
   · rw [Matrix.one_apply_eq, one_mul]
   · intro s _ hsu
-    rw [Matrix.one_apply, if_neg (fun h => hsu h.symm)]
+    rw [Matrix.one_apply, ite_eq_right (fun h => hsu h.symm)]
     simp
   · intro hu
     exact absurd (Finset.mem_univ u) hu

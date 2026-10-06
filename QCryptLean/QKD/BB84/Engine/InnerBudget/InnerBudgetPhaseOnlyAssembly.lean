@@ -52,15 +52,15 @@ theorem bb84_nahar_bareReference_innerBudget_withPEAnnounce_ofTail_phaseOnly
     peSel xSel leakEC ec (bb84SymCKRDeFinettiPurification n)
     (bb84SymCKRDeFinettiPurification_isPairedPermInvariant n))
       (by norm_num : (0 : ℝ) ≤ 1 / 2)).trans ?_
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hOutDim : NeZero (2 ^ ℓ * 2 ^ ℓ *
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hOutDim : NeZero (2 ^ ℓ * 2 ^ ℓ *
       (bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec Q δ).transcriptDim *
       1) := by
     change NeZero (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC 1)
     infer_instance
   -- The rank-`g` symmetric purifier carrying Nahar et al.'s `R = Eⁿ ⊗ V` register split (B13/B17).
   obtain ⟨V⟩ := bb84_symmetricPurifier_exists n
-  haveI hRdim : NeZero ((signalDim ^ n) * V.dV) :=
+  have hRdim : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   -- The general-`m` raw leftover-hashing output bound on the agree block, at the `EⁿV` reference.
   have hRes :=

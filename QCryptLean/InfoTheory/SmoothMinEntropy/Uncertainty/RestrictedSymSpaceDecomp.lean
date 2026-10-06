@@ -175,7 +175,7 @@ theorem tupleProductVec_completeness {d n : ℕ} [NeZero d] [NeZero (d ^ n)]
   have hcard : Fintype.card (Fin n → Fin d) = Module.finrank ℂ E := by
     rw [finrank_euclideanSpace, Fintype.card_fin, Fintype.card_pi]
     simp
-  haveI : Nonempty (Fin n → Fin d) := ⟨fun _ => ⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
+  have : Nonempty (Fin n → Fin d) := ⟨fun _ => ⟨0, Nat.pos_of_ne_zero (NeZero.ne d)⟩⟩
   let b : OrthonormalBasis (Fin n → Fin d) ℂ E :=
     (basisOfOrthonormalOfCardEqFinrank hortho hcard).toOrthonormalBasis
       (by rw [coe_basisOfOrthonormalOfCardEqFinrank]; exact hortho)
@@ -207,7 +207,7 @@ theorem exists_thetaAdaptedKetBasis (d : ℕ) [NeZero d] (θ : NormKet d) :
       (∀ i j, Ket.inner (e i) (e j) = if i = j then 1 else 0) ∧
       e xbar = θ.toKet := by
   classical
-  haveI : NeZero d := ‹_›
+  have : NeZero d := ‹_›
   -- Work in `EuclideanSpace ℂ (Fin d)`, whose inner product matches `Ket.inner`.
   have hn : ∑ i, ‖θ.toKet.vec i‖ ^ 2 = 1 := by
     have hθ := θ.normalized
@@ -269,9 +269,9 @@ theorem exists_thetaAdaptedKetBasis (d : ℕ) [NeZero d] (θ : NormKet d) :
     rw [hbridge]
     by_cases h : i = j
     · subst h
-      rw [if_pos rfl, inner_self_eq_norm_sq_to_K, hortho.1 i]
+      rw [ite_eq_left rfl, inner_self_eq_norm_sq_to_K, hortho.1 i]
       simp
-    · rw [if_neg h, hortho.2 h]
+    · rw [ite_eq_right h, hortho.2 h]
   · ext k
     simp only [hb0, hv0, WithLp.equiv_apply, WithLp.equiv_symm_apply]
 
@@ -358,7 +358,7 @@ theorem finFunctionFinEquiv_symm_cast_finProdFinEquiv {d n r : ℕ} [NeZero d]
   -- `val = b.val + d^r * a.val`.
   have hdpos : 0 < d := Nat.pos_of_ne_zero (NeZero.ne d)
   by_cases hm : (m : ℕ) < r
-  · rw [dif_pos hm, finFunctionFinEquiv_symm_apply_val]
+  · rw [dite_eq_left hm, finFunctionFinEquiv_symm_apply_val]
     -- Low block: `(b + d^r·a) / d^m % d = b / d^m % d` since `d | d^(r-m)` past `b`.
     have hpow : d ^ r = d ^ (m : ℕ) * (d * d ^ (r - (m : ℕ) - 1)) := by
       rw [← mul_assoc, ← pow_succ, ← pow_add]
@@ -371,7 +371,7 @@ theorem finFunctionFinEquiv_symm_cast_finProdFinEquiv {d n r : ℕ} [NeZero d]
       omega
     rw [hbge, Nat.add_mul_div_left _ _ (pow_pos hdpos (m : ℕ)),
       Nat.add_mul_mod_self_left]
-  · rw [dif_neg hm, finFunctionFinEquiv_symm_apply_val]
+  · rw [dite_eq_right hm, finFunctionFinEquiv_symm_apply_val]
     -- High block: digit `m` of `(b + d^r·a)` equals digit `m-r` of `a`.
     push Not at hm
     -- `(b + d^r·a) / d^m = a / d^(m-r)` since `b < d^r ≤ d^m`.
@@ -447,14 +447,14 @@ theorem tupleProductVec_split {d n r : ℕ} [NeZero d] (hr : r ≤ n)
   · -- High block: `Fin.natAdd r j` has value `r + j ≥ r`.
     refine Finset.prod_congr rfl (fun j _ => ?_)
     simp only [hg, Fin.val_cast, Fin.val_natAdd]
-    rw [dif_neg (by omega)]
+    rw [dite_eq_right (by omega)]
     -- Match `cx (cast (natAdd r j)) = cx ⟨r+j,_⟩` and the index `⟨r+j-r,_⟩ = j`.
     congr 2
     apply Fin.ext; simp
   · -- Low block: `Fin.castAdd (n-r) j` has value `j < r`.
     refine Finset.prod_congr rfl (fun j _ => ?_)
     simp only [hg, Fin.val_cast, Fin.val_castAdd]
-    rw [dif_pos (by omega)]
+    rw [dite_eq_left (by omega)]
     congr 2
 
 /-- **A tuple vector is orthogonal to a `θ^{⊗(n−r)} ⊗ tail` generator off the
@@ -515,7 +515,7 @@ theorem tupleProductVec_inner_cast_tensor_eq_zero {d n r : ℕ} [NeZero d] [NeZe
   obtain ⟨m, hm_ge, hm_ne⟩ := hsupp
   have hhi : Ket.inner (tupleProductVec e (fun j : Fin (n - r) => cx ⟨r + (j : ℕ), by omega⟩))
       (tupleProductVec e (fun _ : Fin (n - r) => xbar)) = 0 := by
-    rw [tupleProductVec_inner e he_on, if_neg]
+    rw [tupleProductVec_inner e he_on, ite_eq_right]
     intro hcontra
     apply hm_ne
     have := congr_fun hcontra ⟨(m : ℕ) - r, by omega⟩
@@ -683,7 +683,7 @@ theorem exists_placementAssignment
     · simp only [hβ, zero_smul, ite_self, Finset.sum_const_zero]
     · rw [Finset.sum_ite_eq (placementSubsets n m) (assign bx)
         (fun _ => β bx • (tupleProductVec e bx).vec)]
-      rw [if_pos]
+      rw [ite_eq_left]
       · rw [placementSubsets, Finset.mem_powersetCard]
         exact ⟨Finset.subset_univ _, hassign_card bx hβ⟩
 
@@ -753,13 +753,13 @@ theorem subsetPartialVec_inner {d n : ℕ} [NeZero d] (e : Fin d → Ket d)
     refine Finset.sum_congr rfl (fun bx _ => ?_)
     rw [Finset.sum_eq_single bx]
     · simp
-    · intro by' _ hby'; rw [if_neg (Ne.symm hby'), mul_zero]
+    · intro by' _ hby'; rw [ite_eq_right (Ne.symm hby'), mul_zero]
     · intro h; exact absurd (Finset.mem_univ bx) h
   rw [hdiag]
   -- Reduce `star (c bx) * c' bx` to the indicator-weighted `|β bx|²`.
   by_cases hss' : s = s'
   · subst hss'
-    rw [if_pos rfl, Complex.ofReal_sum]
+    rw [ite_eq_left rfl, Complex.ofReal_sum]
     refine Finset.sum_congr rfl (fun bx _ => ?_)
     rw [apply_ite ((↑) : ℝ → ℂ), Complex.ofReal_zero]
     change star (if assign bx = s then β bx else 0) * (if assign bx = s then β bx else 0)
@@ -767,14 +767,14 @@ theorem subsetPartialVec_inner {d n : ℕ} [NeZero d] (e : Fin d → Ket d)
     split_ifs with h
     · rw [Complex.normSq_eq_conj_mul_self]; simp
     · simp
-  · rw [if_neg hss', Complex.ofReal_zero]
+  · rw [ite_eq_right hss', Complex.ofReal_zero]
     -- `s ≠ s'`: each term vanishes since `assign bx` cannot equal both.
     apply Finset.sum_eq_zero
     intro bx _
     change star (if assign bx = s then β bx else 0) * (if assign bx = s' then β bx else 0) = 0
     by_cases h : assign bx = s
-    · rw [h, if_neg hss', mul_zero]
-    · rw [if_neg h, star_zero, zero_mul]
+    · rw [h, ite_eq_right hss', mul_zero]
+    · rw [ite_eq_right h, star_zero, zero_mul]
 
 /-- **Per-subset placement permutation `π_s`.** Given an `(n−r)`-element subset
 `s ⊆ Fin n` (so `s.card = n − r` and `sᶜ.card = r`), this permutation of the `n` tensor
@@ -937,15 +937,15 @@ theorem subsetPartialVec_eq_vrep {d n r : ℕ} [NeZero d] (hr : r ≤ n)
     intro bx
     by_cases hbxs : assign bx = s
     · by_cases hβ : β bx = 0
-      · rw [if_pos hbxs, if_pos hbxs, hβ, zero_smul, zero_smul]
+      · rw [ite_eq_left hbxs, ite_eq_left hbxs, hβ, zero_smul, zero_smul]
         exact hΦ_zero
-      · rw [if_pos hbxs, if_pos hbxs]
+      · rw [ite_eq_left hbxs, ite_eq_left hbxs]
         rw [hΦ_smul (β bx) (tupleProductVec e
               (fun j : Fin r => bx (π ⟨(j : ℕ), by omega⟩)))]
         simp only [hΦ]
         rw [hπ, tupleProductVec_eq_vrep_term hr xbar e s hs_card h_dim bx
           (fun k hk => hsplace bx k hbxs hβ hk)]
-    · rw [if_neg hbxs, if_neg hbxs]; exact hΦ_zero
+    · rw [ite_eq_right hbxs, ite_eq_right hbxs]; exact hΦ_zero
   -- Assemble: the tail is a sum of single-tuple kets; `Φ` distributes over it.
   rw [subsetPartialVec]
   -- The goal RHS is exactly `Φ (subsetVrepTail …)`.
@@ -998,7 +998,7 @@ theorem tensorPowVec_normSq_eq_one {d n r : ℕ} [NeZero d] (e : Fin d → Ket d
     Ket.normSq (⟨Quantum.TensorProducts.tensorPowVec (e xbar).vec⟩ : Ket (d ^ (n - r))) = 1 := by
   have hθpow : (⟨Quantum.TensorProducts.tensorPowVec (e xbar).vec⟩ : Ket (d ^ (n - r)))
       = tupleProductVec e (fun _ : Fin (n - r) => xbar) := by ext k; rfl
-  rw [hθpow, Ket.normSq, Ket.realInner, tupleProductVec_inner e he_on, if_pos rfl]
+  rw [hθpow, Ket.normSq, Ket.realInner, tupleProductVec_inner e he_on, ite_eq_left rfl]
   rfl
 
 /-- **The `Vrep` tail has the squared norm of its partial sum.** Since
@@ -1109,7 +1109,7 @@ theorem subsetPartialVec_normSq_sum {d n : ℕ} [NeZero d] (e : Fin d → Ket d)
       = Ket.inner (subsetPartialVec e β assign s) (subsetPartialVec e β assign s) by
     rw [Finset.sum_eq_single s]
     · intro s' _ hs'
-      rw [subsetPartialVec_inner e he_on, if_neg (Ne.symm hs'), Complex.ofReal_zero]
+      rw [subsetPartialVec_inner e he_on, ite_eq_right (Ne.symm hs'), Complex.ofReal_zero]
     · intro h; exact absurd hs h]
   rfl
 
@@ -1198,7 +1198,7 @@ theorem restrictedSymSpaceWitness_of_placementPartition
       (Fintype.equivFin (Finset (Fin n))).symm ⟨m, h⟩ else ∅ with hdec
   have hdec_enc : ∀ s, dec (enc s) = s := by
     intro s
-    simp only [hdec, henc, dif_pos (Fin.isLt _)]
+    simp only [hdec, henc, dite_eq_left (Fin.isLt _)]
     simp
   have henc_inj : Function.Injective enc := by
     intro s t hst
@@ -1287,7 +1287,7 @@ theorem restrictedSymSpaceWitness_of_placementPartition
     have hsne : (Ψv (dec (enc s))).vec ≠ 0 := by
       rw [hdec_enc]
       rw [hP, Finset.mem_filter] at hsP; exact hsP.2
-    rw [dif_pos hsne]
+    rw [dite_eq_left hsne]
     simp only [hdec_enc]
     rw [smul_smul]
     have hγne : (γ s : ℂ) ≠ 0 := by
@@ -1305,7 +1305,7 @@ theorem restrictedSymSpaceWitness_of_placementPartition
       rw [hdec_enc]; rw [hP, Finset.mem_filter] at hsP; exact hsP.2
     have htne : (Ψv (dec (enc t))).vec ≠ 0 := by
       rw [hdec_enc]; rw [hP, Finset.mem_filter] at htP; exact htP.2
-    rw [dif_pos hsne, dif_pos htne]
+    rw [dite_eq_left hsne, dite_eq_left htne]
     simp only [hdec_enc]
     -- The real inner product of the two rescaled partial sums.
     have hγs_pos : 0 < γ s := by
@@ -1340,19 +1340,20 @@ theorem restrictedSymSpaceWitness_of_placementPartition
     rw [hΨv, subsetPartialVec_inner e he_on]
     by_cases hst : s = t
     · subst hst
-      rw [if_pos rfl, if_pos rfl]
+      rw [ite_eq_left rfl, ite_eq_left rfl]
       rw [Complex.ofReal_re]
       rw [show (∑ bx, if assign bx = s then Complex.normSq (β bx) else 0)
           = Ket.normSq (Ψv s) by
         have hii := subsetPartialVec_inner e he_on β assign s s
-        rw [if_pos rfl] at hii
+        rw [ite_eq_left rfl] at hii
         rw [hΨv, Ket.normSq, Ket.realInner, hii, Complex.ofReal_re]]
       rw [hγ]; simp only
       rw [hP, Finset.mem_filter] at hsP
       have hpos := ket_normSq_pos (Ψv s) hsP.2
       rw [div_mul_div_comm, one_mul, Real.mul_self_sqrt hpos.le]
       rw [one_div, inv_mul_cancel₀ hpos.ne']
-    · rw [if_neg (fun h => hst (henc_inj h)), if_neg hst, Complex.ofReal_zero, Complex.zero_re,
+    · rw [ite_eq_right (fun h => hst (henc_inj h)), ite_eq_right hst, Complex.ofReal_zero,
+      Complex.zero_re,
         mul_zero]
   -- `hprod_form`: each rescaled partial sum is a `Vrep` vector `U_{π_s}(θ^{⊗(n−r)} ⊗ tail_s)`.
   · intro m hm
@@ -1389,7 +1390,7 @@ theorem restrictedSymSpaceWitness_of_placementPartition
       rw [hγeq]
       exact ket_normalized_of_ne_zero (subsetVrepTail hr e β assign s hs_card) htail_ne
     · -- the Vrep equation, rescaled by `1/γ_s`
-      rw [dif_pos hsne]
+      rw [dite_eq_left hsne]
       simp only [hdec_enc]
       -- `θ_pow = θ^{⊗(n−r)}` with `θ = e xbar`.
       rw [show (⟨Quantum.TensorProducts.tensorPowVec θ.toKet.vec⟩ : Ket (d ^ (n - r)))

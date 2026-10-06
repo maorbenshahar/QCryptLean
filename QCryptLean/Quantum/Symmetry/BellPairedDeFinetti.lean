@@ -88,7 +88,7 @@ lemma bellTypeDiagProjector_sum (n : ℕ) :
   simp only [Matrix.sum_apply, bellTypeDiagProjector, Matrix.diagonal_apply, Matrix.one_apply]
   by_cases hij : i = j
   · subst hij
-    simp only [if_true]
+    simp only [ite_true]
     rw [Finset.sum_ite_eq Finset.univ (bellTypeOfIndex n i) (fun _ => (1 : ℂ))]
     simp
   · simp [hij]

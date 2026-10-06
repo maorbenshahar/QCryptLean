@@ -67,8 +67,8 @@ theorem fidelity_le_fidelity_cptp_of_toOp_eq
     fidelity A B ≤ fidelity A' B' := by
   obtain ⟨envDim, henv, hme, V, hV, hrec⟩ :=
     Quantum.Channels.stinespring_dilation Φ hΦ
-  letI : NeZero envDim := henv
-  letI : NeZero (m * envDim) := hme
+  let : NeZero envDim := henv
+  let : NeZero (m * envDim) := hme
   let Aiso : PosSemidefOp (m * envDim) := posSemidefOp_conj V A
   let Biso : PosSemidefOp (m * envDim) := posSemidefOp_conj V B
   have hAptr : Aiso.partialTraceB = A' :=

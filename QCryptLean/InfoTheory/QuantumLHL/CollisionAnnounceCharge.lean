@@ -294,8 +294,8 @@ theorem collisionQuantity_coarsen_eq_of_injOn
     by_cases hfx : f x' = y
     · by_cases hkeep : x' ∈ S
       · exact absurd (Finset.mem_image.mpr ⟨x', hkeep, hfx⟩) hy
-      · rw [if_pos hfx, hVzero x' hkeep]
-    · rw [if_neg hfx]
+      · rw [ite_eq_left hfx, hVzero x' hkeep]
+    · rw [ite_eq_right hfx]
   rw [collisionQuantity, collisionQuantity]
   have hLHS : ∑ y : Y, weightedFrobeniusSq σ ((CQState.coarsen f ρ).stateMap y).toOp
       = ∑ y ∈ S.image f, weightedFrobeniusSq σ ((CQState.coarsen f ρ).stateMap y).toOp := by

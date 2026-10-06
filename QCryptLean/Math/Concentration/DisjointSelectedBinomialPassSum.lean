@@ -83,20 +83,20 @@ theorem blockSplit {ι : Type*} [Fintype ι] [DecidableEq ι] {d : ℕ}
   set E := (Equiv.piEquivPiSubtypeProd p (fun _ => Fin d)).symm with hE
   have hu : (fun j : {i // p i} => E (u, v) (j : ι)) = u := by
     funext j
-    simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_pos j.2]
+    simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_left j.2]
   have hv : (fun j : {i // ¬ p i} => E (u, v) (j : ι)) = v := by
     funext j
-    simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_neg j.2]
+    simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_right j.2]
   have hprod : (∏ i : ι, w i (E (u, v) i)) =
       (∏ j : {i // p i}, w (j : ι) (u j)) * (∏ j : {i // ¬ p i}, w (j : ι) (v j)) := by
     rw [← Fintype.prod_subtype_mul_prod_subtype p (fun i => w i (E (u, v) i))]
     congr 1
     · refine Finset.prod_congr rfl fun j _ => ?_
       congr 1
-      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_pos j.2]
+      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_left j.2]
     · refine Finset.prod_congr rfl fun j _ => ?_
       congr 1
-      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_neg j.2]
+      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_right j.2]
   rw [hu, hv, hprod]
   by_cases hA : A u <;> by_cases hB : B v <;> simp [hA, hB]
 
@@ -117,7 +117,7 @@ theorem blockSplit_of_rest_sum_one {ι : Type*} [Fintype ι] [DecidableEq ι] {d
       ∑ u : {i // p i} → Fin d, if A u then ∏ j : {i // p i}, w (j : ι) (u j) else 0 := by
   classical
   have h := blockSplit p w A (fun _ => True)
-  simp only [and_true, if_true] at h
+  simp only [and_true, ite_true] at h
   rw [h]
   have hrest : (∑ v : {i // ¬ p i} → Fin d, ∏ j : {i // ¬ p i}, w (j : ι) (v j)) = 1 := by
     rw [← Fintype.prod_sum (f := fun (j : {i // ¬ p i}) (k : Fin d) => w (j : ι) k)]

@@ -317,7 +317,7 @@ lemma ckrDeFinetti_partialTraceA_toOp_eq_partialTraceB_toOp_of_pairedPermInvaria
     (hτ : IsCKRDeFinettiPurification τ)
     (hτ_paired : IsPairedPermInvariant τ) :
     τ.partialTraceA.toOp = τ.partialTraceB.toOp := by
-  haveI : NeZero (d ^ n * d ^ n) :=
+  have : NeZero (d ^ n * d ^ n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne (d ^ n)) (NeZero.ne (d ^ n))⟩
   obtain ⟨W, htransport⟩ := ckrDeFinetti_squareAncilla_unitary_transport τ hτ
   have hfix :
@@ -396,7 +396,7 @@ theorem ckrDeFinetti_squareAncilla_partialTraceA_mem_unitary_orbit
     ∃ W : UnitaryOp (d ^ n),
       τ.partialTraceA.toOp =
         W.toOp * (ckrDeFinettiState d n).toOp * W.toOp† := by
-  haveI : NeZero (d ^ n * d ^ n) :=
+  have : NeZero (d ^ n * d ^ n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne (d ^ n)) (NeZero.ne (d ^ n))⟩
   obtain ⟨W, htransport⟩ := ckrDeFinetti_squareAncilla_unitary_transport τ hτ
   refine ⟨W, ?_⟩

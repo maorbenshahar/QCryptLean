@@ -149,7 +149,7 @@ lemma bellProj_conjTranspose (k : Fin 4) : (bellProj k)† = bellProj k :=
 lemma bellProj_orthogonal (k l : Fin 4) (h : k ≠ l) : bellProj k * bellProj l = 0 := by
   apply ketbra_orthogonal_mul_zero
   have hortho := bellStates_orthonormal k l
-  simp only [if_neg h] at hortho
+  simp only [ite_eq_right h] at hortho
   exact hortho
 
 lemma bellProj_complete : ∑ y : Fin 4, bellProj y = 1 := by
@@ -194,9 +194,9 @@ lemma aliceZDephase_ker_sub (s : DensityOp 4) :
   have h1 := hs.dotProduct_mulVec_nonneg ((aliceZProj 1).mulVec v)
   obtain ⟨hz0, hz1⟩ := (add_eq_zero_iff_of_nonneg h0 h1).mp hkey
   have hsw0 : s.toOp.mulVec ((aliceZProj 0).mulVec v) = 0 :=
-    (hs.dotProduct_mulVec_zero_iff _).mp hz0
+    hs.dotProduct_mulVec_zero_iff.mp hz0
   have hsw1 : s.toOp.mulVec ((aliceZProj 1).mulVec v) = 0 :=
-    (hs.dotProduct_mulVec_zero_iff _).mp hz1
+    hs.dotProduct_mulVec_zero_iff.mp hz1
   have hvsum : (aliceZProj 0).mulVec v + (aliceZProj 1).mulVec v = v := by
     rw [← Matrix.add_mulVec, aliceZProj_sum, Matrix.one_mulVec]
   calc s.toOp.mulVec v
@@ -218,7 +218,7 @@ block-diagonal part. -/
 theorem aliceZ_entropyProduction (s : DensityOp 4) :
     relativeEntropyReal s (aliceZDephase s)
       = vonNeumannEntropy (aliceZDephase s) - vonNeumannEntropy s := by
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   set σ := aliceZDephase s with hσ
   set V := eigenbasisOf σ with hVdef
   set Λvec : Fin 4 → ℂ := fun i => (eigenvaluesOf σ i : ℂ) with hΛvec
@@ -468,7 +468,7 @@ the diagonal are inherited from the density operator). -/
 private lemma vonNeumannEntropy_of_diagonal (ρ : DensityOp 4) (ev : Fin 4 → ℝ)
     (hdiag : ρ.toOp = Matrix.diagonal (fun i => (ev i : ℂ))) :
     vonNeumannEntropy ρ = Math.ClassicalEntropy.shannonEntropy ev := by
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   have hPSD : ρ.toOp.PosSemidef := posSemidefOp_implies_mathlib ρ.toPosSemidefOp
   have hnn : ∀ i, 0 ≤ ev i := by
     intro i
@@ -627,7 +627,7 @@ theorem bellMeas_KL_eq_dephasingRate (s : DensityOp 4) :
             ((bellProj y * (aliceZDephase s).toOp).trace).re))
       = vonNeumannEntropy (aliceZDephase (bellDephasingDensity s))
           - vonNeumannEntropy (bellDephasingDensity s) := by
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   -- the four Bell fidelities (eigenvalues of `T s`) are non-negative
   have hn0 : 0 ≤ DensityOp.fidelitySq s (DensityOp.fromPure bellState00 bellState00_normalized) :=
     fidelityPureSq_nonneg s bellState00 bellState00_normalized
@@ -746,7 +746,7 @@ theorem aliceZDephasingRate_bellTwirl_monotone (s : DensityOp 4) :
     vonNeumannEntropy (aliceZDephase (bellDephasingDensity s))
         - vonNeumannEntropy (bellDephasingDensity s)
       ≤ vonNeumannEntropy (aliceZDephase s) - vonNeumannEntropy s := by
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   have hdpi := projective_measurement_dpi_of_ker_sub bellProj
     bellProj_mul_self bellProj_conjTranspose bellProj_orthogonal bellProj_complete
     s (aliceZDephase s) (aliceZDephase_ker_sub s)

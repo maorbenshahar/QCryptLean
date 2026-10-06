@@ -77,10 +77,10 @@ theorem pairedToBlockedEquiv_conjugates_projector (dA dB n : ℕ)
     Matrix.reindex e e (symmetricProjectorPaired (dA * dB) n) =
       symmetricProjectorPairedGen dA (dA * dB ^ 2) n := by
   intro e
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
-  haveI : NeZero ((dA * dB) * (dA * dB)) :=
+  have : NeZero ((dA * dB) * (dA * dB)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne (dA * dB)) (NeZero.ne (dA * dB))⟩
   rw [symmetricProjectorPaired_eq_gen, show e = (interleavingEquivGen (dA * dB) (dA * dB) n).trans
     ((finCongr (congrArg (· ^ n) (pairedBlocked_dim_eq dA dB))).trans

@@ -136,22 +136,22 @@ theorem
         (CQState.coarsen (aliceKeyString peSel)
           (bb84PELabelledPairedHaarPerSigmaFamily (m := m) 1 (bb84UnitRegisterEmbed n)
             (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ (bellWembed φ))).quantumMarginal := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI hAnn : NeZero (bb84PEAnnounceLabelDim n m) := ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hEve : NeZero (1 * signalDim ^ n) :=
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hAnn : NeZero (bb84PEAnnounceLabelDim n m) := ⟨pow_ne_zero _ (NeZero.ne _)⟩
+  have hEve : NeZero (1 * signalDim ^ n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hfine : NeZero (bb84PEAnnounceLabelDim n m * (1 * signalDim ^ n)) :=
+  have hfine : NeZero (bb84PEAnnounceLabelDim n m * (1 * signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
+  have hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hPEpow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
+  have hPEpow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hsplit : NeZero (bb84PEAnnounceLabelDim n m *
+  have hsplit : NeZero (bb84PEAnnounceLabelDim n m *
       (signalDim ^ bb84KeyRoundCount n m *
         signalDim ^ (n - bb84KeyRoundCount n m))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
-  haveI hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
+  have hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
   -- (C1) the good rate bound on the component `σ = Tr_B (Wembed φ)`, at the deviation edge.
   -- The phase-only membership IS the phase bound; membership carries `Q + (δ + dev)`.
   have hphase : phaseFlipErrorRate_single (DensityOp.partialTraceB (bellWembed φ))
@@ -290,7 +290,7 @@ theorem
           (bb84PELabelledPairedHaarPerSigmaFamily (m := m) 1 (bb84UnitRegisterEmbed n)
             (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ (bellWembed φ))).quantumMarginal := by
   -- the fixed-`β⋆` row is the free-`β` floor at `β = secondOrderSharpBeta …`.
-  haveI hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
+  have hnK : NeZero (bb84KeyRoundCount n m) := bb84KeyRoundCount_neZero hmn
   refine keyScoped_perSigmaLabelled_collective_smoothFloorPhaseOnly_coarsenAlice_soSharpAt
     peSel xSel hcount Q δ hbound hmn εTensor hεTensor_pos
     (secondOrderSharpBeta bb84SharpVarianceCap (bb84KeyRoundCount n m) εTensor) ?_ ?_

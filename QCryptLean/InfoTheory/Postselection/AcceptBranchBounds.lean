@@ -42,7 +42,7 @@ theorem RawKeyMeasurement.badBranchBlockOp_weight_le_of_pAcc_le
     (εAT : ℝ) (hεAT : 0 ≤ εAT)
     (hacc : ∀ σ ∈ Sσhat \ goodSet, M.pAcc σ ≤ εAT) :
     ∑ x, (badBranchBlockOp μ M.rawKeyCQ goodSet x).trace.re ≤ εAT := by
-  haveI : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  have : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
   change ∑ x, (goodBranchBlockOp μ M.rawKeyCQ goodSetᶜ x).trace.re ≤ εAT
   rw [sum_goodBranchBlockOp_trace_re_eq_setIntegral μ M.rawKeyCQ goodSetᶜ h_int]
   -- `\label{eq:condS}` caps `pAcc` on `goodSetᶜ ∩ Sσhat`; `Sσhatᶜ` is μ-null
@@ -71,7 +71,7 @@ lemma RawKeyMeasurement.inter_nonempty_of_lt_mixCQ_En_weight
     (hacc : ∀ σ ∈ P \ goodSet, M.pAcc σ ≤ ε)
     (hmass : ε < ∑ x, ((M.mixCQ_En μ h_int).stateMap x).trace) :
     (goodSet ∩ P).Nonempty := by
-  haveI := μ.isProbability
+  have := μ.isProbability
   by_contra hne
   have hae : ∀ᵐ σ ∂μ.measure, M.pAcc σ ≤ ε :=
     hμ.mono fun σ hσ => hacc σ ⟨hσ, fun hg => hne ⟨σ, hg, hσ⟩⟩
@@ -99,16 +99,16 @@ lemma RawKeyMeasurement.re_trace_acceptReal_mixturePurification_eq_integral_pAcc
     (mapTensorId M.toProtocol.acceptProj
       (mapTensorId (M.toProtocol.variantReal l') Xhat)).trace.re =
         ∫ σ, M.pAcc σ ∂μ.measure := by
-  haveI := M.toProtocol.keyDim_neZero
-  haveI := M.toProtocol.annDim_neZero
+  have := M.toProtocol.keyDim_neZero
+  have := M.toProtocol.annDim_neZero
   dsimp only
   set Xhat := Matrix.reindex
     (Equiv.finProdCongrExt (roundGroupEquiv dA dB n) ((dA * dB) ^ n))
     (Equiv.finProdCongrExt (roundGroupEquiv dA dB n) ((dA * dB) ^ n))
     (deFinettiMixturePurification dA dB n μ).toOp with hXhat
-  haveI : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero (dA ^ n * dB ^ n) :=
+  have : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA ^ n * dB ^ n) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (pow_pos (NeZero.pos dA) n)
       (pow_pos (NeZero.pos dB) n))⟩
   -- `Ψ := Ω_acc ∘ r ∘ reindex`: on the tensor power it is exactly `hpAcc_sem`'s integrand
@@ -161,12 +161,12 @@ theorem RawKeyMeasurement.referenceSecrecy_le_mixCQ_En_weight
         = M.pAcc σ) :
     referenceSecrecy M.toProtocol l' μ
       ≤ ∑ x : Fin M.toProtocol.rawKeyDim, ((M.mixCQ_En μ h_int).stateMap x).trace := by
-  haveI := M.toProtocol.keyDim_neZero
-  haveI := M.toProtocol.annDim_neZero
-  haveI : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim) :=
+  have := M.toProtocol.keyDim_neZero
+  have := M.toProtocol.annDim_neZero
+  have : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos M.toProtocol.keyDim_neZero.pos
       M.toProtocol.annDim_neZero.pos)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
   -- the round-regrouped purification and the two accept-branch pieces
   set Xhat := Matrix.reindex (Equiv.finProdCongrExt (roundGroupEquiv dA dB n) ((dA * dB) ^ n))

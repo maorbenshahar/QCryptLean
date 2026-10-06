@@ -511,7 +511,7 @@ theorem SubDensityOp.exists_externalFlagPurification_fixed_regrouping_overlap
             (dE := dE) (dR := dR) (anc := dE * dR) ψER)
           ψEtilde η ηtilde).re =
         fidelityGen ρER.partialTraceB ρEtilde := by
-  haveI : NeZero (dR * (dE * dR)) :=
+  have : NeZero (dR * (dE * dR)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dR) (NeZero.ne (dE * dR))⟩
   exact
     SubDensityOp.exists_externalFlagPurification_fixed_source_overlap

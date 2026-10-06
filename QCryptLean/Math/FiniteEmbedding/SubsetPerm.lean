@@ -24,7 +24,7 @@ def imageSubset {n N : ℕ} (f : Fin n ↪ Fin N) : Set.powersetCard (Fin N) n :
 /-- The embedding viewed as an equivalence from its domain to its image subset. -/
 def embeddingImageEquiv {n N : ℕ} (f : Fin n ↪ Fin N) : Fin n ≃ imageSubset f :=
   f.toEquivRange.trans
-    (Equiv.setCongr (Set.powersetCard.coe_ofFinEmb n (Fin N) f).symm)
+    (Set.equivOfEq (Set.powersetCard.coe_ofFinEmb n (Fin N) f).symm)
 
 /-- The inverse-rank permutation comparing the embedding's order with increasing subset order. -/
 def embeddingPermutation {n N : ℕ} (f : Fin n ↪ Fin N) : Equiv.Perm (Fin n) :=
@@ -68,7 +68,8 @@ theorem embeddingSubsetPermForward_join {n N : ℕ} (S : Set.powersetCard (Fin N
       let s : S := ⟨i, hi⟩
       let k : Fin n := (increasingSubsetEquiv S).symm s
       refine ⟨π k, ?_⟩
-      simp [joinSubsetPerm, k, s]
+      change ((increasingSubsetEquiv S) (π.symm (π k))).val = i
+      simp [k, s]
   apply Prod.ext
   · exact hS
   · apply Equiv.ext
@@ -92,7 +93,9 @@ theorem embeddingSubsetPermForward_join {n N : ℕ} (S : Set.powersetCard (Fin N
     change
       (increasingSubsetEquiv (imageSubset (joinSubsetPerm S π)) k).1 =
         joinSubsetPerm S π (π k)
-    simpa [joinSubsetPerm] using henum
+    change (increasingSubsetEquiv (imageSubset (joinSubsetPerm S π)) k).val =
+      (increasingSubsetEquiv S (π.symm (π k))).val
+    simpa only [Equiv.symm_apply_apply] using henum
 
 /-- Explicit equivalence between finite embeddings and image-subset/inner-permutation pairs. -/
 def embeddingSubsetPermEquiv (n N : ℕ) :

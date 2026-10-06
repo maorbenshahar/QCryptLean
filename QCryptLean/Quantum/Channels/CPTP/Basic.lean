@@ -253,9 +253,9 @@ lemma mul_unitMatrix_conjTranspose_apply {n m : ℕ}
     · subst hc; simp only [and_true]
       have := Finset.sum_ite_eq' Finset.univ i (fun d => M a d)
       simp only [Finset.mem_univ, ite_true] at this; exact this
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       exact Finset.sum_eq_zero (fun d _ =>
-        if_neg (show ¬(d = i ∧ c = j) from fun h => hc h.2))
+        ite_eq_right (show ¬(d = i ∧ c = j) from fun h => hc h.2))
   simp_rw [h_inner, ite_mul, zero_mul]
   have := Finset.sum_ite_eq' Finset.univ j (fun c => M a i * star (M b c))
   simp only [Finset.mem_univ, ite_true] at this; exact this
@@ -375,7 +375,7 @@ lemma trace_matrixUnit {n : ℕ} [NeZero n] (i j : Fin n) :
     simp only [and_self, ite_true]
     rw [Finset.sum_ite_eq' Finset.univ i (fun _ => (1:ℂ))]
     simp
-  · simp only [if_neg hij]
+  · simp only [ite_eq_right hij]
     apply Finset.sum_eq_zero
     intro k _
     simp only [ite_eq_right_iff, one_ne_zero]
@@ -472,10 +472,10 @@ lemma cptp_eq_kraus_sum {n m : ℕ} [NeZero n] [NeZero m]
       Matrix.of_apply, mul_ite, mul_one, mul_zero]
     symm; exact Finset.sum_eq_single r
       (fun i _ hi => Finset.sum_eq_zero (fun j _ => by
-        exact if_neg (fun ⟨h1, _⟩ => hi h1.symm)))
+        exact ite_eq_right (fun ⟨h1, _⟩ => hi h1.symm)))
       (fun h => absurd (Finset.mem_univ r) h) |>.trans
         (Finset.sum_eq_single c
-          (fun j _ hj => if_neg (fun ⟨_, h2⟩ => hj h2.symm))
+          (fun j _ hj => ite_eq_right (fun ⟨_, h2⟩ => hj h2.symm))
           (fun h => absurd (Finset.mem_univ c) h) |>.trans (by simp))
   -- Apply linearity to get entry-wise sum
   have hΦ_entry : Φ A a b = ∑ i, ∑ j, A i j *
@@ -547,9 +547,9 @@ lemma kraus_sum_completeness {n m r : ℕ} [NeZero n] [NeZero m]
     rw [hME]; simp only [Matrix.one_apply]
     by_cases hij : i = j
     · subst hij; simp [Finset.sum_ite_eq' Finset.univ]
-    · rw [if_neg hij]
+    · rw [ite_eq_right hij]
       apply Finset.sum_eq_zero; intro x _
-      exact if_neg (fun ⟨h1, h2⟩ => hij (h2 ▸ h1))
+      exact ite_eq_right (fun ⟨h1, h2⟩ => hij (h2 ▸ h1))
   -- Now prove ∀ A, Tr(M * A) = Tr(A)
   intro A
   have htp' := htp A
@@ -621,8 +621,8 @@ theorem stinespring_dilation {n m : ℕ} [NeZero n] [NeZero m]
       simp only [Matrix.trace_one, Fintype.card_fin]
       exact Nat.cast_ne_zero.mpr (NeZero.ne n)
     exact hne htp.symm
-  haveI : NeZero r := ⟨hr⟩
-  haveI : NeZero (m * r) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos m) (NeZero.pos r))⟩
+  have : NeZero r := ⟨hr⟩
+  have : NeZero (m * r) := ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos m) (NeZero.pos r))⟩
   -- Step 3: Build V by stacking Kraus operators
   let V : Matrix (Fin (m * r)) (Fin n) ℂ :=
     Matrix.of fun α i =>

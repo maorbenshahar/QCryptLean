@@ -31,19 +31,19 @@ lemma CQState.coarsen_coarsen {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z
       ∑ x : X, (if g y = z then (if f x = y then (ρ.stateMap x).toOp else 0) else 0) := by
     intro y
     by_cases hy : g y = z
-    · rw [if_pos hy, CQState.coarsen_stateMap_toOp]
-      exact Finset.sum_congr rfl fun x _ => (if_pos hy).symm
-    · rw [if_neg hy, Finset.sum_congr rfl (fun x (_ : x ∈ Finset.univ) => if_neg hy),
+    · rw [ite_eq_left hy, CQState.coarsen_stateMap_toOp]
+      exact Finset.sum_congr rfl fun x _ => (ite_eq_left hy).symm
+    · rw [ite_eq_right hy, Finset.sum_congr rfl (fun x (_ : x ∈ Finset.univ) => ite_eq_right hy),
         Finset.sum_const, smul_zero]
   rw [Finset.sum_congr rfl (fun y (_ : y ∈ Finset.univ) => hinner y), Finset.sum_comm]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [Finset.sum_eq_single (f x)]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
     rfl
   · intro y _ hy
     by_cases hgy : g y = z
-    · rw [if_pos hgy, if_neg (Ne.symm hy)]
-    · rw [if_neg hgy]
+    · rw [ite_eq_left hgy, ite_eq_right (Ne.symm hy)]
+    · rw [ite_eq_right hgy]
   · intro h
     exact absurd (Finset.mem_univ (f x)) h
 
@@ -67,7 +67,7 @@ lemma CQState.tensorLeftKernel_filterKeep {X : Type*} [Fintype X] {dE dC : ℕ}
   simp only [CQState.tensorLeftKernel_stateMap, CQState.filterKeep_stateMap]
   by_cases hx : keep x
   · simp [hx]
-  · simp only [hx, Bool.false_eq_true, if_false]
+  · simp only [hx, Bool.false_eq_true, ite_false]
     change Op.tensor (K x).toOp ((0 : SubDensityOp dE)).toOp = (0 : Op (dC * dE))
     rw [show ((0 : SubDensityOp dE)).toOp = (0 : Op dE) from rfl]
     exact tensor_zero_op (K x).toOp
@@ -82,8 +82,8 @@ lemma CQState.sum_filterKeep_stateMap_trace_le {X : Type*} [Fintype X] {d : ℕ}
   refine Finset.sum_le_sum fun x _ => ?_
   rw [CQState.filterKeep_stateMap]
   by_cases hx : keep x
-  · rw [if_pos hx]
-  · rw [if_neg (by simpa using hx)]
+  · rw [ite_eq_left hx]
+  · rw [ite_eq_right (by simpa using hx)]
     rw [show ((0 : SubDensityOp d)).trace = 0 from by
       simp [SubDensityOp.trace, show (0 : SubDensityOp d).toOp = 0 from rfl]]
     exact (A.stateMap x).trace_nonneg
@@ -102,22 +102,22 @@ lemma CQState.coarsen_pair_filterKeep {X Y : Type*} [Fintype X] [Fintype Y] [Dec
   refine CQState.ext_stateMap (funext fun q => SubDensityOp.ext ?_)
   rw [CQState.coarsen_stateMap_toOp]
   by_cases hq : q.2 = true
-  · rw [CQState.filterKeep_stateMap, if_pos hq, CQState.coarsen_stateMap_toOp]
+  · rw [CQState.filterKeep_stateMap, ite_eq_left hq, CQState.coarsen_stateMap_toOp]
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : (g x, keep x) = q
-    · rw [if_pos hx, if_pos hx, CQState.filterKeep_stateMap, if_pos]
+    · rw [ite_eq_left hx, ite_eq_left hx, CQState.filterKeep_stateMap, ite_eq_left]
       rw [← hx] at hq
       exact hq
-    · rw [if_neg hx, if_neg hx]
-  · rw [CQState.filterKeep_stateMap, if_neg hq]
+    · rw [ite_eq_right hx, ite_eq_right hx]
+  · rw [CQState.filterKeep_stateMap, ite_eq_right hq]
     rw [show ((0 : SubDensityOp d)).toOp = (0 : Op d) from rfl]
     refine Finset.sum_eq_zero fun x _ => ?_
     by_cases hx : (g x, keep x) = q
-    · rw [if_pos hx, CQState.filterKeep_stateMap, if_neg]
+    · rw [ite_eq_left hx, CQState.filterKeep_stateMap, ite_eq_right]
       · rfl
       · rw [← hx] at hq
         exact hq
-    · rw [if_neg hx]
+    · rw [ite_eq_right hx]
 
 /-! ## The entropy transfer -/
 
@@ -185,7 +185,7 @@ theorem smoothMinEntropyReal_coarsen_filterKeep_ge
     intro q hq
     rw [hpair]
     simpa [CQState.filterKeep_stateMap] using
-      (if_neg hq : (if q.2 then ((CQState.coarsen p A).stateMap q) else 0) =
+      (ite_eq_right hq : (if q.2 then ((CQState.coarsen p A).stateMap q) else 0) =
         (0 : SubDensityOp d))
   set η : ℝ := (∑ x : X, (FA.stateMap x).trace) - 2 * ε with hη
   have hη_pos : 0 < η := by rw [hη]; linarith
@@ -193,7 +193,7 @@ theorem smoothMinEntropyReal_coarsen_filterKeep_ge
       ∑ q : Y × Bool, ((CQState.coarsen p A).stateMap q).trace := by
     rw [InfoTheory.QuantumLHL.CQState.sum_coarsen_stateMap_trace_eq p A, hFA]
     exact CQState.sum_filterKeep_stateMap_trace_le keep A
-  have hbdd : BddAbove (setOf (isInSmoothedSetReal ε (CQState.coarsen p A) σ)) := by
+  have hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε (CQState.coarsen p A) σ)) := by
     refine smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη_pos
       (CQState.coarsen p A) σ ?_
     intro τ hτ

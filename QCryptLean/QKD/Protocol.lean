@@ -97,7 +97,7 @@ theorem realIdealDistance_eq_half_diamondNorm_difference
 
 /-- The real/ideal distance is nonnegative. -/
 theorem realIdealDistance_nonneg (A : Protocol P) : 0 ≤ A.realIdealDistance := by
-  letI : Nonempty A.boundary.Exit := A.nonempty_exit
+  let : Nonempty A.boundary.Exit := A.nonempty_exit
   exact TypedLOCC.diamondDist_nonneg _ _
 
 /-- Every real output has zero coherences between distinct complete public exits.
@@ -189,7 +189,7 @@ coordinates: a half-diamond-norm estimate for C.difference is an estimate for th
 theorem realIdealDistance_eq_coordinates (A : Protocol P)
     (C : NumeralCoordinates A) :
     A.realIdealDistance = (1 / 2) * Quantum.Channels.diamondNorm C.difference := by
-  letI : Nonempty A.boundary.Exit := A.nonempty_exit
+  let : Nonempty A.boundary.Exit := A.nonempty_exit
   exact congrArg ((1 / 2 : ℝ) * ·) (C.diamondNorm_map A.difference).symm
 
 /-- The diamond norm of the real-minus-ideal map is independent of numeral coordinates: two

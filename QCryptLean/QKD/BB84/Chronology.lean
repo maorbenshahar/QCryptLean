@@ -241,7 +241,7 @@ theorem system_eq_of_sifted (N nK mZ mX ℓ ℓEV leakEC : ℕ)
           (Equiv.cast (congrArg Boundary.Exit hboundary) f.2)).2 := by
     have htail : (publicTranscriptEquiv N nK mZ mX ℓ ℓEV leakEC e).tail =
         tailAnnouncementsEquiv N nK mZ mX ℓ ℓEV leakEC f.1 f.2 := rfl
-    simp only [PublicTranscript.sifted, htail, tailAnnouncementsEquiv, dif_pos hquota,
+    simp only [PublicTranscript.sifted, htail, tailAnnouncementsEquiv, dite_eq_left hquota,
       Equiv.trans_apply, Equiv.cast_apply]
     exact congrArg Prod.snd ((cast_cast _ _ _).trans (cast_eq _ _))
   rw [hflag, system_of_boundary_eq hboundary f.2, system_rawClassicalTailBoundary]

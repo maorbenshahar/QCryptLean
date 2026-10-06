@@ -61,7 +61,7 @@ noncomputable def SubDensityOp.tensor {n m : ℕ} (ρ : SubDensityOp n) (σ : Su
   trace_le_one := by
     rw [Op.trace_tensor, Complex.mul_re, ρ.trace_im_eq_zero, σ.trace_im_eq_zero,
         mul_zero, sub_zero]
-    exact mul_le_one₀ ρ.trace_le_one σ.trace_nonneg σ.trace_le_one
+    exact (mul_le_of_le_one_left σ.trace_nonneg ρ.trace_le_one).trans σ.trace_le_one
 
 /-- Trace of a sub-density tensor product equals the product of traces. -/
 lemma SubDensityOp.tensor_trace {n m : ℕ} (ρ : SubDensityOp n) (σ : SubDensityOp m) :
@@ -110,15 +110,16 @@ noncomputable def SubDensityOp.tensorFinProd {d : ℕ} [NeZero d]
 lemma SubDensityOp.tensorFinProd_zero_trace {d : ℕ} [NeZero d]
     (f : Fin 0 → SubDensityOp d) :
     (SubDensityOp.tensorFinProd 0 f).trace = 1 := by
-  simp [SubDensityOp.tensorFinProd, SubDensityOp.castDim_trace, SubDensityOp.trivialOne_trace]
+  exact SubDensityOp.trivialOne_trace
 
 /-- Trace of the n-fold tensor product is the product of individual traces. -/
 lemma SubDensityOp.tensorFinProd_trace {d : ℕ} [NeZero d]
     (n : ℕ) (f : Fin n → SubDensityOp d) :
     (SubDensityOp.tensorFinProd n f).trace = ∏ i : Fin n, (f i).trace := by
   induction n with
-  | zero => simp [SubDensityOp.tensorFinProd, SubDensityOp.castDim_trace,
-                  SubDensityOp.trivialOne_trace]
+  | zero =>
+      rw [Fintype.prod_empty]
+      exact SubDensityOp.tensorFinProd_zero_trace f
   | succ k ih =>
       simp only [SubDensityOp.tensorFinProd, SubDensityOp.castDim_trace,
                  SubDensityOp.tensor_trace, ih (f ∘ Fin.succ), Function.comp]
@@ -132,10 +133,11 @@ lemma SubDensityOp.tensorFinProd_toOp {d : ℕ} [NeZero d] (n : ℕ) (f : Fin n 
   induction n with
   | zero =>
       rw [tensorFamily_zero]
+      change (DensityOp.trivial.toOp : Op 1) = 1
       ext i j
-      obtain rfl : i = j := Subsingleton.elim (α := Fin 1) i j
-      simp [SubDensityOp.tensorFinProd, SubDensityOp.castDim_toOp, SubDensityOp.trivialOne,
-        DensityOp.toSubDensityOp, DensityOp.trivial, Op.castDim_apply]
+      fin_cases i
+      fin_cases j
+      rfl
   | succ n ih =>
       rw [tensorFamily_comp_rev_castSucc (fun j => (f j).toOp), tensorRect_square,
         ← Op.castDim_eq_reindex_finCongr, ← ih fun j => f j.succ]
@@ -190,8 +192,8 @@ lemma SubDensityOp.tensorFinProd_opLe_pow_const {d : ℕ} [NeZero d]
       intro v
       exact le_refl _
   | succ k ih =>
-      haveI hk : NeZero (d ^ k) := NeZero.pow
-      haveI hkk : NeZero (d * d ^ k) :=
+      have hk : NeZero (d ^ k) := NeZero.pow
+      have hkk : NeZero (d * d ^ k) :=
         ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne (d ^ k))⟩
       have ih' := ih (f ∘ Fin.succ) (fun j => hdom j.succ)
       have h0 := hdom 0

@@ -73,18 +73,18 @@ theorem flagBlock_eq_diagonal (s D : ℕ) (f : Fin 2) :
     Matrix.one_apply, Matrix.single_apply]
   simp only [Fin.ext_iff, finProdFinEquiv_symm_fst_val, finProdFinEquiv_symm_snd_val]
   by_cases hE : (i : ℕ) = (j : ℕ)
-  · rw [if_pos hE, hE]
-    simp only [if_true, and_self, one_mul, mul_one]
+  · rw [ite_eq_left hE, hE]
+    simp only [ite_true, and_self, one_mul, mul_one]
     exact if_congr eq_comm rfl rfl
-  · rw [if_neg hE]
+  · rw [ite_eq_right hE]
     by_cases hA : (i : ℕ) / (2 * D) = (j : ℕ) / (2 * D)
-    · rw [if_pos hA, one_mul]
+    · rw [ite_eq_left hA, one_mul]
       by_cases hC : (i : ℕ) % (2 * D) % D = (j : ℕ) % (2 * D) % D
-      · rw [if_pos hC, mul_one, if_neg]
+      · rw [ite_eq_left hC, mul_one, ite_eq_right]
         rintro ⟨hb1, hb2⟩
         exact hE (Nat.ext_div_mod hA (Nat.ext_div_mod (hb1.symm.trans hb2) hC))
-      · rw [if_neg hC, mul_zero]
-    · rw [if_neg hA, zero_mul]
+      · rw [ite_eq_right hC, mul_zero]
+    · rw [ite_eq_right hA, zero_mul]
 
 theorem acceptProjOp_eq_diagonal (ℓ Dinner : ℕ) :
     acceptProjOp ℓ Dinner
@@ -146,8 +146,8 @@ theorem acceptProjOp_add_abortProjOp (ℓ D : ℕ) :
   funext i
   have h2 := flagDigit_lt_two D (i : ℕ)
   by_cases h0 : flagDigit D (i : ℕ) = 0
-  · rw [if_pos h0, if_neg (by omega), add_zero]
-  · rw [if_neg h0, if_pos (by omega), zero_add]
+  · rw [ite_eq_left h0, ite_eq_right (by omega), add_zero]
+  · rw [ite_eq_right h0, ite_eq_left (by omega), zero_add]
 
 theorem acceptProjOp_mul_self (ℓ D : ℕ) :
     acceptProjOp ℓ D * acceptProjOp ℓ D = acceptProjOp ℓ D := by
@@ -170,8 +170,8 @@ theorem acceptProjOp_mul_abortProjOp (ℓ D : ℕ) :
   congr 1
   funext i
   by_cases h0 : flagDigit D (i : ℕ) = 0
-  · rw [if_neg (show ¬ flagDigit D (i : ℕ) = 1 by omega), mul_zero]
-  · rw [if_neg h0, zero_mul]
+  · rw [ite_eq_right (show ¬ flagDigit D (i : ℕ) = 1 by omega), mul_zero]
+  · rw [ite_eq_right h0, zero_mul]
 
 theorem acceptProjOp_conjTranspose (ℓ D : ℕ) : (acceptProjOp ℓ D)ᴴ = acceptProjOp ℓ D := by
   rw [acceptProjOp_eq_diagonal, Matrix.diagonal_conjTranspose]

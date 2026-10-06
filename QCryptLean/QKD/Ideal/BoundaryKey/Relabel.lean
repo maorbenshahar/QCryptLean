@@ -55,7 +55,7 @@ variable {B : Boundary P} {L : BoundaryKeyLayout B} {a b : P}
 /-- The key alphabet at a complete exit is Alice's own register there. -/
 theorem key_eq (h : RegisterKeyed L a b) (e : B.Exit) :
     (L.disposition e).Key = (B.system e).reg a := by
-  letI : Nonempty (B.system e).total := inferInstance
+  let : Nonempty (B.system e).total := inferInstance
   obtain ⟨q⟩ := (inferInstance : Nonempty (B.system e).total)
   exact type_eq_of_heq (h.aliceKey e q)
 
@@ -102,7 +102,7 @@ noncomputable def fibreEquiv (h : RegisterKeyed L a b) (e : B.Exit) :
 theorem fibreEquiv_apply (h : RegisterKeyed L a b) (e : B.Exit)
     (k l : (L.disposition e).Key) (u : L.Residual e) :
     h.fibreEquiv e (k, l) = (L.coordinates e).symm (k, l, u) := by
-  letI : Subsingleton (L.Residual e) := h.residual e
+  let : Subsingleton (L.Residual e) := h.residual e
   change (L.coordinates e).symm (k, l, _) = _
   exact congrArg (L.coordinates e).symm
     (congrArg (fun r => (k, l, r)) (Subsingleton.elim _ _))
@@ -114,7 +114,7 @@ theorem ideal_apply_diag (h : RegisterKeyed L a b) (rho : TypedLOCC.Op B.space)
     L.ideal rho ⟨e, q⟩ ⟨e, q'⟩ =
       (((Fintype.card ((B.system e).reg a) : ℝ)⁻¹ : ℝ) : ℂ) *
         ∑ p : (B.system e).total, rho ⟨e, p⟩ ⟨e, p⟩ := by
-  letI : Subsingleton (L.Residual e) := h.residual e
+  let : Subsingleton (L.Residual e) := h.residual e
   rcases hc : L.coordinates e q with ⟨A, Bk, u⟩
   rcases hc' : L.coordinates e q' with ⟨A', Bk', u'⟩
   have hqe : q = (L.coordinates e).symm (A, Bk, u) := by rw [← hc]; simp
@@ -131,7 +131,7 @@ theorem ideal_apply_diag (h : RegisterKeyed L a b) (rho : TypedLOCC.Op B.space)
     have := (h.alice_eq_alice_iff e q q').mpr hqq
     rw [hc, hc'] at this
     exact this
-  rw [hqe, hqe', L.ideal_coordinate_entry, if_pos ⟨hAB, hAB', hAA⟩, h.card_key e]
+  rw [hqe, hqe', L.ideal_coordinate_entry, ite_eq_left ⟨hAB, hAB', hAA⟩, h.card_key e]
   refine congrArg (fun z : ℂ => (((Fintype.card ((B.system e).reg a) : ℝ)⁻¹ : ℝ) : ℂ) * z) ?_
   have hprod := Fintype.sum_prod_type
     (f := fun z : (L.disposition e).Key × (L.disposition e).Key =>
@@ -157,12 +157,12 @@ theorem ideal_apply_zero (h : RegisterKeyed L a b) (rho : TypedLOCC.Op B.space)
   obtain ⟨f, q'⟩ := y
   by_cases hef : e = f
   · subst hef
-    letI : Subsingleton (L.Residual e) := h.residual e
+    let : Subsingleton (L.Residual e) := h.residual e
     rcases hc : L.coordinates e q with ⟨A, Bk, u⟩
     rcases hc' : L.coordinates e q' with ⟨A', Bk', u'⟩
     have hqe : q = (L.coordinates e).symm (A, Bk, u) := by rw [← hc]; simp
     have hqe' : q' = (L.coordinates e).symm (A', Bk', u') := by rw [← hc']; simp
-    rw [hqe, hqe', L.ideal_coordinate_entry, if_neg]
+    rw [hqe, hqe', L.ideal_coordinate_entry, ite_eq_right]
     rintro ⟨hAB, hAB', hAA⟩
     refine hne ⟨rfl, ?_, ?_, ?_⟩
     · refine (h.alice_eq_bob_iff e q).mp ?_
@@ -268,7 +268,7 @@ theorem ideal_reindexOp_of_canonRel {B₁ B₂ : Boundary P}
   obtain ⟨x, rfl⟩ : ∃ x, Θ x = x' := ⟨Θ.symm x', Θ.apply_symm_apply x'⟩
   obtain ⟨y, rfl⟩ : ∃ y, Θ y = y' := ⟨Θ.symm y', Θ.apply_symm_apply y'⟩
   have hrhs : reindexOp Θ (L₁.ideal M) (Θ x) (Θ y) = L₁.ideal M x y := by
-    simp [reindexOp]
+    exact congrArg₂ (L₁.ideal M) (Θ.symm_apply_apply x) (Θ.symm_apply_apply y)
   rw [hrhs]
   obtain ⟨g, q⟩ := x
   obtain ⟨f, q'⟩ := y
@@ -306,8 +306,7 @@ theorem ideal_reindexOp_of_canonRel {B₁ B₂ : Boundary P}
         (fun p => M (⟨g, p⟩ : B₁.space) (⟨g, p⟩ : B₁.space)))
       refine Finset.sum_congr rfl ?_
       intro p _
-      simp only [reindexOp, LinearMap.coe_mk, AddHom.coe_mk, Matrix.submatrix_apply]
-      rw [hpull g p]
+      exact congrArg₂ M (hpull g p) (hpull g p)
     · have hL : L₂.ideal (reindexOp Θ M) (Θ ⟨g, q⟩) (Θ ⟨g, q'⟩) = 0 := by
         refine h₂.ideal_apply_zero (reindexOp Θ M) _ _ ?_
         rintro ⟨-, hA, hB, hC⟩
@@ -369,8 +368,9 @@ def canonRel_graftAssocSpace (B : Boundary P) (C : B.Exit → Boundary P)
       ⟨Boundary.graftSpaceEquiv B (graftAssocBoundary B C D) x, Equiv.symm_apply_apply _ _⟩
     obtain ⟨e, z⟩ := w
     rw [graftAssocSpace_apply, Boundary.graftSpaceEquiv_symm_fst,
-      Boundary.graftSpaceEquiv_symm_fst, graftAssocExitEquiv_apply,
-      Boundary.graftSpaceEquiv_apply]
+      Boundary.graftSpaceEquiv_symm_fst, graftAssocExitEquiv_apply]
+    change ((C e).graft (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩))).space at z
+    rw [Boundary.graftSpaceEquiv_apply]
   snd x := by
     obtain ⟨w, rfl⟩ :
         ∃ w, (Boundary.graftSpaceEquiv B (graftAssocBoundary B C D)).symm w = x :=
@@ -380,6 +380,7 @@ def canonRel_graftAssocSpace (B : Boundary P) (C : B.Exit → Boundary P)
     refine (Boundary.graftSpaceEquiv_symm_snd_heq (B.graft C) D _ _).trans ?_
     refine HEq.trans ?_
       (Boundary.graftSpaceEquiv_symm_snd_heq B (graftAssocBoundary B C D) e z).symm
+    change ((C e).graft (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩))).space at z
     rw [Boundary.graftSpaceEquiv_apply]
     exact cast_heq _ _
 

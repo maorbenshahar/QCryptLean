@@ -175,7 +175,7 @@ Z-test PE round) the sift is the identity. -/
 lemma bb84SiftedSinglePairOp_of_not_xTest (b x : Bool) (h : (b && x) = false) :
     bb84SiftedSinglePairOp b x = (1 : Op signalDim) := by
   unfold bb84SiftedSinglePairOp
-  rw [if_neg (by simp [h])]
+  rw [ite_eq_right (by simp [h])]
 
 /-- On a non-X-test round the conditioning operator is the bare computational projector
 `|k⟩⟨k|`. -/
@@ -284,8 +284,8 @@ lemma bb84SiftedTauEveRefConditioned_trivial_entry
             (finProdFinEquiv (sa, (finProdFinEquiv.symm i).2))
             (finProdFinEquiv (sc, (finProdFinEquiv.symm j).2)) *
           star (bb84SiftedRotation n peSel xSel (bb84OutcomeIndex ω) sc) := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hss : Subsingleton (Fin 1) :=
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hss : Subsingleton (Fin 1) :=
     inferInstanceAs (Subsingleton (Fin 1))
   simp only [bb84SiftedTauEveRefConditioned, Matrix.submatrix_apply,
     bb84SiftedTauPreOutputDensity, densityOpUnitaryConj_toOp,
@@ -349,8 +349,8 @@ lemma bb84_siftedTrivial_doubleSum_eq_prod
           star (bb84SiftedRotation n peSel xSel (bb84OutcomeIndex ω) sc)) =
       ∏ b : Fin n, (bb84SiftedSingleRoundRefBlock ψ (peSel b) (xSel b) (ω b)).toOp
         ((finFunctionFinEquiv.symm ri) b) ((finFunctionFinEquiv.symm rj) b) := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI : NeZero ((signalDim * signalDim) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero ((signalDim * signalDim) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
   have hV : ∀ s : Fin (signalDim ^ n),
       bb84SiftedRotation n peSel xSel (bb84OutcomeIndex ω) s =
         ∏ b : Fin n, bb84SiftedSinglePairOp (peSel b) (xSel b) (ω b)
@@ -417,7 +417,7 @@ theorem bb84_siftedUnitRegisterEmbed_tauConditioned_eq_tensorFinProd
         (SubDensityOp.tensorFinProd n
           (fun a => bb84SiftedSingleRoundRefBlock ψ (peSel (Fin.rev a)) (xSel (Fin.rev a))
             (ω (Fin.rev a)))) := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   apply SubDensityOp.ext
   ext i j
   have hicast : ∀ (h : 1 * signalDim ^ n = signalDim ^ n)
@@ -543,7 +543,7 @@ noncomputable def bb84SiftedPERoundProd {n m : ℕ} (peSel xSel : Fin n → Bool
           (xSel (bb84PERoundIdx peSel j)) (p j))
     else 0
   weight_le_one := by
-    haveI : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+    have : NeZero signalDim := ⟨by norm_num [signalDim]⟩
     calc ∑ p : Fin (n - bb84KeyRoundCount n m) → Fin signalDim,
             (if bb84SiftedPEPass (m := m) peSel xSel δ Q p then
               SubDensityOp.tensorFinProd (n - bb84KeyRoundCount n m)
@@ -557,8 +557,8 @@ noncomputable def bb84SiftedPERoundProd {n m : ℕ} (peSel xSel : Fin n → Bool
           apply Finset.sum_le_sum
           intro p _
           by_cases hp : bb84SiftedPEPass (m := m) peSel xSel δ Q p
-          · rw [if_pos hp]
-          · rw [if_neg hp]
+          · rw [ite_eq_left hp]
+          · rw [ite_eq_right hp]
             have hz : (0 : SubDensityOp
                 (signalDim ^ (n - bb84KeyRoundCount n m))).trace = 0 := by
               rw [SubDensityOp.trace]

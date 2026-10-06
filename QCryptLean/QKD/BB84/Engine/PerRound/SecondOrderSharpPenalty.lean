@@ -80,9 +80,9 @@ theorem bb84_perSigma_smoothHmin_ge_nfold_DW_secondOrderSharpAt (σ : DensityOp 
           (DensityOp.toSubDensityOp
             ((bb84ComponentAliceZCQState σ).quantumMarginalDensityOp
               (bb84ComponentAliceZCQState_norm σ))) n_copies) := by
-  haveI hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI hne2 : Nonempty (Fin 2) := ⟨0⟩
-  haveI hnefun : Nonempty (Fin n_copies → Fin 2) := ⟨fun _ => 0⟩
+  have hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hne2 : Nonempty (Fin 2) := ⟨0⟩
+  have hnefun : Nonempty (Fin n_copies → Fin 2) := ⟨fun _ => 0⟩
   set ρ : CQState (Fin 2) signalDim := bb84ComponentAliceZCQState σ with hρdef
   have hnorm : ∑ z : Fin 2, (ρ.stateMap z).trace = 1 := bb84ComponentAliceZCQState_norm σ
   -- the Rényi order is `1 + β`, directly (no detour through the clamped optimiser)

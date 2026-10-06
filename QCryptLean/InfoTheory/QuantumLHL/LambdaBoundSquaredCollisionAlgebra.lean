@@ -141,8 +141,8 @@ private lemma squared_sandwich_variance_pair_bound
         (1 / (Fintype.card Z : ℝ)) ≤ 0 :=
     fun x x' hne => quantumHash_offdiag_coeff_nonpos H hH hne
   -- (4) Diagonal coefficient: τ(x,x) = 1, so coefficient = 1 - 1/|Z| ≤ 1.
-  haveI : Nonempty Seed := H.seedNonempty
-  haveI : Nonempty Z := H.outputNonempty
+  have : Nonempty Seed := H.seedNonempty
+  have : Nonempty Z := H.outputNonempty
   have hSeed_pos : (0 : ℝ) < Fintype.card Seed := by exact_mod_cast Fintype.card_pos
   have hSeed_ne : (Fintype.card Seed : ℝ) ≠ 0 := ne_of_gt hSeed_pos
   have hZ_pos : (0 : ℝ) < Fintype.card Z := by exact_mod_cast Fintype.card_pos
@@ -216,9 +216,9 @@ private lemma squared_sandwich_variance_pair_bound
     apply Finset.sum_nonpos
     intro x' _
     by_cases hxx' : x ≠ x'
-    · rw [if_pos hxx']
+    · rw [ite_eq_left hxx']
       exact mul_nonpos_of_nonpos_of_nonneg (hOffdiag_coeff x x' hxx') (hK_nonneg' x x')
-    · rw [if_neg hxx']
+    · rw [ite_eq_right hxx']
   linarith
 
 /-- Pair-sum form of the squared sandwich marginal. -/

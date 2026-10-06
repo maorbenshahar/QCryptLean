@@ -93,8 +93,8 @@ def IsFixedMarginalMeasure {dA dB : ℕ} (σA : DensityOp dA)
 theorem deFinettiMixturePurification_partialTraceB (μ : DensityMeasure (dA * dB)) :
     (deFinettiMixturePurification dA dB n μ).partialTraceB =
       deFinettiMixtureFixedMarginal dA dB n μ := by
-  haveI := neZero_pairDim dA dB
-  haveI := neZero_pairPow dA dB n
+  have := neZero_pairDim dA dB
+  have := neZero_pairPow dA dB n
   exact purificationDensityOp_partialTraceB (deFinettiMixtureFixedMarginal dA dB n μ)
 
 /-- Pure extension of the fixed-marginal de Finetti mixture at any register size: for any
@@ -107,11 +107,11 @@ theorem exists_pure_extension_fixedMarginal {dA dB n : ℕ} [NeZero dA] [NeZero 
     (μ : DensityMeasure (dA * dB)) (r : ℕ) [NeZero r] :
     ∃ τ : DensityOp ((dA * dB) ^ n * ((dA * dB) ^ n * r)),
       τ.IsPure ∧ τ.partialTraceB = deFinettiMixtureFixedMarginal dA dB n μ := by
-  haveI hABn : NeZero ((dA * dB) ^ n) :=
+  have hABn : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
-  haveI hABn2 : NeZero ((dA * dB) ^ n * (dA * dB) ^ n) :=
+  have hABn2 : NeZero ((dA * dB) ^ n * (dA * dB) ^ n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne ((dA * dB) ^ n)) (NeZero.ne ((dA * dB) ^ n))⟩
-  haveI hABnr : NeZero ((dA * dB) ^ n * r) :=
+  have hABnr : NeZero ((dA * dB) ^ n * r) :=
     ⟨Nat.mul_ne_zero (NeZero.ne ((dA * dB) ^ n)) (NeZero.ne r)⟩
   -- pad the canonical purification's reference register from `(dA·dB)^n` to `(dA·dB)^n · r`
   have hle : (dA * dB) ^ n ≤ (dA * dB) ^ n * r :=

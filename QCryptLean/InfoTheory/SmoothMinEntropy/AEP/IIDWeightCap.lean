@@ -397,7 +397,7 @@ theorem sum_splitCoefficient_le_blockEigenvalue
   -- `lamNat f (n^n_copies) = lamShift f (Fin.last) = f (Fin.last).pred = min(p_x, λ q_·) ≤ p_x`.
   have hlast : lamNat f (n ^ n_copies) ≤ blockEigenvalue ρ n_copies xs x := by
     unfold lamNat
-    rw [dif_pos (Nat.lt_succ_self _)]
+    rw [dite_eq_left (Nat.lt_succ_self _)]
     rcases Fin.eq_zero_or_eq_succ (⟨n ^ n_copies, Nat.lt_succ_self _⟩ : Fin (n ^ n_copies + 1))
       with h | ⟨w, hw⟩
     · rw [h, lamShift_zero]; exact blockEigenvalue_nonneg ρ n_copies xs x
@@ -611,7 +611,7 @@ theorem blockSpectralProjector_trace
   have hdot : star ((hM.eigenvectorBasis x).ofLp) ⬝ᵥ ((hM.eigenvectorBasis x).ofLp) = 1 := by
     rw [dotProduct_comm, ← EuclideanSpace.inner_eq_star_dotProduct]
     have h := orthonormal_iff_ite.mp hM.eigenvectorBasis.orthonormal x x
-    rwa [if_pos rfl] at h
+    rwa [ite_eq_left rfl] at h
   rw [dotProduct_comm]
   exact hdot
 

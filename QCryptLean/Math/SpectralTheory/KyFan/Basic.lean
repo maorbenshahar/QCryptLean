@@ -244,11 +244,10 @@ lemma univ_filter_fin_lt_eq_map {n k : ℕ} (hk : k ≤ n) :
         ⟨fun i => ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩,
          fun _ _ h => Fin.ext (Fin.mk.inj h)⟩ := by
   ext x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_map,
-    Function.Embedding.coeFn_mk]
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_map]
   constructor
   · intro hx
-    exact ⟨⟨x.val, hx⟩, by simp⟩
+    exact ⟨⟨x.val, hx⟩, rfl⟩
   · rintro ⟨y, -, rfl⟩
     exact y.isLt
 
@@ -310,7 +309,7 @@ lemma weighted_sum_le_partial_sum {n : ℕ} (f : Fin n → ℝ) (w : Fin n → �
       linarith
     have hind_one : ∀ i : Fin n, ind i = 1 := by
       intro i; simp only [ind]
-      exact if_pos (Nat.lt_of_lt_of_le i.isLt (le_of_eq hkn.symm))
+      exact ite_eq_left (Nat.lt_of_lt_of_le i.isLt (le_of_eq hkn.symm))
     simp only [hw_one, hind_one, mul_one]
     exact le_refl _
   · -- Case k < n: pivot on c = f(k)
@@ -524,7 +523,6 @@ theorem restricted_trace_le_eigenvalue_sum {n : ℕ} [NeZero n]
   -- Step 5: Show ∑ᵢ wᵢ = Tr(U†PU) = Tr(P) = k
   -- Step 6: Use eigenPerm to reindex through eigenvalues₀Fin (antitone),
   --         then apply weighted_sum_le_partial_sum
-
   -- Step 1: Standard spectral decomposition (no sorting needed)
   have h_spec := hA.spectral_theorem
   rw [Unitary.conjStarAlgAut_apply] at h_spec
@@ -708,7 +706,7 @@ lemma sum_ite_eq_sum_fin {n k : ℕ} (hk : k ≤ n) (f : Fin n → ℝ) :
   let s : Set (Fin n) := {i | i.val < k}
   have h_cond : ∑ i : Fin n, (if i.val < k then f i else 0) =
       ∑ i : Fin n, (if i ∈ s then f i else 0) := by
-    simp only [s, Set.mem_setOf]
+    simp only [s, Set.mem_ofPred]
   rw [h_cond]
   -- Apply sum_congr_set
   trans (∑ i : s, f i)

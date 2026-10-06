@@ -74,20 +74,20 @@ noncomputable def lamNat (lam : Fin d → ℝ) (j : ℕ) : ℝ :=
 lemma lamNat_succ (lam : Fin d → ℝ) (z : Fin d) :
     lamNat lam (z.val + 1) = lam z := by
   unfold lamNat
-  rw [dif_pos (by omega : z.val + 1 < d + 1)]
+  rw [dite_eq_left (by omega : z.val + 1 < d + 1)]
   have : (⟨z.val + 1, by omega⟩ : Fin (d + 1)) = z.succ := by apply Fin.ext; simp [Fin.val_succ]
   rw [this, lamShift_succ]
 
 lemma lamNat_castSucc (lam : Fin d → ℝ) (z : Fin d) :
     lamNat lam z.val = lamShift lam z.castSucc := by
   unfold lamNat
-  rw [dif_pos (by omega : z.val < d + 1)]
+  rw [dite_eq_left (by omega : z.val < d + 1)]
   have : (⟨z.val, by omega⟩ : Fin (d + 1)) = z.castSucc := by apply Fin.ext; simp [Fin.val_castSucc]
   rw [this]
 
 lemma lamNat_zero (lam : Fin d → ℝ) : lamNat lam 0 = 0 := by
   unfold lamNat
-  rw [dif_pos (by omega : (0 : ℕ) < d + 1)]
+  rw [dite_eq_left (by omega : (0 : ℕ) < d + 1)]
   have : (⟨0, by omega⟩ : Fin (d + 1)) = 0 := by apply Fin.ext; simp
   rw [this, lamShift_zero]
 

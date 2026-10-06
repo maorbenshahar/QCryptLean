@@ -93,7 +93,7 @@ lemma collision_count_sub_eq_double_sum_centred
       = ∑ s : S, ∑ z : Z,
           ((if H.hash s x = z then (1:ℝ) else 0) - (1 / (Fintype.card Z : ℝ))) *
           ((if H.hash s x' = z then (1:ℝ) else 0) - (1 / (Fintype.card Z : ℝ))) := by
-  haveI : Nonempty Z := H.outputNonempty
+  have : Nonempty Z := H.outputNonempty
   set c : ℝ := 1 / (Fintype.card Z : ℝ) with hc_def
   -- `|Z|` is nonzero (via H.outputNonempty).
   have hZ_pos : 0 < (Fintype.card Z : ℝ) := by
@@ -185,7 +185,7 @@ lemma scalar_two_universal_quadratic_rewrite
         ∑ s : S, ∑ z : Z,
           (∑ x : X, v x * ((if H.hash s x = z then (1:ℝ) else 0) -
                             (1 / (Fintype.card Z : ℝ))))^2 := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   set c : ℝ := 1 / (Fintype.card Z : ℝ) with hc_def
   set nSinv : ℝ := 1 / (Fintype.card S : ℝ) with hnSinv_def
   -- `|S|` is nonzero (via H.seedNonempty).
@@ -331,7 +331,7 @@ lemma scalar_two_universal_upper_bound_diag_off_split
                     (fun s : S => H.hash s x = H.hash s x')).card : ℝ) -
                 (1 / (Fintype.card Z : ℝ)))
               * v x * v x' := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   -- Convert post-(B2) form to pre-(B2) form via (B2) read backward.
   rw [← scalar_two_universal_quadratic_rewrite H v]
   -- Now split the pre-(B2) double sum into diagonal + off-diagonal.
@@ -363,7 +363,7 @@ lemma scalar_two_universal_upper_bound_diag_off_split
           (Finset.univ.filter (fun s : S => H.hash s x = H.hash s x))
             = (Finset.univ : Finset S) :=
         Finset.filter_true_of_mem (fun _ _ => rfl)
-      rw [hfilter, if_pos rfl, if_pos rfl, Finset.card_univ]
+      rw [hfilter, ite_eq_left rfl, ite_eq_left rfl, Finset.card_univ]
       -- Goal: (nSinv * |S| - c) * v x * v x = (1 - c) * (v x)^2 + 0 * v x * v x
       have h_collapse :
           (nSinv * (Fintype.card S : ℝ) - c) * v x * v x
@@ -373,7 +373,7 @@ lemma scalar_two_universal_upper_bound_diag_off_split
             hSinv_S]
       linarith [h_collapse]
     · -- Off-diagonal: the diag piece is 0; the offdiag piece is itself.
-      rw [if_neg hxx', if_neg hxx']
+      rw [ite_eq_right hxx', ite_eq_right hxx']
       ring
   -- Apply the pointwise split.
   have h_sum_split :
@@ -425,7 +425,7 @@ lemma quantumHash_offdiag_coeff_nonpos
     (1 / (Fintype.card S : ℝ)) *
         ((Finset.univ.filter (fun s : S => H.hash s x = H.hash s x')).card : ℝ) -
       1 / (Fintype.card Z : ℝ) ≤ 0 := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : 0 < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos

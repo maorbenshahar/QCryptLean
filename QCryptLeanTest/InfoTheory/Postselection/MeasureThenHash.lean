@@ -268,7 +268,7 @@ lemma protocol_variantReal_ne_variantIdeal : protocol.variantReal 1 ≠ protocol
 protocol maps differ. -/
 theorem exists_measureThenHash_variants_ne :
     ∃ M : RawKeyMeasurement 1 1 1,
-      Nonempty (MeasureThenHash.{0, 0} M 1) ∧
+      Nonempty (MeasureThenHash.{0} M 1) ∧
         M.toProtocol.variantReal 1 ≠ M.toProtocol.variantIdeal 1 :=
   ⟨measurement, ⟨measureThenHash⟩, protocol_variantReal_ne_variantIdeal⟩
 

@@ -195,8 +195,8 @@ lemma CQState.purifiedDistance_reindexQ {X : Type*} [Fintype X] [DecidableEq X] 
     {n : ℕ} [NeZero n] (e : Fin n ≃ Fin n) (ρ τ : CQState X n) :
     CQState.purifiedDistance (CQState.reindexQ e ρ) (CQState.reindexQ e τ) =
       CQState.purifiedDistance ρ τ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   rw [CQState.reindexQ_toJointDensity e ρ, CQState.reindexQ_toJointDensity e τ]
   exact InfoTheory.SmoothMinEntropy.purifiedDistance_reindex (jointReindexQEquiv (X := X) e)
@@ -225,10 +225,10 @@ lemma CQState.purifiedDistance_relabel {X Y : Type*} [Fintype X] [Fintype Y]
     {n : ℕ} [NeZero n] (e : X ≃ Y) (ρ τ : CQState Y n) :
     CQState.purifiedDistance (CQState.relabel e ρ) (CQState.relabel e τ) =
       CQState.purifiedDistance ρ τ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
-  haveI : NeZero (n * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (n * Fintype.card Y) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   -- The per-block fidelities and the traces both reindex by `e`, so the generalized
   -- fidelity (and hence the purified distance, a function of it) is unchanged.
   have hfid :
@@ -471,7 +471,7 @@ lemma smoothMinEntropyReal_le_tensor_classical_tail
       ∑ p : X × X', ((CQState.tensor block tail).stateMap p).trace = 1 := by
     rw [CQState.tensor_sum_trace, hblock_norm, htail_norm]; ring
   have hbdd_tensor :
-      BddAbove (setOf (isInSmoothedSetReal ε' (CQState.tensor block tail)
+      BddAbove (Set.ofPred (isInSmoothedSetReal ε' (CQState.tensor block tail)
         (SubDensityOp.tensor ref_block tail.quantumMarginal))) :=
     smoothMinEntropyReal_bddAbove ε' hε'_lt_one (CQState.tensor block tail) hρρ'_norm
       (SubDensityOp.tensor ref_block tail.quantumMarginal)

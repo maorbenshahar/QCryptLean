@@ -472,7 +472,7 @@ theorem retainedSiftedPEAnnouncePassBranchKraus_bellTwirl_intertwining
   by_cases hp : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
   · have hp' : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2
         (bellStringRelabel n h ω) = true := by rw [hguard]; exact hp
-    simp only [retainedSiftedPEAnnouncePassBranchKraus, hp, hp', if_true]
+    simp only [retainedSiftedPEAnnouncePassBranchKraus, hp, hp', ite_true]
     rw [tensorRightId_mul_tensorRightId, single_mul_bellTwirlUnitary, rtid_smul_peAnnounce,
       tensorRightId_mul_tensorRightId_left, bb84PEAnnounceBellRelabelUnitary_mul_single,
       pePassOutIndex_bellStringRelabel peSel ec h πsyn hsyn hdec st ω,
@@ -512,7 +512,8 @@ theorem retainedSiftedPEAnnounceFailBranchKraus_bellTwirl_intertwining
   · have hp' : ¬ (bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2
         (bellStringRelabel n h ω) = true) := by rw [hguard]; exact hp
     simp only [retainedSiftedPEAnnounceFailBranchKraus]
-    rw [if_pos hp, if_pos hp', tensorRightId_mul_tensorRightId, single_mul_bellTwirlUnitary,
+    rw [ite_eq_left hp, ite_eq_left hp', tensorRightId_mul_tensorRightId,
+      single_mul_bellTwirlUnitary,
       rtid_smul_peAnnounce, tensorRightId_mul_tensorRightId_left,
       bb84PEAnnounceBellRelabelUnitary_mul_single,
       peFailOutIndex_bellStringRelabel peSel ec h πsyn hsyn st ω, Equiv.symm_apply_apply]
@@ -553,7 +554,7 @@ theorem retainedSiftedPEAnnounceIdealPassKraus_bellTwirl_intertwining
   by_cases hp : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω = true
   · have hp' : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2
         (bellStringRelabel n h ω) = true := by rw [hguard]; exact hp
-    simp only [retainedSiftedPEAnnounceIdealPassKraus, hp, hp', if_true]
+    simp only [retainedSiftedPEAnnounceIdealPassKraus, hp, hp', ite_true]
     rw [tensorRightId_mul_tensorRightId, single_mul_bellTwirlUnitary, rtid_smul_peAnnounce,
       tensorRightId_mul_tensorRightId_left, bb84PEAnnounceBellRelabelUnitary_mul_single]
     rw [bb84AliceKeyString_bellStringRelabel, hsyn, bb84PEBlock_bellStringRelabel,
@@ -864,11 +865,11 @@ lemma bb84SiftedPEAnnounceLinearEveVisible_eq_mapTensorId_castDim_append
         (mapTensorId
           (appendSingleLinear (a := bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC)
             (permAnnounceIndexEquiv n π)) M) := by
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num)) (pow_ne_zero _ (by norm_num)))
       (NeZero.ne _)⟩
-  haveI : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
-  haveI : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * n.factorial) :=
+  have : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
+  have : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * n.factorial) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   rw [show bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV eveDim peSel leakEC π M =
       mapTensorId (bb84SiftedPEAnnounceLinear n m ℓ ℓEV peSel leakEC π) M from rfl,
@@ -880,11 +881,11 @@ theorem bb84_announceLinearEveVisible_traceNorm_eq {n m ℓ ℓEV eveDim : ℕ} 
     (A0 : Op (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC eveDim)) :
     traceNorm (bb84SiftedPEAnnounceLinearEveVisible n m ℓ ℓEV eveDim peSel leakEC π A0) =
       traceNorm A0 := by
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num)) (pow_ne_zero _ (by norm_num)))
       (NeZero.ne _)⟩
-  haveI : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
-  haveI : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * n.factorial) :=
+  have : NeZero n.factorial := ⟨Nat.factorial_ne_zero n⟩
+  have : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * n.factorial) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   rw [bb84SiftedPEAnnounceLinearEveVisible_eq_mapTensorId_castDim_append peSel leakEC π,
     traceNorm_mapTensorId_castDimLinear, mapTensorId_appendSingleLinear,
@@ -908,12 +909,12 @@ lemma bb84SiftedPEAnnounceLinearEveVisible_mapTensorId_reassoc {n m ℓ ℓEV ev
           eveDim dimR).symm
         (prodAssocFin (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC)
           eveDim dimR).symm := by
-  haveI : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
+  have : NeZero (2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num)) (pow_ne_zero _ (by norm_num)))
       (NeZero.ne _)⟩
-  haveI : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * eveDim) :=
+  have : NeZero (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC * eveDim) :=
     bb84EveVisiblePEAnnounceBaseOutputDim_neZero n m ℓ ℓEV peSel leakEC eveDim
-  haveI : NeZero ((2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) *
+  have : NeZero ((2 ^ ℓ * 2 ^ ℓ * bb84SymPEAnnounceTranscriptDim n m ℓ ℓEV peSel leakEC) *
       eveDim) :=
     bb84EveVisiblePEAnnounceSymOutputDim_neZero n m ℓ ℓEV peSel leakEC eveDim
   exact mapTensorId_mapTensorIdLinear_reassoc

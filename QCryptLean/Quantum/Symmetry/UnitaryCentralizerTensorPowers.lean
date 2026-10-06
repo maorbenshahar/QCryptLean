@@ -109,7 +109,7 @@ lemma conjTranspose_mem_commutant {d : ℕ} (S : Set (Op d))
 /-- Inverting an invertible matrix preserves every commutation relation. -/
 lemma nonsing_inv_commute_of_isUnit {d : ℕ} {A M : Op d}
     (hA : IsUnit A) (h : Commute M A) : Commute M A⁻¹ := by
-  letI := hA.invertible
+  let := hA.invertible
   simpa only [Matrix.invOf_eq_nonsing_inv] using h.invOf_right
 
 /-- Polar decomposition extends constrained unitary tensor commutation to invertible matrices. -/
@@ -150,12 +150,12 @@ lemma commute_tensorPow_isUnit_of_unitaryCentralizer {d n : ℕ}
 
 /-- The scalar shifts making a square matrix invertible form a dense subset of the complex plane. -/
 lemma dense_isUnit_scalar_shift {d : ℕ} (A : Op d) :
-    Dense (setOf fun z : ℂ => IsUnit (A + z • (1 : Op d))) := by
+    Dense (Set.ofPred fun z : ℂ => IsUnit (A + z • (1 : Op d))) := by
   have hd := Dense.sdiff_finite dense_univ (-A).finite_spectrum
-  have hs : Set.univ \ spectrum ℂ (-A) = setOf (fun z : ℂ => IsUnit (A + z • (1 : Op d))) := by
+  have hs : Set.univ \ spectrum ℂ (-A) = Set.ofPred (fun z : ℂ => IsUnit (A + z • (1 : Op d))) := by
     ext z
     simp only [Set.mem_sdiff, Set.mem_univ, true_and, spectrum.mem_iff, not_not,
-      Algebra.algebraMap_eq_smul_one, sub_neg_eq_add, add_comm, Set.mem_setOf_eq]
+      Algebra.algebraMap_eq_smul_one, sub_neg_eq_add, add_comm, Set.mem_ofPred_eq]
   rwa [hs] at hd
 
 /-- Unitary tensor powers suffice inside the commutant of any adjoint-closed matrix family. -/

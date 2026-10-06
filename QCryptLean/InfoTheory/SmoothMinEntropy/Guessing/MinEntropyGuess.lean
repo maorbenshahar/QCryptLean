@@ -87,7 +87,7 @@ lemma conditionalMinEntropyOptReal_eq_zero_of_minFeasibleLambda_eq_zero
   have hset : {h | ∃ σ : SubDensityOp n, h = conditionalMinEntropyReal ρ σ} =
       ({0} : Set ℝ) := by
     ext h
-    simp only [Set.mem_setOf_eq, Set.mem_singleton_iff]
+    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
     refine ⟨?_, ?_⟩
     · rintro ⟨σ, rfl⟩; exact hcond σ
     · rintro rfl; exact ⟨(0 : SubDensityOp n), (hcond 0).symm⟩
@@ -208,7 +208,7 @@ lemma conditionalMinEntropyReal_le_neg_log_povmGuessingProb
       have hlog_le : Real.log (povmGuessingProb ρ) ≤ Real.log (minFeasibleLambda ρ σ) :=
         Real.log_le_log hp_pos hlam_ge_p
       exact div_le_div_of_nonneg_right (neg_le_neg hlog_le) hlog2.le
-    · have hempty : setOf (isFeasible ρ σ) = ∅ := by
+    · have hempty : Set.ofPred (isFeasible ρ σ) = ∅ := by
         apply Set.not_nonempty_iff_eq_empty.mp
         rintro ⟨t, ht⟩
         exact hfeas ⟨t, ht⟩
@@ -343,7 +343,7 @@ lemma pgm_sigma_feasible
   classical
   -- The given `M` is not assumed Hermitian, so we discard it and rebuild σ
   -- from the Hermitian optimal POVM produced by `exists_optimal_povm_hermitian`.
-  haveI : Nonempty X := nonempty_of_povmGuessingProb_pos _hp_pos
+  have : Nonempty X := nonempty_of_povmGuessingProb_pos _hp_pos
   obtain ⟨N, ⟨hN_psd, hN_sum⟩, hN_eq⟩ := exists_optimal_povm_hermitian ρ
   have hN_eq' :
       ∑ x : X, ((N x) * (ρ.stateMap x).toOp).trace.re = povmGuessingProb ρ := by
@@ -366,7 +366,7 @@ lemma conditionalMinEntropyOptReal_ge_neg_log_povmGuessingProb_of_pos
     (ρ : CQState X n) (hp : 0 < povmGuessingProb ρ) :
     -Real.log (povmGuessingProb ρ) / Real.log 2 ≤ conditionalMinEntropyOptReal ρ := by
   classical
-  haveI : Nonempty X := nonempty_of_povmGuessingProb_pos hp
+  have : Nonempty X := nonempty_of_povmGuessingProb_pos hp
   obtain ⟨M, hM_pos, hM_sum, hp_eq_Pg⟩ := exists_optimal_povm ρ
   obtain ⟨σ, hfeas⟩ :=
     pgm_sigma_feasible ρ M hM_pos hM_sum hp hp_eq_Pg.symm

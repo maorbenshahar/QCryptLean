@@ -284,8 +284,8 @@ theorem variableLength_postselection_security
             (hproof.rawKeyCQ i) (hproof.ref i)) +
         4 * Real.sqrt (2 * hproof.lamPrime i - hproof.lamPrime i ^ 2)) :
     SatisfiesVariableLengthReferenceBound P lt' μ εsec εe := by
-  haveI := P.rawKeyDim_neZero
-  haveI := hproof.condDim_neZero
+  have := P.rawKeyDim_neZero
+  have := hproof.condDim_neZero
   have hCollapse : ∀ i,
       dPrime i ≤ εe + 4 * Real.sqrt (2 * hproof.lamPrime i - hproof.lamPrime i ^ 2) := by
     intro i

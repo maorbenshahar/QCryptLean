@@ -231,7 +231,7 @@ theorem bb84PEAnnounceAgreeLHLInput_smoothMinEntropy_ge_of_pELabelled
       (bb84PELabelledLHLInput (m := m) ℓEV eveDim pre hpre peSel xSel ec Q δ τ) σ) :
     ENNReal.ofReal k ≤ smoothMinEntropy ε
       (bb84PEAnnounceAgreeLHLInput (m := m) ℓEV eveDim pre hpre peSel xSel ec Q δ τ) σ := by
-  haveI hNZ : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hNZ : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))

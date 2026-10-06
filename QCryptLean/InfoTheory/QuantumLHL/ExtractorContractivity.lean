@@ -72,8 +72,8 @@ lemma cqState_joint_traceNorm_eq_sum_blocks
         (ρ.toJointDensity.toOp - σ.toJointDensity.toOp) =
       ∑ x : X, Quantum.Metrics.traceNorm
           ((ρ.stateMap x).toOp - (σ.stateMap x).toOp) := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [ρ.toJointDensity_toOp_eq_reindex_blockDiagonal,
       σ.toJointDensity_toOp_eq_reindex_blockDiagonal]
@@ -163,7 +163,7 @@ lemma traceNorm_extractorConditionedOp_sub_le
         ∑ s : S, ∑ x : X, if H.hash s x = z then
           Quantum.Metrics.traceNorm
             ((ρ.stateMap x).toOp - (ρ'.stateMap x).toOp) else 0 := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_nn : (0 : ℝ) ≤ 1 / (Fintype.card S : ℝ) := by positivity
   rw [extractorConditionedOp_sub_toOp_eq H ρ ρ' z, traceNorm_real_smul]
   rw [abs_of_nonneg hS_nn]
@@ -204,7 +204,7 @@ lemma sum_traceNorm_extractorConditionedOp_sub_le
            (extractorConditionedOp H ρ' z).toOp) ≤
       ∑ x : X, Quantum.Metrics.traceNorm
           ((ρ.stateMap x).toOp - (ρ'.stateMap x).toOp) := by
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : (0 : ℝ) < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos
@@ -270,8 +270,8 @@ lemma traceNorm_extractorOutput_sub_joint_le
           (extractorOutputState H ρ').toJointDensity.toOp) ≤
       Quantum.Metrics.traceNorm
         (ρ.toJointDensity.toOp - ρ'.toJointDensity.toOp) := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [cqState_joint_traceNorm_eq_sum_blocks
         (extractorOutputState H ρ) (extractorOutputState H ρ'),
@@ -328,8 +328,8 @@ lemma traceDistanceGen_extractorOutput_le
         (extractorOutputState H ρ').toJointDensity.toOp ≤
       Quantum.Metrics.traceDistanceGen
         ρ.toJointDensity.toOp ρ'.toJointDensity.toOp := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   unfold Quantum.Metrics.traceDistanceGen
   have h1 := traceNorm_extractorOutput_sub_joint_le H ρ ρ'

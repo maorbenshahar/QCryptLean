@@ -78,7 +78,7 @@ theorem jointKeyChannel_isSeparableOperation :
   have hone : ∑ b : Fin 2, Matrix.single b b (1 : ℂ) = 1 := by
     ext i j
     simp only [Matrix.sum_apply, Matrix.single_apply, Matrix.one_apply, ite_and]
-    simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [hone, tensorRect_one]
 
 /-- The joint-XOR channel has positive partial transpose across the laboratory Choi cut. -/
@@ -105,7 +105,7 @@ private theorem swapPt_entry_11 : partialTransposeB 4 4 swapChoiReshuffled η₁
       = finProdFinEquiv ((1 : Fin 4), (0 : Fin 4)) := rfl
   rw [η₁, partialTransposeB_apply, swapChoiReshuffled, Matrix.reindex_apply,
     Matrix.submatrix_apply, e, choi_of_reindexMap]
-  rw [if_neg (by simp only [swapBasisEquiv]; decide)]
+  rw [ite_eq_right (by simp only [swapBasisEquiv]; decide)]
 
 private theorem swapPt_entry_12 : partialTransposeB 4 4 swapChoiReshuffled η₁ η₂ = 1 := by
   have e1 : (choiReshuffle 2 2 2 2).symm (finProdFinEquiv ((0 : Fin 4), (0 : Fin 4)))
@@ -114,7 +114,7 @@ private theorem swapPt_entry_12 : partialTransposeB 4 4 swapChoiReshuffled η₁
       = finProdFinEquiv ((1 : Fin 4), (2 : Fin 4)) := rfl
   rw [η₁, η₂, partialTransposeB_apply, swapChoiReshuffled, Matrix.reindex_apply,
     Matrix.submatrix_apply, e1, e2, choi_of_reindexMap]
-  rw [if_pos (by simp only [swapBasisEquiv]; decide)]
+  rw [ite_eq_left (by simp only [swapBasisEquiv]; decide)]
 
 private theorem swapPt_entry_21 : partialTransposeB 4 4 swapChoiReshuffled η₂ η₁ = 1 := by
   have e1 : (choiReshuffle 2 2 2 2).symm (finProdFinEquiv ((1 : Fin 4), (2 : Fin 4)))
@@ -123,14 +123,14 @@ private theorem swapPt_entry_21 : partialTransposeB 4 4 swapChoiReshuffled η₂
       = finProdFinEquiv ((0 : Fin 4), (0 : Fin 4)) := rfl
   rw [η₁, η₂, partialTransposeB_apply, swapChoiReshuffled, Matrix.reindex_apply,
     Matrix.submatrix_apply, e1, e2, choi_of_reindexMap]
-  rw [if_pos (by simp only [swapBasisEquiv]; decide)]
+  rw [ite_eq_left (by simp only [swapBasisEquiv]; decide)]
 
 private theorem swapPt_entry_22 : partialTransposeB 4 4 swapChoiReshuffled η₂ η₂ = 0 := by
   have e : (choiReshuffle 2 2 2 2).symm (finProdFinEquiv ((1 : Fin 4), (0 : Fin 4)))
       = finProdFinEquiv ((0 : Fin 4), (2 : Fin 4)) := rfl
   rw [η₂, partialTransposeB_apply, swapChoiReshuffled, Matrix.reindex_apply,
     Matrix.submatrix_apply, e, choi_of_reindexMap]
-  rw [if_neg (by simp only [swapBasisEquiv]; decide)]
+  rw [ite_eq_right (by simp only [swapBasisEquiv]; decide)]
 
 /-- The laboratory-grouped SWAP Choi matrix has a negative partial-transpose quadratic form. -/
 theorem swap_choi_not_ppt : ¬ IsPPT 4 4 swapChoiReshuffled := by

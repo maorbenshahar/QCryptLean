@@ -111,8 +111,8 @@ lemma stdKet_bitIndex_orthonormal (b b' : Fin n → Bool) :
       if b = b' then 1 else 0 := by
   rw [stdKet_braket]
   by_cases h : b = b'
-  · rw [if_pos h, if_pos (congrArg (bitIndex n).symm h)]
-  · rw [if_neg h, if_neg fun hs => h ((bitIndex n).symm.injective hs)]
+  · rw [ite_eq_left h, ite_eq_left (congrArg (bitIndex n).symm h)]
+  · rw [ite_eq_right h, ite_eq_right fun hs => h ((bitIndex n).symm.injective hs)]
 
 /-! ## The two total weights -/
 

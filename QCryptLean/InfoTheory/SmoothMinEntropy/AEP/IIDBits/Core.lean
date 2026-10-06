@@ -126,9 +126,9 @@ theorem iidAEP_weightCap_purifiedDistance_le_sqrt_two_mul_traceDefect
     (hpin : iidAEPIsWeightCapSmoothedState ρ n_copies W) :
     CQState.purifiedDistance (iidAEPTensorState ρ n_copies) W.smoothedState
       ≤ Real.sqrt (2 * iidAEPTraceDefect ρ n_copies W) := by
-  haveI hcard : NeZero (Fintype.card (Fin n_copies → X)) :=
+  have hcard : NeZero (Fintype.card (Fin n_copies → X)) :=
     ⟨Fintype.card_ne_zero⟩
-  haveI hjoint : NeZero (n ^ n_copies * Fintype.card (Fin n_copies → X)) :=
+  have hjoint : NeZero (n ^ n_copies * Fintype.card (Fin n_copies → X)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have hdefect : iidAEPTraceDefect ρ n_copies W
       = (iidAEPTensorState ρ n_copies).toJointDensity.trace
@@ -321,7 +321,7 @@ theorem iidAEPBitEntropyFloor_le_smoothRate_of_smoothApproxReal
     [Nonempty (Fin n_copies → X)]
     (ε : ℝ) (_hε : 0 ≤ ε)
     (W : IIDAEPSpectralWitness X n n_copies)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε
       (iidAEPTensorState ρ n_copies)
       (iidAEPTensorReference σ n_copies))))
     (h_smooth :

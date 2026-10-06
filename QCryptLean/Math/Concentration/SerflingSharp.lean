@@ -150,7 +150,7 @@ theorem serfling_upper_tail_sharp_le
         {ω | populationFreq seq + δ ≤ empiricalFreqOf seq (sampleFn ω)} ⊆
           {ω | populationFreq seq + δ' < empiricalFreqOf seq (sampleFn ω)} := by
       intro ω hω
-      simp only [Set.mem_setOf_eq] at hω ⊢
+      simp only [Set.mem_ofPred_eq] at hω ⊢
       linarith
     calc
       P.real {ω | populationFreq seq + δ ≤ empiricalFreqOf seq (sampleFn ω)}
@@ -259,7 +259,7 @@ theorem serfling_tlgr_mu_upper_tail
       {ω | empiricalFreqOf seq (sampleFn ω) ≥ complementFreq seq (sampleFn ω) + μ} =
         {ω | populationFreq seq + δ ≤ empiricalFreqOf seq (sampleFn ω)} := by
     ext ω
-    simp only [Set.mem_setOf_eq, ge_iff_le]
+    simp only [Set.mem_ofPred_eq, ge_iff_le]
     have hcons := freq_conservation seq (sampleFn ω) hn (by omega : n < n + k)
     push_cast at hcons
     set e := empiricalFreqOf seq (sampleFn ω) with he

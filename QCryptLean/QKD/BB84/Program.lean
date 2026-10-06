@@ -96,9 +96,10 @@ def selectedBitsToRawProgram (N n : ℕ) :
     Program (Measurement.weightedSelectedRecordSystem N n)
       (.leaf (FinalStage.rawSystem n)) :=
   cast (by
-    simp only [selectedBitsToRawAliceAction, selectedBitsToRawBobAction,
-      PrivateAction.out_ofInstrument, Measurement.weightedSelectedRecordSystem,
-      FinalStage.rawSystem, TwoParty.set_alice, TwoParty.set_bob])
+    apply congrArg (fun R => Program (Measurement.weightedSelectedRecordSystem N n) (.leaf R))
+    change ((Measurement.weightedSelectedRecordSystem N n).set .alice
+      (Fin (2 ^ n))).set .bob (Fin (2 ^ n)) = _
+    rw [Measurement.weightedSelectedRecordSystem, TwoParty.set_alice, TwoParty.set_bob])
     ((selectedBitsToRawAliceAction N n).then (selectedBitsToRawBobAction N n).run)
 
 /-! ## Stage 4 — disclose the tests, the seed, the tag and the syndrome -/
@@ -159,11 +160,11 @@ theorem lateSelectionLeaf_system (N nK mZ mX : ℕ) (omega : Sampling.RawControl
   unfold Measurement.lateSelectionLeaf
   split
   · rename_i h
-    rw [if_pos h]
+    rw [ite_eq_left h]
     intro e
     rfl
   · rename_i h
-    rw [if_neg h]
+    rw [ite_eq_right h]
     intro e
     rfl
 
@@ -251,7 +252,7 @@ noncomputable def completeContinuation
       have h' : Sampling.HasQuotas nK mZ mX ⟨a, b, order⟩ := by
         simpa [lateSelectionExitEquiv] using h
       change (Measurement.lateSelectionLeaf N nK mZ mX ⟨a, b, order⟩).system leaf = _
-      rw [lateSelectionLeaf_system, if_pos h']
+      rw [lateSelectionLeaf_system, ite_eq_left h']
     have hout : completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC e =
         rawClassicalTailBoundary (nK + mZ + mX) (mZ + mX) ℓ ℓEV
           (@Sampling.packedPESel nK mZ mX) leakEC := by
@@ -264,7 +265,7 @@ noncomputable def completeContinuation
       have h' : ¬Sampling.HasQuotas nK mZ mX ⟨a, b, order⟩ := by
         simpa [lateSelectionExitEquiv] using h
       change (Measurement.lateSelectionLeaf N nK mZ mX ⟨a, b, order⟩).system leaf = _
-      rw [lateSelectionLeaf_system, if_neg h']
+      rw [lateSelectionLeaf_system, ite_eq_right h']
     have hout : completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC e =
         .leaf Measurement.lateSelectionAbortSystem := by
       simp [completeContinuationBoundary, h]
@@ -353,8 +354,7 @@ theorem completeContinuationOutputLayout_alice
     (e : (Measurement.lateSelectionBoundary N nK mZ mX).Exit) :
     (completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC e).alice = .alice := by
   unfold completeContinuationOutputLayout
-  split <;> simp [rawClassicalTailOutputLayout,
-    QKD.OutputLayout.graftFixedParties, lateSelectionAbortOutputLayout]
+  split <;> exact QKD.OutputLayout.transport_alice _ _
 
 /-- The quota-dependent continuation layout keeps Bob as its named key owner. -/
 theorem completeContinuationOutputLayout_bob
@@ -362,8 +362,7 @@ theorem completeContinuationOutputLayout_bob
     (e : (Measurement.lateSelectionBoundary N nK mZ mX).Exit) :
     (completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC e).bob = .bob := by
   unfold completeContinuationOutputLayout
-  split <;> simp [rawClassicalTailOutputLayout,
-    QKD.OutputLayout.graftFixedParties, lateSelectionAbortOutputLayout]
+  split <;> exact QKD.OutputLayout.transport_bob _ _
 
 /-- Local Alice/Bob key ownership across quota success, shortage abort, and the final semantic
 accept/abort flag, while preserving the complete public exit. -/

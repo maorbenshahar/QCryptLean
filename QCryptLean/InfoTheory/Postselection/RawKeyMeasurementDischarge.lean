@@ -112,17 +112,17 @@ theorem referenceSecrecy_eq_seedKeyExtractor_traceDistanceGen
         (InfoTheory.QuantumLHL.seedKeyExtractorOutputState H ρ_EnV).toJointDensity.toOp
         (InfoTheory.QuantumLHL.seedUniformOutputState
           ρ_EnV.quantumMarginal).toJointDensity.toOp := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (r * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (r * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero hr.out Fintype.card_ne_zero⟩
-  haveI := M.toProtocol.keyDim_neZero
-  haveI := M.toProtocol.annDim_neZero
-  haveI : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim) :=
+  have := M.toProtocol.keyDim_neZero
+  have := M.toProtocol.annDim_neZero
+  have : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim) :=
     ⟨Nat.pos_iff_ne_zero.mp
       (Nat.mul_pos M.toProtocol.keyDim_neZero.pos M.toProtocol.annDim_neZero.pos)⟩
-  haveI hknz : NeZero ((dA * dB) ^ n) :=
+  have hknz : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
-  haveI : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim * (dA * dB) ^ n) :=
+  have : NeZero (M.toProtocol.keyDim * M.toProtocol.annDim * (dA * dB) ^ n) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero M.toProtocol.keyDim_neZero.ne M.toProtocol.annDim_neZero.ne)
       (pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)))⟩
   set X := mapTensorId (k := (dA * dB) ^ n) (M.toProtocol.roundDifferenceMap l')
@@ -135,8 +135,8 @@ theorem referenceSecrecy_eq_seedKeyExtractor_traceDistanceGen
   -- and `mapTensorId` preserves Hermiticity of the (Hermitian) de Finetti mixture purification.
   have hXherm : X.IsHermitian := by
     rw [hX_def]
-    haveI := M.toProtocol.keyDim_neZero
-    haveI := M.toProtocol.annDim_neZero
+    have := M.toProtocol.keyDim_neZero
+    have := M.toProtocol.annDim_neZero
     exact Quantum.Channels.mapTensorId_preserves_hermitian
       (M.toProtocol.roundDifferenceMap l')
       (fun Mat => M.toProtocol.roundDifferenceMap_conjTranspose l' Mat)

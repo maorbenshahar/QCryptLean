@@ -462,8 +462,8 @@ private lemma concaveOn_sq_log :
     have ha' : (0 : ℝ) < a := lt_trans (Real.exp_pos 1) ha
     have hb' : (0 : ℝ) < b := lt_trans (Real.exp_pos 1) hb
     rw [(hderiv a ha').deriv, (hderiv b hb').deriv]
-    have h := Real.log_div_self_antitoneOn (Set.mem_setOf.mpr ha.le)
-      (Set.mem_setOf.mpr hb.le) hab
+    have h := Real.log_div_self_antitoneOn (Set.mem_ofPred.mpr ha.le)
+      (Set.mem_ofPred.mpr hb.le) hab
     simp only at h
     linarith
 
@@ -1271,7 +1271,7 @@ private lemma mulVec_eq_zero_of_le {m : Type*} [Fintype m]
   have h3 : star v ⬝ᵥ ((B - A).mulVec v) = - (star v ⬝ᵥ (A.mulVec v)) := by
     rw [Matrix.sub_mulVec, hv, dotProduct_sub, dotProduct_zero, zero_sub]
   rw [h3] at h1
-  exact (hApsd.dotProduct_mulVec_zero_iff v).mp
+  exact hApsd.dotProduct_mulVec_zero_iff.mp
     (le_antisymm (neg_nonneg.mp h1) h2)
 
 /-- The `hsupp` side condition of the divergence bounds, on the cq instance: the pinned

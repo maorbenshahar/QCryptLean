@@ -46,11 +46,11 @@ lemma traceDistanceGen_extractorOutput_le_purifiedDistance
         (extractorOutputState H ρ).toJointDensity.toOp
         (extractorOutputState H ρ').toJointDensity.toOp ≤
       CQState.purifiedDistance ρ ρ' := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   -- STEP 1: extractor contracts the generalized trace distance on joint densities.
   have hStep1 := traceDistanceGen_extractorOutput_le H ρ ρ'
@@ -83,11 +83,11 @@ lemma traceDistanceGen_uniformOutput_le_marginal_purifiedDistance
         (uniformOutputState ρ.quantumMarginal : CQState Z n).toJointDensity.toOp
         (uniformOutputState ρ'.quantumMarginal : CQState Z n).toJointDensity.toOp ≤
       CQState.purifiedDistance ρ ρ' := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   -- Stage 1: collapse uniform-output to the quantum marginals.
   rw [traceDistanceGen_uniformOutput_eq]

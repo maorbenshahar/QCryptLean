@@ -162,7 +162,7 @@ lemma goodBranchBlockOp_opLe_integral_weight_of_ae_bound
         opLe ((f τ).stateMap x).toOp (Complex.ofReal (lam τ) • σ_ref.toOp)) :
     opLe (goodBranchBlockOp μ f goodSet x)
       (Complex.ofReal (∫ τ in goodSet, lam τ ∂μ.measure) • σ_ref.toOp) := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   intro v
   rw [goodBranchBlockOp_eq_setIntegral μ f goodSet x h_int.restrict]
   rw [Quantum.Operators.quadraticForm_re_setIntegral goodSet

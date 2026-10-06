@@ -132,7 +132,7 @@ theorem smoothMinEntropyReal_ge_of_smul_opLe_of_marginalDominated
     (g : ℝ) (hg : 1 ≤ g)
     (hmarg : opLe ρ.quantumMarginalOp σ.toOp)
     (hdom : opLe σ.toOp ((g : ℂ) • σ'.toOp))
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ'))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ'))) :
     smoothMinEntropyReal ε ρ σ - Real.log g / Real.log 2 ≤ smoothMinEntropyReal ε ρ σ' := by
   have hg0 : 0 ≤ g := le_trans zero_le_one hg
   have hlog_g_nonneg : 0 ≤ Real.log g := Real.log_nonneg hg
@@ -183,7 +183,7 @@ theorem smoothMinEntropyReal_coarsen_le_of_exists_lift
     [Fintype Y] [DecidableEq Y] [Nonempty Y] {d : ℕ} [NeZero d]
     (g : X → Y) (ρ : CQState X d) (σ : SubDensityOp d) (hσ : σ.toOp.PosDef)
     (ε : ℝ) (hε_nn : 0 ≤ ε)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)))
     (hlift : ∀ τ : CQState Y d, CQState.purifiedDistance (CQState.coarsen g ρ) τ ≤ ε →
       ∃ τ' : CQState X d, CQState.purifiedDistance ρ τ' ≤ ε ∧ CQState.coarsen g τ' = τ) :
     smoothMinEntropyReal ε (CQState.coarsen g ρ) σ ≤ smoothMinEntropyReal ε ρ σ := by

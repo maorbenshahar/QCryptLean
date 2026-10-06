@@ -87,10 +87,10 @@ private lemma tensorFinProd_maxMixed_aux {d : ℕ} [NeZero d] (n : ℕ) :
       fin_cases j
       simp
   | succ k ih =>
-      haveI : NeZero (d ^ k) := NeZero.pow
-      haveI : NeZero (d * d ^ k) :=
+      have : NeZero (d ^ k) := NeZero.pow
+      have : NeZero (d * d ^ k) :=
         ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne (d ^ k))⟩
-      haveI : NeZero (d ^ (k + 1)) := NeZero.pow
+      have : NeZero (d ^ (k + 1)) := NeZero.pow
       change SubDensityOp.castDim (by ring : d * d ^ k = d ^ (k + 1))
           ((DensityOp.toSubDensityOp (DensityOp.maxMixed d)).tensor
             (SubDensityOp.tensorFinProd k

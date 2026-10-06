@@ -64,9 +64,9 @@ theorem smoothMinEntropyReal_ge_of_posDef_ref_aux
       have hzero : minFeasibleLambda ρ' σref = 0 := le_antisymm hpos hlam_nn
       rw [hzero, Real.log_zero, neg_zero, zero_div]
       exact hk_nonpos
-  by_cases hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σref))
+  by_cases hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σref))
   · -- Honest branch: the center state witnesses membership in the smoothing set.
-    have hmem : conditionalMinEntropyReal ρ σref ∈ setOf (isInSmoothedSetReal ε ρ σref) :=
+    have hmem : conditionalMinEntropyReal ρ σref ∈ Set.ofPred (isInSmoothedSetReal ε ρ σref) :=
       ⟨ρ, rfl, by rw [CQState.purifiedDistance_self_zero]; exact hε⟩
     exact le_trans (hpt ρ) (le_csSup hbdd hmem)
   · -- Junk branch: the `sSup` of a non-`BddAbove` set is `0`.

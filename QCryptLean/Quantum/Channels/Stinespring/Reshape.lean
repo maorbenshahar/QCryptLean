@@ -1,6 +1,6 @@
 import Mathlib.Data.Matrix.Basis
 import Mathlib.Data.Matrix.Mul
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.LinearAlgebra.Matrix.ConjTranspose
@@ -118,7 +118,7 @@ lemma idTensorBlock_mul_apply {n m r : ℕ}
   simp_rw [hb]
   rw [Finset.sum_ite_eq Finset.univ a
       (fun b => ∑ f, W e f * U (finProdFinEquiv (b, f)) i)]
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
 
 /-- Key algebraic identity: reshape of `(I_m ⊗ W) · U` equals `(reshape U) · Wᵀ`.
 

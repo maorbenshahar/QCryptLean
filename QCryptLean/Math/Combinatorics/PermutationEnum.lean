@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Analysis.Real.Sqrt
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 
 /-!
 # Permutation enumeration and small Fin / complex-arithmetic lemmas

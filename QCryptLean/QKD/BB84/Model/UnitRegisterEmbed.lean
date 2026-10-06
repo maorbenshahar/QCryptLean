@@ -59,7 +59,7 @@ identity Kraus map cast along `4 ^ n = 4 ^ n * 1`.  No attack object is named an
 statement or in the proof, which is what lets the bare channels carry attack-free CPTP proofs. -/
 theorem bb84UnitRegisterEmbed_isCPTP (n : ℕ) [NeZero (4 ^ n)] :
     IsCPTP (⇑(bb84UnitRegisterEmbed n)) := by
-  haveI : NeZero (4 ^ n * 1) := ⟨by simp⟩
+  have : NeZero (4 ^ n * 1) := ⟨by simp⟩
   exact KrausRepresentation.is_cptp ((idKrausRep (4 ^ n)).castOutput (Nat.mul_one (4 ^ n)).symm)
 
 /-- **The unit register embedding is `A ↦ A ⊗ 1₁`** (the identity on the signal, tensored with the
@@ -70,7 +70,8 @@ theorem bb84UnitRegisterEmbed_apply (n : ℕ) (A : Op (4 ^ n)) :
     ((idKrausRep (4 ^ n)).castOutput (Nat.mul_one (4 ^ n)).symm).operators A = _
   rw [krausMapFintype_castOutput]
   have hid : krausMapFintype (idKrausRep (4 ^ n)).operators A = A := by
-    simp [idKrausRep, krausMapFintype]
+    change (∑ _ : Fin 1, (1 : Op (4 ^ n)) * A * (1 : Op (4 ^ n))ᴴ) = A
+    simp
   rw [show (Nat.mul_one (4 ^ n)).symm ▸ krausMapFintype (idKrausRep (4 ^ n)).operators A
         = Op.castDim (Nat.mul_one (4 ^ n)).symm
             (krausMapFintype (idKrausRep (4 ^ n)).operators A) from rfl,

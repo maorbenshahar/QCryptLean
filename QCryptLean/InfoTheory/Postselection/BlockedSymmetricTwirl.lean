@@ -41,8 +41,8 @@ lemma groupPairedTwirlProjector_mul_symmetricProjectorPaired_trace {G : Type*} [
     (hx : (groupTwirlProjector π).trace = (x : ℂ)) :
     (groupPairedTwirlProjector n π * symmetricProjectorPaired d n).trace =
       (deFinettiPrefactor x n : ℂ) := by
-  haveI : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
-  haveI : NeZero x := ⟨Nat.cast_ne_zero.mp (by
+  have : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero x := ⟨Nat.cast_ne_zero.mp (by
     rw [← hx]
     exact groupTwirlProjector_trace_ne_zero π hπ)⟩
   have hflat : Matrix.reindex (interleavingEquivGen d d n) (interleavingEquivGen d d n)
@@ -81,7 +81,7 @@ lemma groupBlockedSymmetricTwirl_isOrthogonalProjection
     let Q := groupBlockedTwirlProjector πA πB *
       symmetricProjectorPairedGen dA (dA * dB ^ 2) n
     Q.IsHermitian ∧ Q * Q = Q := by
-  haveI : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
+  have : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   obtain ⟨hG, hGG⟩ := groupBlockedTwirlProjector_isOrthogonalProjection
     (n := n) πA hπA πB hπB
   have hP := symmetricProjectorPairedGen_isHermitian dA (dA * dB ^ 2) n
@@ -104,7 +104,7 @@ lemma groupBlockedSymmetricTwirl_mul_reindex_of_supported
     let e := pairedToBlockedEquiv dA dB n
     (groupBlockedTwirlProjector πA πB * symmetricProjectorPairedGen dA (dA * dB ^ 2) n) *
       Matrix.reindex e e X = Matrix.reindex e e X := by
-  haveI : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
+  have : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   intro e
   have hG' := congrArg (Matrix.reindexAlgEquiv ℂ ℂ e) hG
   simp only [map_mul, Matrix.coe_reindexAlgEquiv] at hG'
@@ -156,7 +156,7 @@ lemma groupBlockedSymmetricTwirl_trace
     (hx : (groupTwirlProjector (prodRep πA πB)).trace = (x : ℂ)) :
     (groupBlockedTwirlProjector πA πB * symmetricProjectorPairedGen dA (dA * dB ^ 2) n).trace =
       (deFinettiPrefactor x n : ℂ) := by
-  haveI : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
   rw [groupBlockedTwirlProjector, ← pairedToBlockedEquiv_conjugates_projector,
     ← Matrix.reindex_mul, Matrix.trace_reindex_self]
   exact groupPairedTwirlProjector_mul_symmetricProjectorPaired_trace _
@@ -171,9 +171,9 @@ lemma groupBlockedSymmetricTwirl_partialTraceB_posDef
     (πB : G_B → Op dB) (hπB : IsUnitaryRep πB) :
     (partialTraceB (groupBlockedTwirlProjector πA πB *
       symmetricProjectorPairedGen dA (dA * dB ^ 2) n)).PosDef := by
-  haveI : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
-  haveI : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
+  have : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
+  have : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   let ρ := DensityOp.maxMixed ((dA * dB) ^ n)
   have hperm : IsPermutationInvariant ρ := by
     apply (isPermutationInvariant_iff_commutes ρ).mpr
@@ -232,7 +232,7 @@ lemma groupBlockedSymmetricTwirl_partialTraceB_commute
     (πB : G_B → Op dB) (hπB : IsUnitaryRep πB) :
     let Q := groupBlockedTwirlProjector πA πB * symmetricProjectorPairedGen dA (dA * dB ^ 2) n
     Commute (Op.tensor (partialTraceB Q) (1 : Op ((dA * dB ^ 2) ^ n))) Q := by
-  haveI : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
+  have : NeZero (dA * dB ^ 2) := ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   intro Q
   obtain ⟨hGherm, hGG⟩ := groupBlockedTwirlProjector_isOrthogonalProjection (n := n) πA hπA πB hπB
   have hPherm := symmetricProjectorPairedGen_isHermitian dA (dA * dB ^ 2) n
@@ -265,9 +265,9 @@ lemma groupBlockedSymmetricTwirl_eq_referenceHaar
       Op.tensor (CFC.sqrt κ) (1 : Op ((dA * dB ^ 2) ^ n)) *
         (groupBlockedTwirlProjector πA πB * symmetricProjectorPairedGen dA (dA * dB ^ 2) n) *
         Op.tensor (CFC.sqrt κ) (1 : Op ((dA * dB ^ 2) ^ n)) := by
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
-  letI := hκ.isUnit.invertible
+  let := hκ.isUnit.invertible
   let Q := groupBlockedTwirlProjector (n := n) πA πB *
     symmetricProjectorPairedGen dA (dA * dB ^ 2) n
   have hQ : Q.IsHermitian :=
@@ -315,7 +315,7 @@ theorem exists_flatten_groupSymmetricTwirl
   refine ⟨Ω⁻¹, hΩ.inv.posSemidef, hΩ.inv.isUnit, ?_, ?_⟩
   · exact tensor_inv_one_commute hΩ.isUnit
       (groupBlockedSymmetricTwirl_partialTraceB_commute πA hπA πB hπB)
-  · letI := hΩ.isUnit.invertible
+  · let := hΩ.isUnit.invertible
     exact Matrix.inv_inv_of_invertible Ω
 
 /-- The locally normalized group-symmetric reference remains supported on the
@@ -336,8 +336,8 @@ lemma groupBlockedReference_group_supported
     let T := S * (W * (groupBlockedTwirlProjector πA πB *
       symmetricProjectorPairedGen dA (dA * dB ^ 2) n) * W) * S
     groupBlockedTwirlProjector πA πB * T = T := by
-  haveI : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  letI := hκ.isUnit.invertible
+  have : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  let := hκ.isUnit.invertible
   let G := groupBlockedTwirlProjector (n := n) πA πB
   let Q := G * symmetricProjectorPairedGen dA (dA * dB ^ 2) n
   let A := (σA.tensorPowGen n).toOp
@@ -378,10 +378,10 @@ lemma groupReferenceOrbit_partialTrace_isInvariant
     IsGroupInvariantState (prodRep πA πB)
       (densityOp_reindex
         (finCongr (show dA * (dA * dB ^ 2) = (dA * dB) * (dA * dB) by ring)) τ).partialTraceB := by
-  letI := Fintype.ofFinite G_A
-  letI := Fintype.ofFinite G_B
-  haveI : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero (dA * dB ^ 2) :=
+  let := Fintype.ofFinite G_A
+  let := Fintype.ofFinite G_B
+  have : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB ^ 2) :=
     ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   let G := groupBlockedTwirlProjector (n := n) πA πB
   let S := Op.tensor (CFC.sqrt (σA.tensorPowGen n).toOp) (1 : Op ((dA * dB ^ 2) ^ n))
@@ -449,7 +449,7 @@ lemma exists_groupMeasure_of_blockedReference
           symmetricProjectorPairedGen dA (dA * dB ^ 2) n) * W) * S))
         = (deFinettiMixtureFixedMarginal dA dB n μ).toOp := by
   classical
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   let r := groupReferenceRep πA hπA πB hπB
   let ν := unitaryCentralizerHaar r

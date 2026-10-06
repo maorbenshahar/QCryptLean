@@ -144,8 +144,8 @@ theorem CQState.exists_left_isometry_supported_extension
         Op.tensor (1 : Op dE) (V * Vᴴ) * (ρhat.stateMap x).toOp *
             Op.tensor (1 : Op dE) (V * Vᴴ) = (ρhat.stateMap x).toOp) := by
   classical
-  haveI : NeZero (dE * dSrc) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dSrc)⟩
-  haveI : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
+  have : NeZero (dE * dSrc) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dSrc)⟩
+  have : NeZero (dE * dR) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   set K : Matrix (Fin (dE * dR)) (Fin (dE * dSrc)) ℂ :=
     kronIdLeftIso (dH := dE) V with hK_def
   have hK_iso : Kᴴ * K = (1 : Matrix (Fin (dE * dSrc)) (Fin (dE * dSrc)) ℂ) := by
@@ -268,7 +268,7 @@ theorem smoothMinEntropyReal_left_isometry_embed_arbitraryRef_le
     (hρ_embed : ∀ x : α, (ρ_embed.stateMap x).toOp = K * (ρ.stateMap x).toOp * Kᴴ)
     (σ_embed : SubDensityOp dTgt)
     (hσ_embed : σ_embed.toOp = K * σ.toOp * Kᴴ)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ_embed σ_embed))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ_embed σ_embed))) :
     smoothMinEntropyReal ε ρ σ ≤ smoothMinEntropyReal ε ρ_embed σ_embed := by
   unfold smoothMinEntropyReal
   apply csSup_le_csSup hbdd

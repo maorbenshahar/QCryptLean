@@ -288,7 +288,7 @@ lemma reindex_preserves_traceDistance {m n : ℕ} [NeZero m]
       exact NeZero.ne m (hcard.trans hn)⟩
     traceDistance (densityOp_reindex e A).toOp (densityOp_reindex e B).toOp =
     traceDistance A.toOp B.toOp := by
-  letI : NeZero n := ⟨by
+  let : NeZero n := ⟨by
     intro hn
     have hcard : m = n := by simpa using Fintype.card_congr e
     exact NeZero.ne m (hcard.trans hn)⟩
@@ -344,9 +344,9 @@ lemma partialTraceB_tensorPow_eq {d k : ℕ} [NeZero d]
     τ.partialTraceB.tensorPowGen k =
     (densityOp_reindex (interleavingEquiv d k).symm
       (τ.tensorPowGen k)).partialTraceB := by
-  haveI : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
-  haveI : NeZero (d ^ k) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
-  haveI : NeZero ((d * d) ^ k) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
+  have : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero (d ^ k) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
+  have : NeZero ((d * d) ^ k) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
   apply DensityOp.ext; ext i j
   -- Setup: decode i,j as digit tuples α,β
   set tie_d := @finFunctionFinEquiv d k
@@ -479,16 +479,16 @@ lemma partialTraces_commute_interleave {d n : ℕ} [NeZero d] [NeZero n]
     partialTraceToFirstK k hk Ψ.partialTraceB =
       (densityOp_reindex (interleavingEquiv d k).symm
         (partialTraceToFirstK k hk (reindexInterleave Ψ))).partialTraceB := by
-  haveI : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
-  haveI : NeZero ((d * d) ^ n) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
-  haveI : NeZero (d ^ k) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
-  haveI : NeZero ((d * d) ^ k) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
+  have : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
+  have : NeZero ((d * d) ^ n) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
+  have : NeZero (d ^ k) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
+  have : NeZero ((d * d) ^ k) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
   -- Both sides compute the same sum over entries of Ψ.toOp.
   -- The proof goes through digit decomposition and a change of summation variables.
-  haveI : NeZero (d ^ (n - k)) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
-  haveI : NeZero ((d * d) ^ (n - k)) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
-  haveI : NeZero (d ^ (n - k) * d ^ (n - k)) :=
+  have : NeZero (d ^ (n - k)) := ⟨pow_ne_zero _ (NeZero.ne d)⟩
+  have : NeZero ((d * d) ^ (n - k)) := ⟨pow_ne_zero _ (NeZero.ne (d * d))⟩
+  have : NeZero (d ^ (n - k) * d ^ (n - k)) :=
     ⟨Nat.mul_pos (Nat.pos_of_ne_zero (NeZero.ne (d ^ (n - k))))
       (Nat.pos_of_ne_zero (NeZero.ne (d ^ (n - k)))) |>.ne'⟩
   apply DensityOp.ext; ext i j

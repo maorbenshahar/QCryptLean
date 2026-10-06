@@ -265,9 +265,9 @@ theorem minFeasibleLambda_ge_of_rankOne_blocks
     · have hempty : ∀ t, ¬ isFeasible ρ σ t := by
         intro t ht
         exact hfeas ⟨t, ht.1, fun x => opLe_trans (hsub x) (ht.2 x)⟩
-      have hsetρ : setOf (isFeasible ρ σ) = ∅ :=
+      have hsetρ : Set.ofPred (isFeasible ρ σ) = ∅ :=
         Set.eq_empty_iff_forall_notMem.mpr hempty
-      have hsetR : setOf (isFeasible R σ) = ∅ :=
+      have hsetR : Set.ofPred (isFeasible R σ) = ∅ :=
         Set.eq_empty_iff_forall_notMem.mpr (fun t ht => hfeas ⟨t, ht⟩)
       have hρ0 : minFeasibleLambda ρ σ = 0 := by
         rw [minFeasibleLambda, hsetρ, Real.sInf_empty]

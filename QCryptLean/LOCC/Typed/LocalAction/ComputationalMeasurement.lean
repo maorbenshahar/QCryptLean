@@ -84,15 +84,25 @@ theorem computationalMeasurement_liftedChannel_apply
         ((R.splitAtSet i (R.reg i)).symm (R.splitAt i q')) =
       if ((R.splitAt i) q).1 = ((R.splitAt i) q').1 then rho q q' else 0 := by
   classical
-  simp only [LinearMap.sum_apply, Matrix.sum_apply]
-  simp_rw [computationalMeasurement_liftedOperation_apply]
+  let L : R.reg i → Op R.total →ₗ[ℂ] Op (computationalMeasurement R i).out.total :=
+    fun o => (computationalMeasurement R i).liftedOperation o
+  change (∑ o, L o) rho ((R.splitAtSet i (R.reg i)).symm (R.splitAt i q))
+    ((R.splitAtSet i (R.reg i)).symm (R.splitAt i q')) = _
+  rw [LinearMap.sum_apply]
+  refine (Matrix.sum_apply _ _ Finset.univ (fun o => L o rho)).trans ?_
+  have hL (o : R.reg i) : L o rho
+      ((R.splitAtSet i (R.reg i)).symm (R.splitAt i q))
+      ((R.splitAtSet i (R.reg i)).symm (R.splitAt i q')) =
+      if ((R.splitAt i) q).1 = o ∧ ((R.splitAt i) q').1 = o then rho q q' else 0 :=
+    computationalMeasurement_liftedOperation_apply R i o rho q q'
+  refine (Finset.sum_congr rfl (fun o _ => hL o)).trans ?_
   by_cases h : ((R.splitAt i) q).1 = ((R.splitAt i) q').1
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     simp [h]
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     apply Finset.sum_eq_zero
     intro o _
-    rw [if_neg]
+    rw [ite_eq_right]
     intro ho
     exact h (ho.1.trans ho.2.symm)
 

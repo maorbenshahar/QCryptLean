@@ -167,7 +167,7 @@ lemma bb84RefereeSiftedSingleRoundRefBlock_false_toOp_entry
       ψ.toOp (finProdFinEquiv (k, r)) (finProdFinEquiv (k, r')) := by
   rw [bb84RefereeSiftedSingleRoundRefBlock_toOp_entry, bb84RefereeSiftedConditionOp_false]
   simp only [bb84ComputationalPOVM, Matrix.single_apply, ite_mul, one_mul, zero_mul, ite_and,
-    Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 /-- The single-round sifted conditioning operators sum to the identity over the outcome `k`
 (`∑_k Vᴴ |k⟩⟨k| V = Vᴴ (∑_k |k⟩⟨k|) V = Vᴴ V = 1`). -/
@@ -258,18 +258,18 @@ theorem bb84_mapTensorId_unitRegisterEmbed_eq_castDim {n : ℕ} [NeZero (4 ^ n)]
           (finProdFinEquiv.symm (finProdFinEquiv.symm q).1).1 := by
     intro i j
     rw [bb84UnitRegisterEmbed_apply, Op_tensor_apply_finProd, Matrix.one_apply,
-      if_pos (Subsingleton.elim _ _), mul_one]
+      ite_eq_left (Subsingleton.elim _ _), mul_one]
   simp only [hΦ, Matrix.single_apply]
   rw [Finset.sum_eq_single (finProdFinEquiv.symm (finProdFinEquiv.symm p).1).1]
   · rw [Finset.sum_eq_single (finProdFinEquiv.symm (finProdFinEquiv.symm q).1).1]
-    · rw [if_pos ⟨rfl, rfl⟩, one_mul]
+    · rw [ite_eq_left ⟨rfl, rfl⟩, one_mul]
       congr 1 <;> exact unitFactor_collapse_idx (by rw [Nat.mul_one]) _
     · intro j _ hj
-      rw [if_neg (fun hcon => hj hcon.2), zero_mul]
+      rw [ite_eq_right (fun hcon => hj hcon.2), zero_mul]
     · intro hcon; exact absurd (Finset.mem_univ _) hcon
   · intro i _ hi
     refine Finset.sum_eq_zero (fun j _ => ?_)
-    rw [if_neg (fun hcon => hi hcon.1), zero_mul]
+    rw [ite_eq_right (fun hcon => hi hcon.1), zero_mul]
   · intro hcon; exact absurd (Finset.mem_univ _) hcon
 
 /-! ## (d) The PE-pass predicate on sorted PE outcomes, and the PE-round product factor `ρ_PE` -/

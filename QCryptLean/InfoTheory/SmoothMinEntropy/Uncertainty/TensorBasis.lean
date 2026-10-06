@@ -126,15 +126,15 @@ def tensor (P₁ : RankOneProjectiveBasis d₁) (P₂ : RankOneProjectiveBasis d
     rw [Ket.dag_tensor, bra_tensor_mul_ket_tensor, P₁.orthonormal, P₂.orthonormal]
     by_cases h : i = j
     · subst h; simp
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have hne : (finProdFinEquiv.symm i).1 ≠ (finProdFinEquiv.symm j).1 ∨
           (finProdFinEquiv.symm i).2 ≠ (finProdFinEquiv.symm j).2 := by
         by_contra hc
         push Not at hc
         exact h (finProdFinEquiv.symm.injective (Prod.ext_iff.mpr hc))
       rcases hne with h1 | h2
-      · rw [if_neg h1, zero_mul]
-      · rw [if_neg h2, mul_zero]
+      · rw [ite_eq_right h1, zero_mul]
+      · rw [ite_eq_right h2, mul_zero]
   complete := by
     have step : ∀ k : Fin (d₁ * d₂),
         (P₁.vec (finProdFinEquiv.symm k).1 ⊗ P₂.vec (finProdFinEquiv.symm k).2) *

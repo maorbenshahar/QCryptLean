@@ -234,8 +234,8 @@ theorem Op.tensorPow_diagonal (v : Fin d → ℂ) (n : ℕ) :
   by_cases hfg : f = g
   · subst hfg; simp
   · obtain ⟨k, hk⟩ := Function.ne_iff.mp hfg
-    rw [if_neg hfg]
-    exact Finset.prod_eq_zero (Finset.mem_univ k) (if_neg hk)
+    rw [ite_eq_right hfg]
+    exact Finset.prod_eq_zero (Finset.mem_univ k) (ite_eq_right hk)
 
 /-- The trace of a power is the power of the trace. -/
 @[simp] theorem Op.trace_tensorPow (M : Op d) (n : ℕ) :
@@ -314,9 +314,11 @@ theorem DensityOp.tensorPowGen_toOp {d : ℕ} [NeZero d] (ρ : DensityOp d) (n :
   induction n with
   | zero =>
     rw [Op.tensorPow_zero, DensityOp.tensorPowGen, densityOp_castDim_toOp]
+    change (DensityOp.trivial.toOp : Op 1) = 1
     ext i j
-    obtain rfl : i = j := Subsingleton.elim (α := Fin 1) i j
-    simp [Op.castDim_apply, DensityOp.trivial]
+    fin_cases i
+    fin_cases j
+    rfl
   | succ n ih =>
     rw [DensityOp.tensorPowGen, densityOp_castDim_toOp, Op.tensorPow_succ, ← ih]
     rfl

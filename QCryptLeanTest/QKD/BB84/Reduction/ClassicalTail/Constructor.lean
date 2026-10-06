@@ -40,7 +40,7 @@ theorem rawClassicalTailFinalPoint_decoder
   dsimp only
   by_cases hflag : QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec delta Q
       d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome (x .bob) = 0
-  · rw [if_pos hflag]
+  · rw [ite_eq_left hflag]
     let keys :=
       (QKD.BB84.Model.aliceKeySlotOf n ell peSel d.seedPair.1
           (QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec delta Q
@@ -54,33 +54,38 @@ theorem rawClassicalTailFinalPoint_decoder
     have hpoint :
         rawClassicalTailFinalPoint n m ell ellEV peSel xSel leakEC ec delta Q d x =
           (finalStageOutputEquiv ell).symm (Sum.inl keys) := by
-      apply (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).injective
-      simp only [rawClassicalTailFinalPoint, hflag, dif_pos,
-        Equiv.apply_symm_apply, finalStageOutputEquiv, Equiv.coe_fn_symm_mk,
-        Boundary.publicSpaceEquiv_apply]
-      simp [keys, hflag, finalStageLeafExit, FinalStage.flagBoundary,
-        Boundary.leafSpaceEquiv, TwoParty.pairEquiv]
-      rfl
+      have hdecode : (finalStageOutputEquiv ell).symm (Sum.inl keys) =
+          (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).symm
+            ⟨0, (Boundary.leafSpaceEquiv (FinalStage.keySystem ell)).symm
+              ((TwoParty.pairEquiv (Fin (2 ^ ell)) (Fin (2 ^ ell))).symm keys)⟩ := by
+        change (⟨⟨0, finalStageLeafExit ell 0⟩, _⟩ : (FinalStage.boundary ell).space) = _
+        rw [finalStageLeafExit_eq ell 0 ()]
+        rfl
+      refine (dite_eq_left hflag).trans (Eq.trans ?_ hdecode.symm)
+      apply congrArg (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).symm
+      exact Sigma.ext hflag (cast_heq _ _)
     rw [hpoint, (finalStageOutputEquiv ell).apply_symm_apply]
-  · rw [if_neg hflag]
+  · rw [ite_eq_right hflag]
     have hflag_one : QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec delta Q
         d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome (x .bob) = 1 :=
       Fin.eq_one_of_ne_zero _ hflag
     have hpoint :
         rawClassicalTailFinalPoint n m ell ellEV peSel xSel leakEC ec delta Q d x =
           (finalStageOutputEquiv ell).symm (Sum.inr ()) := by
-      apply (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).injective
-      simp only [rawClassicalTailFinalPoint, hflag_one, finalStageOutputEquiv,
-        Equiv.coe_fn_symm_mk,
-        Boundary.publicSpaceEquiv_apply]
-      simp only [Boundary.system_announce, Fin.isValue, one_ne_zero, ↓dreduceDIte,
-        eq_mpr_eq_cast, Sigma.mk.injEq]
-      refine ⟨hflag_one, ?_⟩
-      refine (cast_heq _ _).trans (heq_of_eq ?_)
-      apply Sigma.ext (Unit.ext _ _)
-      apply heq_of_eq
-      funext p
-      cases p <;> exact Unit.ext _ _
+      have hdecode : (finalStageOutputEquiv ell).symm (Sum.inr ()) =
+          (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).symm
+            ⟨1, (Boundary.leafSpaceEquiv FinalStage.abortSystem).symm
+              ((TwoParty.pairEquiv Unit Unit).symm ((), ()))⟩ := by
+        change (⟨⟨1, finalStageLeafExit ell 1⟩, _⟩ : (FinalStage.boundary ell).space) = _
+        rw [finalStageLeafExit_eq ell 1 ()]
+        refine Sigma.ext
+          (show (⟨1, ()⟩ : (FinalStage.boundary ell).Exit) = ⟨1, ()⟩ from rfl) ?_
+        apply heq_of_eq
+        funext p
+        cases p <;> rfl
+      refine (dite_eq_right hflag).trans (Eq.trans ?_ hdecode.symm)
+      apply congrArg (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).symm
+      exact Sigma.ext hflag_one (cast_heq _ _)
     rw [hpoint, (finalStageOutputEquiv ell).apply_symm_apply]
 
 end QKD.BB84.Reduction.DirectTailConstructorGate

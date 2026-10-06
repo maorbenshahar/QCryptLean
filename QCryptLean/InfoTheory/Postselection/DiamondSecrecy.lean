@@ -70,12 +70,12 @@ theorem PMQKDProtocol.isSecretAt_of_roundDifferenceMap_diamondNorm_le
         ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
       (1 / 2 : ℝ) * diamondNorm (P.roundDifferenceMap l') ≤ ε) :
     P.IsSecretAt l' σA ε := by
-  haveI := P.keyDim_neZero
-  haveI := P.annDim_neZero
-  haveI : NeZero (P.keyDim * P.annDim) :=
+  have := P.keyDim_neZero
+  have := P.annDim_neZero
+  have : NeZero (P.keyDim * P.annDim) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos P.keyDim_neZero.pos P.annDim_neZero.pos)⟩
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
   set e := roundGroupEquiv dA dB n with he_def
   set Δ := P.roundDifferenceMap l' with hΔ_def

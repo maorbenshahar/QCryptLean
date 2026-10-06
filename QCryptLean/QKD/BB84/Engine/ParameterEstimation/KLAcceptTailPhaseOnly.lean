@@ -76,7 +76,7 @@ theorem bb84_integral_onComponent_localPhaseBadBranch_le_klChernoff_exact_anyMea
     fun σ hσ =>
       bb84_onComponent_localPhaseBad_le_klChernoff_exactDev peSel xSel Q δ dev hdev
         σ hσ
-  haveI hProb : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
+  have hProb : MeasureTheory.IsProbabilityMeasure μ.measure := μ.isProbability
   have hInt : MeasureTheory.Integrable
       (bb84SiftedLocalAcceptProbabilityOnComponent n peSel xSel Q δ) μ.measure := by
     have hAE := (bb84SiftedLocalAcceptProbabilityOnComponent_continuous n peSel xSel Q
@@ -153,11 +153,11 @@ theorem bb84_rhoEtilde_phaseBadBranch_traceNorm_le_ofSourceCap_of_goodSet {n : �
               ∂(deFinetti_haarMeasure (signalDim * signalDim)).measure :
             Op (eveDim * (signalDim ^ n))).trace).re
       ≤ c * T := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hNd : NeZero (signalDim * signalDim) := ⟨by norm_num⟩
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hNd : NeZero (signalDim * signalDim) := ⟨by norm_num⟩
   set μ16 := (deFinetti_haarMeasure (signalDim * signalDim)).measure with hμ16
   set ckr := Quantum.Channels.ckrMixtureMeasure signalDim with hckr
-  haveI hckrProb : MeasureTheory.IsProbabilityMeasure ckr.measure := ckr.isProbability
+  have hckrProb : MeasureTheory.IsProbabilityMeasure ckr.measure := ckr.isProbability
   set S : Set (DensityOp signalDim) := goodSetᶜ with hS
   have hSmeas : MeasurableSet S := hgoodMeas.compl
   set Spaired : Set (DensityOp (signalDim * signalDim)) :=
@@ -401,7 +401,7 @@ theorem bb84_peLabelledRhoEtilde_acceptSplit_phaseBadBranch_traceNorm_le_ofSourc
           Op (signalDim ^ (n - bb84KeyRoundCount n m) *
             (eveDim * (signalDim ^ n)))).trace).re ≤
       c * T := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   have hsame : ∀ x : Fin n → Fin signalDim,
       (Matrix.of fun i j : Fin (signalDim ^ (n - bb84KeyRoundCount n m) *
             (eveDim * (signalDim ^ n))) =>
@@ -455,7 +455,7 @@ theorem bb84_peLabelledRhoEtilde_acceptSplit_phaseBadBranch_traceNorm_le_ofSourc
           Op (signalDim ^ (n - bb84KeyRoundCount n m) *
             (eveDim * (signalDim ^ n)))).trace).re ≤
       c * T := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   have hsame : ∀ x : Fin n → Fin signalDim,
       (Matrix.of fun i j : Fin (signalDim ^ (n - bb84KeyRoundCount n m) *
             (eveDim * (signalDim ^ n))) =>

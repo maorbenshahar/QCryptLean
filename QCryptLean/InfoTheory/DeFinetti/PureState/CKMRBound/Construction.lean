@@ -126,7 +126,7 @@ noncomputable def coherentState_deFinettiMeasure (d : ℕ) [NeZero d]
         have : ∫ g, postMeasurementWeight Ψ g ∂(haarProbUnitary d) = 1 :=
           schur_integral_trace d n Ψ _hsym
         rw [this]; simp
-      exact Measure.isProbabilityMeasure_map coherentSingleCopy_measurable.aemeasurable }
+      infer_instance }
 
 /-- The single-copy coherent state `|g₀⟩⟨g₀|` is a pure density operator
     for every `g ∈ U(d)`. Direct corollary of `DensityOp.fromPure_isPure`. -/
@@ -163,9 +163,9 @@ lemma coherentState_deFinettiMeasure_isProductStateMeasure
   -- Measurability of `{σ | σ.IsPure}`: same Borel-closed argument as for
   -- `deFinetti_haarMeasure_isProductStateMeasure`.
   have h_toOp : Continuous (fun σ : DensityOp d => σ.toOp) := continuous_induced_dom
-  have h_meas : MeasurableSet (setOf (fun σ : DensityOp d => σ.IsPure)) := by
-    have hset : setOf (fun σ : DensityOp d => σ.IsPure)
-        = setOf (fun σ : DensityOp d => σ.toOp * σ.toOp = σ.toOp) := rfl
+  have h_meas : MeasurableSet (Set.ofPred (fun σ : DensityOp d => σ.IsPure)) := by
+    have hset : Set.ofPred (fun σ : DensityOp d => σ.IsPure)
+        = Set.ofPred (fun σ : DensityOp d => σ.toOp * σ.toOp = σ.toOp) := rfl
     rw [hset]
     exact (isClosed_eq (h_toOp.mul h_toOp) h_toOp).measurableSet
   refine (MeasureTheory.ae_map_iff coherentSingleCopy_measurable.aemeasurable
@@ -249,13 +249,13 @@ lemma symmetric_perm_invariant_entry {d n : ℕ} [NeZero d] [NeZero n]
     rw [Finset.sum_eq_single_of_mem (e (f ∘ π)) (Finset.mem_univ _)]
     · -- This term has indicator = 1
       simp only [permutationRepresentation, Matrix.of_apply, hi_def, he_def]
-      rw [if_pos]
+      rw [ite_eq_left]
       · ring
       · ext l; simp [Function.comp_apply, Equiv.symm_apply_apply]
     · -- All other terms have indicator = 0
       intro k _ hk
       simp only [permutationRepresentation, Matrix.of_apply, hi_def, he_def]
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       intro heq
       apply hk
       -- From heq: f = e.symm k ∘ π.symm, so f ∘ π = e.symm k, so k = e(f ∘ π)
@@ -335,7 +335,7 @@ lemma bipartite_perm_invariant {d n : ℕ} [NeZero d] [NeZero n]
       -- RHS: (g ∘ ι) m — split on whether m < n-k
       change _ = g (ι m)
       by_cases hm : (m : ℕ) < n - k
-      · rw [dif_pos hm]
+      · rw [dite_eq_left hm]
         -- ι m = ⟨(σ ⟨m, hm⟩).val, ...⟩ when m < n-k
         have h_ι : ι m = ⟨(σ ⟨m.val, hm⟩).val, by omega⟩ := by
           change σ.extendDomain embed m = _
@@ -344,12 +344,12 @@ lemma bipartite_perm_invariant {d n : ℕ} [NeZero d] [NeZero n]
         change (f_c ∘ σ) ⟨m.val, hm⟩ = g (ι m)
         simp only [Function.comp_apply]
         rw [h_ι]; show f_c (σ ⟨↑m, hm⟩) = g ⟨(σ ⟨↑m, hm⟩).val, _⟩
-        simp only [g, dif_pos (σ ⟨m.val, hm⟩).isLt]
-      · rw [dif_neg hm]
+        simp only [g, dite_eq_left (σ ⟨m.val, hm⟩).isLt]
+      · rw [dite_eq_right hm]
         -- ι m = m when m ≥ n-k
         have h_ι : ι m = m := Equiv.Perm.extendDomain_apply_not_subtype σ embed hm
         change f_a ⟨↑m - (n - k), _⟩ = g (ι m)
-        rw [h_ι]; simp only [g, dif_neg hm]
+        rw [h_ι]; simp only [g, dite_eq_right hm]
     rw [← hfun, Equiv.apply_symm_apply]
   -- Apply symmetric_perm_invariant_entry
   rw [heq_σ, heq_c]
@@ -407,14 +407,14 @@ lemma symmetric_containment_bipartite {d n : ℕ} [NeZero d] [NeZero n]
     intro σ
     rw [Finset.sum_eq_single_of_mem (e (e.symm c ∘ ⇑σ)) (Finset.mem_univ _)]
     · -- The selected term: condition holds, gives 1 * Ψ(fPE(a, σ_action c), fPE(b, c))
-      rw [if_pos, one_mul]
+      rw [ite_eq_left, one_mul]
       · exact hinv σ
       · -- e.symm c = e.symm(e(e.symm c ∘ σ)) ∘ σ⁻¹ = (e.symm c ∘ σ) ∘ σ⁻¹ = e.symm c
         simp only [← he_def] at *
         ext l; simp only [Function.comp_apply, Equiv.symm_apply_apply, Equiv.apply_symm_apply]
     · -- All other terms: condition fails, gives 0 * Ψ(...) = 0
       intro c' _ hne
-      rw [if_neg, zero_mul]
+      rw [ite_eq_right, zero_mul]
       intro heq; apply hne
       -- From heq: e.symm c = e.symm c' ∘ σ⁻¹, derive c' = e(e.symm c ∘ σ)
       simp only [← he_def] at heq
@@ -441,7 +441,7 @@ lemma approx_integral_trace_re {d n : ℕ} [NeZero d] [NeZero n]
       ∂(haarProbUnitary d)).trace.re = 1 := by
   -- Strategy: Tr(∫ w(g)•M(g) dg) = ∫ Tr(w(g)•M(g)) dg = ∫ w(g)•1 dg = ∫ ↑w(g) dg
   -- then .re = ∫ w(g) dg = 1 by schur_integral_trace.
-  haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
   -- Step 0: Integrability
   have h_w_cont : Continuous (postMeasurementWeight Ψ) := by
     unfold postMeasurementWeight
@@ -526,7 +526,7 @@ lemma integralTensorPower_coherentState_eq {d n : ℕ} [NeZero d] [NeZero n]
   simp_rw [h_tensor_eq]
   -- Step 5: Pull entry selection inside Bochner integral on RHS
   symm
-  haveI : IsProbabilityMeasure haar := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure haar := haarProbUnitary_isProbability d
   have h_M_cont : Continuous (fun g : unitaryGroup (Fin d) ℂ =>
       (coherentStateDensityOp g k).toOp) :=
     continuous_matrix (fun a b => coherentStateDensityOp_entry_continuous a b)

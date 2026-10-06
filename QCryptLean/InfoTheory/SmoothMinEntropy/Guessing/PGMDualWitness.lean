@@ -227,7 +227,7 @@ lemma pgmDualWitness_objective_diff
            Matrix.trace_add, Matrix.trace_sub,
            apply_ite Matrix.trace, Matrix.trace_zero,
            Finset.sum_add_distrib, Finset.sum_sub_distrib,
-           Finset.sum_ite_eq', Finset.mem_univ, if_true]
+           Finset.sum_ite_eq', Finset.mem_univ, ite_true]
   rw [hC1, hET, hETdag, hC2, hETTdag]
   ring
 

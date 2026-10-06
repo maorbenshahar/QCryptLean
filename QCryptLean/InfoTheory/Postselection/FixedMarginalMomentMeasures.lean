@@ -29,12 +29,13 @@ def densityMeasureOfFamily {α : Type*} [MeasurableSpace α] {d : ℕ}
     (ν : Measure α) [IsProbabilityMeasure ν] (f : α → DensityOp d) (hf : Measurable f) :
     DensityMeasure d where
   measure := Measure.map f ν
-  isProbability := Measure.isProbabilityMeasure_map hf.aemeasurable
+  isProbability := ⟨by
+    rw [Measure.map_apply hf MeasurableSet.univ, Set.preimage_univ, measure_univ]⟩
 
 /-- A measurable property holds for the induced measure exactly when it holds almost surely. -/
 lemma densityMeasureOfFamily_ae_iff {α : Type*} [MeasurableSpace α] {d : ℕ}
     (ν : Measure α) [IsProbabilityMeasure ν] (f : α → DensityOp d) (hf : Measurable f)
-    (P : DensityOp d → Prop) (hP : MeasurableSet (setOf P)) :
+    (P : DensityOp d → Prop) (hP : MeasurableSet (Set.ofPred P)) :
     (∀ᵐ σ ∂(densityMeasureOfFamily ν f hf).measure, P σ) ↔ ∀ᵐ x ∂ν, P (f x) :=
   ae_map_iff hf.aemeasurable hP
 
@@ -43,8 +44,6 @@ lemma tensorPower_family_integrable {α : Type*} [MeasurableSpace α] {d n : ℕ
     [NeZero d] [NeZero n] (ν : Measure α) [IsProbabilityMeasure ν]
     (f : α → DensityOp d) (hf : Measurable f) :
     Integrable (fun x => ((f x).tensorPowGen n).toOp) ν := by
-  haveI : IsProbabilityMeasure (Measure.map f ν) :=
-    Measure.isProbabilityMeasure_map hf.aemeasurable
   exact continuous_tensorPowGen_toOp.integrable_of_compactSpace.comp_measurable hf
 
 /-- The induced measure has the tensor-power moment of its parameterized family. -/
@@ -53,7 +52,7 @@ lemma integralTensorPower_densityMeasureOfFamily {α : Type*} [MeasurableSpace �
     (f : α → DensityOp d) (hf : Measurable f) :
     (integralTensorPower n (densityMeasureOfFamily ν f hf)).toOp =
       ∫ x, ((f x).tensorPowGen n).toOp ∂ν := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   ext i j
   rw [PureState.integralTensorPower_toOp_apply,
     matrix_integral_entry _ (tensorPower_family_integrable ν f hf)]
@@ -89,7 +88,7 @@ lemma partialTraceB_family_moment {α : Type*} [MeasurableSpace α]
       (tensorPowerProductEquiv d r n).symm (∫ x, ((f x).tensorPowGen n).toOp ∂ν)) =
       (integralTensorPower n (densityMeasureOfFamily ν (fun x => (f x).partialTraceB)
         (partialTraceB_continuous_general.measurable.comp hf))).toOp := by
-  haveI : NeZero (d * r) := ⟨mul_ne_zero (NeZero.ne d) (NeZero.ne r)⟩
+  have : NeZero (d * r) := ⟨mul_ne_zero (NeZero.ne d) (NeZero.ne r)⟩
   let tr : Op (d ^ n * r ^ n) →ₗ[ℂ] Op (d ^ n) :=
     { toFun := partialTraceB
       map_add' := partialTraceB_add
@@ -183,7 +182,7 @@ lemma referenceOrbit_tensorPower_moment {α : Type*} [TopologicalSpace α] [Comp
         Matrix.reindex (interleavingEquivGen a b n).symm (interleavingEquivGen a b n).symm
           (Op.tensorPow T n) *
         (Op.tensor (1 : Op (a ^ n)) (Op.tensorPow (U x : Op b) n))ᴴ ∂ν) * Sᴴ := by
-  haveI : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
+  have : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
   intro S
   let L := (Matrix.reindexLinearEquiv ℂ ℂ (interleavingEquivGen a b n).symm
     (interleavingEquivGen a b n).symm).toLinearMap.toContinuousLinearMap
@@ -215,7 +214,7 @@ lemma partialTraceB_pairedToBlocked_tensorPow {a b n : ℕ} [NeZero a] [NeZero b
         (interleavingEquivGen a (a * b ^ 2) n).symm (τ.tensorPowGen n).toOp)) =
       ((densityOp_reindex e τ).partialTraceB.tensorPowGen n).toOp := by
   dsimp only
-  haveI : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
+  have : NeZero (a * b) := ⟨mul_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
   rw [DensityOp.tensorPowGen_toOp, pairedToBlockedEquiv_tensorPow_cast]
   let q := densityOp_reindex
     (finCongr (show a * (a * b ^ 2) = (a * b) * (a * b) by ring)) τ
@@ -237,7 +236,7 @@ lemma partialTraceB_pairedToBlocked_family_moment {α : Type*} [MeasurableSpace 
         (interleavingEquivGen a (a * b ^ 2) n).symm
         (∫ x, ((f x).tensorPowGen n).toOp ∂ν))) =
       ∫ x, ((densityOp_reindex e (f x)).partialTraceB.tensorPowGen n).toOp ∂ν := by
-  haveI : NeZero (a * (a * b ^ 2)) :=
+  have : NeZero (a * (a * b ^ 2)) :=
     ⟨mul_ne_zero (NeZero.ne a) (mul_ne_zero (NeZero.ne a) (pow_ne_zero 2 (NeZero.ne b)))⟩
   dsimp only
   let tr : Op ((a * b) ^ n * (a * b) ^ n) →ₗ[ℂ] Op ((a * b) ^ n) :=

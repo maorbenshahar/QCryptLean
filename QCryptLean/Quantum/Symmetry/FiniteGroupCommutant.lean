@@ -129,7 +129,7 @@ lemma amplified_commute_of_bicommutant {d : ℕ} (S : Set (Op d)) (T : Op d)
 theorem finiteGroup_bicommutant {G : Type*} [Group G] [Finite G] {d : ℕ}
     (ρ : G →* Op d) :
     commutant d (commutant d (Set.range ρ)) = Submodule.span ℂ (Set.range ρ) := by
-  letI := Fintype.ofFinite G
+  let := Fintype.ofFinite G
   apply le_antisymm
   · intro T hT
     let P := finiteGroupMatrixAverage (amplifiedMatrixRep ρ)

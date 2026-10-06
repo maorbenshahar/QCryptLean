@@ -113,7 +113,7 @@ def isFeasible {X : Type*} [Fintype X] {n : ℕ}
     t · σ dominates ρ_A(x) for all classical outcomes x. -/
 noncomputable def minFeasibleLambda {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) : ℝ :=
-  sInf (setOf (isFeasible ρ σ))
+  sInf (Set.ofPred (isFeasible ρ σ))
 
 /-- Predicate: the feasible set for (ρ, σ) is nonempty. -/
 def hasFeasibleLambda {X : Type*} [Fintype X] {n : ℕ}
@@ -128,7 +128,7 @@ lemma minFeasibleLambda_eq_zero_of_not_hasFeasibleLambda
     (h : ¬ hasFeasibleLambda ρ σ) :
     minFeasibleLambda ρ σ = 0 := by
   unfold minFeasibleLambda
-  have hEmpty : setOf (isFeasible ρ σ) = ∅ := by
+  have hEmpty : Set.ofPred (isFeasible ρ σ) = ∅ := by
     rw [← Set.not_nonempty_iff_eq_empty]
     rintro ⟨t, ht⟩
     exact h ⟨t, ht⟩
@@ -159,7 +159,7 @@ lemma isFeasible_mono_t {X : Type*} [Fintype X] {n : ℕ}
 
 /-- The feasible set is bounded below by `0`. -/
 lemma minFeasibleLambda_bddBelow {X : Type*} [Fintype X] {n : ℕ}
-    (ρ : CQState X n) (σ : SubDensityOp n) : BddBelow (setOf (isFeasible ρ σ)) :=
+    (ρ : CQState X n) (σ : SubDensityOp n) : BddBelow (Set.ofPred (isFeasible ρ σ)) :=
   ⟨0, fun _ ht => ht.1⟩
 
 /-- Every feasible scalar is an upper bound for `minFeasibleLambda`. -/
@@ -188,7 +188,7 @@ lemma isFeasible_mul_minFeasibleLambda_mono
 lemma minFeasibleLambda_nonneg {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) : 0 ≤ minFeasibleLambda ρ σ := by
   unfold minFeasibleLambda
-  by_cases h : (setOf (isFeasible ρ σ)).Nonempty
+  by_cases h : (Set.ofPred (isFeasible ρ σ)).Nonempty
   · exact le_csInf h (fun _ ht => ht.1)
   · rw [Set.not_nonempty_iff_eq_empty] at h
     rw [h, Real.sInf_empty]
@@ -197,37 +197,37 @@ lemma minFeasibleLambda_nonneg {X : Type*} [Fintype X] {n : ℕ}
 real scalars. -/
 lemma isFeasible_isClosed {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) :
-    IsClosed (setOf (isFeasible ρ σ)) := by
+    IsClosed (Set.ofPred (isFeasible ρ σ)) := by
   classical
   unfold isFeasible opLe
   refine isClosed_Ici.inter ?_
-  change IsClosed (setOf (fun t : ℝ =>
+  change IsClosed (Set.ofPred (fun t : ℝ =>
     ∀ (x : X) (v : Fin n → ℂ),
       (quadraticForm (ρ.stateMap x).toOp v).re ≤
         (quadraticForm (Complex.ofReal t • σ.toOp) v).re))
-  rw [Set.setOf_forall]
+  rw [Set.ofPred_forall]
   refine isClosed_iInter
-    (f := fun x : X => setOf (fun t : ℝ =>
+    (f := fun x : X => Set.ofPred (fun t : ℝ =>
       ∀ v : Fin n → ℂ,
         (quadraticForm (ρ.stateMap x).toOp v).re ≤
           (quadraticForm (Complex.ofReal t • σ.toOp) v).re)) (fun x => ?_)
-  rw [Set.setOf_forall]
+  rw [Set.ofPred_forall]
   refine isClosed_iInter
-    (f := fun v : Fin n → ℂ => setOf (fun t : ℝ =>
+    (f := fun v : Fin n → ℂ => Set.ofPred (fun t : ℝ =>
       (quadraticForm (ρ.stateMap x).toOp v).re ≤
         (quadraticForm (Complex.ofReal t • σ.toOp) v).re)) (fun v => ?_)
   have hset :
-      setOf (fun t : ℝ =>
+      Set.ofPred (fun t : ℝ =>
           (quadraticForm (ρ.stateMap x).toOp v).re ≤
             (quadraticForm (Complex.ofReal t • σ.toOp) v).re) =
-        setOf (fun t : ℝ =>
+        Set.ofPred (fun t : ℝ =>
           (quadraticForm (ρ.stateMap x).toOp v).re ≤
             t * (quadraticForm σ.toOp v).re) := by
     ext t
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [quadraticForm_ofReal_smul, Complex.mul_re, Complex.ofReal_re,
       Complex.ofReal_im, zero_mul, sub_zero]
-  change IsClosed (setOf (fun t : ℝ =>
+  change IsClosed (Set.ofPred (fun t : ℝ =>
     (quadraticForm (ρ.stateMap x).toOp v).re ≤
       (quadraticForm (Complex.ofReal t • σ.toOp) v).re))
   rw [hset]
@@ -272,7 +272,7 @@ lemma isFeasible_minFeasibleLambda_of_posDef
     {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) (hσ : σ.toOp.PosDef) :
     isFeasible ρ σ (minFeasibleLambda ρ σ) := by
-  change sInf (setOf (isFeasible ρ σ)) ∈ setOf (isFeasible ρ σ)
+  change sInf (Set.ofPred (isFeasible ρ σ)) ∈ Set.ofPred (isFeasible ρ σ)
   exact (isFeasible_isClosed ρ σ).csInf_mem
     (hasFeasibleLambda_of_posDef ρ σ hσ)
     (minFeasibleLambda_bddBelow ρ σ)
@@ -288,7 +288,7 @@ lemma isFeasible_minFeasibleLambda_of_hasFeasibleLambda
     {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) (hfeas : hasFeasibleLambda ρ σ) :
     isFeasible ρ σ (minFeasibleLambda ρ σ) := by
-  change sInf (setOf (isFeasible ρ σ)) ∈ setOf (isFeasible ρ σ)
+  change sInf (Set.ofPred (isFeasible ρ σ)) ∈ Set.ofPred (isFeasible ρ σ)
   exact (isFeasible_isClosed ρ σ).csInf_mem hfeas
     (minFeasibleLambda_bddBelow ρ σ)
 
@@ -320,10 +320,10 @@ lemma minFeasibleLambda_antitone_of_opLe {X : Type*} [Fintype X] {n : ℕ}
     (h : opLe τ.toOp σ.toOp) (hfeas : hasFeasibleLambda ρ τ) :
     minFeasibleLambda ρ σ ≤ minFeasibleLambda ρ τ := by
   unfold minFeasibleLambda
-  have hsub : setOf (isFeasible ρ τ) ⊆ setOf (isFeasible ρ σ) :=
+  have hsub : Set.ofPred (isFeasible ρ τ) ⊆ Set.ofPred (isFeasible ρ σ) :=
     fun _ ht => isFeasible_of_opLe ρ σ τ h ht
   obtain ⟨t, ht⟩ := hfeas
-  have hne : (setOf (isFeasible ρ τ)).Nonempty := ⟨t, ht⟩
+  have hne : (Set.ofPred (isFeasible ρ τ)).Nonempty := ⟨t, ht⟩
   exact csInf_le_csInf (minFeasibleLambda_bddBelow ρ σ) hne hsub
 
 /-- Feasibility is monotone in the CQ state: if every block of `ρ_small` is
@@ -345,10 +345,10 @@ lemma minFeasibleLambda_mono_stateMap_of_opLe {X : Type*} [Fintype X] {n : ℕ}
     (hfeas : hasFeasibleLambda ρ_big σ) :
     minFeasibleLambda ρ_small σ ≤ minFeasibleLambda ρ_big σ := by
   unfold minFeasibleLambda
-  have hsub : setOf (isFeasible ρ_big σ) ⊆ setOf (isFeasible ρ_small σ) :=
+  have hsub : Set.ofPred (isFeasible ρ_big σ) ⊆ Set.ofPred (isFeasible ρ_small σ) :=
     fun _ ht => isFeasible_of_stateMap_opLe ρ_small ρ_big σ hρ ht
   obtain ⟨t, ht⟩ := hfeas
-  have hne : (setOf (isFeasible ρ_big σ)).Nonempty := ⟨t, ht⟩
+  have hne : (Set.ofPred (isFeasible ρ_big σ)).Nonempty := ⟨t, ht⟩
   exact csInf_le_csInf (minFeasibleLambda_bddBelow ρ_small σ) hne hsub
 
 /-!
@@ -541,7 +541,7 @@ lemma ofReal_le_conditionalMinEntropy_of_isFeasible
     (k : ℝ) (h : isFeasible ρ σ (2 ^ (-k))) :
     ENNReal.ofReal k ≤ conditionalMinEntropy ρ σ := by
   by_cases hpos : 0 < minFeasibleLambda ρ σ
-  · rw [conditionalMinEntropy, if_pos hpos]
+  · rw [conditionalMinEntropy, ite_eq_left hpos]
     exact ENNReal.ofReal_le_ofReal
       (conditionalMinEntropyReal_le_of_minFeasibleLambda_pos_le_pow_neg_k ρ σ k hpos
         (minFeasibleLambda_le_of_isFeasible ρ σ h))
@@ -559,7 +559,7 @@ lemma isFeasible_of_ofReal_le_conditionalMinEntropy
     exact (not_le_of_gt (ENNReal.ofReal_pos.mpr hk)) hH
   apply isFeasible_mono_t (isFeasible_minFeasibleLambda_of_hasFeasibleLambda ρ σ hfeas)
   by_cases hpos : 0 < minFeasibleLambda ρ σ
-  · rw [conditionalMinEntropy, if_pos hpos] at hH
+  · rw [conditionalMinEntropy, ite_eq_left hpos] at hH
     have hreal : k ≤ conditionalMinEntropyReal ρ σ := by
       rcases ENNReal.ofReal_le_ofReal_iff'.mp hH with h | h
       · exact h
@@ -579,7 +579,7 @@ lemma isFeasible_of_ofReal_lt_conditionalMinEntropy
     exact (not_lt_of_ge (zero_le)) hH
   apply isFeasible_mono_t (isFeasible_minFeasibleLambda_of_hasFeasibleLambda ρ σ hfeas)
   by_cases hpos : 0 < minFeasibleLambda ρ σ
-  · rw [conditionalMinEntropy, if_pos hpos] at hH
+  · rw [conditionalMinEntropy, ite_eq_left hpos] at hH
     exact minFeasibleLambda_le_pow_neg_k_of_conditionalMinEntropyReal_le ρ σ k
       (ENNReal.ofReal_lt_ofReal_iff'.mp hH).1.le
   · exact (le_of_not_gt hpos).trans (Real.rpow_nonneg (by norm_num) _)
@@ -762,8 +762,8 @@ lemma oneHotPovm_quadraticForm_re_nonneg {X : Type*} [DecidableEq X] {n : ℕ}
     0 ≤ (quadraticForm (oneHotPovm x₀ x : Op n) v).re := by
   unfold oneHotPovm
   by_cases hx : x = x₀
-  · rw [if_pos hx]; exact zero_le_quadraticForm_one_re v
-  · rw [if_neg hx, quadraticForm_zero_re]
+  · rw [ite_eq_left hx]; exact zero_le_quadraticForm_one_re v
+  · rw [ite_eq_right hx, quadraticForm_zero_re]
 
 lemma oneHotPovm_sum {X : Type*} [Fintype X] [DecidableEq X] {n : ℕ}
     (x₀ : X) : ∑ x : X, (oneHotPovm x₀ x : Op n) = 1 := by
@@ -781,8 +781,8 @@ lemma oneHotPovm_trace_sum {X : Type*} [Fintype X] [DecidableEq X] {n : ℕ}
       if x = x₀ then ((ρ.stateMap x).toOp).trace.re else 0 := by
     intro x
     by_cases hx : x = x₀
-    · rw [if_pos hx, one_mul, if_pos hx]
-    · rw [if_neg hx, zero_mul, Matrix.trace_zero, Complex.zero_re, if_neg hx]
+    · rw [ite_eq_left hx, one_mul, ite_eq_left hx]
+    · rw [ite_eq_right hx, zero_mul, Matrix.trace_zero, Complex.zero_re, ite_eq_right hx]
   simp_rw [h_each]
   rw [Finset.sum_ite_eq' Finset.univ x₀]
   simp
@@ -908,7 +908,7 @@ lemma povmGuessingProb_le_minFeasibleLambda {X : Type*} [Fintype X] [Nonempty X]
     ⟨_, oneHotPovm x₀, oneHotPovm_quadraticForm_re_nonneg x₀,
       oneHotPovm_sum x₀, rfl⟩
   -- For every feasible `t`, every `p ∈ S` satisfies `p ≤ t`.
-  have h_bound : ∀ t ∈ setOf (isFeasible ρ σ), ∀ p ∈ S, p ≤ t := by
+  have h_bound : ∀ t ∈ Set.ofPred (isFeasible ρ σ), ∀ p ∈ S, p ≤ t := by
     intro t ht p hp
     obtain ⟨M, hM_pos, hM_sum, rfl⟩ := hp
     have h_trace_eq :
@@ -923,7 +923,7 @@ lemma povmGuessingProb_le_minFeasibleLambda {X : Type*} [Fintype X] [Nonempty X]
       (symmFamily_sum_eq_one M hM_sum)
       ht
   -- Now apply `csSup_le` to get `sSup S ≤ t`, then `le_csInf` to get `sSup S ≤ sInf feasible`.
-  have h_pg_le : ∀ t ∈ setOf (isFeasible ρ σ), povmGuessingProb ρ ≤ t := by
+  have h_pg_le : ∀ t ∈ Set.ofPred (isFeasible ρ σ), povmGuessingProb ρ ≤ t := by
     intro t ht
     change sSup S ≤ t
     exact csSup_le hS_ne (fun p hp => h_bound t ht p hp)
@@ -1000,7 +1000,7 @@ lemma weight_div_card_le_of_isFeasible {X : Type*} [Fintype X] [Nonempty X] {n :
     (where `sInf ∅ = 0`), so the feasible set is nonempty. -/
 private lemma feasibleSet_nonempty_of_minFeasibleLambda_pos {X : Type*} [Fintype X] {n : ℕ}
     (ρ : CQState X n) (σ : SubDensityOp n) (hpos : 0 < minFeasibleLambda ρ σ) :
-    (setOf (isFeasible ρ σ)).Nonempty := by
+    (Set.ofPred (isFeasible ρ σ)).Nonempty := by
   rw [Set.nonempty_iff_ne_empty]
   intro hem
   unfold minFeasibleLambda at hpos
@@ -1072,7 +1072,7 @@ lemma minFeasibleLambda_pos_of_posDef_of_weight_pos
     (hσ : σ.toOp.PosDef)
     (hρ_weight_pos : 0 < ∑ x : X, (ρ.stateMap x).trace) :
     0 < minFeasibleLambda ρ σ := by
-  haveI : Nonempty X := by
+  have : Nonempty X := by
     by_contra hnot
     rw [not_nonempty_iff] at hnot
     have hsum_zero : (∑ x : X, (ρ.stateMap x).trace) = 0 := by
@@ -1148,7 +1148,7 @@ theorem conditionalMinEntropyOpt_le_log_card {X : Type*} [Fintype X] [Nonempty X
   have hpos : 0 < minFeasibleLambda ρ σ :=
     minFeasibleLambda_pos_of_hasFeasibleLambda ρ hnorm σ hfeas
   unfold conditionalMinEntropy
-  rw [if_pos hpos]
+  rw [ite_eq_left hpos]
   exact ENNReal.ofReal_le_ofReal (conditionalMinEntropyReal_le_log_card ρ hnorm σ)
 
 /-- Real min-entropy is antitone in σ: smaller reference operators give smaller
@@ -1217,7 +1217,7 @@ theorem conditionalMinEntropy_antitone_sigma {X : Type*} [Fintype X] {n : ℕ} [
     minFeasibleLambda_antitone_of_opLe ρ σ τ h hfeas
   have hpos_tau : 0 < minFeasibleLambda ρ τ := lt_of_lt_of_le hpos hle
   unfold conditionalMinEntropy
-  rw [if_pos hpos, if_pos hpos_tau]
+  rw [ite_eq_left hpos, ite_eq_left hpos_tau]
   exact ENNReal.ofReal_le_ofReal
     (conditionalMinEntropyReal_antitone_sigma ρ σ τ h hfeas hpos)
 

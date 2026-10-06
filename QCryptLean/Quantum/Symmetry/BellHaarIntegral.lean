@@ -74,7 +74,7 @@ theorem bb84BellPairedDeFinettiState_eq_haar_integral {n : ℕ} [NeZero n] [NeZe
         (densityOp_reindex (interleavingEquiv 4 n).symm
           ((bellWembed φ).tensorPowGen n)).toOp
         ∂(deFinetti_haarMeasure 4).measure := by
-  haveI : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
+  have : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
     (deFinetti_haarMeasure 4).isProbability
   -- The fixed ℂ-linear `W`-conjugation-then-reindex map pulled out of the Bochner integral.
   let L : Op (4 ^ n) →L[ℂ] Op (4 ^ n * 4 ^ n) :=

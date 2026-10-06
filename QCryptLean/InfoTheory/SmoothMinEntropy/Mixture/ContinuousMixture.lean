@@ -85,9 +85,9 @@ lemma sandwich_posSemidef {n : ℕ} {A B : Op n} (_hA : A.PosSemidef) (hB : B.Po
     letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
     letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
     (CFC.sqrt A * B * CFC.sqrt A).PosSemidef := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   have hsqrtA : (CFC.sqrt A).PosSemidef := (CFC.sqrt_nonneg (a := A)).posSemidef
   have hS : (CFC.sqrt A)† = CFC.sqrt A := hsqrtA.isHermitian
   have h := Matrix.PosSemidef.conjTranspose_mul_mul_same hB (CFC.sqrt A)
@@ -103,9 +103,9 @@ lemma continuous_trace_re {n : ℕ} :
 
 /-- **Continuity of the matrix-level fidelity on the product PSD cone.** -/
 lemma fidOp_continuousOn {n : ℕ} : ContinuousOn (fidOp : Op n × Op n → ℝ) (psdProd n) := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   -- continuity of `p ↦ CFC.sqrt p.1` on the cone
   have hmaps1 : Set.MapsTo (fun p : Op n × Op n => p.1) (psdProd n) {M | 0 ≤ M} :=
     fun p hp => (Matrix.nonneg_iff_posSemidef).2 hp.1
@@ -129,12 +129,15 @@ lemma fidOp_continuousOn {n : ℕ} : ContinuousOn (fidOp : Op n × Op n → ℝ)
 
 /-- The product PSD cone is closed. -/
 lemma isClosed_psdProd {n : ℕ} : IsClosed (psdProd n) := by
-  have h1 : IsClosed ((fun p : Op n × Op n => p.1) ⁻¹' (setOf (fun A : Op n => A.PosSemidef))) :=
+  have h1 :
+      IsClosed ((fun p : Op n × Op n => p.1) ⁻¹' (Set.ofPred (fun A : Op n => A.PosSemidef))) :=
     (Quantum.Operators.isClosed_setOf_posSemidef).preimage continuous_fst
-  have h2 : IsClosed ((fun p : Op n × Op n => p.2) ⁻¹' (setOf (fun A : Op n => A.PosSemidef))) :=
+  have h2 :
+      IsClosed ((fun p : Op n × Op n => p.2) ⁻¹' (Set.ofPred (fun A : Op n => A.PosSemidef))) :=
     (Quantum.Operators.isClosed_setOf_posSemidef).preimage continuous_snd
-  have hEq : psdProd n = ((fun p : Op n × Op n => p.1) ⁻¹' (setOf (fun A : Op n => A.PosSemidef)))
-      ∩ ((fun p : Op n × Op n => p.2) ⁻¹' (setOf (fun A : Op n => A.PosSemidef))) := rfl
+  have hEq : psdProd n =
+      ((fun p : Op n × Op n => p.1) ⁻¹' (Set.ofPred (fun A : Op n => A.PosSemidef)))
+      ∩ ((fun p : Op n × Op n => p.2) ⁻¹' (Set.ofPred (fun A : Op n => A.PosSemidef))) := rfl
   rw [hEq]; exact h1.inter h2
 
 /-- The product PSD cone is convex. -/
@@ -161,7 +164,7 @@ lemma fidOp_smul {n : ℕ} [NeZero n] {a : ℝ} (ha : 0 ≤ a) (A B : PosSemidef
 Follows from the finite super-additivity `fidelity_sum_le_fidelity_sum` (Renner
 Eq. 3.59) at `Fin 2` together with the homogeneity `fidelity_smul_block_eq`. -/
 lemma fidOp_concaveOn {n : ℕ} [NeZero n] : ConcaveOn ℝ (psdProd n) fidOp := by
-  haveI : NeZero (n * Fintype.card (Fin 2)) :=
+  have : NeZero (n * Fintype.card (Fin 2)) :=
     ⟨by rw [Fintype.card_fin]; exact Nat.mul_ne_zero (NeZero.ne n) (by norm_num)⟩
   refine ⟨convex_psdProd, ?_⟩
   rintro p hp q hq a b ha hb hab
@@ -326,7 +329,7 @@ lemma goodBranchBlockOp_g_trace_le_one {d dE : ℕ} {X : Type*} [Fintype X]
     (h_int : MeasureTheory.Integrable
       (fun τ : DensityOp d => ((g τ).stateMap x).toOp) μ.measure) :
     (goodBranchBlockOp μ g goodSet x).trace.re ≤ 1 := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   rw [goodBranchBlockOp_trace_re_eq_setIntegral μ g goodSet x h_int]
   calc ∫ τ in goodSet, ((g τ).stateMap x).trace ∂μ.measure
       ≤ ∫ _τ in goodSet, (1 : ℝ) ∂μ.measure :=
@@ -344,7 +347,7 @@ lemma goodBranchBlockOp_g_weight_le_one {d dE : ℕ} {X : Type*} [Fintype X]
     (h_int : ∀ x : X, MeasureTheory.Integrable
       (fun τ : DensityOp d => ((g τ).stateMap x).toOp) μ.measure) :
     ∑ x : X, (goodBranchBlockOp μ g goodSet x).trace.re ≤ 1 := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   rw [sum_goodBranchBlockOp_trace_re_eq_setIntegral μ g goodSet h_int]
   calc ∫ τ in goodSet, ∑ x : X, ((g τ).stateMap x).trace ∂μ.measure
       ≤ ∫ _τ in goodSet, (1 : ℝ) ∂μ.measure :=
@@ -542,7 +545,7 @@ lemma integrableOn_fidOp_blocks {d dE : ℕ} [NeZero dE] {X : Type*} [Fintype X]
       (fun τ : DensityOp d => ((g τ).stateMap x).toOp) μ.measure) :
     IntegrableOn
       (fun τ => fidOp (((f τ).stateMap x).toOp, ((g τ).stateMap x).toOp)) goodSet μ.measure := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   refine Integrable.of_bound
     (aestronglyMeasurable_fidOp hf_int.restrict.aestronglyMeasurable.aemeasurable
       hg_int.restrict.aestronglyMeasurable.aemeasurable
@@ -578,7 +581,7 @@ lemma setIntegral_blockFidelity_le {d dE : ℕ} [NeZero dE] {X : Type*} [Fintype
     (hρ' : (ρ_good'.stateMap x).toOp = goodBranchBlockOp μ g goodSet x) :
     ∫ τ in goodSet, fidOp (((f τ).stateMap x).toOp, ((g τ).stateMap x).toOp) ∂μ.measure
       ≤ fidOp ((ρ_good.stateMap x).toOp, (ρ_good'.stateMap x).toOp) := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   have h := setIntegral_fidOp_le (μ := μ.measure) (s := goodSet)
     (A := fun τ => ((f τ).stateMap x).toOp) (B := fun τ => ((g τ).stateMap x).toOp)
     hf_int.restrict hg_int.restrict
@@ -612,9 +615,9 @@ theorem exists_continuousMixtureGoodBranch_purifiedDistance_le_of_integrable
     ∃ ρ_good' : CQState X dE,
       (∀ x : X, (ρ_good'.stateMap x).toOp = goodBranchBlockOp μ g goodSet x) ∧
       CQState.purifiedDistance ρ_good ρ_good' ≤ εBar := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (dE * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
   obtain ⟨ρ_good', hρ_good'⟩ := exists_goodBranchCQState_g μ g goodSet hg_int
   refine ⟨ρ_good', hρ_good', ?_⟩
   -- abbreviations

@@ -82,7 +82,7 @@ theorem completeContinuationOutputLayout_success
       from (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply ω]
     exact hω
   unfold QKD.BB84.completeContinuationOutputLayout
-  rw [dif_pos hquota]
+  rw [dite_eq_left hquota]
 
 /-- Identifies the raw classical-tail output space with the continuation space at a
 successful late-selection exit. -/
@@ -167,7 +167,7 @@ theorem graftSpaceEquiv_successCompleteOutputEmbedding
       ⟨Measurement.lateSelectionExit N nK mZ mX omega,
         successContinuationSpaceEquiv
           N nK mZ mX ell ellEV leakEC omega homega q⟩ := by
-  simp [successCompleteOutputEmbedding, successContinuationSpaceEquiv]
+  exact Equiv.apply_symm_apply _ _
 
 /-- The inverse graft map on the literal successful fibre is exactly the successful complete-output
 embedding after the explicit child-space transport.  This is an implementation coordinate
@@ -633,7 +633,10 @@ theorem shortageCompleteOutput_disposition
     exact hω
   delta QKD.BB84.exitEquiv at hshort
   delta QKD.BB84.outputLayout
-  rw [graft_disposition]
+  refine (graft_disposition (Measurement.lateSelectionBoundary N nK mZ mX)
+    (completeContinuationBoundary N nK mZ mX ℓ ℓEV leakEC)
+    (completeContinuationOutputLayout N nK mZ mX ℓ ℓEV leakEC) .alice .bob
+    (by decide) _ _ _).trans ?_
   unfold QKD.BB84.completeContinuationOutputLayout
   split
   · rename_i hquota
@@ -687,9 +690,11 @@ theorem graftSpaceEquiv_symm_shortage_fibre
     apply (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).injective
     rw [(QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply]
     dsimp only [G, s]
-    rw [Boundary.graftSpaceEquiv_fst]
-    exact shortageCompleteOutput_rawControl
-      N nK mZ mX ell ellEV leakEC omega hshort
+    refine (congrArg (lateSelectionExitEquiv N nK mZ mX)
+      (Boundary.graftSpaceEquiv_fst (lateSelectionBoundary N nK mZ mX)
+        (completeContinuationBoundary N nK mZ mX ell ellEV leakEC)
+        (shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega hshort))).trans ?_
+    exact shortageCompleteOutput_rawControl N nK mZ mX ell ellEV leakEC omega hshort
   apply G.injective
   rw [G.apply_symm_apply]
   generalize hgs : G s = gs

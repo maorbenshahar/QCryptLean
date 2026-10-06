@@ -73,7 +73,7 @@ lemma stdKet_dag_mul (w : Fin d) (ψ : Ket d) : ((stdKet d w).dag * ψ : ℂ) = 
   · simp [Ket.dag_vec, stdKet_apply]
   · intro i _ hiw
     simp only [Ket.dag_vec, stdKet_apply]
-    rw [if_neg fun h => hiw h.symm]
+    rw [ite_eq_right fun h => hiw h.symm]
     simp
   · intro h
     exact absurd (Finset.mem_univ w) h

@@ -120,8 +120,8 @@ theorem CQState.fidelityGen_filterKeep_ge
     (hFρ' : ∀ x, Fρ'.stateMap x = if keep x then ρ'.stateMap x else 0) :
     fidelityGen ρ.toJointDensity ρ'.toJointDensity ≤
       fidelityGen Fρ.toJointDensity Fρ'.toJointDensity := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   classical
   set s : Finset X := Finset.univ.filter (fun x => keep x = true) with hs_def
@@ -141,12 +141,12 @@ theorem CQState.fidelityGen_filterKeep_ge
     have h0 : ∑ x ∈ Finset.univ.filter (fun x => ¬ keep x = true), (Fρ.stateMap x).trace = 0 := by
       apply Finset.sum_eq_zero; intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-      rw [hFρ x, if_neg hx, htrace_zero]
+      rw [hFρ x, ite_eq_right hx, htrace_zero]
     have heq : ∑ x ∈ Finset.univ.filter (fun x => keep x = true), (Fρ.stateMap x).trace =
         ∑ x ∈ s, (ρ.stateMap x).trace := by
       apply Finset.sum_congr rfl; intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-      rw [hFρ x, if_pos hx]
+      rw [hFρ x, ite_eq_left hx]
     rw [heq, h0, add_zero]
   have hqS : Fρ'.toJointDensity.trace = ∑ x ∈ s, (ρ'.stateMap x).trace := by
     rw [Fρ'.toJointDensity_trace_eq_sum]
@@ -154,12 +154,12 @@ theorem CQState.fidelityGen_filterKeep_ge
     have h0 : ∑ x ∈ Finset.univ.filter (fun x => ¬ keep x = true), (Fρ'.stateMap x).trace = 0 := by
       apply Finset.sum_eq_zero; intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-      rw [hFρ' x, if_neg hx, htrace_zero]
+      rw [hFρ' x, ite_eq_right hx, htrace_zero]
     have heq : ∑ x ∈ Finset.univ.filter (fun x => keep x = true), (Fρ'.stateMap x).trace =
         ∑ x ∈ s, (ρ'.stateMap x).trace := by
       apply Finset.sum_congr rfl; intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-      rw [hFρ' x, if_pos hx]
+      rw [hFρ' x, ite_eq_left hx]
     rw [heq, h0, add_zero]
   -- fidelity sums
   have hF_full :
@@ -179,7 +179,7 @@ theorem CQState.fidelityGen_filterKeep_ge
       apply Finset.sum_eq_zero; intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
       apply Quantum.Metrics.fidelity_eq_zero_of_left_toOp_eq_zero
-      rw [hFρ x, if_neg hx]; rfl
+      rw [hFρ x, ite_eq_right hx]; rfl
     have heq : ∑ x ∈ Finset.univ.filter (fun x => keep x = true),
         Quantum.Metrics.fidelity (Fρ.stateMap x).toPosSemidefOp
           (Fρ'.stateMap x).toPosSemidefOp =
@@ -188,7 +188,7 @@ theorem CQState.fidelityGen_filterKeep_ge
       apply Finset.sum_congr rfl; intro x hx
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
       congr 1 <;> · first
-        | (rw [hFρ x, if_pos hx]) | (rw [hFρ' x, if_pos hx])
+        | (rw [hFρ x, ite_eq_left hx]) | (rw [hFρ' x, ite_eq_left hx])
     rw [heq, h0, add_zero]
   -- abbreviations
   set A : ℝ := ∑ x ∈ s, Quantum.Metrics.fidelity (ρ.stateMap x).toPosSemidefOp
@@ -266,8 +266,8 @@ theorem CQState.purifiedDistance_filterKeep_le
     (hFρ : ∀ x, Fρ.stateMap x = if keep x then ρ.stateMap x else 0)
     (hFρ' : ∀ x, Fρ'.stateMap x = if keep x then ρ'.stateMap x else 0) :
     CQState.purifiedDistance Fρ Fρ' ≤ CQState.purifiedDistance ρ ρ' := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   exact purifiedDistance_le_of_fidelityGen_ge Fρ.toJointDensity Fρ'.toJointDensity
@@ -285,7 +285,7 @@ noncomputable def CQState.filterKeep {X : Type*} [Fintype X] {n : ℕ}
     intro x _
     by_cases hx : keep x
     · simp [hx]
-    · simp only [hx, Bool.false_eq_true, if_false]
+    · simp only [hx, Bool.false_eq_true, ite_false]
       have : ((0 : SubDensityOp n).trace) = 0 := by
         simp [SubDensityOp.trace, show (0 : SubDensityOp n).toOp = 0 from rfl]
       rw [this]; exact (ρ.stateMap x).trace_nonneg
@@ -305,10 +305,10 @@ lemma CQState.filterKeep_stateMap_opLe {X : Type*} [Fintype X] {n : ℕ}
   classical
   rw [CQState.filterKeep_stateMap]
   by_cases hx : keep x
-  · simp only [hx, if_true]
+  · simp only [hx, ite_true]
     intro v
     exact le_refl _
-  · simp only [hx, Bool.false_eq_true, if_false]
+  · simp only [hx, Bool.false_eq_true, ite_false]
     intro v
     have h0 : ((0 : SubDensityOp n).toOp) = 0 := rfl
     rw [h0]
@@ -350,7 +350,7 @@ theorem smoothMinEntropyReal_filterKeep_ge
     intro τ hτ
     refine CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower (η := η) ?_ hτ
     rw [hη_def]; ring_nf; rfl
-  have hbdd : BddAbove (setOf (isInSmoothedSetReal ε Fρ σ)) :=
+  have hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε Fρ σ)) :=
     smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη_pos Fρ σ hfloor_Fρ
   unfold smoothMinEntropyReal
   apply csSup_le (smoothedSetReal_nonempty hε ρ σ)

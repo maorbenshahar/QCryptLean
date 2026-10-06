@@ -81,10 +81,10 @@ lemma blockProjDiag_completeness {F : Type*} [Fintype F] [DecidableEq F] {d : �
   simp_rw [Matrix.diagonal_apply]
   by_cases hpq : p = q
   · subst hpq
-    simp only [if_true, Matrix.one_apply_eq]
+    simp only [ite_true, Matrix.one_apply_eq]
     rw [Finset.sum_ite_eq Finset.univ ((fiberEquiv F d).symm p).2 (fun _ => (1 : ℂ))]
     simp
-  · simp only [if_neg hpq, Finset.sum_const_zero, Matrix.one_apply_ne hpq]
+  · simp only [ite_eq_right hpq, Finset.sum_const_zero, Matrix.one_apply_ne hpq]
 
 /-- The `F`-dephasing pinch channel on the quantum register `Fin (d * card F)`:
 `M ↦ ∑_f Πf · M · Πf`, where `Πf` projects onto the `f`-th fiber block. -/
@@ -121,19 +121,19 @@ lemma fDephasingMap_apply_entry {F : Type*} [Fintype F] [DecidableEq F] {d : ℕ
     rw [Matrix.mul_diagonal, Matrix.diagonal_mul]
   simp_rw [hterm]
   by_cases hab : ((fiberEquiv F d).symm p).2 = ((fiberEquiv F d).symm q).2
-  · rw [if_pos hab]
+  · rw [ite_eq_left hab]
     rw [Finset.sum_eq_single ((fiberEquiv F d).symm p).2]
-    · rw [if_pos rfl, if_pos hab.symm]; ring
+    · rw [ite_eq_left rfl, ite_eq_left hab.symm]; ring
     · intro f _ hf
-      rw [if_neg (Ne.symm hf), zero_mul, zero_mul]
+      rw [ite_eq_right (Ne.symm hf), zero_mul, zero_mul]
     · intro h; exact absurd (Finset.mem_univ _) h
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     apply Finset.sum_eq_zero
     intro f _
     by_cases haf : ((fiberEquiv F d).symm p).2 = f
     · have hbf : ((fiberEquiv F d).symm q).2 ≠ f := fun h => hab (haf.trans h.symm)
-      rw [if_neg hbf, mul_zero]
-    · rw [if_neg haf, zero_mul, zero_mul]
+      rw [ite_eq_right hbf, mul_zero]
+    · rw [ite_eq_right haf, zero_mul, zero_mul]
 
 /-- The `f`-th fiber diagonal block of an operator on the quantum register:
 the principal submatrix indexed by the `f`-fiber. -/
@@ -157,7 +157,7 @@ lemma fDephasingMap_eq_reindex_blockDiagonal {F : Type*} [Fintype F] [DecidableE
   rw [fDephasingMap_apply_entry, Matrix.reindex_apply, Matrix.submatrix_apply,
     Matrix.blockDiagonal_apply]
   by_cases h : ((fiberEquiv F d).symm p).2 = ((fiberEquiv F d).symm q).2
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     have hp : (fiberEquiv F d)
         (((fiberEquiv F d).symm p).1, ((fiberEquiv F d).symm p).2) = p := by
       rw [Prod.mk.eta]; exact Equiv.apply_symm_apply _ _
@@ -165,7 +165,7 @@ lemma fDephasingMap_eq_reindex_blockDiagonal {F : Type*} [Fintype F] [DecidableE
         (((fiberEquiv F d).symm q).1, ((fiberEquiv F d).symm p).2) = q := by
       rw [h, Prod.mk.eta]; exact Equiv.apply_symm_apply _ _
     rw [blockExtract_apply, hp, hq]
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
 
 /-! ## S3: bundle / extract plumbing -/
 
@@ -290,9 +290,9 @@ lemma coarsen_prodFst_stateMap_toOp {Y F : Type*} [Fintype Y] [Fintype F] [Decid
       ∑ f : F, (ρ.stateMap (y, f)).toOp := by
   rw [CQState.coarsen_stateMap_toOp, Fintype.sum_prod_type]
   rw [Finset.sum_eq_single y]
-  · apply Finset.sum_congr rfl; intro f _; rw [if_pos rfl]
+  · apply Finset.sum_congr rfl; intro f _; rw [ite_eq_left rfl]
   · intro y' _ hy'
-    apply Finset.sum_eq_zero; intro f _; rw [if_neg hy']
+    apply Finset.sum_eq_zero; intro f _; rw [ite_eq_right hy']
   · intro h; exact absurd (Finset.mem_univ y) h
 
 /-- `partialTraceB` of the bundle recovers the product-projection coarsening:
@@ -338,7 +338,7 @@ lemma blockExtract_cqBlock {F : Type*} [Fintype F] [DecidableEq F] {d : ℕ}
   rw [blockExtract_apply, cqBlock_toOp_fiberEquiv, Matrix.reindex_apply,
     Matrix.submatrix_apply]
   simp only [Equiv.symm_apply_apply]
-  rw [Matrix.blockDiagonal_apply, if_pos rfl]
+  rw [Matrix.blockDiagonal_apply, ite_eq_left rfl]
 
 /-- The pinch fixes a CQ block-diagonal operator. -/
 lemma fDephasingMap_cqBlock {F : Type*} [Fintype F] [DecidableEq F] {d : ℕ}
@@ -357,13 +357,13 @@ lemma fidelityGen_bundle_eq {Y F : Type*} [Fintype Y] [DecidableEq Y] [Nonempty 
     (μ ν : CQState (Y × F) d) :
     fidelityGen (bundle μ).toJointDensity (bundle ν).toJointDensity =
       fidelityGen μ.toJointDensity ν.toJointDensity := by
-  haveI : NeZero (Fintype.card F) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card F) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
-  haveI : NeZero ((d * Fintype.card F) * Fintype.card Y) :=
+  have : NeZero (Fintype.card F) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (Fintype.card Y) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card F) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
+  have : NeZero ((d * Fintype.card F) * Fintype.card Y) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI : NeZero (Fintype.card (Y × F)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card (Y × F)) :=
+  have : NeZero (Fintype.card (Y × F)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card (Y × F)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
   have hfid : Quantum.Metrics.fidelity (bundle μ).toJointDensity.toPosSemidefOp
         (bundle ν).toJointDensity.toPosSemidefOp =
@@ -425,8 +425,8 @@ theorem exists_coarsen_preimage_in_ball
     ∃ τ' : CQState (Y × F) d,
       CQState.purifiedDistance ρ τ' ≤ ε ∧
       CQState.coarsen (Prod.fst : Y × F → Y) τ' = τ := by
-  haveI : NeZero (Fintype.card F) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (d * Fintype.card F) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card F) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (d * Fintype.card F) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne _)⟩
   -- 1. Uhlmann extension of the coarse witness through the bundle.
   have hdist : CQState.purifiedDistance (bundle ρ).partialTraceB τ ≤ ε := by
     rw [partialTraceB_bundle_eq_coarsen]; exact hτ
@@ -506,7 +506,7 @@ theorem smoothMinEntropyReal_coarsen_le
     [Fintype F] [DecidableEq F] [Nonempty F] {d : ℕ} [NeZero d]
     (ρ : CQState (Y × F) d) (σ : SubDensityOp d) (hσ : σ.toOp.PosDef)
     (ε : ℝ) (hε_nn : 0 ≤ ε)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ))) :
     smoothMinEntropyReal ε (CQState.coarsen (Prod.fst : Y × F → Y) ρ) σ ≤
       smoothMinEntropyReal ε ρ σ :=
   smoothMinEntropyReal_coarsen_le_of_exists_lift (Prod.fst : Y × F → Y) ρ σ hσ ε hε_nn hbdd

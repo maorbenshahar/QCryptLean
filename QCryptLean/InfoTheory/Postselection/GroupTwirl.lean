@@ -69,7 +69,7 @@ lemma purification_bound_of_family_twirl {d n k eveDim dimOut : ℕ}
     (hΨ_marg : partialTraceB Ψ.toOp =
       (1 / (k : ℂ)) • ∑ i : Fin k, U i * ρ.partialTraceB.toOp * (U i)ᴴ) :
     traceNorm (mapTensorId Δ ρ.toOp) ≤ traceNorm (mapTensorId Δ Ψ.toOp) := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   -- square purification `Ψ₀` of the round-grouped marginal of `ρ`
   set σnorm : DensityOp (d ^ n) := ρ.partialTraceB with hσnorm_def
   set Ψ0 : DensityOp (d ^ n * d ^ n) := InfoTheory.DeFinetti.purificationDensityOp σnorm
@@ -159,8 +159,8 @@ lemma purification_bound_of_groupTwirl
             (tensorFamily fun j => prodRep πA πB (v j))ᴴ) :
     Quantum.Metrics.traceNorm (Quantum.Channels.mapTensorId Δ ρ.toOp) ≤
       Quantum.Metrics.traceNorm (Quantum.Channels.mapTensorId Δ Ψ.toOp) := by
-  haveI hAB : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI hABn : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
+  have hAB : NeZero (dA * dB) := ⟨mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have hABn : NeZero ((dA * dB) ^ n) := ⟨pow_ne_zero n (NeZero.ne (dA * dB))⟩
   have hπG : IsUnitaryRep (prodRep πA πB) := prodRep_isUnitaryRep πA hπA πB hπB
   -- bundle the single-round group unitaries as `UnitaryOp`s with toOp = prodRep πA πB
   set W : (G_A × G_B) → UnitaryOp (dA * dB) := prodRepUnitary πA hπA πB hπB with hW_def
@@ -201,8 +201,8 @@ lemma purification_bound_of_groupTwirl
   -- the `Fin k`-indexed family of round-pattern unitaries and the reindexed marginal
   set e := Fintype.equivFin (Fin n → G_A × G_B) with he
   set k := Fintype.card (Fin n → G_A × G_B) with hk
-  haveI hpi : Nonempty (Fin n → G_A × G_B) := ⟨fun _ => (1, 1)⟩
-  haveI hkne : NeZero k := ⟨Fintype.card_ne_zero⟩
+  have hpi : Nonempty (Fin n → G_A × G_B) := ⟨fun _ => (1, 1)⟩
+  have hkne : NeZero k := ⟨Fintype.card_ne_zero⟩
   have hU_unit : ∀ i : Fin k,
       (tensorFamily (fun j => prodRep πA πB (e.symm i j)))ᴴ *
         tensorFamily (fun j => prodRep πA πB (e.symm i j)) = 1 ∧
@@ -246,7 +246,7 @@ lemma roundwiseAliceMarginal_groupTwirl
             tensorFamily (fun j => prodRep πA πB (v j)) * M *
               (tensorFamily fun j => prodRep πA πB (v j))ᴴ))
       = (σA.tensorPowGen n).toOp := by
-  haveI : Nonempty (Fin n → G_A × G_B) := ⟨fun _ => (1, 1)⟩
+  have : Nonempty (Fin n → G_A × G_B) := ⟨fun _ => (1, 1)⟩
   have hcard_ne : ((Fintype.card (Fin n → G_A × G_B) : ℕ) : ℂ) ≠ 0 := by
     exact_mod_cast Fintype.card_ne_zero (α := Fin n → G_A × G_B)
   -- push `reindex` through the scalar multiple and the finite sum (entrywise)

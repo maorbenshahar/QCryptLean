@@ -74,8 +74,15 @@ theorem graftAssocSpace_apply (B : Boundary P) (C : B.Exit → Boundary P)
               (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩)) z).1⟩,
           (Boundary.graftSpaceEquiv (C e)
             (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩)) z).2⟩ := by
-  simp only [graftAssocSpace, Equiv.trans_apply, Equiv.apply_symm_apply]
-  rfl
+  exact congrArg
+    (fun w : Σ e : B.Exit, (graftAssocBoundary B C D e).space =>
+      (Boundary.graftSpaceEquiv (B.graft C) D).symm
+        ⟨(Boundary.graftExitEquiv B C).symm
+          ⟨w.1, (Boundary.graftSpaceEquiv (C w.1)
+            (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨w.1, f⟩)) w.2).1⟩,
+          (Boundary.graftSpaceEquiv (C w.1)
+            (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨w.1, f⟩)) w.2).2⟩)
+    ((Boundary.graftSpaceEquiv B (graftAssocBoundary B C D)).apply_symm_apply ⟨e, z⟩)
 
 /-- A grafted-boundary point written in graft coordinates. -/
 theorem graft_point_eq {B : Boundary P} (C : B.Exit → Boundary P)
@@ -116,7 +123,13 @@ theorem graftAssocSpace_apply' (B : Boundary P) (C : B.Exit → Boundary P)
             (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩))).symm ⟨f, xx⟩⟩) =
       (Boundary.graftSpaceEquiv (B.graft C) D).symm
         ⟨(Boundary.graftExitEquiv B C).symm ⟨e, f⟩, xx⟩ := by
-  rw [graftAssocSpace_apply, Equiv.apply_symm_apply]
+  refine (graftAssocSpace_apply B C D e
+    ((Boundary.graftSpaceEquiv (C e) _).symm ⟨f, xx⟩)).trans ?_
+  exact congrArg (fun w : Σ f : (C e).Exit,
+      (D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩)).space =>
+    (Boundary.graftSpaceEquiv (B.graft C) D).symm
+      ⟨(Boundary.graftExitEquiv B C).symm ⟨e, w.1⟩, w.2⟩)
+    ((Boundary.graftSpaceEquiv (C e) _).apply_symm_apply ⟨f, xx⟩)
 
 /-- Exit blocks of a controlled continuation at a decomposed graft exit. -/
 theorem blockAt_cc' {B : Boundary P} {C : B.Exit → Boundary P}
@@ -192,34 +205,48 @@ theorem cc_comp_cc {B : Boundary P} {C : B.Exit → Boundary P}
           ⟨e, (Boundary.graftSpaceEquiv (C e) _).symm ⟨f, xx⟩⟩)
         ((Boundary.graftSpaceEquiv B (graftAssocBoundary B C D)).symm
           ⟨e', (Boundary.graftSpaceEquiv (C e') _).symm ⟨f', yy⟩⟩) from by
-    simp [reindexOp]]
+    exact congrArg₂ (Program.controlledContinuation (graftAssocProgram k l) M)
+      ((graftAssocSpace B C D).symm_apply_apply _)
+      ((graftAssocSpace B C D).symm_apply_apply _)]
   rw [graftAssocSpace_apply', graftAssocSpace_apply']
   by_cases hee : e = e'
   · subst hee
-    rw [cc_sameExit,
-      show (graftAssocProgram k l e).denote (blockAt B e M) =
-          Program.controlledContinuation (graftAssocCont l e)
-            ((k e).denote (blockAt B e M)) from by
-        exact LinearMap.congr_fun ((k e).denote_graft (graftAssocCont l e)) (blockAt B e M)]
+    refine Eq.trans ?_ (cc_sameExit (graftAssocProgram k l) M e
+      ((Boundary.graftSpaceEquiv (C e) _).symm ⟨f, xx⟩)
+      ((Boundary.graftSpaceEquiv (C e) _).symm ⟨f', yy⟩)).symm
+    refine Eq.trans ?_ (congrArg
+      (fun N : TypedLOCC.Op (graftAssocBoundary B C D e).space =>
+        N ((Boundary.graftSpaceEquiv (C e) _).symm ⟨f, xx⟩)
+          ((Boundary.graftSpaceEquiv (C e) _).symm ⟨f', yy⟩))
+      (LinearMap.congr_fun ((k e).denote_graft (graftAssocCont l e))
+        (blockAt B e M))).symm
     by_cases hff : f = f'
     · subst hff
-      rw [cc_sameExit, Program.controlledContinuation_sameExit,
-        exitKraus_sandwich_eq_blockAt, blockAt_cc'']
-      simp only [graftAssocCont]
-      rw [denote_systemCast]
+      refine (cc_sameExit l (Program.controlledContinuation k M)
+        ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩) xx yy).trans ?_
+      refine Eq.trans ?_ (cc_sameExit (graftAssocCont l e)
+        ((k e).denote (blockAt B e M)) f xx yy).symm
+      rw [blockAt_cc'']
+      exact (denote_systemCast (Boundary.system_graftExitEquiv_symm B C ⟨e, f⟩)
+        (l ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩)) _ xx yy).symm
     · have hne : (Boundary.graftExitEquiv B C).symm ⟨e, f⟩ ≠
           (Boundary.graftExitEquiv B C).symm ⟨e, f'⟩ := by
         intro hcon
         exact hff (eq_of_heq (Sigma.mk.inj_iff.mp
           ((Boundary.graftExitEquiv B C).symm.injective hcon)).2)
-      rw [Program.controlledContinuation_block_zero _ _ hne,
-        Program.controlledContinuation_block_zero _ _ hff]
+      exact (Program.controlledContinuation_block_zero l
+        (Program.controlledContinuation k M) hne xx yy).trans
+          (Program.controlledContinuation_block_zero (graftAssocCont l e)
+            ((k e).denote (blockAt B e M)) hff xx yy).symm
   · have hne : (Boundary.graftExitEquiv B C).symm ⟨e, f⟩ ≠
         (Boundary.graftExitEquiv B C).symm ⟨e', f'⟩ := by
       intro hcon
       exact hee (congrArg Sigma.fst ((Boundary.graftExitEquiv B C).symm.injective hcon))
-    rw [Program.controlledContinuation_block_zero _ _ hne,
-      Program.controlledContinuation_block_zero _ _ hee]
+    exact (Program.controlledContinuation_block_zero l
+      (Program.controlledContinuation k M) hne xx yy).trans
+        (Program.controlledContinuation_block_zero (graftAssocProgram k l) M hee
+          ((Boundary.graftSpaceEquiv (C e) _).symm ⟨f, xx⟩)
+          ((Boundary.graftSpaceEquiv (C e') _).symm ⟨f', yy⟩)).symm
 
 /-- Continuation family of the reassociated graft, transported along a boundary equality. -/
 def graftAssocProgramCast {B : Boundary P} {C : B.Exit → Boundary P}
@@ -344,8 +371,15 @@ theorem graftAssocExitEquiv_apply (B : Boundary P) (C : B.Exit → Boundary P)
               (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩)) y).1⟩,
           (Boundary.graftExitEquiv (C e)
             (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨e, f⟩)) y).2⟩ := by
-  simp only [graftAssocExitEquiv, Equiv.trans_apply, Equiv.apply_symm_apply]
-  rfl
+  exact congrArg
+    (fun w : Σ e : B.Exit, (graftAssocBoundary B C D e).Exit =>
+      (Boundary.graftExitEquiv (B.graft C) D).symm
+        ⟨(Boundary.graftExitEquiv B C).symm
+          ⟨w.1, (Boundary.graftExitEquiv (C w.1)
+            (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨w.1, f⟩)) w.2).1⟩,
+          (Boundary.graftExitEquiv (C w.1)
+            (fun f => D ((Boundary.graftExitEquiv B C).symm ⟨w.1, f⟩)) w.2).2⟩)
+    ((Boundary.graftExitEquiv B (graftAssocBoundary B C D)).apply_symm_apply ⟨e, y⟩)
 
 /-! ## Exit-controlled continuations -/
 
@@ -455,8 +489,14 @@ theorem denote_graft_congr_relabel {R : MultipartiteSystem P} {B : Boundary P} (
         (Boundary.graftSpaceEquiv B C₁).symm
           ⟨(Boundary.graftSpaceEquiv B C₂ z).1,
             (theta _).symm (Boundary.graftSpaceEquiv B C₂ z).2⟩ := rfl
-  simp only [LinearMap.comp_apply, reindexOp, LinearMap.coe_mk, AddHom.coe_mk,
-    Matrix.submatrix_apply]
+  change Program.controlledContinuation k₂ (p.denote rho)
+    ((Boundary.graftSpaceEquiv B C₂).symm ⟨e, a⟩)
+    ((Boundary.graftSpaceEquiv B C₂).symm ⟨f, c⟩) =
+      Program.controlledContinuation k₁ (p.denote rho)
+        ((graftSpaceRelabel B C₁ C₂ theta).symm
+          ((Boundary.graftSpaceEquiv B C₂).symm ⟨e, a⟩))
+        ((graftSpaceRelabel B C₁ C₂ theta).symm
+          ((Boundary.graftSpaceEquiv B C₂).symm ⟨f, c⟩))
   rw [hsymm, hsymm, Equiv.apply_symm_apply, Equiv.apply_symm_apply]
   dsimp only
   by_cases hef : e = f

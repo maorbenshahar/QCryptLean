@@ -454,8 +454,8 @@ theorem CQState.purifiedDistance_self_zero {X : Type*} [Fintype X] [DecidableEq 
     {n : ℕ} [NeZero n] (ρ : CQState X n) :
     CQState.purifiedDistance ρ ρ = 0 := by
   unfold CQState.purifiedDistance
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   exact InfoTheory.SmoothMinEntropy.purifiedDistance_self_zero ρ.toJointDensity
 
 /-- The zero CQ state has zero joint density (Tomamichel 2016, §2.4.4). -/
@@ -472,8 +472,8 @@ boundary in Tomamichel 2016, Definition 6.4. -/
 lemma CQState.purifiedDistance_zeroCQ {X : Type*} [Fintype X] [DecidableEq X]
     [Nonempty X] {n : ℕ} [NeZero n] (ρ : CQState X n) :
     CQState.purifiedDistance ρ zeroCQ = Real.sqrt (∑ x, (ρ.stateMap x).trace) := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   unfold CQState.purifiedDistance
   rw [zeroCQ_toJointDensity]
@@ -493,8 +493,8 @@ theorem CQState.purifiedDistance_symm {X : Type*} [Fintype X] [DecidableEq X] [N
     {n : ℕ} [NeZero n] (ρ σ : CQState X n) :
     CQState.purifiedDistance ρ σ = CQState.purifiedDistance σ ρ := by
   unfold CQState.purifiedDistance
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   exact InfoTheory.SmoothMinEntropy.purifiedDistance_symm ρ.toJointDensity σ.toJointDensity
 
 /-- Triangle inequality for purified distance on CQ states. -/
@@ -503,8 +503,8 @@ theorem CQState.purifiedDistance_triangle {X : Type*} [Fintype X] [DecidableEq X
     CQState.purifiedDistance ρ τ ≤
     CQState.purifiedDistance ρ σ + CQState.purifiedDistance σ τ := by
   unfold CQState.purifiedDistance
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   exact InfoTheory.SmoothMinEntropy.purifiedDistance_triangle
     ρ.toJointDensity σ.toJointDensity τ.toJointDensity
 
@@ -624,10 +624,10 @@ theorem CQState.purifiedDistance_left_isometry_embed_eq
       (σ_embed.stateMap x).toOp =
         K * (σ.stateMap x).toOp * K.conjTranspose) :
     CQState.purifiedDistance ρ_embed σ_embed = CQState.purifiedDistance ρ σ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (dSrc * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (dSrc * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dSrc) (NeZero.ne _)⟩
-  haveI : NeZero (dTgt * Fintype.card X) :=
+  have : NeZero (dTgt * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dTgt) (NeZero.ne _)⟩
   exact CQState.purifiedDistance_eq_of_fidelityGen_toJointDensity_eq _ _ _ _
     (CQState.fidelityGen_left_isometry_embed_eq K hK_iso ρ σ ρ_embed σ_embed hρ_embed hσ_embed)
@@ -666,7 +666,7 @@ theorem CQState.fidelityGen_le_fidelityGen_partialTraceB
     (ρ σ : CQState X (dE * dR)) :
     fidelityGen ρ.toJointDensity σ.toJointDensity ≤
       fidelityGen ρ.partialTraceB.toJointDensity σ.partialTraceB.toJointDensity := by
-  haveI : NeZero (dE * dR) :=
+  have : NeZero (dE * dR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   let A : X → PosSemidefOp (dE * dR) := fun x => (ρ.stateMap x).toPosSemidefOp
   let B : X → PosSemidefOp (dE * dR) := fun x => (σ.stateMap x).toPosSemidefOp
@@ -722,11 +722,11 @@ theorem CQState.purifiedDistance_partialTraceB_contract
     CQState.purifiedDistance ρ.partialTraceB σ.partialTraceB ≤
       CQState.purifiedDistance ρ σ := by
   unfold CQState.purifiedDistance
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero ((dE * dR) * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero ((dE * dR) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR))
       (NeZero.ne _)⟩
-  haveI : NeZero (dE * Fintype.card X) :=
+  have : NeZero (dE * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne _)⟩
   apply purifiedDistance_le_of_fidelityGen_ge
   exact CQState.fidelityGen_le_fidelityGen_partialTraceB ρ σ
@@ -819,8 +819,8 @@ theorem CQState.purifiedDistance_le_sqrt_two_mul_epsilon_of_toJointDensity_opLe
     (htrace_deficit : 1 - (∑ x : X, (τ.stateMap x).trace) ≤ ε) :
     CQState.purifiedDistance ρ τ ≤ Real.sqrt (2 * ε) := by
   unfold CQState.purifiedDistance
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   have hρ_joint_trace : ρ.toJointDensity.trace = 1 := by
     rw [CQState.toJointDensity_trace_eq_sum]
@@ -859,8 +859,8 @@ theorem CQState.purifiedDistance_le_sqrt_two_mul_trace_gap_epsilon_of_toJointDen
           (∑ x : X, (τ.stateMap x).trace) ≤ ε) :
     CQState.purifiedDistance ρ τ ≤ Real.sqrt (2 * ε) := by
   unfold CQState.purifiedDistance
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   apply
     SubDensityOp.purifiedDistance_le_sqrt_two_mul_trace_gap_epsilon_of_opLe

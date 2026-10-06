@@ -36,7 +36,7 @@ set-theoretic complement expected by `Equiv.Set.sumCompl`. -/
 def embeddingComplementEquiv {n N : ℕ} (f : Fin n ↪ Fin N) :
     Fin (N - n) ≃ {i : Fin N // i ∈ (Set.range f)ᶜ} :=
   (((embeddingRange f)ᶜ).orderIsoOfFin (card_embeddingRange_compl f)).toEquiv.trans
-    (Equiv.setCongr (by rw [Finset.coe_compl, coe_embeddingRange]))
+    (Set.equivOfEq (by rw [Finset.coe_compl, coe_embeddingRange]))
 
 /-- Split `Fin N` into the actual range of `f` and its increasingly enumerated complement. -/
 def embeddingSplitEquiv {n N : ℕ} (f : Fin n ↪ Fin N) :

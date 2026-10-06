@@ -136,12 +136,12 @@ theorem CQState.exists_extension_of_partialTraceB_purifiedDistance
     ∃ ρERtilde : CQState X (dE * dR),
       CQState.purifiedDistance ρER ρERtilde ≤ ε ∧
       ρERtilde.partialTraceB = ρEtilde := by
-  haveI : NeZero (dE * dR) :=
+  have : NeZero (dE * dR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero ((dE * dR) * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero ((dE * dR) * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne (dE * dR)) (NeZero.ne (Fintype.card X))⟩
-  haveI : NeZero (dE * Fintype.card X) :=
+  have : NeZero (dE * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne (Fintype.card X))⟩
   obtain ⟨ρERtilde, hpartial, hfid⟩ :=
     CQState.exists_extension_of_partialTraceB_fidelityGen_eq ρER ρEtilde

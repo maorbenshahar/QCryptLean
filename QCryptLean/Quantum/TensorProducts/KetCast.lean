@@ -52,9 +52,11 @@ theorem tensorPowVec_isNormalized {d k : ℕ} [NeZero d] [NeZero (d ^ k)]
     intro f g
     by_cases hfg : f = g
     · subst hfg; simp
-    · rw [Matrix.one_apply, if_neg (fun hcontra => hfg (finFunctionFinEquiv.injective hcontra))]
+    · rw [Matrix.one_apply,
+      ite_eq_right (fun hcontra => hfg (finFunctionFinEquiv.injective hcontra))]
       obtain ⟨x, hx⟩ := Function.ne_iff.mp hfg
-      exact (Finset.prod_eq_zero (Finset.mem_univ x) (by rw [Matrix.one_apply, if_neg hx])).symm
+      exact (Finset.prod_eq_zero (Finset.mem_univ x) (by rw [Matrix.one_apply,
+        ite_eq_right hx])).symm
   have hone : quadraticForm (1 : Op d) θ.toKet.vec = 1 := by
     have hn := θ.normalized
     unfold Ket.IsNormalized at hn

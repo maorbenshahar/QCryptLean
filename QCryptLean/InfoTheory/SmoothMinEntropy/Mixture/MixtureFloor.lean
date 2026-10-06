@@ -234,15 +234,15 @@ theorem CQState.purifiedDistance_mixture_le_max
     (hcomp : ∀ z, CQState.purifiedDistance (a z) (b z) ≤ ε) :
     CQState.purifiedDistance ρ ρ' ≤ ε := by
   classical
-  haveI hZne : Nonempty Z := by
+  have hZne : Nonempty Z := by
     rcases isEmpty_or_nonempty Z with hE | hN
     · exfalso; rw [Finset.sum_of_isEmpty] at hp_sum; norm_num at hp_sum
     · exact hN
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   -- (I) Super-additive fidelity lower bound for the mixture joint density.
   have hI :
@@ -562,7 +562,7 @@ theorem smoothMinEntropyReal_mixture_ge_inf_component
     (comp : Z → CQState X n) (ρ : CQState X n)
     (hmix : ∀ x : X, (ρ.stateMap x).toOp = ∑ z, (p z : ℂ) • ((comp z).stateMap x).toOp)
     (σ : SubDensityOp n) (k : ℝ)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)))
     (hfeas_comp_ball : ∀ z, ∀ ρ' : CQState X n,
       CQState.purifiedDistance (comp z) ρ' ≤ ε → hasFeasibleLambda ρ' σ)
     (hfloor : ∀ z, k ≤ smoothMinEntropyReal ε (comp z) σ) :

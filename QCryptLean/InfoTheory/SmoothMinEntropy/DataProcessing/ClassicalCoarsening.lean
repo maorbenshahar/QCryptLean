@@ -45,8 +45,8 @@ lemma povmCoarsen_posSemidef {X Y : Type*} [Fintype X] [DecidableEq Y] {n : ℕ}
     (by
       intro x _
       by_cases hx : g x = y
-      · simpa only [hx, if_true] using hM x
-      · simpa only [hx, if_false] using (Matrix.PosSemidef.zero : (0 : Op n).PosSemidef))
+      · simpa only [hx, ite_true] using hM x
+      · simpa only [hx, ite_false] using (Matrix.PosSemidef.zero : (0 : Op n).PosSemidef))
 
 /-- Pushing a Hermitian feasible POVM along a finite classical map preserves feasibility. -/
 lemma povmCoarsen_mem_povmFeasibleHerm
@@ -79,16 +79,16 @@ lemma povmCoarsen_self_opLe
   have hterm :
       (quadraticForm (if g x₀ = g x₀ then M x₀ else 0) v).re =
         (quadraticForm (M x₀) v).re := by
-    simp only [if_true]
+    simp only [ite_true]
   rw [← hterm]
   exact Finset.single_le_sum
     (s := (Finset.univ : Finset X))
     (f := fun x : X => (quadraticForm (if g x = g x₀ then M x else 0) v).re)
     (fun x _ => by
       by_cases hx : g x = g x₀
-      · simpa only [hx, if_true] using posSemidef_re_quadraticForm_nonneg (hM x) v
+      · simpa only [hx, ite_true] using posSemidef_re_quadraticForm_nonneg (hM x) v
       · change 0 ≤ (quadraticForm (if g x = g x₀ then M x else 0) v).re
-        rw [if_neg hx]
+        rw [ite_eq_right hx]
         unfold quadraticForm
         simp only [Matrix.zero_mulVec, dotProduct_zero, Complex.zero_re]
         exact le_rfl)
@@ -105,8 +105,8 @@ lemma trace_mul_coarsen_stateMap_toOp_eq_sum
   apply Finset.sum_congr rfl
   intro x _
   by_cases hx : g x = y
-  · simp only [hx, if_true]
-  · simp only [hx, if_false, Matrix.mul_zero, Matrix.trace_zero, Complex.zero_re]
+  · simp only [hx, ite_true]
+  · simp only [hx, ite_false, Matrix.mul_zero, Matrix.trace_zero, Complex.zero_re]
 
 /-- Objective against a coarsened CQ state can be evaluated by pulling the
 coarse POVM family back along the classical map. -/
@@ -170,7 +170,7 @@ theorem povmGuessingProb_le_povmGuessingProb_coarsen
     (hp : 0 < povmGuessingProb ρ) :
     povmGuessingProb ρ ≤ povmGuessingProb (CQState.coarsen g ρ) := by
   classical
-  haveI : Nonempty X := nonempty_of_povmGuessingProb_pos hp
+  have : Nonempty X := nonempty_of_povmGuessingProb_pos hp
   obtain ⟨M, hM, hM_eq⟩ := exists_optimal_povm_hermitian ρ
   have hN : povmCoarsen g M ∈
       (povmFeasibleHerm : Set (Y → Op n)) :=

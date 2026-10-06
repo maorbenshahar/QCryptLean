@@ -98,11 +98,11 @@ theorem fiberProdSum_eq_binomial_index {ι : Type*} [Fintype ι] [DecidableEq ι
       constructor
       · intro h_eq i
         by_cases hi : i ∈ S
-        · simp only [t, if_pos hi]
+        · simp only [t, ite_eq_left hi]
           have hmem : i ∈ (Finset.univ.filter (fun i => flag (ω i))) := by rw [h_eq]; exact hi
           simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem ⊢
           exact hmem
-        · simp only [t, if_neg hi]
+        · simp only [t, ite_eq_right hi]
           have hmem : i ∉ (Finset.univ.filter (fun i => flag (ω i))) := by rw [h_eq]; exact hi
           simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hmem ⊢
           exact hmem
@@ -113,11 +113,11 @@ theorem fiberProdSum_eq_binomial_index {ι : Type*} [Fintype ι] [DecidableEq ι
         · intro h_flag
           by_contra hi
           specialize h_pi i
-          simp only [t, if_neg hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
+          simp only [t, ite_eq_right hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
           exact h_pi h_flag
         · intro hi
           specialize h_pi i
-          simp only [t, if_pos hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
+          simp only [t, ite_eq_left hi, Finset.mem_filter, Finset.mem_univ, true_and] at h_pi
           exact h_pi
     rw [h_eq_pi, ← Finset.prod_univ_sum t (fun _ j => g j)]
     have h_t_sum : ∀ i : ι,
@@ -126,8 +126,8 @@ theorem fiberProdSum_eq_binomial_index {ι : Type*} [Fintype ι] [DecidableEq ι
           else (∑ j ∈ Finset.univ.filter (fun j => ¬ flag j), g j) := by
       intro i
       by_cases hi : i ∈ S
-      · simp only [t, if_pos hi]
-      · simp only [t, if_neg hi]
+      · simp only [t, ite_eq_left hi]
+      · simp only [t, ite_eq_right hi]
     rw [Finset.prod_congr rfl (fun i _ => h_t_sum i),
         Finset.prod_ite (f := fun _ => (∑ j ∈ Finset.univ.filter (fun j => flag j), g j))
           (g := fun _ => (∑ j ∈ Finset.univ.filter (fun j => ¬ flag j), g j)),
@@ -184,20 +184,20 @@ theorem flagOutcomePassSum_eq_binomialPassSum_index {ι : Type*} [Fintype ι] [D
             ∏ i : ι, g (ω i)
         else 0 := by
     by_cases hpe : |(k : ℝ) / N - Q| ≤ δ
-    · rw [if_pos hpe]
+    · rw [ite_eq_left hpe]
       refine Finset.sum_congr rfl ?_
       intro ω hω
       rw [Finset.mem_filter] at hω
       have hck : (Finset.univ.filter (fun i => flag (ω i))).card = k := hω.2
       simp only [hF, hck]
-      rw [if_pos hpe]
-    · rw [if_neg hpe]
+      rw [ite_eq_left hpe]
+    · rw [ite_eq_right hpe]
       refine Finset.sum_eq_zero ?_
       intro ω hω
       rw [Finset.mem_filter] at hω
       have hck : (Finset.univ.filter (fun i => flag (ω i))).card = k := hω.2
       simp only [hF, hck]
-      rw [if_neg hpe]
+      rw [ite_eq_right hpe]
   rw [hfiber, fiberProdSum_eq_binomial_index flag g k, ← hN]
   have hcomp : (∑ j ∈ Finset.univ.filter (fun j => ¬ flag j), g j) =
       1 - (∑ j ∈ Finset.univ.filter (fun j => flag j), g j) := by
@@ -256,7 +256,7 @@ theorem selected_split_perRound {n d : ℕ}
       refine ⟨Finset.mem_univ _, ?_⟩
       have hpi : p i := hi.2.1
       have heq : E (ωPE, y) i = ωPE ⟨i, hpi⟩ := by
-        simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_pos hpi]
+        simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_left hpi]
       rw [heq] at hi
       exact hi.2.2
     · intro j hj
@@ -265,7 +265,7 @@ theorem selected_split_perRound {n d : ℕ}
       have hpj : p (j : Fin n) := j.2
       refine ⟨Finset.mem_univ _, j.2, ?_⟩
       have heq : E (ωPE, y) (j : Fin n) = ωPE ⟨(j : Fin n), hpj⟩ := by
-        simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_pos hpj]
+        simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_left hpj]
       rw [heq]
       convert hj.2 using 2
     · intro i hi; rfl
@@ -282,27 +282,27 @@ theorem selected_split_perRound {n d : ℕ}
     · apply Finset.prod_congr rfl
       intro j _
       have hpj : p (j : Fin n) := j.2
-      rw [if_pos hpj]
+      rw [ite_eq_left hpj]
       congr 1
-      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_pos hpj]
+      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_left hpj]
     · apply Finset.prod_congr rfl
       intro j _
       have hnpj : ¬ p (j : Fin n) := j.2
-      rw [if_neg hnpj]
+      rw [ite_eq_right hnpj]
       congr 1
-      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dif_neg hnpj]
+      simp only [hE, Equiv.piEquivPiSubtypeProd_symm_apply, dite_eq_right hnpj]
   -- Rewrite the inner sum using the count and product facts.
   simp_rw [hcount, hprod]
   -- The indicator no longer depends on `y`; factor it and sum the free unselected product to one.
   by_cases hpe : |((Finset.univ.filter (fun j : {i // sel i = true} => flag (ωPE j))).card : ℝ) /
       Fintype.card {i // sel i = true} - Q| ≤ δ
-  · simp_rw [if_pos hpe]
+  · simp_rw [ite_eq_left hpe]
     rw [← Finset.mul_sum]
     have hkey : (∑ y : {i // ¬ p i} → Fin d, ∏ j : {i // ¬ p i}, h (j : Fin n) (y j)) = 1 := by
       rw [← Fintype.prod_sum (f := fun (j : {i // ¬ p i}) (k : Fin d) => h (j : Fin n) k)]
       exact Finset.prod_eq_one fun j _ => hh (j : Fin n)
     rw [hkey, mul_one]
-  · simp_rw [if_neg hpe]
+  · simp_rw [ite_eq_right hpe]
     simp
 
 open scoped BigOperators in
@@ -396,8 +396,8 @@ theorem passSum_mono_of_imp {ι : Type*} [Fintype ι]
   refine Finset.sum_le_sum ?_
   intro x _
   by_cases hP : P x
-  · rw [if_pos hP, if_pos (himp x hP)]
-  · rw [if_neg hP]
+  · rw [ite_eq_left hP, ite_eq_left (himp x hP)]
+  · rw [ite_eq_right hP]
     split_ifs with hR
     · exact hw x
     · exact le_refl 0

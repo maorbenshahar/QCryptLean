@@ -167,10 +167,16 @@ theorem reconstructionShortageKraus_resource_intertwines
     exact (map_sum (Matrix.singleAddMonoidHom (α := ℂ) y y) _ _).symm
   rw [hsum, hsum, BoundaryKeyLayout.ideal_single_of_abort _ rfl
       (shortageCompleteOutput_disposition N nK mZ mX ell ellEV leakEC omega.1
-        (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j omega)),
-    tensorIdLinear_trace_block (retainedAnalysisResource nK mZ mX ell ellEV leakEC)
+        (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j omega))]
+  have htrace := tensorIdLinear_trace_block
+      (retainedAnalysisResource nK mZ mX ell ellEV leakEC)
       (coordinateLinear_trace _ _ _
-        (retainedAnalysisOutputLayout nK mZ mX ell ellEV leakEC).toBoundaryKeyLayout.trace_ideal)]
+        (retainedAnalysisOutputLayout nK mZ mX ell ellEV leakEC).toBoundaryKeyLayout.trace_ideal)
+      rho (Sum.inr j : ComparisonControl N (nK + mZ + mX))
+  exact congrArg (fun z : ℂ => Matrix.single _ _
+    (Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j) omega.1 *
+      z * star (Instrument.weightedChoiceScale
+        (totalFailureControlKernel N nK mZ mX pA pB j) omega.1))) htrace.symm
 
 /-- The complete-output resource commutes with the whole reconstruction channel. -/
 theorem reconstructionInstrument_resource_intertwines

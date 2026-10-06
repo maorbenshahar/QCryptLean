@@ -101,8 +101,9 @@ theorem lifted_preserves_unequal_spectator_entry :
   rw [constantAction_entry]
   simp only [unequalSpectatorUnit, Fin.sum_univ_two, Matrix.single_apply]
   simp only [and_self, ↓reduceIte, inputAt, Fin.isValue, EmbeddingLike.apply_eq_iff_eq,
-    Prod.mk.injEq, and_true, add_eq_left, ite_eq_right_iff, one_ne_zero, imp_false]
-  exact (Fin.zero_ne_one : (0 : Fin 2) ≠ 1)
+    add_eq_left, ite_eq_right_iff, one_ne_zero, imp_false]
+  intro h
+  exact (Fin.zero_ne_one : (0 : Fin 2) ≠ 1) (congrArg Prod.fst h.1)
 
 /-- Unequal actor output keys force zero without imposing equality on the spectators. -/
 theorem lifted_unequal_output_keys_zero

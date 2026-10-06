@@ -69,11 +69,16 @@ private theorem successfulCompleteContinuation_output_apply
                 (@Sampling.packedPESel nK mZ mX)) : ℂ)⁻¹ *
                 (∑ qB : Measurement.SelectedLocalRecord N (nK + mZ + mX),
                   ∑ qA : Measurement.SelectedLocalRecord N (nK + mZ + mX),
-                    if x .alice = QKD.BB84.selectedBitsToRaw qA ∧
-                        x .bob = QKD.BB84.selectedBitsToRaw qB then
-                      sigma ((TwoParty.pairEquiv _ _).symm (qA, qB))
-                        ((TwoParty.pairEquiv _ _).symm (qA, qB))
-                    else 0)
+                    @ite ℂ
+                      (x .alice = QKD.BB84.selectedBitsToRaw qA ∧
+                        x .bob = QKD.BB84.selectedBitsToRaw qB)
+                      (@instDecidableAnd _ _
+                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
+                          (x .alice) (QKD.BB84.selectedBitsToRaw qA))
+                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
+                          (x .bob) (QKD.BB84.selectedBitsToRaw qB)))
+                      (sigma ((TwoParty.pairEquiv _ _).symm (qA, qB))
+                        ((TwoParty.pairEquiv _ _).symm (qA, qB))) 0)
             else 0
       else 0 := by
   unfold QKD.BB84.successfulCompleteContinuation
@@ -89,14 +94,18 @@ private theorem successfulCompleteContinuation_output_apply
       (Boundary.graftSpaceEquiv B C).symm ⟨(), q⟩ = q := by
     simpa only [B, C, Boundary.graftSpaceEquiv_leaf_apply] using
       (Equiv.symm_apply_apply (Boundary.graftSpaceEquiv B C) q)
-  change (Program.controlledContinuation (fun _ : B.Exit =>
+  let F := Program.controlledContinuation (B := B) (C := C) (fun _ : B.Exit =>
       QKD.BB84.rawClassicalTailProgram (nK + mZ + mX) (mZ + mX)
         ell ellEV (@Sampling.packedPESel nK mZ mX)
         (@Sampling.packedXSel nK mZ mX) leakEC ec delta Q)
-      ((QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma)) qa qb = _
-  conv_lhs =>
-    rw [← hrow qa, ← hrow qb]
-  rw [Program.controlledContinuation_sameExit]
+      ((QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma)
+  change F qa qb = _
+  refine (congrArg₂ F (hrow qa).symm (hrow qb).symm).trans ?_
+  refine (Program.controlledContinuation_sameExit (B := B) (C := C)
+    (fun _ => QKD.BB84.rawClassicalTailProgram (nK + mZ + mX) (mZ + mX)
+      ell ellEV (@Sampling.packedPESel nK mZ mX) (@Sampling.packedXSel nK mZ mX)
+      leakEC ec delta Q)
+    ((QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma) () qa qb).trans ?_
   let tau : TypedLOCC.Op (FinalStage.rawSystem (nK + mZ + mX)).total :=
     (Boundary.exitKraus B () : Matrix _ _ ℂ)ᴴ *
       (QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma *
@@ -107,7 +116,7 @@ private theorem successfulCompleteContinuation_output_apply
         tau qa qb = _
   rw [rawClassicalTailProgram_output_apply]
   by_cases hq : qa = qb
-  · rw [if_pos hq, if_pos hq]
+  · rw [ite_eq_left hq, ite_eq_left hq]
     apply Finset.sum_congr rfl
     intro x _
     apply Finset.sum_congr rfl
@@ -115,7 +124,7 @@ private theorem successfulCompleteContinuation_output_apply
     by_cases hout : rawClassicalTailOutputPoint (nK + mZ + mX)
         (mZ + mX) ell ellEV (@Sampling.packedPESel nK mZ mX)
         (@Sampling.packedXSel nK mZ mX) leakEC ec delta Q x st = qa
-    · rw [if_pos hout, if_pos hout]
+    · rw [ite_eq_left hout, ite_eq_left hout]
       congr 1
       have htau : tau x x =
           (QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma
@@ -124,8 +133,8 @@ private theorem successfulCompleteContinuation_output_apply
           ((QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma)) x) x
       rw [htau]
       exact selectedBitsToRawProgram_denote_diag N (nK + mZ + mX) sigma x
-    · rw [if_neg hout, if_neg hout]
-  · rw [if_neg hq, if_neg hq]
+    · rw [ite_eq_right hout, ite_eq_right hout]
+  · rw [ite_eq_right hq, ite_eq_right hq]
 
 private theorem program_denote_success_eq_continuation
     (pA pB : PMF Basis) (N nK mZ mX ell ellEV leakEC : ℕ)
@@ -209,15 +218,20 @@ private theorem program_denote_success_raw_formula
                 (@Sampling.packedPESel nK mZ mX)) : ℂ)⁻¹ *
                 (∑ qB : Measurement.SelectedLocalRecord N (nK + mZ + mX),
                   ∑ qA : Measurement.SelectedLocalRecord N (nK + mZ + mX),
-                    if x .alice = QKD.BB84.selectedBitsToRaw qA ∧
-                        x .bob = QKD.BB84.selectedBitsToRaw qB then
-                      (Measurement.weightedLatePublicSelectionProgram
+                    @ite ℂ
+                      (x .alice = QKD.BB84.selectedBitsToRaw qA ∧
+                        x .bob = QKD.BB84.selectedBitsToRaw qB)
+                      (@instDecidableAnd _ _
+                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
+                          (x .alice) (QKD.BB84.selectedBitsToRaw qA))
+                        ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
+                          (x .bob) (QKD.BB84.selectedBitsToRaw qB)))
+                      ((Measurement.weightedLatePublicSelectionProgram
                         pA pB N nK mZ mX).denote rho
                         (Measurement.lateSelectionSuccessAt N nK mZ mX
                           omega hquota (qA, qB))
                         (Measurement.lateSelectionSuccessAt N nK mZ mX
-                          omega hquota (qA, qB))
-                    else 0)
+                          omega hquota (qA, qB))) 0)
             else 0
       else 0 := by
   rw [program_denote_success_eq_continuation]
@@ -233,10 +247,7 @@ private theorem program_denote_success_raw_formula
   have hstart :
       (Measurement.lateSelectionBoundary N nK mZ mX).system e =
         Measurement.weightedSelectedRecordSystem N (nK + mZ + mX) := by
-    rcases omega with ⟨aBasis, bBasis, order⟩
-    change (Measurement.lateSelectionLeaf N nK mZ mX
-      ⟨aBasis, bBasis, order⟩).system _ = _
-    rw [QKD.BB84.lateSelectionLeaf_system, if_pos hquota]
+    exact QKD.BB84.lateSelectionBoundary_system_success N nK mZ mX omega hquota
   have hout :
       QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC e =
         QKD.BB84.rawClassicalTailBoundary (nK + mZ + mX) (mZ + mX) ell ellEV
@@ -244,7 +255,7 @@ private theorem program_denote_success_raw_formula
     exact completeContinuationBoundary_success
       N nK mZ mX ell ellEV leakEC omega hquota
   unfold QKD.BB84.completeContinuation
-  rw [dif_pos hquota']
+  rw [dite_eq_left hquota']
   dsimp only
   change (cast
       (congrArg (fun R => Program R
@@ -281,8 +292,9 @@ private theorem program_denote_success_raw_formula
           omega hquota (qA, qB))
         (Measurement.lateSelectionSuccessAt N nK mZ mX
           omega hquota (qA, qB)) := by
-    simp [Matrix.mul_apply, Matrix.conjTranspose_apply,
-      Boundary.exitKraus_apply, hpoint]
+    exact (BoundaryKeyLayout.leafBlock_apply e _ _ _).trans
+      (congrArg₂ ((Measurement.weightedLatePublicSelectionProgram
+        pA pB N nK mZ mX).denote rho) (hpoint qA qB) (hpoint qA qB))
   have hdiag' (qA qB : Measurement.SelectedLocalRecord N (nK + mZ + mX)) :
       (((Boundary.exitKraus (Measurement.lateSelectionBoundary N nK mZ mX)
             (Measurement.lateSelectionExit N nK mZ mX omega))ᴴ *
@@ -311,15 +323,20 @@ private theorem weightedLatePublicSelection_selectedBits_sum
     (x : (FinalStage.rawSystem (nK + mZ + mX)).total) :
     (∑ qB : Measurement.SelectedLocalRecord N (nK + mZ + mX),
       ∑ qA : Measurement.SelectedLocalRecord N (nK + mZ + mX),
-        if x .alice = QKD.BB84.selectedBitsToRaw qA ∧
-            x .bob = QKD.BB84.selectedBitsToRaw qB then
-          (Measurement.weightedLatePublicSelectionProgram
+        @ite ℂ
+          (x .alice = QKD.BB84.selectedBitsToRaw qA ∧
+            x .bob = QKD.BB84.selectedBitsToRaw qB)
+          (@instDecidableAnd _ _
+            ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
+              (x .alice) (QKD.BB84.selectedBitsToRaw qA))
+            ((inferInstance : DecidableEq (Fin (2 ^ (nK + mZ + mX))))
+              (x .bob) (QKD.BB84.selectedBitsToRaw qB)))
+          ((Measurement.weightedLatePublicSelectionProgram
             pA pB N nK mZ mX).denote rho
             (Measurement.lateSelectionSuccessAt N nK mZ mX
               omega hquota (qA, qB))
             (Measurement.lateSelectionSuccessAt N nK mZ mX
-              omega hquota (qA, qB))
-        else 0) =
+              omega hquota (qA, qB))) 0) =
       (Fintype.card (Shuffle omega.a omega.b) : ℂ)⁻¹ *
         ((Sampling.basisStringLaw N pA omega.a).toReal : ℂ) *
         ((Sampling.basisStringLaw N pB omega.b).toReal : ℂ) *
@@ -335,19 +352,27 @@ private theorem weightedLatePublicSelection_selectedBits_sum
   let qB0 : Measurement.SelectedLocalRecord N (nK + mZ + mX) :=
     (omega.b,
       (retainedBitCoordinateEquiv (nK + mZ + mX)).symm (x .bob))
-  have hreference :
-      selectedReferenceInputBlock
-          (Matrix.of fun i j =>
-            (reindexOp (weightedScheduleUnitInputEquiv N) rho) i.1 j.1)
-          () () =
-        reindexOp (weightedScheduleUnitInputEquiv N) rho := by
-    rfl
-  simp_rw [Measurement.weightedLatePublicSelectionProgram_success_apply]
-  simp only [Measurement.selectedMeasurementLaw]
+  have hlaw (qA qB : Measurement.SelectedLocalRecord N (nK + mZ + mX)) :
+      selectedMeasurementLaw pA pB (selectedEmbedding omega hquota)
+          (reindexOp (weightedScheduleUnitInputEquiv N) rho) (qA, qB) (qA, qB) =
+        ((Sampling.basisStringLaw N pA qA.1).toReal : ℂ) *
+          ((Sampling.basisStringLaw N pB qB.1).toReal : ℂ) *
+          fixedBasisSelectedBornBlock (selectedEmbedding omega hquota) qA.1 qB.1 qA.2 qB.2
+            (Matrix.of fun i j =>
+              (reindexOp (weightedScheduleUnitInputEquiv N) rho) i.1 j.1) () () := by
+    exact (selectedMeasurementLaw_apply pA pB (selectedEmbedding omega hquota)
+      (reindexOp (weightedScheduleUnitInputEquiv N) rho)
+      qA.1 qA.1 qB.1 qB.1 qA.2 qA.2 qB.2 qB.2).trans (ite_eq_left ⟨rfl, rfl⟩)
+  simp_rw [Measurement.weightedLatePublicSelectionProgram_success_apply, hlaw]
   rw [Finset.sum_eq_single qB0]
   · rw [Finset.sum_eq_single qA0]
-    · simp [qA0, qB0, QKD.BB84.selectedBitsToRaw, retainedBitCoordinateEquiv,
-        fixedBasisSelectedBornBlock, hreference]
+    · have ha : x .alice = QKD.BB84.selectedBitsToRaw qA0 :=
+        ((retainedBitCoordinateEquiv (nK + mZ + mX)).apply_symm_apply (x .alice)).symm
+      have hb : x .bob = QKD.BB84.selectedBitsToRaw qB0 :=
+        ((retainedBitCoordinateEquiv (nK + mZ + mX)).apply_symm_apply (x .bob)).symm
+      refine (ite_eq_left ⟨ha, hb⟩).trans ?_
+      rw [ite_eq_left ⟨rfl, rfl, rfl, rfl⟩]
+      dsimp only [qA0, qB0]
       ring
     · intro qA _ hne
       by_cases hbits : x .alice = QKD.BB84.selectedBitsToRaw qA
@@ -357,8 +382,8 @@ private theorem weightedLatePublicSelection_selectedBits_sum
           apply Prod.ext
           · exact hb
           · apply (retainedBitCoordinateEquiv (nK + mZ + mX)).injective
-            simp only [qA0, Equiv.apply_symm_apply]
-            exact hbits.symm
+            exact hbits.symm.trans
+              ((retainedBitCoordinateEquiv (nK + mZ + mX)).apply_symm_apply (x .alice)).symm
         simp [hbits, hbase]
       · simp [hbits]
     · simp
@@ -370,8 +395,8 @@ private theorem weightedLatePublicSelection_selectedBits_sum
         apply Prod.ext
         · exact hb
         · apply (retainedBitCoordinateEquiv (nK + mZ + mX)).injective
-          simp only [qB0, Equiv.apply_symm_apply]
-          exact hbits.symm
+          exact hbits.symm.trans
+            ((retainedBitCoordinateEquiv (nK + mZ + mX)).apply_symm_apply (x .bob)).symm
       simp [hbits, hbase]
     · simp [hbits]
   · simp
@@ -412,19 +437,19 @@ private theorem totalized_success_mass_formula
     subst nK
     subst mZ
     subst mX
-    rw [totalizedReconstructedStatusRawLaw, dif_pos rfl] at hpoint
+    rw [totalizedReconstructedStatusRawLaw, dite_eq_left rfl] at hpoint
     simp only [PMF.bind_apply, PMF.pure_apply, tsum_fintype,
       Prod.mk.injEq, true_and, mul_ite, mul_one, mul_zero] at hpoint
     simpa [selectionSuccessMass_zero_quotas] using hpoint
-  · rw [totalizedReconstructedStatusRawLaw, dif_neg hn] at hpoint
+  · rw [totalizedReconstructedStatusRawLaw, dite_eq_right hn] at hpoint
     simp only [PMF.bind_apply, PMF.pure_apply, tsum_fintype,
       Fintype.sum_bool, selectionStatusLaw, PMF.ofFintype_apply,
-      selectionStatusWeight, Bool.false_eq_true, if_false, if_true,
+      selectionStatusWeight, Bool.false_eq_true, ite_false, ite_true,
       Prod.mk.injEq, true_and, mul_ite, mul_one, mul_zero] at hpoint
     simp_rw [Finset.mul_sum] at hpoint
     simp only [mul_ite, mul_zero, Bool.true_eq_false, false_and,
-      if_false, Finset.sum_const_zero, add_zero,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true] at hpoint
+      ite_false, Finset.sum_const_zero, add_zero,
+      Finset.sum_ite_eq, Finset.mem_univ, ite_true] at hpoint
     simpa only [mul_assoc] using hpoint
 
 private theorem totalized_success_complex_mass_formula
@@ -611,9 +636,10 @@ private theorem reconstruction_success
             omega hquota q) x = 0
     unfold reconstructionShortageKraus
     refine (Matrix.smul_apply _ _ _ _).trans ?_
-    rw [Matrix.single_apply_of_row_ne]
-    · exact smul_zero _
-    · intro heq
+    have hrow : shortageCompleteOutput N nK mZ mX ell ellEV leakEC eta.1
+        (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j eta) ≠
+        successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC omega hquota q := by
+      intro heq
       have hrc := congrArg (fun y =>
         QKD.BB84.lateSelectionExitEquiv N nK mZ mX
           ((QKD.BB84.exitEquiv N nK mZ mX ell ellEV leakEC) y.1).1) heq
@@ -627,6 +653,10 @@ private theorem reconstruction_success
         ((QKD.BB84.lateSelectionExitEquiv N nK mZ mX).right_inv omega)
       exact (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j eta)
         (hrc' ▸ hquota)
+    exact (congrArg (fun z : ℂ => _ • z)
+      (Matrix.single_apply_of_row_ne hrow
+        ((r, Sum.inr j) : ReconstructionInput N nK mZ mX ell ellEV leakEC)
+        x (1 : ℂ))).trans (smul_zero _)
   let EPost := reconstructionInputEquiv N nK mZ mX ell ellEV leakEC
   let sigma : Matrix
       (ReconstructionInput N nK mZ mX ell ellEV leakEC)
@@ -713,56 +743,14 @@ private theorem reconstruction_success
   by_cases hpos : 0 < K omega
   · let eta0 : SelectedControlSupport N nK mZ mX pA pB S pi :=
       ⟨omega, hpos⟩
-    have hrow_self
-        (q : RawClassicalTailOutput (nK + mZ + mX) (mZ + mX) ell ellEV
-          (@Sampling.packedPESel nK mZ mX) leakEC)
-        (x : ReconstructionInput N nK mZ mX ell ellEV leakEC) :
-        reconstructionKraus N nK mZ mX ell ellEV leakEC pA pB
-            (Sum.inl ⟨S, pi, eta0⟩)
-            (successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC
-              omega hquota q) x =
-          if x = (E (D.symm (pi, q)), Sum.inl S) then
-            Instrument.weightedChoiceScale K omega else 0 := by
-      change reconstructionSuccessKraus N nK mZ mX ell ellEV leakEC
-          pA pB S pi eta0
-            (successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC
-              omega hquota q) x = _
-      unfold reconstructionSuccessKraus
-      dsimp only
-      by_cases hx : x = (E (D.symm (pi, q)), Sum.inl S)
-      · subst x
-        simp [E, D, K, eta0]
-      · rw [if_neg hx]
-        split
-        · rename_i hc
-          exfalso
-          apply hx
-          rcases hc with ⟨hcS, hcpi, hcout⟩
-          apply Prod.ext
-          · have htail :
-                q = (D (E.symm x.1)).2 := by
-              apply (successCompleteOutputEmbedding
-                N nK mZ mX ell ellEV leakEC omega hquota).injective
-              simpa [eta0] using hcout
-            have hdata : D (E.symm x.1) = (pi, q) := by
-              apply Prod.ext
-              · exact hcpi
-              · exact htail.symm
-            calc
-              x.1 = E (E.symm x.1) := (E.apply_symm_apply x.1).symm
-              _ = E (D.symm (pi, q)) := by
-                rw [← hdata, D.symm_apply_apply]
-          · exact hcS
-        · rfl
     have hrows
         (q : RawClassicalTailOutput (nK + mZ + mX) (mZ + mX) ell ellEV
           (@Sampling.packedPESel nK mZ mX) leakEC) :
         reconstructionKraus N nK mZ mX ell ellEV leakEC pA pB (Sum.inl ⟨S, pi, eta0⟩)
             (successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC omega hquota q) =
-          Pi.single (E (D.symm (pi, q)), Sum.inl S)
+          Pi.single (reconstructionSuccessInput N nK mZ mX ell ellEV leakEC S pi q)
             (Instrument.weightedChoiceScale K omega) := by
-      funext x
-      exact (hrow_self q x).trans (Pi.single_apply _ _ _).symm
+      exact reconstructionSuccessKraus_row N nK mZ mX ell ellEV leakEC pA pB S pi eta0 q
     rw [Finset.sum_eq_single eta0]
     · refine (matrixConjLinear_apply_of_row_eq_single _ sigma (hrows qa) (hrows qb)).trans ?_
       calc
@@ -886,6 +874,7 @@ private theorem retainedMid_success
       unfold comparisonPreToRetainedControlEquiv
         comparisonSelectedToRoundEquiv comparisonPreOutputEquiv
       simp
+      rfl
     change (coordinateLinear (comparisonPreInputEquiv N)
         (comparisonPreOutputEquiv N (nK + mZ + mX))
         (comparisonPreInstrument N nK mZ mX pA pB hN).channel)
@@ -1064,14 +1053,25 @@ private theorem retainedAnalysisReal_success
     have hrow (y : ComparisonPreInput n) :
         kp (e x) (selectedPairNumeralEquiv n y) = knative () y := by
       rcases y with ⟨yA, yB⟩
-      simp [kp, kappa, e, knative, uA, uB,
-        retainedAnalysisBlockInputEquiv, TwoParty.pairEquiv,
-        selectedPairNumeralEquiv, nativeSiftPairKraus,
-        nativeSiftMeasurementRow, retainedBitCoordinateEquiv,
-        Instrument.computationalMeasurement,
-        Instrument.nondemolitionReadout,
-        Instrument.nondemolitionReadoutKraus,
-        Quantum.TensorProducts.Op.tensor]
+      suffices h :
+          kappa (x .alice) ((retainedBitCoordinateEquiv n) yA) *
+              kappa (x .bob) ((retainedBitCoordinateEquiv n) yB) =
+            kappa ((retainedBitCoordinateEquiv n) ((retainedBitCoordinateEquiv n).symm (x .alice)))
+                ((retainedBitCoordinateEquiv n) yA) *
+              kappa ((retainedBitCoordinateEquiv n) ((retainedBitCoordinateEquiv n).symm (x .bob)))
+                ((retainedBitCoordinateEquiv n) yB) by
+        simpa [kp, kappa, e, knative, uA, uB,
+          retainedAnalysisBlockInputEquiv, TwoParty.pairEquiv,
+          selectedPairNumeralEquiv, nativeSiftPairKraus,
+          nativeSiftMeasurementRow, retainedBitCoordinateEquiv,
+          Instrument.computationalMeasurement,
+          Instrument.nondemolitionReadout,
+          Instrument.nondemolitionReadoutKraus,
+          Quantum.TensorProducts.Op.tensor] using h
+      exact congrArg₂ (fun (a b : Fin (2 ^ n)) => kappa a ((retainedBitCoordinateEquiv n) yA) *
+        kappa b ((retainedBitCoordinateEquiv n) yB))
+        ((retainedBitCoordinateEquiv n).apply_symm_apply (x .alice)).symm
+        ((retainedBitCoordinateEquiv n).apply_symm_apply (x .bob)).symm
     rw [mul_mul_conjTranspose_apply, mul_mul_conjTranspose_apply]
     rw [← Equiv.sum_comp (selectedPairNumeralEquiv n)]
     apply Finset.sum_congr rfl
@@ -1098,7 +1098,7 @@ private theorem retainedAnalysisReal_success
   simp only [qA, qB, D, Equiv.apply_symm_apply, hNative]
   by_cases hq : qa = qb
   · subst qb
-    rw [if_pos rfl, if_pos rfl]
+    rw [ite_eq_left rfl, ite_eq_left rfl]
   · have hq' :
         (retainedAnalysisOutputDataEquiv nK mZ mX ell ellEV leakEC).symm
             (pi, qa) ≠
@@ -1109,7 +1109,7 @@ private theorem retainedAnalysisReal_success
       exact congrArg Prod.snd
         ((retainedAnalysisOutputDataEquiv
           nK mZ mX ell ellEV leakEC).symm.injective h)
-    rw [if_neg hq', if_neg hq]
+    rw [ite_eq_right hq', ite_eq_right hq]
 
 /-- On a quota-success exit, the BB84 program and the factorized real map have the same complete
 output block for every complex input operator and every pair of classical-tail outputs. -/
@@ -1152,7 +1152,14 @@ theorem retainedFactorization_success_sector
         Matrix.reindex (Fintype.equivFin (weightedStreamSystem Unit N).total)
           (Fintype.equivFin (weightedStreamSystem Unit N).total) rho := by
     ext i j
-    simp [rhoBits, reindexOp, comparisonPreInputEquiv, Matrix.reindex_apply]
+    change rho
+      ((weightedScheduleUnitInputEquiv N).symm ((weightedScheduleUnitInputEquiv N)
+        ((Fintype.equivFin _).symm i)))
+      ((weightedScheduleUnitInputEquiv N).symm ((weightedScheduleUnitInputEquiv N)
+        ((Fintype.equivFin _).symm j))) = _
+    exact congrArg₂ rho
+      ((weightedScheduleUnitInputEquiv N).symm_apply_apply _)
+      ((weightedScheduleUnitInputEquiv N).symm_apply_apply _)
   rw [← hinput]
   simp_rw [retainedMid_success pA pB N nK mZ mX ell ellEV leakEC hN
     ec delta Q rhoBits]
@@ -1162,7 +1169,7 @@ theorem retainedFactorization_success_sector
     ell ellEV leakEC omega hquota ec delta Q rho qa qb]
   by_cases hq : qa = qb
   · subst qb
-    simp only [if_pos]
+    simp only [ite_eq_left]
     have hcoeff
         (S : Set.powersetCard (Fin N) (nK + mZ + mX))
         (pi : Equiv.Perm (Fin (nK + mZ + mX))) :
@@ -1289,6 +1296,6 @@ theorem retainedFactorization_success_sector
       enter [2, x]
       rw [Finset.sum_comm]
     simp only [mul_assoc]
-  · simp only [if_neg hq, mul_zero, Finset.sum_const_zero]
+  · simp only [ite_eq_right hq, mul_zero, Finset.sum_const_zero]
 
 end QKD.BB84.Reduction

@@ -55,7 +55,7 @@ lemma isGroupInvariantMeasure_const_one {d : ℕ} (μ : DensityMeasure d) :
 /-- A nonempty tensor power determines its single-round density operator. -/
 lemma tensorPowGen_injective {d n : ℕ} [NeZero d] [NeZero n] :
     Function.Injective (fun σ : DensityOp d => σ.tensorPowGen n) := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   exact Function.LeftInverse.injective (fun σ => partialTraceToFirst_tensorPowGen σ n)
 
 /-- A tensor power is IID group-invariant exactly when its single-round state
@@ -80,9 +80,9 @@ lemma isIIDGroupInvariant_tensorPowGen_iff {G : Type*} [Group G]
 
 /-- Group-invariant states form a closed subset of the density operators. -/
 lemma isClosed_isGroupInvariantState {G : Type*} [Group G] {d : ℕ}
-    (π : G → Op d) : IsClosed (setOf (IsGroupInvariantState π)) := by
-  change IsClosed (setOf fun σ : DensityOp d => ∀ g, π g * σ.toOp * (π g)ᴴ = σ.toOp)
-  simp only [Set.setOf_forall]
+    (π : G → Op d) : IsClosed (Set.ofPred (IsGroupInvariantState π)) := by
+  change IsClosed (Set.ofPred fun σ : DensityOp d => ∀ g, π g * σ.toOp * (π g)ᴴ = σ.toOp)
+  simp only [Set.ofPred_forall]
   exact isClosed_iInter fun g => isClosed_eq
     ((continuous_const.matrix_mul DensityOp.continuous_toOp).matrix_mul continuous_const)
     DensityOp.continuous_toOp

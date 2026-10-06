@@ -103,9 +103,9 @@ private theorem acceptContinuation_denote_apply
         else 0 := by
   have hout : (FinalStage.bobKeyAction n ell peSel leakEC ec seed syn flag).out =
     FinalStage.keySystem ell := by
-    simp only [FinalStage.bobKeyAction, FinalStage.aliceKeyAction,
-      PrivateAction.out_ofInstrument, FinalStage.rawSystem, FinalStage.keySystem,
-      TwoParty.set_alice, TwoParty.set_bob]
+    change ((FinalStage.rawSystem n).set .alice (Fin (2 ^ ell))).set .bob
+      (Fin (2 ^ ell)) = _
+    rw [TwoParty.set_alice, TwoParty.set_bob]
   have hcoord (a b : Fin (2 ^ ell)) :
       (Equiv.cast (congrArg Boundary.space (congrArg Boundary.leaf hout.symm)))
           ((Boundary.leafSpaceEquiv (FinalStage.keySystem ell)).symm
@@ -165,7 +165,11 @@ private theorem acceptContinuation_denote_apply
         (((FinalStage.aliceKeyAction n ell peSel seed flag).out.set .bob (Fin (2 ^
           ell))).pairEquiv.symm
           (a', b')) = _
-  rw [Instrument.liftAt_bob_operation_apply]
+  refine (Instrument.liftAt_bob_operation_apply
+    (FinalStage.aliceKeyAction n ell peSel seed flag).out
+    (Instrument.functionAndForget (Model.bobKeySlotOf n ell peSel leakEC ec seed syn flag)) ()
+    ((FinalStage.aliceKeyAction n ell peSel seed flag).liftedOperation () sigma)
+    a a' b b').trans ?_
   refine (Instrument.functionAndForget_operation_apply
     (QKD.BB84.Model.bobKeySlotOf n ell peSel leakEC ec seed syn flag) _ _ _).trans ?_
   have hAliceApply (a a' : Fin (2 ^ ell))
@@ -186,10 +190,12 @@ private theorem acceptContinuation_denote_apply
           (Fin (2 ^ ell))).pairEquiv.symm (a, rB))
         (((FinalStage.rawSystem n).set .alice
           (Fin (2 ^ ell))).pairEquiv.symm (a', rB)) = _
-    rw [Instrument.liftAt_alice_operation_apply]
+    refine (Instrument.liftAt_alice_operation_apply (FinalStage.rawSystem n)
+      (Instrument.functionAndForget (Model.aliceKeySlotOf n ell peSel seed flag)) ()
+      sigma a a' rB rB).trans ?_
     exact Instrument.functionAndForget_operation_apply
       (QKD.BB84.Model.aliceKeySlotOf n ell peSel seed flag) _ _ _
-  simp_rw [Matrix.submatrix_apply, hAliceApply]
+  exact Finset.sum_congr rfl fun rB _ => if_congr Iff.rfl (hAliceApply a a' rB) rfl
 
 /-- Every entry of the key-discarding continuation is the trace of its input: its output space
 is a single point. -/
@@ -271,7 +277,19 @@ private theorem finalStage_program_denote_apply
         ((FinalStage.rawSystem n).splitAt .bob x))
       (((FinalStage.rawSystem n).splitAtSet .bob (Fin (2 ^ n))).symm
         ((FinalStage.rawSystem n).splitAt .bob x')) = _
-    rw [Instrument.liftAt_operation_apply]
+    refine (Instrument.liftAt_operation_apply (R := FinalStage.rawSystem n) .bob
+      (Instrument.nondemolitionReadout (Model.acceptFlagOf n m ellEV peSel xSel leakEC ec
+        delta Q d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome)) flag sigma _ _).trans ?_
+    let E : (FinalStage.rawSystem n).total ≃
+        Fin (2 ^ n) × (FinalStage.rawSystem n).rest .bob := (FinalStage.rawSystem n).splitAt .bob
+    let O : ((FinalStage.rawSystem n).set .bob (Fin (2 ^ n))).total ≃
+        Fin (2 ^ n) × (FinalStage.rawSystem n).rest .bob :=
+      (FinalStage.rawSystem n).splitAtSet .bob (Fin (2 ^ n))
+    change (Instrument.nondemolitionReadout (Model.acceptFlagOf n m ellEV peSel xSel leakEC ec
+      delta Q d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome)).operation flag
+      (sigma.submatrix (fun y => E.symm (y, (O (O.symm (E x))).2))
+        (fun y => E.symm (y, (O (O.symm (E x'))).2)))
+      (O (O.symm (E x))).1 (O (O.symm (E x'))).1 = _
     simp only [Equiv.apply_symm_apply]
     have h := Instrument.nondemolitionReadout_operation_apply
         (QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec delta Q
@@ -283,8 +301,9 @@ private theorem finalStage_program_denote_apply
             (y, ((FinalStage.rawSystem n).splitAt .bob x').2)))
         ((FinalStage.rawSystem n).splitAt .bob x).1
         ((FinalStage.rawSystem n).splitAt .bob x').1
-    simp only [Matrix.submatrix_apply, Prod.eta, Equiv.symm_apply_apply] at h
-    exact h
+    refine h.trans ?_
+    exact if_congr Iff.rfl
+      (congrArg₂ sigma (E.symm_apply_apply x) (E.symm_apply_apply x')) rfl
   have hFinalAtFlag
       (d : QKD.BB84.ClassicalTailData n m ell ellEV peSel leakEC)
       (sigma : Op (FinalStage.rawSystem n).total) (flag : Fin 2)
@@ -299,7 +318,6 @@ private theorem finalStage_program_denote_apply
     have hblock := Program.denote_then_publicSpaceEquiv_symm_apply
       (FinalStage.decisionAnnouncement n m ellEV peSel xSel leakEC ec delta Q
         d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome) (Equiv.refl _) (fun _ => rfl)
-    simp only [FinalStage.decisionAnnouncement_announce] at hblock
     refine (hblock _ _ sigma flag u v).trans ?_
     refine (Program.denote_cast_apply (decisionOutput d flag) rfl _ _ _ _).trans ?_
     rfl
@@ -315,9 +333,14 @@ private theorem finalStage_program_denote_apply
               (QKD.BB84.Model.aliceKeySlotOf n ell peSel d.seedPair.1 0 (x .alice),
                QKD.BB84.Model.bobKeySlotOf n ell peSel leakEC ec d.seedPair.1 d.syndrome
                  0 (x .bob)))⟩ := by
-    apply (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).injective
-    simp only [rawClassicalTailFinalPoint, hf, dif_pos, Equiv.apply_symm_apply]
-    simp [hf, FinalStage.flagBoundary, Boundary.leafSpaceEquiv, TwoParty.pairEquiv]
+    refine (dite_eq_left hf).trans ?_
+    apply congrArg (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).symm
+    apply Sigma.ext hf
+    exact (cast_heq _ _).trans (heq_of_eq (congrArg (fun flag : Fin 2 =>
+      (Boundary.leafSpaceEquiv (FinalStage.keySystem ell)).symm
+        ((TwoParty.pairEquiv (Fin (2 ^ ell)) (Fin (2 ^ ell))).symm
+          (Model.aliceKeySlotOf n ell peSel d.seedPair.1 flag (x .alice),
+            Model.bobKeySlotOf n ell peSel leakEC ec d.seedPair.1 d.syndrome flag (x .bob)))) hf))
   have hPointAbort
       (d : QKD.BB84.ClassicalTailData n m ell ellEV peSel leakEC)
       (x : (FinalStage.rawSystem n).total)
@@ -330,9 +353,9 @@ private theorem finalStage_program_denote_apply
     have hone : QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec delta Q
         d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome (x .bob) = 1 :=
       Fin.eq_one_of_ne_zero _ hf
-    apply (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).injective
-    simp [rawClassicalTailFinalPoint, hone, FinalStage.flagBoundary,
-      Boundary.publicSpaceEquiv, Boundary.leafSpaceEquiv, TwoParty.pairEquiv]
+    refine (dite_eq_right hf).trans ?_
+    apply congrArg (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).symm
+    exact Sigma.ext hone (cast_heq _ _)
   let keyPoint (a b : Fin (2 ^ ell)) : (FinalStage.boundary ell).space :=
     (Boundary.publicSpaceEquiv (FinalStage.flagBoundary ell)).symm
       ⟨0, (Boundary.leafSpaceEquiv (FinalStage.keySystem ell)).symm
@@ -412,11 +435,13 @@ private theorem finalStage_program_denote_apply
   have hCont0 (seed : KeyHashSeed n ell peSel) (syn : Fin (2 ^ leakEC)) :
       FinalStage.continuation n ell peSel leakEC ec seed syn (0 : Fin 2) =
         FinalStage.acceptContinuation n ell peSel leakEC ec seed syn 0 := by
-    simp [FinalStage.continuation, FinalStage.flagBoundary]
+    simp only [FinalStage.continuation]
+    rfl
   have hCont1 (seed : KeyHashSeed n ell peSel) (syn : Fin (2 ^ leakEC)) :
       FinalStage.continuation n ell peSel leakEC ec seed syn (1 : Fin 2) =
         FinalStage.discardKeys n := by
-    simp [FinalStage.continuation, FinalStage.flagBoundary]
+    simp only [FinalStage.continuation, dite_eq_right (by decide : (1 : Fin 2) ≠ 0)]
+    rfl
   have hFinalKeys
       (d : QKD.BB84.ClassicalTailData n m ell ellEV peSel leakEC)
       (sigma : TypedLOCC.Op (FinalStage.rawSystem n).total)
@@ -429,7 +454,8 @@ private theorem finalStage_program_denote_apply
               rawClassicalTailFinalPoint n m ell ellEV peSel xSel leakEC ec delta Q
                 d x = keyPoint a' b' then sigma x x else 0 := by
     conv_lhs => dsimp only [keyPoint]
-    rw [hFinalAtFlag, hCont0]
+    refine (hFinalAtFlag d sigma 0 _ _).trans ?_
+    rw [hCont0]
     dsimp only [FinalStage.flagBoundary]
     refine (acceptContinuation_denote_apply n ell peSel leakEC ec d.seedPair.1 d.syndrome 0
       (decisionOperation d 0 sigma) a a' b b').trans ?_
@@ -439,7 +465,7 @@ private theorem finalStage_program_denote_apply
     by_cases hb : b = QKD.BB84.Model.bobKeySlotOf n ell peSel leakEC ec d.seedPair.1
           d.syndrome 0 y ∧
         b' = QKD.BB84.Model.bobKeySlotOf n ell peSel leakEC ec d.seedPair.1 d.syndrome 0 y
-    · rw [if_pos hb]
+    · rw [ite_eq_left hb]
       apply Finset.sum_congr rfl
       intro x _
       rw [hDecision d sigma (0 : Fin 2)]
@@ -450,13 +476,13 @@ private theorem finalStage_program_denote_apply
         by_cases hf : QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec
           delta Q d.alicePE d.bobPE d.seedPair.2 d.evTag d.syndrome y = 0 <;>
         simp [ha, ha', hf, hb.1, hb.2]
-    · rw [if_neg hb]
+    · rw [ite_eq_right hb]
       symm
       apply Finset.sum_eq_zero
       intro x _
       simp only [hPointKey d ((TwoParty.pairEquiv _ _).symm (x, y))]
       dsimp only [TwoParty.pairEquiv]
-      apply if_neg
+      apply ite_eq_right
       intro hp
       exact hb ⟨hp.1.2.2, hp.2.2.2⟩
   have hFinalAbort
@@ -467,7 +493,8 @@ private theorem finalStage_program_denote_apply
         ∑ x, if rawClassicalTailFinalPoint n m ell ellEV peSel xSel leakEC ec delta Q
           d x = abortPoint then sigma x x else 0 := by
     conv_lhs => dsimp only [abortPoint]
-    rw [hFinalAtFlag, hCont1]
+    refine (hFinalAtFlag d sigma 1 _ _).trans ?_
+    rw [hCont1]
     dsimp only [FinalStage.flagBoundary]
     refine (discardKeys_denote_apply n (decisionOperation d 1 sigma) _ _).trans ?_
     apply Finset.sum_congr rfl
@@ -524,14 +551,14 @@ private theorem finalStage_program_denote_apply
     symm
     apply Finset.sum_eq_zero
     intro x _
-    apply if_neg
+    apply ite_eq_right
     rintro ⟨hp, hp'⟩
     exact hKeyNeAbort a b (hp.symm.trans hp')
   · rw [(hFinalCross d sigma a' b').2]
     symm
     apply Finset.sum_eq_zero
     intro x _
-    apply if_neg
+    apply ite_eq_right
     rintro ⟨hp, hp'⟩
     exact hKeyNeAbort a' b' (hp'.symm.trans hp)
   · simpa only [and_self] using hFinalAbort d sigma
@@ -561,8 +588,7 @@ private theorem fusedStage_done_denote_apply
   let hout (y : QKD.BB84.FusedPublic n ell ellEV peSel leakEC) :
       (QKD.BB84.fusedAnnouncement n ell ellEV peSel leakEC ec).out y =
         FinalStage.rawSystem n := by
-    simp only [QKD.BB84.fusedAnnouncement, AnnouncedAction.out_ofInstrument,
-      FinalStage.rawSystem, TwoParty.set_alice]
+    exact (FinalStage.rawSystem n).set_self .alice
   unfold QKD.BB84.fusedStage
   have hn := Program.denote_then_publicSpaceEquiv_symm_apply
     (QKD.BB84.fusedAnnouncement n ell ellEV peSel leakEC ec)
@@ -662,7 +688,17 @@ private theorem peAnnouncementLoop_denote_diag
     exact fusedStage_done_denote_apply n ell ellEV peSel leakEC ec sigma x fused
   | succ r ih =>
     rcases raw with ⟨bs, as, fused⟩
-    rw [QKD.BB84.peAnnouncementLoop_succ]
+    let z := (Boundary.uniformSpaceEquiv (FinalStage.rawSystem n)
+      (PE.transcriptWord (r + 1) (.cons (FusedPublic n ell ellEV peSel leakEC) .nil))).symm
+      (x, (preDecisionRawEquiv (r + 1) (Model.bb84AnnounceCard n ell ellEV peSel leakEC)).symm
+        { bobPERaw := bs, alicePERaw := as, fusedRaw := fused })
+    refine (congrArg (fun p : Program (FinalStage.rawSystem n)
+        (Boundary.uniform (FinalStage.rawSystem n)
+          (PE.transcriptWord (r + 1) (.cons (FusedPublic n ell ellEV peSel leakEC) .nil))) =>
+      p.denote sigma z z)
+      (peAnnouncementLoop_succ n
+        (T := .cons (FusedPublic n ell ellEV peSel leakEC) .nil) r idx
+        (fun _ _ => fusedStage n ell ellEV peSel leakEC ec (fun _ => Program.done)))).trans ?_
     have hBob := fun k rho => Program.denote_then_publicSpaceEquiv_symm_apply
       (QKD.BB84.bobPEBitAnnouncement n (idx 0)) (LOCC.outcomeDigit 2).symm (fun _ => rfl)
       (fun _ => Boundary.uniform (FinalStage.rawSystem n)
@@ -690,28 +726,33 @@ private theorem peAnnouncementLoop_denote_diag
     simp only [Equiv.cast_refl, Equiv.refl_apply]
     refine (ih (fun j => idx j.succ) _
       { bobPERaw := Fin.tail bs, alicePERaw := Fin.tail as, fusedRaw := fused }).trans ?_
-    dsimp only [QKD.BB84.alicePEBitAnnouncement, QKD.BB84.bobPEBitAnnouncement]
-    simp only [Matrix.reindex_apply, Matrix.submatrix_apply, ← Equiv.cast_symm,
-      Equiv.cast_apply]
-    conv_lhs =>
-      arg 2
-      arg 2
-      tactic => exact peBitAnnouncement_liftedOperation_diag n (idx 0) .alice (as 0) _ x
-    simp only [Matrix.submatrix_apply, Equiv.cast_apply]
-    conv_lhs =>
-      arg 2
-      arg 2
-      arg 2
-      tactic => exact peBitAnnouncement_liftedOperation_diag n (idx 0) .bob (bs 0) sigma x
-    dsimp only [QKD.BB84.localRegisterBit]
-    -- Split both tests over `Fin (r + 1)` into round `0` and the later rounds, then decide the
-    -- two round-`0` readouts.
-    simp only [Fin.forall_fin_succ, Fin.tail]
-    by_cases hb : LOCC.registerBit n (idx 0) (x .bob) =
-        LOCC.outcomeDigit 2 (bs 0) <;>
-      by_cases ha : LOCC.registerBit n (idx 0) (x .alice) =
-        LOCC.outcomeDigit 2 (as 0) <;>
-      simp only [hb, ha, true_and, false_and, and_false, if_true, if_false, mul_zero, ite_self]
+    let xa : Fin (2 ^ n) := x .alice
+    let xb : Fin (2 ^ n) := x .bob
+    let PA (j : Fin (r + 1)) := LOCC.registerBit n (idx j) xa = LOCC.outcomeDigit 2 (as j)
+    let PB (j : Fin (r + 1)) := LOCC.registerBit n (idx j) xb = LOCC.outcomeDigit 2 (bs j)
+    let PF := Model.evTagSynOf n ell ellEV peSel leakEC ec
+      ((fusedPublicEquiv n ell ellEV peSel leakEC).symm fused).1 xa =
+        ((fusedPublicEquiv n ell ellEV peSel leakEC).symm fused).2
+    let weight : ℂ := (Fintype.card (KeyHashSeedPairEV n ell ellEV peSel) : ℂ)⁻¹
+    let bobState : Op (FinalStage.rawSystem n).total :=
+      Matrix.reindex
+        (Equiv.cast (congrArg MultipartiteSystem.total ((FinalStage.rawSystem n).set_self .bob)))
+        (Equiv.cast (congrArg MultipartiteSystem.total ((FinalStage.rawSystem n).set_self .bob)))
+        ((bobPEBitAnnouncement n (idx 0)).liftedOperation (LOCC.outcomeDigit 2 (bs 0)) sigma)
+    refine (congrArg (fun v : ℂ =>
+      if (∀ j : Fin r, PB j.succ) ∧ (∀ j : Fin r, PA j.succ) ∧ PF then weight * v else 0)
+      (peBitAnnouncement_liftedOperation_diag n (idx 0) .alice (as 0) bobState x)).trans ?_
+    refine (congrArg (fun v : ℂ =>
+      if (∀ j : Fin r, PB j.succ) ∧ (∀ j : Fin r, PA j.succ) ∧ PF then
+        weight * (if PA 0 then v else 0) else 0)
+      (peBitAnnouncement_liftedOperation_diag n (idx 0) .bob (bs 0) sigma x)).trans ?_
+    let value : ℂ := sigma x x
+    change (if (∀ j : Fin r, PB j.succ) ∧ (∀ j : Fin r, PA j.succ) ∧ PF then
+        weight * (if PA 0 then (if PB 0 then value else 0) else 0) else 0) =
+      if (∀ j, PB j) ∧ (∀ j, PA j) ∧ PF then weight * value else 0
+    simp only [Fin.forall_fin_succ]
+    by_cases hb : PB 0 <;> by_cases ha : PA 0 <;>
+      simp only [hb, ha, true_and, false_and, and_false, ite_true, ite_false, mul_zero, ite_self]
 
 /-- Exact complete-output kernel of the actual retained classical tail.
 
@@ -904,6 +945,7 @@ theorem rawClassicalTailProgram_output_apply
       exact ⟨hd, by rwa [hd] at ha⟩
     · rintro ⟨hd, ha⟩
       simp only [hd, Equiv.symm_apply_apply, ha]
+      rfl
   have hSeedSum
       (e : (QKD.BB84.classicalPreDecisionBoundary n m ell ellEV peSel leakEC).Exit)
       (a b : (FinalStage.boundary ell).space) (x : (FinalStage.rawSystem n).total) :
@@ -937,7 +979,7 @@ theorem rawClassicalTailProgram_output_apply
           QKD.BB84.classicalTailExitEquiv n m ell ellEV peSel leakEC e <;>
         simp [hd]
     · intro st hst
-      apply if_neg
+      apply ite_eq_right
       rintro ⟨hp, _⟩
       have hd := (hOutputPoint e a x st).mp hp
       exact hst (congrArg QKD.BB84.ClassicalTailData.seedPair hd.1)
@@ -982,7 +1024,7 @@ theorem rawClassicalTailProgram_output_apply
       intro x _
       apply Finset.sum_eq_zero
       intro st _
-      apply if_neg
+      apply ite_eq_right
       rintro ⟨hp, hp'⟩
       have he := (hOutputPoint e a x st).mp hp
       have hf := (hOutputPoint f b x st).mp hp'
@@ -999,11 +1041,18 @@ theorem rawClassicalTailProgram_output_apply
   rw [hTailJoint]
   split_ifs with hq
   · simp only [← hq, and_self]
+    refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun st _ => ?_
+    by_cases hp : rawClassicalTailOutputPoint n m ell ellEV peSel xSel leakEC ec delta Q x st =
+        (Boundary.graftSpaceEquiv
+          (classicalPreDecisionBoundary n m ell ellEV peSel leakEC)
+          (fun _ => FinalStage.boundary ell)).symm ⟨e, a⟩
+    · exact (ite_eq_left hp).trans (ite_eq_left hp).symm
+    · exact (ite_eq_right hp).trans (ite_eq_right hp).symm
   · apply Finset.sum_eq_zero
     intro x _
     apply Finset.sum_eq_zero
     intro st _
-    apply if_neg
+    apply ite_eq_right
     rintro ⟨hp, hp'⟩
     exact hq (hp.symm.trans hp')
 

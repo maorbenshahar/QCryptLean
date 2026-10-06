@@ -17,8 +17,8 @@ theorem finPiFinEquiv_succ_val {m : Fin (k + 1) → ℕ} (f : ∀ j, Fin (m j)) 
     (finPiFinEquiv f : ℕ) =
       (f 0 : ℕ) + m 0 * (finPiFinEquiv (n := fun j : Fin k => m j.succ) fun j => f j.succ : ℕ) := by
   rw [finPiFinEquiv_apply, finPiFinEquiv_apply, Fin.sum_univ_succ]
-  simp only [Fin.val_zero]
-  simp only [Fintype.prod_empty, Nat.mul_one]
+  change (f 0 : ℕ) * (∏ j : Fin 0, m (Fin.castLE (Nat.zero_le _) j)) + _ = _
+  rw [Fintype.prod_empty, Nat.mul_one]
   rw [Finset.mul_sum]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
@@ -162,4 +162,3 @@ theorem finPiFinEquiv_update_zero_mul_iff (n : Fin k → ℕ) (D c x : ℕ) (hx 
   · rintro ⟨h0, hrest⟩
     rw [h0, ← htail.mpr hrest]
     ring
-

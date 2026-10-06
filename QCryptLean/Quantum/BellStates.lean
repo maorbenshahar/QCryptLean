@@ -95,7 +95,7 @@ theorem stdKet_tensor_stdKet {n m : ℕ} (a : Fin n) (b : Fin m) :
   ext k
   rw [Ket.tensor_vec, stdKet_apply, stdKet_apply, stdKet_apply, ite_zero_mul_ite_zero, mul_one]
   refine if_congr ?_ rfl rfl
-  rw [Equiv.apply_eq_iff_eq_symm_apply, Prod.ext_iff]
+  rw [← Equiv.eq_symm_apply, Prod.ext_iff]
 
 /-- The four computational-basis vectors of `ℂ⁴` as explicit vectors. -/
 private theorem stdKet_four_vec :
@@ -423,7 +423,7 @@ theorem bell_fidelity_sum_eq_one (ρ : DensityOp 4) :
     DensityOp.fidelitySq ρ (DensityOp.fromPure bellState01 bellState01_normalized) +
     DensityOp.fidelitySq ρ (DensityOp.fromPure bellState10 bellState10_normalized) +
     DensityOp.fidelitySq ρ (DensityOp.fromPure bellState11 bellState11_normalized) = 1 := by
-  haveI : NeZero 4 := ⟨by norm_num⟩
+  have : NeZero 4 := ⟨by norm_num⟩
   -- Rewrite using fidelitySq_fromPure: each F²(ρ, |β⟩⟨β|) = (⟨β|ρ|β⟩).re
   simp only [fidelitySq_fromPure]
   -- Apply helper lemma: each (⟨βᵢ|ρ|βᵢ⟩).re = Tr(|βᵢ⟩⟨βᵢ| · ρ).re

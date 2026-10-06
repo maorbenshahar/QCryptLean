@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
@@ -413,7 +413,7 @@ theorem errorVerification_outcome_joint_correctness_of_universal
           (if A ω ≠ B ω ∧ (acc ω && decide (h s (A ω) = h s (B ω))) = true then w ω else 0)
       ≤ 1 / Fintype.card T := by
   classical
-  haveI : Fintype S := Fintype.ofFinite S
+  have : Fintype S := Fintype.ofFinite S
   set p : S × S → ℝ :=
     fun ab => ∑ ω : Ω, if (A ω, B ω) = ab ∧ acc ω = true then w ω else 0 with hpdef
   have hp_nonneg : ∀ ab, 0 ≤ p ab := by
@@ -443,7 +443,7 @@ theorem errorVerification_outcome_joint_correctness_of_universal
     rw [Finset.sum_comm, Finset.mul_sum]
     refine Finset.sum_congr rfl fun ω _ => ?_
     by_cases hc : A ω ≠ B ω ∧ acc ω = true
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have hcond : ∀ s : Sd,
           (if A ω ≠ B ω ∧ (acc ω && decide (h s (A ω) = h s (B ω))) = true then w ω else 0) =
             (if h s (A ω) = h s (B ω) then w ω else 0) := by
@@ -455,12 +455,12 @@ theorem errorVerification_outcome_joint_correctness_of_universal
       rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
       rw [collisionProbIdx]
       ring
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       have hzero : ∀ s : Sd,
           (if A ω ≠ B ω ∧ (acc ω && decide (h s (A ω) = h s (B ω))) = true then w ω else 0)
             = 0 := by
         intro s
-        refine if_neg ?_
+        refine ite_eq_right ?_
         rintro ⟨hne, hacc⟩
         exact hc ⟨hne, (Bool.and_eq_true _ _ |>.mp hacc).1⟩
       rw [Finset.sum_eq_zero fun s _ => hzero s, mul_zero]
@@ -475,7 +475,7 @@ theorem errorVerification_outcome_joint_correctness_of_universal
               collisionProbIdx h ab.1 ab.2 else 0) := by
       intro ab
       by_cases hab : ab.1 ≠ ab.2
-      · simp only [if_pos hab, hpdef, Finset.sum_mul]
+      · simp only [ite_eq_left hab, hpdef, Finset.sum_mul]
       · simp [hab]
     rw [Finset.sum_congr rfl fun ab (_ : ab ∈ Finset.univ) => hexp ab, Finset.sum_comm]
     refine Finset.sum_congr rfl fun ω _ => ?_

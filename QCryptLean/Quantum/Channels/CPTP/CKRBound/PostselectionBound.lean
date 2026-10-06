@@ -1,3 +1,4 @@
+import Mathlib.Data.Nat.Choose.Bounds
 import QCryptLean.Quantum.Channels.CPTP.DiamondNorm
 import QCryptLean.Quantum.Channels.CPTP.CKRBound.Reference.Paired
 import QCryptLean.Quantum.Symmetry.Covariance
@@ -16,9 +17,8 @@ an arbitrary linear map `Op (d ^ n) →ₗ[ℂ] Op dimOut` for arbitrary `d`, so
 is available to any `Quantum/`-pathed module (e.g. the tight postselection bound in
 `TightPostselectionBound.lean`) without importing the protocol layer.
 
-`choose_add_le_pow_succ` / `choose_add_le_pow_succ_real` (the binomial dimension bound
-`C(n+k,k) ≤ (n+1)^k`) are pure `Nat.choose` combinatorics with no channel or protocol content
-at all; they are kept alongside the CKR bound that is their only consumer.
+`choose_add_le_pow_succ_real` is the real-valued form of Mathlib’s binomial bound
+`Nat.choose_add_le_add_one_pow`: `C(n+k,k) ≤ (n+1)^k`.
 
 ## Main definitions
 - `IsProtocolSecure`: ε-security against general attacks (`diamondNorm Δ ≤ ε`)
@@ -26,7 +26,7 @@ at all; they are kept alongside the CKR bound that is their only consumer.
   dimension `g_{n,d} = C(n + d² − 1, d² − 1)`
 
 ## Main statements
-- `choose_add_le_pow_succ` and `choose_add_le_pow_succ_real`: binomial bounds
+- `Nat.choose_add_le_add_one_pow` and `choose_add_le_pow_succ_real`: binomial bounds
   `C(n + k, k) ≤ (n + 1)^k`
 - `diamondNorm_le_symDim_mul_ckrTraceNorm`: CKR core bound with exact binomial coefficient
   (CKR 2009, Theorem 1 + Lemma 1)
@@ -46,31 +46,13 @@ noncomputable section
 
 namespace Quantum.Channels
 
-/-- Binomial bound: `C(n+k, k) ≤ (n+1)^k`. -/
-theorem choose_add_le_pow_succ (n k : ℕ) : Nat.choose (n + k) k ≤ (n + 1) ^ k := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have hid := Nat.add_one_mul_choose_eq (n + k) k
-    have hk : 0 < k + 1 := Nat.succ_pos k
-    change (n + k + 1).choose (k + 1) ≤ (n + 1) ^ (k + 1)
-    apply Nat.le_of_mul_le_mul_right _ hk
-    show (n + k + 1).choose (k + 1) * (k + 1) ≤ (n + 1) ^ (k + 1) * (k + 1)
-    rw [← hid, Nat.pow_add_one']
-    calc
-      (n + k + 1) * (n + k).choose k ≤ (n + k + 1) * (n + 1) ^ k :=
-        Nat.mul_le_mul_left _ ih
-      _ ≤ ((n + 1) * (k + 1)) * (n + 1) ^ k :=
-        Nat.mul_le_mul_right _ (by nlinarith [Nat.zero_le (n * k)])
-      _ = (n + 1) * (n + 1) ^ k * (k + 1) := by ring
-
 /-- Real-valued form of the binomial dimension bound
 `C(n + k, k) ≤ (n + 1)^k`. -/
 lemma choose_add_le_pow_succ_real (n k : ℕ) :
     (Nat.choose (n + k) k : ℝ) ≤ (n + 1 : ℝ) ^ k := by
   have h :
       (Nat.choose (n + k) k : ℝ) ≤ (((n + 1) ^ k : ℕ) : ℝ) :=
-    Nat.cast_le.mpr (choose_add_le_pow_succ n k)
+    Nat.cast_le.mpr (Nat.choose_add_le_add_one_pow n k)
   simpa only [Nat.cast_pow, Nat.cast_add, Nat.cast_one] using h
 
 /-- A QKD protocol is **ε-secure** if the diamond norm of the difference
@@ -89,7 +71,7 @@ def IsProtocolSecure {d n dimOut : ℕ} [NeZero d] [NeZero n] [NeZero dimOut]
 
     `g_{n,d} = C(n + d² − 1, d² − 1)` .
 
-    The polynomial upper bound `C(n + k, k) ≤ (n+1)^k` (`choose_add_le_pow_succ`) loosens this
+    The polynomial bound `C(n + k, k) ≤ (n+1)^k` (`Nat.choose_add_le_add_one_pow`) loosens this
     scalar by a factor approaching `(d² − 1)!`; for BB84 (`d = 4`, `d² − 1 = 15`) that factor is
     `15! ≈ 1.307·10¹²`, i.e. `40.25` bits of budget lost by applying the loosening.
 
@@ -131,9 +113,9 @@ theorem diamondNorm_le_symDim_mul_ckrTraceNorm {d n dimOut dimR : ℕ}
       ↑(Nat.choose (n + (d ^ 2 - 1)) (d ^ 2 - 1)) * ckrTensorTraceNorm Δ τ := by
   -- The diamond norm is sSup of a set; bound each element
   unfold diamondNorm
-  haveI : NeZero (d ^ n * (d ^ n)) :=
+  have : NeZero (d ^ n * (d ^ n)) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
-  haveI : NeZero (dimOut * (d ^ n)) :=
+  have : NeZero (dimOut * (d ^ n)) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos _) (NeZero.pos _))⟩
   apply csSup_le
   -- Nonemptiness: X = 0 gives element 0
@@ -156,7 +138,7 @@ dimension of the symmetric subspace `Sym^n(ℂ^{d²})`,
 `g_{n,d} = C(n + d² − 1, d² − 1)` ,
 
 in place of the polynomial upper bound `(n+1)^{d²−1}` obtained by composing with
-`choose_add_le_pow_succ`; the two differ by a factor `(d²−1)!` in the limit (`1.3·10¹²` at
+`Nat.choose_add_le_add_one_pow`; the two differ by a factor `(d²−1)!` in the limit (`1.3·10¹²` at
 `d = 4`), so applying that loosening is a pure loss and is not done here.
 
 Reference: CKR (2009) `arXiv:0809.3019`, `main.tex:268`–`:401` (\emph{Main Result}: the

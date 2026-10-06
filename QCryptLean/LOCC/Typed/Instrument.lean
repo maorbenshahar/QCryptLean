@@ -124,7 +124,8 @@ def localKrausLift (R : MultipartiteSystem P) (i : P) (HH : Type)
       if ((R.splitAtSet i HH) a).2 = ((R.splitAt i) b).2 then
         K ((R.splitAtSet i HH) a).1 ((R.splitAt i) b).1
       else 0 := by
-  simp [localKrausLift, Matrix.submatrix_apply, Matrix.kroneckerMap_apply, Matrix.one_apply]
+  simp only [localKrausLift, Matrix.submatrix_apply, Matrix.kroneckerMap_apply,
+    Matrix.one_apply, mul_ite, mul_one, mul_zero]
 
 /-- A local lift's Gram matrix is the local Gram matrix tensored with spectator identities. -/
 theorem localKrausLift_conjTranspose_mul_self (R : MultipartiteSystem P) (i : P) (HH : Type)
@@ -160,8 +161,8 @@ theorem localKrausLift_complete_dependent {X : Type} [Fintype X]
     by_cases h1 : ((R.splitAt i) a).1 = ((R.splitAt i) b).1
     · have h2 : ((R.splitAt i) a).2 ≠ ((R.splitAt i) b).2 := fun h2 =>
         hne (Prod.ext_iff.mpr ⟨h1, h2⟩)
-      rw [if_neg h2, if_neg hab, mul_zero]
-    · rw [if_neg hab, Matrix.one_apply_ne h1]
+      rw [ite_eq_right h2, ite_eq_right hab, mul_zero]
+    · rw [ite_eq_right hab, Matrix.one_apply_ne h1]
       simp
 
 /-- Lift an instrument to the joint register, replacing only its actor's register. -/

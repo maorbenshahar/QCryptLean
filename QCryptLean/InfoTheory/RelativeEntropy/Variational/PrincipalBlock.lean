@@ -127,15 +127,15 @@ lemma inv_toBlocks₁₁_le_toBlocks₁₁_inv {n m : Type*}
   have hM_eq : M = Matrix.fromBlocks A B B.conjTranspose D := by
     rw [← Matrix.fromBlocks_toBlocks M, hB]
   have hA : A.PosDef := hM.submatrix Sum.inl_injective
-  letI : Invertible A := hA.isUnit.invertible
-  letI : Invertible M := hM.isUnit.invertible
-  letI : Invertible (Matrix.fromBlocks A B B.conjTranspose D) := by
+  let : Invertible A := hA.isUnit.invertible
+  let : Invertible M := hM.isUnit.invertible
+  let : Invertible (Matrix.fromBlocks A B B.conjTranspose D) := by
     simpa [hM_eq] using (inferInstance : Invertible M)
   have hM_psd : (Matrix.fromBlocks A B B.conjTranspose D).PosSemidef := by
     simpa [hM_eq] using hM.posSemidef
   have hS_psd : S.PosSemidef := by
     exact (Matrix.PosDef.fromBlocks₁₁ (B := B) (D := D) hA).mp hM_psd
-  letI : Invertible (D - B.conjTranspose * ⅟A * B) :=
+  let : Invertible (D - B.conjTranspose * ⅟A * B) :=
     Matrix.invertibleOfFromBlocks₁₁Invertible A B B.conjTranspose D
   have hS_pd : S.PosDef := by
     refine hS_psd.posDef_iff_isUnit.mpr ?_
@@ -280,7 +280,7 @@ lemma toBlocks₁₁_rpow_le_rpow_toBlocks₁₁ {n m : Type*}
   have hPowSnd := (snd_cfcₙ_nnrpow_prod (q := q) hM_nonneg hM11_nonneg).symm.trans
     ((congrArg Prod.snd hPow).trans (snd_integral hInt))
   -- Integrate the pointwise comparison `toBlocks₁₁_cfcₙ_rpowIntegrand₀₁_le` over `t > 0`.
-  letI : OrderClosedTopology (Matrix n n ℂ) := CStarAlgebra.instOrderClosedTopology
+  let : OrderClosedTopology (Matrix n n ℂ) := CStarAlgebra.instOrderClosedTopology
   have hmono := MeasureTheory.integral_mono_ae ((toBlocks₁₁CLM n m).integrable_comp hIntM)
     (MeasureTheory.Integrable.snd hInt) <| by
       filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with t ht
@@ -360,7 +360,7 @@ lemma toBlocks₁₁_log_le_log_toBlocks₁₁ {n m : Type*}
     have hsub : (M ^ p).toBlocks₁₁ - 1 ≤ M.toBlocks₁₁ ^ p - 1 := sub_le_sub_right hpow 1
     have hpinv : 0 ≤ (p⁻¹ : ℝ) := by exact inv_nonneg.mpr hp.1.le
     exact smul_le_smul_of_nonneg_left hsub hpinv
-  letI : OrderClosedTopology (Matrix n n ℂ) := CStarAlgebra.instOrderClosedTopology
+  let : OrderClosedTopology (Matrix n n ℂ) := CStarAlgebra.instOrderClosedTopology
   exact le_of_tendsto_of_tendsto hTendBlock hTendM11 hEventually
 
 end InfoTheory.RelativeEntropy

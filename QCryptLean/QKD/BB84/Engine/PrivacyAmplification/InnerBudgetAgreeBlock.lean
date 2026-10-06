@@ -72,8 +72,8 @@ theorem
       (1 / 2) * Real.exp (-(bb84KeyRoundCount n m : ℝ) / 4 *
         (Real.log 2 - binaryEntropy (Q + 2 * δ))) +
         2 * (ε_AEP + Real.sqrt (2 * E)) := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hRdim : NeZero ((signalDim ^ n) * V.dV) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hRdim : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   -- The B16-B17-B19 floor `kEV = kfloor − P − 2·log₂ g − (leakEC + ℓEV)`, at `n_K = n − m`.
   set kEV : ℝ := bb84PairedHaarFloorLevel n m Q δ ε_AEP -

@@ -52,9 +52,9 @@ for some `u`; positive definiteness of `B` gives `⟨u | M | u⟩ = ⟨S u | B |
 so `M ≠ 0`, whence `√M ≠ 0` and `Tr √M ≠ 0`. -/
 theorem fidelity_pos_of_posDef {n : ℕ} [NeZero n] (A B : PosSemidefOp n)
     (hA : A.toOp ≠ 0) (hB : B.toOp.PosDef) : 0 < fidelity A B := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   have hfid :
       fidelity A B =
         (Matrix.trace

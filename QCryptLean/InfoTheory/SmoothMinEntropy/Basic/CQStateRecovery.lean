@@ -130,7 +130,7 @@ theorem CQState.purifiedDistance_recovery_contract
     (hρERtilde : ∀ x, (ρERtilde.stateMap x).toOp = T x (ρEtilde.stateMap x).toOp) :
     CQState.purifiedDistance ρER ρERtilde ≤
       CQState.purifiedDistance ρE ρEtilde := by
-  haveI : NeZero (dE * dR) :=
+  have : NeZero (dE * dR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dE) (NeZero.ne dR)⟩
   have hT_cptp : ∀ x, Quantum.Channels.IsCPTP ⇑(T x) := fun x =>
     Quantum.Channels.isCPTP_of_isCompletelyPositive_isTracePreserving (T x) (hcp x) (htp x)

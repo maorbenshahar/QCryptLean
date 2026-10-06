@@ -131,17 +131,17 @@ instance haarOnUnitary_isMulRightInvariant (d : ℕ) [NeZero d] :
   -- `ν := map (· * g) μ` is left-invariant (right and left translation commute).
   set ν : Measure (unitaryGroup (Fin d) ℂ) := Measure.map (fun x => x * g) μ with hνdef
   have hRmeas : Measurable (fun x : unitaryGroup (Fin d) ℂ => x * g) := by fun_prop
-  haveI hμFin : IsFiniteMeasure μ := by
+  have hμFin : IsFiniteMeasure μ := by
     rw [hμdef]; exact ⟨IsCompact.measure_lt_top isCompact_univ⟩
-  haveI hνLI : ν.IsMulLeftInvariant := by
+  have hνLI : ν.IsMulLeftInvariant := by
     refine ⟨fun h => ?_⟩
     rw [hνdef, Measure.map_map (by fun_prop) hRmeas]
     have hcomm : (fun x : unitaryGroup (Fin d) ℂ => h * x) ∘ (fun x => x * g)
         = (fun x => x * g) ∘ (fun x => h * x) := by funext x; simp [mul_assoc]
     rw [hcomm, ← Measure.map_map hRmeas (by fun_prop), map_mul_left_eq_self]
-  haveI hνFin : IsFiniteMeasure ν := by
+  have hνFin : IsFiniteMeasure ν := by
     rw [hνdef]; exact μ.isFiniteMeasure_map (fun x => x * g)
-  haveI hνFinC : IsFiniteMeasureOnCompacts ν := inferInstance
+  have hνFinC : IsFiniteMeasureOnCompacts ν := inferInstance
   -- By uniqueness on the compact group, `ν = c • μ`.
   have hsmul : ν = Measure.haarScalarFactor ν μ • μ :=
     Measure.isMulInvariant_eq_smul_of_compactSpace ν μ

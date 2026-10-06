@@ -372,7 +372,7 @@ lemma traceDistance_le_sqrt_one_sub_fidelitySq_normalized
     Quantum.Metrics.traceDistance ρ'.toOp σ'.toOp
       ≤ Real.sqrt
           (1 - Quantum.Metrics.fidelity ρ'.toPosSemidefOp σ'.toPosSemidefOp ^ 2) := by
-  letI : NeZero (m * m) := ⟨Nat.mul_ne_zero (NeZero.ne m) (NeZero.ne m)⟩
+  let : NeZero (m * m) := ⟨Nat.mul_ne_zero (NeZero.ne m) (NeZero.ne m)⟩
   -- Uhlmann achievability on the canonical purification kets of ρ' and σ'.
   obtain ⟨U, hU⟩ :=
     sameAncillaPurificationKet_exists_tensorUnitary_overlap_re_eq_trace_cfcSqrt_sandwich

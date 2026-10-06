@@ -59,7 +59,7 @@ lemma partialTraceBKraus_completeness (n m : ℕ) [NeZero n] [NeZero m] :
   by_cases hαβ : α = β
   · -- α = β: sum = 1
     subst hαβ
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     -- Write α = finProdFinEquiv (a1, a2)
     obtain ⟨⟨a1, a2⟩, hα_eq⟩ : ∃ p : Fin n × Fin m, α = finProdFinEquiv p :=
       ⟨finProdFinEquiv.symm α, (finProdFinEquiv.apply_symm_apply α).symm⟩
@@ -68,7 +68,7 @@ lemma partialTraceBKraus_completeness (n m : ℕ) [NeZero n] [NeZero m] :
       (fun k _ hk => by
         apply Finset.sum_eq_zero
         intro i _
-        apply if_neg
+        apply ite_eq_right
         rintro ⟨hαi, _⟩
         apply hk
         have heq : finProdFinEquiv (a1, a2) = finProdFinEquiv (i, k) :=
@@ -78,7 +78,7 @@ lemma partialTraceBKraus_completeness (n m : ℕ) [NeZero n] [NeZero m] :
     -- Collapse inner sum to i = a1
     rw [Finset.sum_eq_single a1
       (fun i _ hi => by
-        apply if_neg
+        apply ite_eq_right
         rintro ⟨hαi, _⟩
         apply hi
         have heq : finProdFinEquiv (a1, a2) = finProdFinEquiv (i, a2) :=
@@ -86,11 +86,11 @@ lemma partialTraceBKraus_completeness (n m : ℕ) [NeZero n] [NeZero m] :
         exact (congr_arg Prod.fst (finProdFinEquiv.injective heq)).symm)
       (fun h => absurd (Finset.mem_univ _) h)]
     -- now: if α = finProdFinEquiv (a1, a2) ∧ α = finProdFinEquiv (a1, a2) then 1 else 0
-    rw [if_pos ⟨hα_eq, hα_eq⟩]
-  · rw [if_neg hαβ]
+    rw [ite_eq_left ⟨hα_eq, hα_eq⟩]
+  · rw [ite_eq_right hαβ]
     apply Finset.sum_eq_zero; intro k _
     apply Finset.sum_eq_zero; intro i _
-    apply if_neg
+    apply ite_eq_right
     rintro ⟨h1, h2⟩
     exact hαβ (h1.trans h2.symm)
 
@@ -116,17 +116,17 @@ private lemma partialTraceBKraus_sandwich_apply
       ρ (finProdFinEquiv (i, k)) α := by
     intro α
     rw [Finset.sum_eq_single (finProdFinEquiv (i, k))
-      (fun β _ hβ => by rw [if_neg hβ]; ring)
+      (fun β _ hβ => by rw [ite_eq_right hβ]; ring)
       (fun h => absurd (Finset.mem_univ _) h)]
-    rw [if_pos rfl]; ring
+    rw [ite_eq_left rfl]; ring
   simp_rw [hinner]
   -- Step 2: collapse outer α-sum to α = fpfe(j,k)
   rw [Finset.sum_eq_single (finProdFinEquiv (j, k))
     (fun α _ hα => by
       have hne : ¬ (α = finProdFinEquiv (j, k)) := hα
-      rw [if_neg hne]; simp)
+      rw [ite_eq_right hne]; simp)
     (fun h => absurd (Finset.mem_univ _) h)]
-  rw [if_pos rfl]; simp
+  rw [ite_eq_left rfl]; simp
 
 /-- The Kraus action `KrausRepresentation.applyOp` agrees with `partialTraceB`. -/
 lemma partialTraceBKrausRep_applyOp_eq (n m : ℕ) [NeZero n] [NeZero m] :

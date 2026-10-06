@@ -156,14 +156,14 @@ theorem conditionalMinEntropyReal_classical_extension
   have hlMarg_nn : 0 ≤ lMarg := minFeasibleLambda_nonneg ρ' σ
   have hlog2 : 0 < Real.log 2 := Real.log_pos one_lt_two
   -- Subset relation from Helper A: feasible(ρ') ⊆ feasible(ρ).
-  have hsub : setOf (isFeasible ρ' σ) ⊆ setOf (isFeasible ρ σ) :=
+  have hsub : Set.ofPred (isFeasible ρ' σ) ⊆ Set.ofPred (isFeasible ρ σ) :=
     fun _ ht => isFeasible_of_marginal_isFeasible ρ σ ht
   -- Helper B as a set membership map.
-  have hmap : ∀ t ∈ setOf (isFeasible ρ σ),
-      (Fintype.card X : ℝ) * t ∈ setOf (isFeasible ρ' σ) :=
+  have hmap : ∀ t ∈ Set.ofPred (isFeasible ρ σ),
+      (Fintype.card X : ℝ) * t ∈ Set.ofPred (isFeasible ρ' σ) :=
     fun t ht => isFeasible_marginal_of_isFeasible_card_smul ρ σ ht
   have hcard_nn : (0 : ℝ) ≤ (Fintype.card X : ℝ) := Nat.cast_nonneg _
-  by_cases hne : (setOf (isFeasible ρ' σ)).Nonempty
+  by_cases hne : (Set.ofPred (isFeasible ρ' σ)).Nonempty
   · -- ρ' has feasible witnesses, so ρ does too, and `lFull ≤ lMarg`.
     have hle : lFull ≤ lMarg :=
       csInf_le_csInf (minFeasibleLambda_bddBelow ρ σ) hne hsub
@@ -177,13 +177,13 @@ theorem conditionalMinEntropyReal_classical_extension
       push Not at hpos
       have hzero : lFull = 0 := le_antisymm hpos hlFull_nn
       obtain ⟨t', ht'⟩ := hne
-      have ht_full : (setOf (isFeasible ρ σ)).Nonempty := ⟨t', hsub ht'⟩
+      have ht_full : (Set.ofPred (isFeasible ρ σ)).Nonempty := ⟨t', hsub ht'⟩
       -- Show `lMarg ≤ 0` via an ε-argument.
       have h_marg_le : lMarg ≤ 0 := by
         rcases eq_or_lt_of_le hcard_nn with hc0 | hc_pos
         · -- |X| = 0 case: pick any t ∈ feasible(ρ); |X|*t = 0 ∈ feasible(ρ').
           obtain ⟨t₀, ht₀⟩ := ht_full
-          have h0 : (Fintype.card X : ℝ) * t₀ ∈ setOf (isFeasible ρ' σ) := hmap t₀ ht₀
+          have h0 : (Fintype.card X : ℝ) * t₀ ∈ Set.ofPred (isFeasible ρ' σ) := hmap t₀ ht₀
           rw [← hc0, zero_mul] at h0
           exact csInf_le (minFeasibleLambda_bddBelow ρ' σ) h0
         · -- |X| > 0 case: ε-argument.
@@ -193,7 +193,7 @@ theorem conditionalMinEntropyReal_classical_extension
           have hlt : lFull < δ / (Fintype.card X : ℝ) := by rw [hzero]; exact hε_pos
           obtain ⟨t, ht, htlt⟩ :=
             exists_lt_of_csInf_lt ht_full hlt
-          have hmem : (Fintype.card X : ℝ) * t ∈ setOf (isFeasible ρ' σ) := hmap t ht
+          have hmem : (Fintype.card X : ℝ) * t ∈ Set.ofPred (isFeasible ρ' σ) := hmap t ht
           have hbd : lMarg ≤ (Fintype.card X : ℝ) * t :=
             csInf_le (minFeasibleLambda_bddBelow ρ' σ) hmem
           have hcard_eq : (Fintype.card X : ℝ) * (δ / (Fintype.card X : ℝ)) = δ := by
@@ -210,10 +210,10 @@ theorem conditionalMinEntropyReal_classical_extension
       rw [show minFeasibleLambda ρ σ = 0 from hzero]
   · -- feasible(ρ') = ∅. By Helper B, feasible(ρ) = ∅ too. Both H = 0.
     rw [Set.not_nonempty_iff_eq_empty] at hne
-    have hempty : setOf (isFeasible ρ σ) = ∅ := by
+    have hempty : Set.ofPred (isFeasible ρ σ) = ∅ := by
       rw [Set.eq_empty_iff_forall_notMem]
       intro t ht
-      have hmem : (Fintype.card X : ℝ) * t ∈ setOf (isFeasible ρ' σ) := hmap t ht
+      have hmem : (Fintype.card X : ℝ) * t ∈ Set.ofPred (isFeasible ρ' σ) := hmap t ht
       rw [hne] at hmem
       exact hmem
     have hzero_full : lFull = 0 := by

@@ -218,8 +218,8 @@ lemma traceDistanceGen_flagPack_toJointDensity_le_sum
         (CQState.flagPack blocks' hj').toJointDensity.toOp
       ≤ ∑ c : C, traceDistanceGen (blocks c).toJointDensity.toOp (blocks' c).toJointDensity.toOp :=
           by
-  haveI : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (nE * Fintype.card C) :=
+  have : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (nE * Fintype.card C) :=
     ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
   have hTN : traceNorm ((CQState.flagPack blocks hj).toJointDensity.toOp
         - (CQState.flagPack blocks' hj').toJointDensity.toOp)
@@ -290,8 +290,8 @@ theorem flagPack_purifiedDistance_le_sqrt_two_sum
       ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
     CQState.purifiedDistance (CQState.flagPack blocks hj) (CQState.flagPack blocks' hj')
       ≤ Real.sqrt (2 * ∑ c : C, CQState.purifiedDistance (blocks c) (blocks' c)) := by
-  haveI : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (nE * Fintype.card C) :=
+  have : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (nE * Fintype.card C) :=
     ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
   have hstep :
       traceDistanceGen (CQState.flagPack blocks hj).toJointDensity.toOp
@@ -351,7 +351,7 @@ theorem flagPack_smoothMinEntropy_ge_of_blocks
     (ε : ℝ) (hε : 0 ≤ ε) :
     ENNReal.ofReal (-Real.logb 2 (packExpSum k)) ≤
       smoothMinEntropy ε (CQState.flagPack blocks hjoint) (flagPackRef σ k).toJointDensity := by
-  haveI : NeZero (nE * Fintype.card C) :=
+  have : NeZero (nE * Fintype.card C) :=
     ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
   exact (flagPack_conditionalMinEntropy_ge_of_blocks blocks hjoint σ k hk).trans
     (smoothMinEntropy_ge_conditionalMinEntropy hε _ _)
@@ -371,7 +371,7 @@ theorem flagPack_smoothMinEntropy_ge_of_block_witnesses
     ENNReal.ofReal (-Real.logb 2 (packExpSum k)) ≤
       smoothMinEntropy (Real.sqrt (2 * ∑ c, radii c))
         (CQState.flagPack blocks hjoint) (flagPackRef σ k).toJointDensity := by
-  haveI : NeZero (nE * Fintype.card C) :=
+  have : NeZero (nE * Fintype.card C) :=
     ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
   apply smoothMinEntropy_ge_of_hmin_approx _ (CQState.flagPack τ hτjoint)
   · exact (flagPack_purifiedDistance_le_sqrt_two_sum blocks τ hjoint hτjoint).trans
@@ -427,8 +427,8 @@ theorem flagPack_smoothMinEntropyReal_ge_of_blocks
     -Real.logb 2 (packExpSum k)
       ≤ smoothMinEntropyReal ε (CQState.flagPack blocks hjoint)
         (flagPackRef σ k).toJointDensity := by
-  haveI : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (nE * Fintype.card C) := ⟨Nat.mul_ne_zero (NeZero.ne nE) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (nE * Fintype.card C) := ⟨Nat.mul_ne_zero (NeZero.ne nE) (NeZero.ne _)⟩
   have hweight_pos : 0 < ∑ c : C, ∑ x : X, ((blocks c).stateMap x).trace := by linarith
   have hcond :=
     flagPack_conditionalMinEntropyReal_ge_of_blocks blocks hjoint σ k hfeas hk hweight_pos
@@ -436,7 +436,7 @@ theorem flagPack_smoothMinEntropyReal_ge_of_blocks
       = ∑ c : C, ∑ x : X, ((blocks c).stateMap x).trace :=
     flagPack_sum_stateMap_trace blocks hjoint
   have hbdd :
-      BddAbove (setOf (isInSmoothedSetReal ε (CQState.flagPack blocks hjoint)
+      BddAbove (Set.ofPred (isInSmoothedSetReal ε (CQState.flagPack blocks hjoint)
         (flagPackRef σ k).toJointDensity)) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ
@@ -468,8 +468,8 @@ theorem flagPack_smoothMinEntropyReal_ge_of_block_witnesses
     -Real.logb 2 (packExpSum k)
       ≤ smoothMinEntropyReal (Real.sqrt (2 * ∑ c : C, radii c))
           (CQState.flagPack blocks hjoint) (flagPackRef σ k).toJointDensity := by
-  haveI : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (nE * Fintype.card C) :=
+  have : NeZero (Fintype.card C) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (nE * Fintype.card C) :=
     ⟨Nat.mul_ne_zero (NeZero.ne nE) Fintype.card_ne_zero⟩
   set r : ℝ := Real.sqrt (2 * ∑ c : C, radii c) with hr
   have hr_nonneg : 0 ≤ r := Real.sqrt_nonneg _
@@ -484,7 +484,7 @@ theorem flagPack_smoothMinEntropyReal_ge_of_block_witnesses
       = ∑ c : C, ∑ x : X, ((blocks c).stateMap x).trace :=
     flagPack_sum_stateMap_trace blocks hjoint
   have hbdd :
-      BddAbove (setOf (isInSmoothedSetReal r (CQState.flagPack blocks hjoint)
+      BddAbove (Set.ofPred (isInSmoothedSetReal r (CQState.flagPack blocks hjoint)
         (flagPackRef σ k).toJointDensity)) :=
     (fun ε η hη ρ hρ σ =>
       smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε η hη ρ σ

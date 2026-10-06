@@ -68,8 +68,8 @@ lemma joint_traceNorm_le_sqrt_card_mul_lambda
         ((extractorOutputState H (ρ : CQState X n)).toJointDensity.toOp -
           (uniformOutputState ρ.toCQState.quantumMarginal).toJointDensity.toOp) ≤
       Real.sqrt (Fintype.card Z * minFeasibleLambda (ρ : CQState X n) σ) := by
-  haveI : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (Fintype.card Z) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   -- Step 1 (Tomamichel eq. 7.35, T1.4 corollary): block-diagonal factorization.
   rw [cqState_joint_traceNorm_eq_sum_blocks
@@ -164,10 +164,10 @@ theorem extractorDistance_le_of_smoothMinEntropyOpt
         (uniformOutputState ρ.quantumMarginal).toJointDensity.toOp ≤
       (1 / 2) * Real.sqrt (Fintype.card Z * 2 ^ (-k)) + 2 * ε := by
   classical
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card Z) :=
+  have : NeZero (n * Fintype.card Z) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   exact (extractorDistance_le_seedKeyExtractorDistance H ρ ρ.quantumMarginal).trans
     (quantum_seedKey_LHL_smoothOpt H hH ρ ε hε k hk)
@@ -251,7 +251,7 @@ theorem extractorDistance_le_of_minEntropy
         (uniformOutputState ρ.quantumMarginal).toJointDensity.toOp ≤
       (1 / 2) * Real.sqrt (Fintype.card Z * 2 ^ (-k)) := by
   classical
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty S := H.seedNonempty
   simpa using extractorDistance_le_of_smoothMinEntropy H hH ρ σ 0 (by norm_num) k
     (by simpa using hk)
 

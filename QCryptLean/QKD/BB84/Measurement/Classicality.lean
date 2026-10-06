@@ -268,28 +268,30 @@ theorem weightedMeasurementScheduleAux_preserves_accumulator_block_zero
       simp only [LinearMap.sum_apply, LinearMap.comp_apply, Matrix.sum_apply]
       apply Finset.sum_eq_zero
       intro observedB _
+      let rhoAB : Op (weightedStreamBobAction pA pB F n).out.total :=
+        (weightedStreamBobAction pA pB F n).liftedOperation observedB
+          ((weightedStreamAliceAction pA F n).liftedOperation observedA rho)
       change (cast (congrArg (fun R => Program R
         (.leaf (weightedStreamSystem (finishAcc (F × StoredRecord) n) 0))) hout.symm)
           (weightedMeasurementScheduleAux pA pB (F × StoredRecord) n)).denote _ _ _ = _
-      rw [Program.denote_cast_apply hout rfl
-        (weightedMeasurementScheduleAux pA pB (F × StoredRecord) n)]
+      refine (Program.denote_cast_apply hout rfl
+        (weightedMeasurementScheduleAux pA pB (F × StoredRecord) n)
+        rhoAB
+        ((weightedScheduleOutputEquiv F (n + 1)).symm ((fA, rA), (fB, rB)))
+        ((weightedScheduleOutputEquiv F (n + 1)).symm ((fA', rA'), (fB', rB')))).trans ?_
       have hrec := ih (F := F × StoredRecord)
-        (rho := (((weightedStreamBobAction pA pB F n).liftedOperation observedB
-          ((weightedStreamAliceAction pA F n).liftedOperation observedA rho)).submatrix
+        (rho := (rhoAB.submatrix
             (Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
             (Equiv.cast (congrArg MultipartiteSystem.total hout)).symm))
         (fA := (fA, rA 0)) (fA' := (fA', rA' 0))
         (fB := (fB, rB 0)) (fB' := (fB', rB' 0))
         (hzero := fun xA xA' xB xB' => by
-          change ((weightedStreamBobAction pA pB F n).liftedOperation observedB
-            ((weightedStreamAliceAction pA F n).liftedOperation observedA rho))
-              ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                ((TwoParty.pairEquiv _ _).symm (((fA, rA 0), xA), ((fB, rB 0), xB))))
-              ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                ((TwoParty.pairEquiv _ _).symm (((fA', rA' 0), xA'), ((fB', rB' 0), xB')))) = 0
-          simp only [← Equiv.cast_symm, Equiv.cast_apply,
-            weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n]
-          exact hBobZero observedA observedB (rA 0) (rA' 0) (rB 0) (rB' 0) xA xA' xB xB')
+          exact (congrArg₂ rhoAB
+            (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+              ((fA, rA 0), xA) ((fB, rB 0), xB))
+            (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+              ((fA', rA' 0), xA') ((fB', rB' 0), xB'))).trans
+            (hBobZero observedA observedB (rA 0) (rA' 0) (rB 0) (rB' 0) xA xA' xB xB'))
         (Fin.tail rA) (Fin.tail rA') (Fin.tail rB) (Fin.tail rB')
       exact hrec
 
@@ -385,13 +387,18 @@ theorem weightedMeasurementScheduleAux_recordsDiagonal
       simp only [LinearMap.sum_apply, LinearMap.comp_apply, Matrix.sum_apply]
       apply Finset.sum_eq_zero
       intro observedB _
+      let rhoAB : Op (weightedStreamBobAction pA pB F n).out.total :=
+        (weightedStreamBobAction pA pB F n).liftedOperation observedB
+          ((weightedStreamAliceAction pA F n).liftedOperation observedA rho)
       change (cast (congrArg (fun R => Program R
         (.leaf (weightedStreamSystem (finishAcc (F × StoredRecord) n) 0))) hout.symm)
           (weightedMeasurementScheduleAux pA pB (F × StoredRecord) n)).denote _ _ _ = _
-      rw [Program.denote_cast_apply hout rfl
-        (weightedMeasurementScheduleAux pA pB (F × StoredRecord) n)]
-      let sigma := ((weightedStreamBobAction pA pB F n).liftedOperation observedB
-        ((weightedStreamAliceAction pA F n).liftedOperation observedA rho)).submatrix
+      refine (Program.denote_cast_apply hout rfl
+        (weightedMeasurementScheduleAux pA pB (F × StoredRecord) n)
+        rhoAB
+        ((weightedScheduleOutputEquiv F (n + 1)).symm ((fA, rA), (fB, rB)))
+        ((weightedScheduleOutputEquiv F (n + 1)).symm ((fA', rA'), (fB', rB')))).trans ?_
+      let sigma : Op (weightedStreamSystem (F × StoredRecord) n).total := rhoAB.submatrix
           (Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
           (Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
       by_cases hA0 : (rA 0).2 ≠ (rA' 0).2
@@ -399,15 +406,12 @@ theorem weightedMeasurementScheduleAux_recordsDiagonal
           pA pB (F × StoredRecord) n sigma
           (fA, rA 0) (fA', rA' 0) (fB, rB 0) (fB', rB' 0)
           (fun xA xA' xB xB' => by
-            change ((weightedStreamBobAction pA pB F n).liftedOperation observedB
-              ((weightedStreamAliceAction pA F n).liftedOperation observedA rho))
-                ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                  ((TwoParty.pairEquiv _ _).symm (((fA, rA 0), xA), ((fB, rB 0), xB))))
-                ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                  ((TwoParty.pairEquiv _ _).symm (((fA', rA' 0), xA'), ((fB', rB' 0), xB')))) = 0
-            simp only [← Equiv.cast_symm, Equiv.cast_apply,
-              weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n]
-            exact hBobAfterAliceHeadZero observedA observedB hA0 xA xA' xB xB')
+            exact (congrArg₂ rhoAB
+              (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+                ((fA, rA 0), xA) ((fB, rB 0), xB))
+              (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+                ((fA', rA' 0), xA') ((fB', rB' 0), xB'))).trans
+              (hBobAfterAliceHeadZero observedA observedB hA0 xA xA' xB xB'))
           (Fin.tail rA) (Fin.tail rA') (Fin.tail rB) (Fin.tail rB')
         exact hrec
       · by_cases hB0 : (rB 0).2 ≠ (rB' 0).2
@@ -415,15 +419,12 @@ theorem weightedMeasurementScheduleAux_recordsDiagonal
             pA pB (F × StoredRecord) n sigma
             (fA, rA 0) (fA', rA' 0) (fB, rB 0) (fB', rB' 0)
             (fun xA xA' xB xB' => by
-              change ((weightedStreamBobAction pA pB F n).liftedOperation observedB
-                ((weightedStreamAliceAction pA F n).liftedOperation observedA rho))
-                  ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                    ((TwoParty.pairEquiv _ _).symm (((fA, rA 0), xA), ((fB, rB 0), xB))))
-                  ((Equiv.cast (congrArg MultipartiteSystem.total hout)).symm
-                    ((TwoParty.pairEquiv _ _).symm (((fA', rA' 0), xA'), ((fB', rB' 0), xB')))) = 0
-              simp only [← Equiv.cast_symm, Equiv.cast_apply,
-                weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n]
-              exact hBobHeadZero observedA observedB hB0 xA xA' xB xB')
+              exact (congrArg₂ rhoAB
+                (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+                  ((fA, rA 0), xA) ((fB, rB 0), xB))
+                (weightedStreamBobAction_out_cast_pairEquiv_symm pA pB F n
+                  ((fA', rA' 0), xA') ((fB', rB' 0), xB'))).trans
+                (hBobHeadZero observedA observedB hB0 xA xA' xB xB'))
             (Fin.tail rA) (Fin.tail rA') (Fin.tail rB) (Fin.tail rB')
           exact hrec
         · have hheadA : rA 0 = rA' 0 := by

@@ -73,7 +73,7 @@ private lemma idTensorRect_conj_entry'
     rw [Finset.sum_comm]
     refine Finset.sum_congr rfl fun s' _ => ?_
     simp only [ite_mul, zero_mul]
-    rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+    rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ _)]
   -- reindex the outer `reference` summation, substitute the inner collapse, then collapse `dq`
   rw [← Equiv.sum_comp finProdFinEquiv
         (fun x => (∑ x_1 : Fin (a * drin), (if cp = (finProdFinEquiv.symm x_1).1
@@ -88,7 +88,7 @@ private lemma idTensorRect_conj_entry'
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun s' _ => ?_
   simp only [apply_ite (star : ℂ → ℂ), star_zero, mul_ite, mul_zero]
-  rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+  rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ _)]
   ring
 
 /-- The signal-side map `Δ ⊗ id` commutes with reference-side conjugation by the rectangular
@@ -191,8 +191,8 @@ private lemma ckrTensorTraceNorm_eq_canonical
     refine Finset.sum_congr rfl fun pair _ => ?_
     rw [hMindef, idTensorRectMatrix_apply, Matrix.one_apply, Equiv.symm_apply_apply]
     by_cases hc : (finProdFinEquiv.symm k).1 = pair.1
-    · rw [if_pos hc, if_pos hc.symm]; ring
-    · rw [if_neg hc, if_neg (fun h => hc h.symm), zero_mul, zero_mul]
+    · rw [ite_eq_left hc, ite_eq_left hc.symm]; ring
+    · rw [ite_eq_right hc, ite_eq_right (fun h => hc h.symm), zero_mul, zero_mul]
   have hop : τ.toOp =
       Min * (Quantum.Channels.ckrDeFinettiCanonicalPurification d n).toOp * Minᴴ := by
     rw [DensityOp.pureKetOf_spec τ hτ.isPure,
@@ -236,10 +236,10 @@ theorem bb84_ckrTensorTraceNorm_EnV_eq_canonical
       ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
     ckrTensorTraceNorm Δ (bb84SymCKRDeFinettiPurification n) =
       ckrTensorTraceNorm Δ (bb84EnVCKRPurification V) := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI : NeZero ((signalDim ^ n) * V.dV) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero ((signalDim ^ n) * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI : NeZero ((signalDim ^ n) * (signalDim ^ n)) :=
+  have : NeZero ((signalDim ^ n) * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   rw [ckrTensorTraceNorm_eq_canonical Δ (bb84SymCKRDeFinettiPurification n)
         (bb84SymCKRDeFinettiPurification_isPurification n) (le_refl _),

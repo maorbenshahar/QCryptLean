@@ -49,7 +49,13 @@ theorem coherentAccumulatorSigma_offDiagonal_nonzero :
     (reindexOp (weightedScheduleOutputEquiv (Fin 2) 0) coherentAccumulatorSigma)
       ((0, emptyRecords), (0, emptyRecords))
       ((1, emptyRecords), (0, emptyRecords)) = 1 := by
-  simp [reindexOp, coherentAccumulatorSigma]
+  change coherentAccumulatorSigma
+    ((weightedScheduleOutputEquiv (Fin 2) 0).symm
+      ((0, emptyRecords), (0, emptyRecords)))
+    ((weightedScheduleOutputEquiv (Fin 2) 0).symm
+      ((1, emptyRecords), (0, emptyRecords))) = 1
+  unfold coherentAccumulatorSigma
+  exact ite_eq_left ⟨rfl, rfl⟩
 
 /-- Zero-round record diagonality is vacuous and therefore permits the explicit coherent
 off-diagonal accumulator entry above. -/

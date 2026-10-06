@@ -233,9 +233,9 @@ theorem retainedAnalysisBlockDimNeZero (n : ℕ) : NeZero (2 ^ n * 2 ^ n) :=
 theorem retainedAnalysisOutputDimNeZero
     (nK mZ mX ell ellEV leakEC : ℕ) :
     NeZero (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC) := by
-  letI : Nonempty (Equiv.Perm (Fin (nK + mZ + mX))) :=
+  let : Nonempty (Equiv.Perm (Fin (nK + mZ + mX))) :=
     ⟨Equiv.refl _⟩
-  letI : Nonempty (QKD.BB84.rawClassicalTailBoundary
+  let : Nonempty (QKD.BB84.rawClassicalTailBoundary
       (nK + mZ + mX) (mZ + mX) ell ellEV
       (@Sampling.packedPESel nK mZ mX) leakEC).space :=
     ⟨retainedAnalysisDefaultRawTailOutput nK mZ mX ell ellEV leakEC⟩

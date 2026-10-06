@@ -107,7 +107,7 @@ theorem bb84_bellWembedPairedTensorPow_opLe_polyDimTight_smul_bellPairedDeFinett
     opLe (densityOp_reindex (interleavingEquiv 4 n).symm
         ((bellWembed φ).tensorPowGen n)).toOp
       ((bb84PolyDimTight n : ℂ) • (bb84BellPairedDeFinettiState n).toOp) := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   -- The marginal symmetric-subspace domination on `(ℂ⁴)^{⊗n}`, conjugated by `W^{⊗n}`.
   have hsand := opLe_kraus_sandwich (bellDoublingIsometryPow n)
     (tensorPowGen_opLe_symmetricProjector_of_isPure (D := 4) (n := n) φ hφ)

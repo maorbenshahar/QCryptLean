@@ -64,7 +64,7 @@ theorem binomialLowerTail_of_lt {n q : ℕ} (h : n < q) (p : ℝ) : binomialLowe
   have hq : ∀ k ∈ range (n + 1), k < q := fun k hk => by
     have := mem_range.mp hk
     omega
-  rw [Finset.sum_congr rfl fun k hk => if_pos (hq k hk)]
+  rw [Finset.sum_congr rfl fun k hk => ite_eq_left (hq k hk)]
   have hbinom := (add_pow p (1 - p) n).symm
   rw [add_sub_cancel, one_pow] at hbinom
   refine (Finset.sum_congr rfl fun k _ => ?_).trans hbinom

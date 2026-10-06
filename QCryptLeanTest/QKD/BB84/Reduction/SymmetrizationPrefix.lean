@@ -80,7 +80,8 @@ theorem siftPermutation_member_operation
     (rho : Op (Fin (2 ^ n))) :
     (siftPermutationInstrument n peSel xSel π).operation () rho =
       matrixConjLinear (QKD.BB84.Model.siftPermHalf n peSel xSel π) rho := by
-  simp [siftPermutationInstrument, Instrument.operation, Instrument.ofFine]
+  change (∑ _ : Unit, matrixConjLinear (Model.siftPermHalf n peSel xSel π) rho) = _
+  exact Fintype.sum_unique _
 
 theorem alicePermutation_localOperation_weight
     (n : ℕ) (peSel xSel : Fin n → Bool) (π : Equiv.Perm (Fin n)) :
@@ -107,10 +108,10 @@ theorem permutationStage_uses_same_public_permutation
       (alicePermutationAnnouncement n peSel xSel).then fun π =>
         (bobSiftUnitAnnouncement n peSel xSel π).then fun _ =>
           cast (by
-            simp only [bobSiftUnitAnnouncement, PrivateAction.asUnitAnnouncement_out,
-              bobSiftPermutationPrivate, alicePermutationAnnouncement,
-              PrivateAction.out_ofInstrument, AnnouncedAction.out_ofInstrument,
-              FinalStage.rawSystem, TwoParty.set_alice, TwoParty.set_bob]) (k π) := rfl
+            apply congrArg (fun R => Program R (B π))
+            change FinalStage.rawSystem n =
+              ((FinalStage.rawSystem n).set .alice (Fin (2 ^ n))).set .bob (Fin (2 ^ n))
+            rw [TwoParty.set_alice, TwoParty.set_bob]) (k π) := rfl
 
 /-! ## Branch reductions with independent spectator coordinates -/
 

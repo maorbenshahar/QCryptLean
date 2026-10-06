@@ -291,10 +291,10 @@ lemma blockDiscarded_le_overThreshold
   rw [hsub]
   refine Finset.sum_le_sum (fun z' _ => ?_)
   by_cases hcase : lam * q z' < p
-  · rw [if_pos hcase, min_eq_right hcase.le]
+  · rw [ite_eq_left hcase, min_eq_right hcase.le]
     have hlam_nn : (0 : ℝ) ≤ lam := (weightCapScale_pos W).le
     nlinarith [ho_nn z', hq_nn z', hlam_nn, mul_nonneg hlam_nn (hq_nn z')]
-  · rw [if_neg hcase, min_eq_left (not_lt.mp hcase)]
+  · rw [ite_eq_right hcase, min_eq_left (not_lt.mp hcase)]
     simp
 
 /-- The total operator discarded mass `Σ_xs [tr(ρ^{⊗}_xs) − tr(ρ̄_xs).re]` is bounded

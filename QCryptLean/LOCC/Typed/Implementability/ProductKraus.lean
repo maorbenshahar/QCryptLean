@@ -33,7 +33,7 @@ def famKraus {R S : MultipartiteSystem P} (K : ∀ i, Matrix (S.reg i) (R.reg i)
   by_cases hab : a = b
   · subst b
     simp
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     obtain ⟨i, hi⟩ := Function.ne_iff.mp hab
     exact Finset.prod_eq_zero (Finset.mem_univ i) (Matrix.one_apply_ne hi)
 
@@ -74,7 +74,8 @@ theorem MultipartiteSystem.localFam_apply_of_ne (R : MultipartiteSystem P) (i : 
     (M : Matrix HH (R.reg i) ℂ) {j : P} (hj : j ≠ i)
     (a : (R.set i HH).reg j) (b : R.reg j) :
     R.localFam i HH M j a b = if cast (R.set_reg_of_ne i HH hj) a = b then 1 else 0 := by
-  simp [MultipartiteSystem.localFam, hj, Matrix.one_apply]
+  simp only [MultipartiteSystem.localFam, dite_eq_right hj]
+  rfl
 
 /-- Componentwise coordinates for splitting off one party. -/
 theorem MultipartiteSystem.splitAt_apply (R : MultipartiteSystem P) (i : P) (b : R.total) :
@@ -105,11 +106,11 @@ theorem localKrausLift_eq_famKraus (R : MultipartiteSystem P) (i : P) (HH : Type
   · rw [hfg, Matrix.one_apply_eq]
     refine (Finset.prod_eq_one fun j hj => ?_).symm
     have hji : j ≠ i := Finset.ne_of_mem_erase hj
-    rw [R.localFam_apply_of_ne _ _ _ hji, if_pos (congrFun hfg ⟨j, hji⟩)]
+    rw [R.localFam_apply_of_ne _ _ _ hji, ite_eq_left (congrFun hfg ⟨j, hji⟩)]
   · rw [Matrix.one_apply_ne hfg]
     obtain ⟨j0, hj0⟩ := Function.ne_iff.mp hfg
     refine (Finset.prod_eq_zero (Finset.mem_erase.mpr ⟨j0.2, Finset.mem_univ _⟩) ?_).symm
-    rw [R.localFam_apply_of_ne _ _ _ j0.2, if_neg hj0]
+    rw [R.localFam_apply_of_ne _ _ _ j0.2, ite_eq_right hj0]
 
 /-- Every lifted Kraus matrix of an announced local action is a party-product matrix. -/
 theorem AnnouncedAction.liftedKraus_eq_famKraus {R : MultipartiteSystem P} {Y : Type}

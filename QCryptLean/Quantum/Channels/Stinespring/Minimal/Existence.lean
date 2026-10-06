@@ -78,10 +78,10 @@ theorem choiRank_kraus_isometric_packing
         Matrix.of_apply, mul_ite, mul_one, mul_zero]
       symm; exact Finset.sum_eq_single rr
         (fun i _ hi => Finset.sum_eq_zero (fun j _ => by
-          exact if_neg (fun ⟨h1, _⟩ => hi h1.symm)))
+          exact ite_eq_right (fun ⟨h1, _⟩ => hi h1.symm)))
         (fun h => absurd (Finset.mem_univ rr) h) |>.trans
           (Finset.sum_eq_single cc
-            (fun j _ hj => if_neg (fun ⟨_, h2⟩ => hj h2.symm))
+            (fun j _ hj => ite_eq_right (fun ⟨_, h2⟩ => hj h2.symm))
             (fun h => absurd (Finset.mem_univ cc) h) |>.trans (by simp))
     have hΦ_entry : Φ A a b = ∑ i, ∑ j, A i j *
         ChoiMatrix n m ⇑Φ (finProdFinEquiv (i, a)) (finProdFinEquiv (j, b)) := by
@@ -134,8 +134,8 @@ theorem choiRank_kraus_isometric_packing
       simp only [Matrix.trace_one, Fintype.card_fin]
       exact Nat.cast_ne_zero.mpr (NeZero.ne n)
     exact hne htp1.symm
-  haveI hrNZ : NeZero r := ⟨hr_ne⟩
-  haveI hmrNZ : NeZero (m * r) :=
+  have hrNZ : NeZero r := ⟨hr_ne⟩
+  have hmrNZ : NeZero (m * r) :=
     ⟨Nat.pos_iff_ne_zero.mp (Nat.mul_pos (NeZero.pos m) (NeZero.pos r))⟩
   -- Step 5: pack Kraus operators into isometry V.
   let V : Matrix (Fin (m * r)) (Fin n) ℂ :=

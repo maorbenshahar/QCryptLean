@@ -73,7 +73,7 @@ theorem purification_squareAncilla_rightTensorUnitaryConj
       τ.toOp =
         Quantum.TensorProducts.rightTensorUnitaryConj W
           (sameAncillaPurificationDensity ρ).toOp := by
-  haveI : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
+  have : NeZero (d * d) := ⟨Nat.mul_ne_zero (NeZero.ne d) (NeZero.ne d)⟩
   let ψτ : Ket (d * d) := τ.pureKetOf hpure
   have hψτ_pu : partialTraceB (ψτ * ψτ.dag) = ρ.toOp := by
     calc

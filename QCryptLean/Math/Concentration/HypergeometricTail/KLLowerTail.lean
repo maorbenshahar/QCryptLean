@@ -78,7 +78,7 @@ lemma worLowerTail_le_tilt {N m K : ℕ} (hmN : m ≤ N) (hm : m ≠ 0) (a s : �
       rw [hc, ← Real.exp_nat_mul, ← Real.exp_add]
       congr 1; ring
     by_cases hbad : (k : ℝ) / m ≤ a
-    · rw [if_pos hbad]
+    · rw [ite_eq_left hbad]
       have hk_le : (k : ℝ) ≤ (m : ℝ) * a := by rw [div_le_iff₀ hmpos] at hbad; linarith
       calc
         chooseWeight N m K k = chooseWeight N m K k * 1 := (mul_one _).symm
@@ -87,7 +87,7 @@ lemma worLowerTail_le_tilt {N m K : ℕ} (hmN : m ≤ N) (hm : m ≠ 0) (a s : �
                 (Real.one_le_exp (mul_nonneg hs.le (by linarith))) hw_nn
         _ = Real.exp (s * ((m : ℝ) * a)) * (chooseWeight N m K k * c ^ k) := by
               rw [← hexp_k]; ring
-    · rw [if_neg hbad]
+    · rw [ite_eq_right hbad]
       have : 0 ≤ Real.exp (s * ((m : ℝ) * a)) * (chooseWeight N m K k * c ^ k) :=
         mul_nonneg (Real.exp_pos _).le (mul_nonneg hw_nn (pow_nonneg (Real.exp_pos _).le k))
       exact this
@@ -158,7 +158,7 @@ theorem hypergeometricPassSum_le_klChernoff (N m K : ℕ) (a b : ℝ)
     have hzero :
         (∑ k ∈ Finset.range (m + 1),
             if (k : ℝ) / m ≤ a then chooseWeight N m K k else 0) = 0 :=
-      Finset.sum_eq_zero fun k _ => if_neg (not_le.mpr (ha_neg.trans_le (by positivity)))
+      Finset.sum_eq_zero fun k _ => ite_eq_right (not_le.mpr (ha_neg.trans_le (by positivity)))
     rw [hzero, zero_div]
     exact (Real.exp_pos _).le
   · -- `a = 0`: only `k = 0` passes; use the `c = 0` domination.
@@ -167,10 +167,10 @@ theorem hypergeometricPassSum_le_klChernoff (N m K : ℕ) (a b : ℝ)
     have hLHS :
         (∑ k ∈ Finset.range (m + 1),
             if (k : ℝ) / m ≤ 0 then chooseWeight N m K k else 0) = chooseWeight N m K 0 := by
-      rw [Finset.sum_eq_single_of_mem 0 h0_mem, if_pos (by rw [Nat.cast_zero, zero_div])]
+      rw [Finset.sum_eq_single_of_mem 0 h0_mem, ite_eq_left (by rw [Nat.cast_zero, zero_div])]
       intro k _hk hk0
       have hk_pos : (0 : ℝ) < k / m := by positivity
-      exact if_neg (not_le.mpr hk_pos)
+      exact ite_eq_right (not_le.mpr hk_pos)
     have hworZero : worCPowMGF N m K 0 = chooseWeight N m K 0 / (N.choose m : ℝ) := by
       rw [worCPowMGF, Finset.sum_eq_single_of_mem 0 h0_mem, pow_zero, mul_one]
       intro k _hk hk0

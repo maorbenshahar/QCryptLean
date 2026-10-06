@@ -140,7 +140,7 @@ lemma cqState_classicalHmax_le_logb_card
     {X : Type*} [Fintype X] [Nonempty X] {n : ℕ}
     (ρ : CQState X n) (hρ_norm : ∑ x : X, (ρ.stateMap x).trace = 1) :
     ρ.classicalHmax (ρ.classicalRank_filter_pos hρ_norm) ≤ Real.logb 2 (Fintype.card X) := by
-  rw [InfoTheory.SmoothMinEntropy.CQState.classicalHmax]
+  change Real.logb 2 (ρ.classicalRank : ℝ) ≤ _
   have hpos : (0 : ℝ) < (ρ.classicalRank : ℝ) := by
     have := InfoTheory.SmoothMinEntropy.CQState.classicalRank_filter_pos ρ hρ_norm
     have h1 : 1 ≤ ρ.classicalRank := this
@@ -459,7 +459,7 @@ theorem RestrictedSymSpaceWitness.inRestrictedSymSpace
   refine Finset.sum_congr rfl (fun s hs => ?_)
   congr 1
   rw [heqs s hs]
-  simp only [dif_pos hs]
+  simp only [dite_eq_left hs]
 
 /-!
 ## Main AEP theorem

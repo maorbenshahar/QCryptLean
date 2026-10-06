@@ -39,7 +39,7 @@ Tomamichel 2016, §6.2.1, Definition 6.4:
     Tomamichel 2016, Definition 6.4:
       B^ε(A; ρ) := {τ ∈ S•(A) : P(τ, ρ) ≤ ε}. -/
 def epsilonBall {n : ℕ} [NeZero n] (ρ : SubDensityOp n) (ε : ℝ) : Set (SubDensityOp n) :=
-  setOf (fun τ => purifiedDistance ρ τ ≤ ε)
+  Set.ofPred (fun τ => purifiedDistance ρ τ ≤ ε)
 
 /-- The ε-ball always contains ρ itself (when ε ≥ 0). -/
 theorem epsilonBall_self_mem {n : ℕ} [NeZero n] (ρ : SubDensityOp n) {ε : ℝ} (hε : 0 ≤ ε) :
@@ -86,7 +86,7 @@ theorem smoothedSetReal_nonempty
     {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X]
     {n : ℕ} [NeZero n] {ε : ℝ} (hε : 0 ≤ ε)
     (ρ : CQState X n) (σ : SubDensityOp n) :
-    (setOf (isInSmoothedSetReal ε ρ σ)).Nonempty :=
+    (Set.ofPred (isInSmoothedSetReal ε ρ σ)).Nonempty :=
   ⟨conditionalMinEntropyReal ρ σ, ρ, rfl, by
     rw [CQState.purifiedDistance_self_zero]; exact hε⟩
 
@@ -112,8 +112,8 @@ lemma CQState.sum_stateMap_trace_ge_of_purifiedDistance
     (hρnorm : ∑ x : X, (ρ.stateMap x).trace = 1)
     (hd : CQState.purifiedDistance ρ ρ' ≤ ε) :
     1 - ε ^ 2 ≤ ∑ x : X, (ρ'.stateMap x).trace := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   have hρ_joint_trace : ρ.toJointDensity.trace = 1 := by
     rw [CQState.toJointDensity_trace_eq_sum]; exact hρnorm
   have h_joint_ge : 1 - ε ^ 2 ≤ ρ'.toJointDensity.trace :=
@@ -133,8 +133,8 @@ lemma CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower
     (hρ_lower : η + 2 * ε ≤ ∑ x : X, (ρ.stateMap x).trace)
     (hd : CQState.purifiedDistance ρ ρ' ≤ ε) :
     η ≤ ∑ x : X, (ρ'.stateMap x).trace := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   have hD_le :
       Quantum.Metrics.traceDistanceGen
@@ -188,9 +188,9 @@ lemma CQState.sum_stateMap_trace_ge_of_purifiedDistance_of_weight_lower
 theorem smoothMinEntropyReal_bddAbove {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X] {n : ℕ}
     [NeZero n] (ε : ℝ) (hε1 : ε < 1) (ρ : CQState X n)
     (hρnorm : ∑ x : X, (ρ.stateMap x).trace = 1) (σ : SubDensityOp n) :
-    BddAbove (setOf (isInSmoothedSetReal ε ρ σ)) := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+    BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)) := by
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   have hcard_pos : (0 : ℝ) < Fintype.card X := by exact_mod_cast Fintype.card_pos
   have hcard_ge_one : (1 : ℝ) ≤ Fintype.card X := by exact_mod_cast Fintype.card_pos
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
@@ -449,8 +449,8 @@ theorem CQState.sum_stateMap_trace_ge_purifiedDistanceWeightFloor
     (hd : CQState.purifiedDistance ρ ρ' ≤ ε) :
     purifiedDistanceWeightFloor ε (∑ x : X, (ρ.stateMap x).trace) ≤
       ∑ x : X, (ρ'.stateMap x).trace := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   have hε_sq_lt_joint : ε ^ 2 < ρ.toJointDensity.trace := by
     simpa [CQState.toJointDensity_trace_eq_sum] using hε_sq_lt_weight
@@ -522,7 +522,7 @@ theorem smoothMinEntropyReal_bddAbove_of_candidate_weight_floor
     (hfloor : ∀ ρ' : CQState X n,
       CQState.purifiedDistance ρ ρ' ≤ ε →
         η ≤ ∑ x : X, (ρ'.stateMap x).trace) :
-    BddAbove (setOf (isInSmoothedSetReal ε ρ σ)) := by
+    BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)) := by
   refine ⟨-Real.log (η / (Fintype.card X : ℝ)) / Real.log 2, ?_⟩
   intro h hh
   obtain ⟨rho2, hh_eq, hd⟩ := hh
@@ -541,7 +541,7 @@ theorem smoothMinEntropyReal_bddAbove_of_candidate_weight_floor
 noncomputable def smoothMinEntropyReal {X : Type*} [Fintype X] [DecidableEq X] [Nonempty X]
     {n : ℕ} [NeZero n]
     (ε : ℝ) (ρ : CQState X n) (σ : SubDensityOp n) : ℝ :=
-  sSup (setOf (isInSmoothedSetReal ε ρ σ))
+  sSup (Set.ofPred (isInSmoothedSetReal ε ρ σ))
 
 namespace CQState
 
@@ -648,11 +648,11 @@ theorem smoothMinEntropyReal_zero_eq {X : Type*} [Fintype X] [DecidableEq X] [No
     {n : ℕ} [NeZero n]
     (ρ : CQState X n) (σ : SubDensityOp n) :
     smoothMinEntropyReal 0 ρ σ = conditionalMinEntropyReal ρ σ := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
   unfold smoothMinEntropyReal
   -- Show the smoothed set is the singleton {conditionalMinEntropyReal ρ σ}.
-  have hset : setOf (isInSmoothedSetReal 0 ρ σ) = {conditionalMinEntropyReal ρ σ} := by
+  have hset : Set.ofPred (isInSmoothedSetReal 0 ρ σ) = {conditionalMinEntropyReal ρ σ} := by
     apply Set.eq_singleton_iff_unique_mem.mpr
     refine ⟨?_, ?_⟩
     · -- ρ itself witnesses membership.
@@ -683,7 +683,7 @@ theorem smoothMinEntropyReal_ge_of_hmin_approx_of_bddAbove
     (σ : SubDensityOp n)
     (k : ℝ)
     (ρ' : CQState X n)
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)))
     (hd : CQState.purifiedDistance ρ ρ' ≤ ε)
     (hk : k ≤ conditionalMinEntropyReal ρ' σ) :
     k ≤ smoothMinEntropyReal ε ρ σ := by
@@ -709,7 +709,7 @@ theorem smoothMinEntropyReal_exists_approx {X : Type*} [Fintype X] [DecidableEq 
     (k : ℝ) (hk : k < smoothMinEntropyReal ε ρ σ) :
     ∃ ρ' : CQState X n, CQState.purifiedDistance ρ ρ' ≤ ε ∧ k ≤ conditionalMinEntropyReal ρ' σ := by
   unfold smoothMinEntropyReal at hk
-  have hne : (setOf (isInSmoothedSetReal ε ρ σ)).Nonempty :=
+  have hne : (Set.ofPred (isInSmoothedSetReal ε ρ σ)).Nonempty :=
     smoothedSetReal_nonempty hε ρ σ
   obtain ⟨h, hmem, hlt⟩ := exists_lt_of_lt_csSup hne hk
   obtain ⟨rho2, hh_eq, hd⟩ := hmem
@@ -723,7 +723,7 @@ theorem smoothMinEntropyReal_bddAbove_of_eps_sq_lt_weight
     {Xc : Type*} [Fintype Xc] [DecidableEq Xc] [Nonempty Xc] {m : ℕ} [NeZero m]
     (ε : ℝ) (hε_nn : 0 ≤ ε) (ρ : CQState Xc m) (σ : SubDensityOp m)
     (hweight_gt : ε ^ 2 < ∑ x : Xc, (ρ.stateMap x).trace) :
-    BddAbove (setOf (isInSmoothedSetReal ε ρ σ)) :=
+    BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ)) :=
   smoothMinEntropyReal_bddAbove_of_candidate_weight_floor ε
     (purifiedDistanceWeightFloor ε (∑ x : Xc, (ρ.stateMap x).trace))
     (purifiedDistanceWeightFloor_pos hε_nn ρ.weight_le_one hweight_gt) ρ σ
@@ -812,8 +812,8 @@ theorem smoothMinEntropy_ge_conditionalMinEntropy {ε : ℝ} (hε : 0 ≤ ε)
     smoothMinEntropy 0 ρ σ = conditionalMinEntropy ρ σ := by
   apply le_antisymm
   · refine iSup_le fun τ => iSup_le fun hd => ?_
-    haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-    haveI : NeZero (n * Fintype.card X) :=
+    have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+    have : NeZero (n * Fintype.card X) :=
       ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
     have hzero : purifiedDistance ρ.toJointDensity τ.toJointDensity = 0 :=
       le_antisymm hd (purifiedDistance_nonneg _ _)
@@ -921,7 +921,7 @@ theorem smoothMinEntropy_eq_ofReal_of_eps_sq_lt_weight
           (CQState.sum_stateMap_trace_ge_purifiedDistanceWeightFloor hε hweight hd)
       have hpos := minFeasibleLambda_pos_of_hasFeasibleLambda_of_weight_pos τ σ
         hτweight hfeas
-      rw [conditionalMinEntropy, if_pos hpos]
+      rw [conditionalMinEntropy, ite_eq_left hpos]
       apply ENNReal.ofReal_le_ofReal
       exact le_csSup
         (smoothMinEntropyReal_bddAbove_of_eps_sq_lt_weight ε hε ρ σ hweight) ⟨τ, rfl, hd⟩
@@ -1051,7 +1051,7 @@ theorem smoothMinEntropyReal_mono_sigma_of_bddAbove
     (hfeas : ∀ ρ' : CQState X n, CQState.purifiedDistance ρ ρ' ≤ ε → hasFeasibleLambda ρ' σ)
     (hpos_sigma_prime : ∀ ρ' : CQState X n, CQState.purifiedDistance ρ ρ' ≤ ε →
         0 < minFeasibleLambda ρ' σ')
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ'))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ'))) :
     smoothMinEntropyReal ε ρ σ ≤ smoothMinEntropyReal ε ρ σ' := by
   unfold smoothMinEntropyReal
   apply csSup_le

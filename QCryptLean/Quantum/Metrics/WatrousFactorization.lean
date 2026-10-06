@@ -833,7 +833,7 @@ lemma opNorm_sqrt_partialTraceB_conj_le_one {n : ℕ} [NeZero (n * n)]
     (V P : Op (n * n)) (hP : P.PosSemidef) (hP_tr : P.trace.re ≤ 1)
     (hV : (1 - Vᴴ * V).PosSemidef) :
     ‖CFC.sqrt (partialTraceB (V * P * Vᴴ))‖ ≤ 1 := by
-  haveI : NeZero n := by
+  have : NeZero n := by
     refine ⟨fun h => ?_⟩
     have : n * n = 0 := by simp [h]
     exact NeZero.ne _ this
@@ -848,7 +848,7 @@ lemma opNorm_sqrt_partialTraceA_conj_le_one {n : ℕ} [NeZero (n * n)]
     (V P : Op (n * n)) (hP : P.PosSemidef) (hP_tr : P.trace.re ≤ 1)
     (hV : (1 - Vᴴ * V).PosSemidef) :
     ‖CFC.sqrt (partialTraceA (V * P * Vᴴ))‖ ≤ 1 := by
-  haveI : NeZero n := by
+  have : NeZero n := by
     refine ⟨fun h => ?_⟩
     have : n * n = 0 := by simp [h]
     exact NeZero.ne _ this

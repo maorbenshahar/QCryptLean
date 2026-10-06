@@ -174,7 +174,7 @@ theorem bscWeight_upperTail_le {Q ε : ℝ} (hQ0 : 0 ≤ Q) (hQ1 : Q ≤ 1) (hε
       refine Finset.sum_eq_zero fun k hk => ?_
       rw [Finset.mem_range, h0] at hk
       have hk0 : k = 0 := by omega
-      rw [if_neg]
+      rw [ite_eq_right]
       rw [hk0, h0]
       norm_num
     rw [hzero]
@@ -189,10 +189,10 @@ theorem bscWeight_upperTail_le {Q ε : ℝ} (hQ0 : 0 ≤ Q) (hQ1 : Q ≤ 1) (hε
       have h2 : (0 : ℝ) ≤ (1 - Q) ^ (N - k) := pow_nonneg (by linarith) _
       positivity
     by_cases hgate : (Q + ε) * (N : ℝ) < (k : ℝ)
-    · rw [if_pos hgate, if_pos]
+    · rw [ite_eq_left hgate, ite_eq_left]
       rw [le_div_iff₀ hNpos]
       linarith
-    · rw [if_neg hgate]
+    · rw [ite_eq_right hgate]
       split_ifs
       · exact hnn
       · exact le_rfl
@@ -230,14 +230,14 @@ lemma bscWeight_ball_compl_le {q ε : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (hε 
   apply Finset.sum_le_sum
   intro b _
   by_cases hb : hammingDist a b ≤ t
-  · simp only [if_pos hb]
+  · simp only [ite_eq_left hb]
     split_ifs
     · exact bscWeight_nonneg hq0 hq1 a b
     · exact le_refl 0
   · have hdist : (t + 1 : ℝ) ≤ hammingDist a b := by
       exact_mod_cast Nat.succ_le_of_lt (Nat.lt_of_not_ge hb)
     have hlarge := hgate.trans_le hdist
-    simp only [if_neg hb, if_pos hlarge, le_refl]
+    simp only [ite_eq_right hb, ite_eq_left hlarge, le_refl]
 
 /-- **KL-rate Chernoff upper tail for the binary symmetric product measure.**
 
@@ -298,8 +298,8 @@ theorem bscWeight_ball_compl_le_klBer {q : ℝ} (hq0 : 0 < q)
       (Fintype.card ι) q ((t + 1 : ℝ) / Fintype.card ι) q
       hba (le_refl q) hq0.le hq0)
   by_cases hgate2 : t < k
-  · rw [if_pos hgate2, if_pos ((hkN k).mpr hgate2)]
-  · rw [if_neg hgate2, if_neg (mt (hkN k).mp hgate2)]
+  · rw [ite_eq_left hgate2, ite_eq_left ((hkN k).mpr hgate2)]
+  · rw [ite_eq_right hgate2, ite_eq_right (mt (hkN k).mp hgate2)]
 
 end Math.Concentration.BinarySymmetricTail
 

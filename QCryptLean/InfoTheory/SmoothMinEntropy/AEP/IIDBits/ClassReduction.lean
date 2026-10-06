@@ -60,7 +60,7 @@ theorem cqConditionalVonNeumann_le_classicalHmax
   -- entropy leaves in `cqConditional_vonNeumann_le_log_classicalRank`, divided by `log 2 > 0`.
   have h2pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
   have hcore := ρ.cqConditional_vonNeumann_le_log_classicalRank hρ_norm
-  rw [InfoTheory.SmoothMinEntropy.CQState.classicalHmax, Real.logb]
+  change _ ≤ Real.log (ρ.classicalRank : ℝ) / Real.log 2
   exact (div_le_div_iff_of_pos_right h2pos).mpr hcore
 
 /-- **The tensor-power CQ state is `λ = 1` feasible against the tensor-power

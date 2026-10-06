@@ -153,7 +153,7 @@ theorem PauliError.syndrome_eq_iff {n : ℕ} (code : CSSCode n) (e₁ e₂ : Pau
       -- Same argument: diff is orthogonal to C₂, so diff ∈ C₂⊥
       -- By definition of dual: v ∈ C⊥ iff ∀ c ∈ C.codewords, ⟨v, c⟩ = 0
       rw [LinearCode.dual]
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       intro c hc
       -- hfun says the syndrome functions are equal, so they agree on c
       have heq : zSyndromeFunc code e₁ ⟨c, hc⟩ = zSyndromeFunc code e₂ ⟨c, hc⟩ :=
@@ -297,14 +297,14 @@ def CSSCode.zCoset {n : ℕ} (code : CSSCode n) (v : Fin n → ZMod 2) : Set (Fi
 theorem CSSCode.mem_xCoset_self {n : ℕ} (code : CSSCode n) (v : Fin n → ZMod 2) :
     v ∈ code.xCoset v := by
   unfold xCoset
-  simp only [Set.mem_setOf_eq, sub_self]
+  simp only [Set.mem_ofPred_eq, sub_self]
   exact code.C1.zero_mem_codewords
 
 /-- Every vector is in its own Z coset. -/
 theorem CSSCode.mem_zCoset_self {n : ℕ} (code : CSSCode n) (v : Fin n → ZMod 2) :
     v ∈ code.zCoset v := by
   unfold zCoset
-  simp only [Set.mem_setOf_eq, sub_self]
+  simp only [Set.mem_ofPred_eq, sub_self]
   intro c _
   simp only [Pi.zero_apply, zero_mul, Finset.sum_const_zero]
 
@@ -946,7 +946,7 @@ theorem CSSCode.corrects_errors {n : ℕ} (code : CSSCode n)
     have hx_same_coset : code.xCoset e₁.xPattern = code.xCoset e₂.xPattern := by
       ext w
       unfold CSSCode.xCoset
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       constructor
       · -- `e₂ - w = (e₁ - w) - (e₁ - e₂)`
         intro hw
@@ -960,7 +960,7 @@ theorem CSSCode.corrects_errors {n : ℕ} (code : CSSCode n)
     have hz_same_coset : code.zCoset e₁.zPattern = code.zCoset e₂.zPattern := by
       ext w
       unfold CSSCode.zCoset
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       constructor
       · -- `e₂ - w = (e₁ - w) - (e₁ - e₂)`
         intro hw

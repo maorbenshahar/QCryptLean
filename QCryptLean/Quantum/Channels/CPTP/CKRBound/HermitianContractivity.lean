@@ -49,8 +49,8 @@ lemma kraus_apply_single {n m r : ℕ}
     by_cases hx : x = j
     · subst hx
       simp only [and_true, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-    · rw [if_neg hx]
-      exact Finset.sum_eq_zero fun y _ => if_neg (fun ⟨_, h⟩ => hx h.symm)
+    · rw [ite_eq_right hx]
+      exact Finset.sum_eq_zero fun y _ => ite_eq_right (fun ⟨_, h⟩ => hx h.symm)
   simp only [Matrix.mul_apply, Matrix.conjTranspose_apply, h_KE, ite_mul, zero_mul,
     Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 

@@ -244,7 +244,7 @@ lemma goodBranchBlockOp_opLe_of_forall_mem_bound
       opLe ((f τ).stateMap x).toOp (Complex.ofReal t • σ_ref.toOp)) :
     opLe (goodBranchBlockOp μ f goodSet x)
       (Complex.ofReal t • σ_ref.toOp) := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   intro v
   rw [goodBranchBlockOp_eq_setIntegral μ f goodSet x h_int.restrict]
   rw [Quantum.Operators.quadraticForm_re_setIntegral goodSet
@@ -298,7 +298,7 @@ lemma goodBranchBlockOp_opLe_of_ae_bound
         opLe ((f τ).stateMap x).toOp (Complex.ofReal t • σ_ref.toOp)) :
     opLe (goodBranchBlockOp μ f goodSet x)
       (Complex.ofReal t • σ_ref.toOp) := by
-  haveI : IsProbabilityMeasure μ.measure := μ.isProbability
+  have : IsProbabilityMeasure μ.measure := μ.isProbability
   intro v
   rw [goodBranchBlockOp_eq_setIntegral μ f goodSet x h_int.restrict]
   rw [Quantum.Operators.quadraticForm_re_setIntegral goodSet

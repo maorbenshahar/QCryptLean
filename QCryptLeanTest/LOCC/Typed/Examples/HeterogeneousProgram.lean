@@ -17,7 +17,21 @@ namespace TypedLOCC.Examples.HeterogeneousProgram
 inductive Party
   | alice
   | bob
-  deriving DecidableEq, Fintype
+  deriving DecidableEq
+
+protected abbrev Party.enumList : List Party := [.alice, .bob]
+
+protected theorem Party.enumList_getElem?_ctorIdx_eq (x : Party) :
+    Party.enumList[Party.ctorIdx x]? = some x := by
+  cases x <;> rfl
+
+protected theorem Party.enumList_nodup : Party.enumList.Nodup := by decide
+
+instance instFintypeParty : Fintype Party where
+  elems := ⟨Party.enumList, Party.enumList_nodup⟩
+  complete x := by
+    change x ∈ Party.enumList
+    exact List.mem_iff_getElem?.mpr ⟨Party.ctorIdx x, Party.enumList_getElem?_ctorIdx_eq x⟩
 
 /-- Alice initially holds a bit and Bob holds the trivial register. -/
 def inputSystem : MultipartiteSystem Party where
@@ -108,8 +122,9 @@ the `true` branch maps it into one distinguished coordinate of `Bool × Bool`. -
 def branchKraus (o : Bool) :
     Matrix (outputRegister o) (inputSystem.reg .alice) ℂ :=
   match o with
-  | false => Matrix.of fun _ j => if j = false then 1 else 0
-  | true => Matrix.of fun i j => if i = (false, false) ∧ j = true then 1 else 0
+  | false => Matrix.of fun (_ : Unit) (j : Bool) => if j = false then 1 else 0
+  | true => Matrix.of fun (i : Bool × Bool) (j : Bool) =>
+      if i = (false, false) ∧ j = true then 1 else 0
 
 /-- The two branch-dependent Kraus matrices form a complete instrument on Alice's input bit. -/
 theorem branchKraus_complete :
@@ -222,38 +237,36 @@ theorem privateThenBranch_liftedKraus_mul_eq_zero_of_ne
     (privateOutcome publicOutcome : Bool) (h : publicOutcome ≠ privateOutcome) :
     branchAction.liftedKraus publicOutcome () *
         privateMeasure.liftedKraus privateOutcome () = 0 := by
-  cases privateOutcome <;> cases publicOutcome
-  · exact (h rfl).elim
-  · ext a b
-    simp only [Matrix.mul_apply, Matrix.zero_apply]
-    apply Finset.sum_eq_zero
-    intro x _
-    cases hx : x .alice <;>
-      simp only [AnnouncedAction.liftedKraus, inputSystem, privateMeasure, computationalMeasure,
-        PrivateAction.ofInstrument, branchAction, branchKraus, outputRegister, id_eq,
-        localKrausLift_apply, MultipartiteSystem.splitAtSet_apply, ne_eq,
-        MultipartiteSystem.splitAt, Equiv.piSplitAt_apply, hx, PrivateAction.liftedKraus,
-        Matrix.of_apply, mul_ite, mul_one, mul_zero, ite_eq_right_iff, and_imp]
-    · intro _ _ _ _
-      change (if _ then (1 : ℂ) else 0) = 0
-      simp
-    · intro _ hc
-      exact Bool.noConfusion hc
-  · ext a b
-    simp only [Matrix.mul_apply, Matrix.zero_apply]
-    apply Finset.sum_eq_zero
-    intro x _
-    cases hx : x .alice <;>
-      simp only [AnnouncedAction.liftedKraus, inputSystem, privateMeasure, computationalMeasure,
-        PrivateAction.ofInstrument, branchAction, branchKraus, outputRegister, id_eq,
-        localKrausLift_apply, MultipartiteSystem.splitAtSet_apply, ne_eq,
-        MultipartiteSystem.splitAt, Equiv.piSplitAt_apply, hx, PrivateAction.liftedKraus,
-        Matrix.of_apply, mul_ite, mul_one, mul_zero, ite_eq_right_iff, and_imp]
-    · intro _ hc
-      exact Bool.noConfusion hc
-    · intro _ _ _ _
-      rfl
-  · exact (h rfl).elim
+  classical
+  have hp (o : Bool) (x : privateMeasure.out.total) (b : inputSystem.total)
+      (hx : x .alice ≠ o) : privateMeasure.liftedKraus o () x b = 0 := by
+    refine (localKrausLift_apply inputSystem .alice Bool
+      ((computationalMeasure Bool).kraus o ()) x b).trans ?_
+    simp only [MultipartiteSystem.splitAt,
+      Equiv.piSplitAt_apply]
+    split_ifs
+    · exact ite_eq_right (fun he : x .alice = o ∧ b .alice = o => hx he.1)
+    · rfl
+  have hb (o : Bool) (a : (branchAction.out o).total) (x : privateMeasure.out.total)
+      (hx : x .alice ≠ o) : branchAction.liftedKraus o () a x = 0 := by
+    refine (localKrausLift_apply privateMeasure.out .alice (outputRegister o)
+      (branchKraus o) a x).trans ?_
+    simp only [MultipartiteSystem.splitAt,
+      Equiv.piSplitAt_apply]
+    cases o
+    · split_ifs
+      · exact ite_eq_right hx
+      · rfl
+    · split_ifs
+      · exact ite_eq_right (fun he : a .alice = (false, false) ∧ x .alice = true => hx he.2)
+      · rfl
+  ext a b
+  simp only [Matrix.mul_apply, Matrix.zero_apply]
+  apply Finset.sum_eq_zero
+  intro x _
+  by_cases hx : x .alice = privateOutcome
+  · rw [hb publicOutcome a x (fun heq => h (heq.symm.trans hx)), zero_mul]
+  · rw [hp privateOutcome x b hx, mul_zero]
 
 /-- A syntactically present private-then-announced path with mismatched outcomes has zero path
 Kraus matrix.  Thus the later public result agrees with the retained bit on every nonzero path. -/

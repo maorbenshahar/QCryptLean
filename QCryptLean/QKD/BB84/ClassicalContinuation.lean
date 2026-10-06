@@ -103,7 +103,6 @@ theorem protocol_real_honestRegistersDiagonal
     cases h
     exact hdiff.elim (fun ha => ha rfl) (fun hb => hb rfl)
   have hzero := hclass ⟨e, q⟩ ⟨e, q'⟩ () () hne
-  simp only [tensorIdLinear_apply] at hzero
   exact hzero
 
 /-- The complete output boundary has an inhabited output space, established from its explicit
@@ -235,7 +234,9 @@ theorem protocol_real_honestRegistersDiagonal_mapTensorId
           (Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total)
           (Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total) rho := by
     ext i j
-    simp [rho, Matrix.reindex_apply]
+    exact congrArg₂ (fun a b => W (finProdFinEquiv (a, s)) (finProdFinEquiv (b, t)))
+      ((Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total).apply_symm_apply i).symm
+      ((Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total).apply_symm_apply j).symm
   rw [hblock]
   calc
     coordinateLinear
@@ -274,7 +275,6 @@ theorem protocol_real_honestRegistersDiagonal_mapTensorId
       have hzero := protocol_real_isClassicalOnFirst
         pA pB N nK mZ mX ℓ ℓEV leakEC ec delta Q rhoRef
         ⟨e, q⟩ ⟨e, q'⟩ s t hne
-      simp only [tensorIdLinear_apply] at hzero
       exact hzero
 
 /-- Entries between distinct complete public exits remain zero after adjoining an arbitrary finite
@@ -316,7 +316,9 @@ theorem protocol_real_exitBlockDiagonal_mapTensorId
           (Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total)
           (Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total) rho := by
     ext i j
-    simp [rho, Matrix.reindex_apply]
+    exact congrArg₂ (fun a b => W (finProdFinEquiv (a, s)) (finProdFinEquiv (b, t)))
+      ((Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total).apply_symm_apply i).symm
+      ((Fintype.equivFin (Measurement.weightedStreamSystem Unit N).total).apply_symm_apply j).symm
   rw [hblock]
   calc
     coordinateLinear
@@ -354,7 +356,6 @@ theorem protocol_real_exitBlockDiagonal_mapTensorId
       have hzero := protocol_real_isClassicalOnFirst
         pA pB N nK mZ mX ℓ ℓEV leakEC ec delta Q rhoRef
         ⟨e, q⟩ ⟨f, q'⟩ s t hne
-      simp only [tensorIdLinear_apply] at hzero
       exact hzero
 
 end QKD.BB84

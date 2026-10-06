@@ -87,6 +87,7 @@ theorem actualOperation_preserves_offDiagonal :
         identityInstrument).operation ()) offDiagonal) ((), 0) ((), 1) = 1 := by
   simp [Instrument.operation, onFactor, onFactorKraus, identityInstrument,
     matrixConjLinear, offDiagonal]
+  rfl
 
 attribute [simp] onFactorKraus_apply
 

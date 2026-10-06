@@ -56,9 +56,9 @@ lemma sqrt_ofReal_smul {n : ℕ} {c : ℝ} (hc : 0 ≤ c) {M : Op n} (hM : M.Pos
 (the spectral-calculus commutation pattern: `cfcₙ` applied to a commuting pair). -/
 lemma sqrt_commute {n : ℕ} {X Y : Op n} (h : X * Y = Y * X) :
     CFC.sqrt X * Y = Y * CFC.sqrt X := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   have hc : Commute X Y := h
   have hswap : Y * CFC.sqrt X = CFC.sqrt X * Y := by
     simp only [CFC.sqrt]

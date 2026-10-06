@@ -86,7 +86,8 @@ noncomputable def rawClassicalTailExitDataEquiv
         ⟨(QKD.BB84.classicalTailExitEquiv n m ell ellEV peSel leakEC).symm q.1,
           (finalStageExitEquiv ell).symm q.2⟩
   left_inv e := by
-    simp
+    simp only [Equiv.symm_apply_apply]
+    exact Equiv.symm_apply_apply _ e
   right_inv q := by
     rcases q with ⟨data, flag⟩
     simp
@@ -127,7 +128,9 @@ def finalStageOutputEquiv (ell : Nat) :
         (TwoParty.pairEquiv (Fin (2 ^ ell)) (Fin (2 ^ ell))).symm
           (TwoParty.pairEquiv (Fin (2 ^ ell)) (Fin (2 ^ ell)) registers)⟩ :
             (FinalStage.boundary ell).space) = ⟨⟨0, ()⟩, registers⟩
-      rw [(TwoParty.pairEquiv (Fin (2 ^ ell)) (Fin (2 ^ ell))).symm_apply_apply]
+      exact congrArg (fun q : (FinalStage.keySystem ell).total =>
+        (⟨⟨0, ()⟩, q⟩ : (FinalStage.boundary ell).space))
+        ((TwoParty.pairEquiv (Fin (2 ^ ell)) (Fin (2 ^ ell))).symm_apply_apply registers)
     · have hflag_one : flag = 1 := Fin.eq_one_of_ne_zero flag hflag
       subst flag
       change Unit at leaf
@@ -143,7 +146,8 @@ def finalStageOutputEquiv (ell : Nat) :
       rw [hregisters]
   right_inv q := by
     rcases q with keys | abort
-    · simp
+    · exact congrArg Sum.inl
+        ((TwoParty.pairEquiv (Fin (2 ^ ell)) (Fin (2 ^ ell))).apply_symm_apply keys)
     · cases abort
       rfl
 

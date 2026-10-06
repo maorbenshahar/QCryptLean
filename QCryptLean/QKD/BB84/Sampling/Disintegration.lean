@@ -139,7 +139,7 @@ theorem selectedControlKernel_apply
   classical
   unfold selectedControlKernel
   by_cases hmass : selectedInjectionFiberMass N nK mZ mX pA pB f = 0
-  · rw [if_pos hmass]
+  · rw [ite_eq_left hmass]
     apply PMF.filterOrPure_apply_of_not_exists
     rintro ⟨x, hx, hsupp⟩
     have hsum :
@@ -149,7 +149,7 @@ theorem selectedControlKernel_apply
     have hxzero := (ENNReal.tsum_eq_zero.mp hsum) x
     rw [Set.indicator_of_mem hx] at hxzero
     exact (PMF.mem_support_iff _ _).mp hsupp hxzero
-  · rw [if_neg hmass]
+  · rw [ite_eq_right hmass]
     have hexists : ∃ x ∈ selectedFiberSet nK mZ mX f,
         x ∈ (rawControlLaw N pA pB).support := by
       by_contra hnone
@@ -187,7 +187,7 @@ theorem failureControlKernel_apply
   classical
   unfold failureControlKernel
   by_cases hmass : selectionFailureMass N nK mZ mX pA pB = 0
-  · rw [if_pos hmass]
+  · rw [ite_eq_left hmass]
     apply PMF.filterOrPure_apply_of_not_exists
     rintro ⟨x, hx, hsupp⟩
     have hsum :
@@ -197,7 +197,7 @@ theorem failureControlKernel_apply
     have hxzero := (ENNReal.tsum_eq_zero.mp hsum) x
     rw [Set.indicator_of_mem hx] at hxzero
     exact (PMF.mem_support_iff _ _).mp hsupp hxzero
-  · rw [if_neg hmass]
+  · rw [ite_eq_right hmass]
     have hexists : ∃ x ∈ failureSet nK mZ mX,
         x ∈ (rawControlLaw N pA pB).support := by
       by_contra hnone
@@ -289,12 +289,12 @@ theorem reconstructedStatusRawLaw_eq
   rintro ⟨status, omega⟩
   rw [reconstructedStatusRawLaw, taggedRawControlLaw, PMF.bind_apply, PMF.map_apply]
   simp only [tsum_fintype, Fintype.sum_bool, selectionStatusLaw,
-    PMF.ofFintype_apply, selectionStatusWeight, Bool.false_eq_true, if_false, if_true]
+    PMF.ofFintype_apply, selectionStatusWeight, Bool.false_eq_true, ite_false, ite_true]
   rw [Fintype.sum_eq_single omega]
   · simp only [Prod.mk.injEq, and_true]
     cases status
     · simp only [PMF.bind_apply, PMF.pure_apply, Prod.mk.injEq,
-        Bool.false_eq_true, false_and, if_false, mul_zero, tsum_fintype,
+        Bool.false_eq_true, false_and, ite_false, mul_zero, tsum_fintype,
         Finset.sum_const_zero, true_and, mul_ite, mul_one, Finset.sum_ite_eq,
         Finset.mem_univ, zero_add, false_eq_decide_iff, ite_not]
       by_cases hq : HasQuotas nK mZ mX omega
@@ -316,18 +316,18 @@ theorem reconstructedStatusRawLaw_eq
             have hsum := selectionSuccessMass_add_failureMass N nK mZ mX pA pB
             rw [htop, add_top] at hsum
             exact ENNReal.top_ne_one hsum
-          rw [failureControlKernel_apply, if_neg hmass]
-          simp only [hq, not_false_eq_true, if_true, if_false]
+          rw [failureControlKernel_apply, ite_eq_right hmass]
+          simp only [hq, not_false_eq_true, ite_true, ite_false]
           -- `m · (r / m) = r · (m · m⁻¹) = r`
           rw [div_eq_mul_inv, mul_left_comm, ENNReal.mul_inv_cancel hmass hmassTop, mul_one]
     · simp only [PMF.bind_apply, PMF.pure_apply, Prod.mk.injEq, true_and,
         mul_ite, mul_one, mul_zero, tsum_fintype, Finset.sum_ite_eq,
-        Finset.mem_univ, if_true, Bool.true_eq_false, false_and,
+        Finset.mem_univ, ite_true, Bool.true_eq_false, false_and,
         true_eq_decide_iff]
       by_cases hsuccess : selectionSuccessMass N nK mZ mX pA pB = 0
       · rw [hsuccess, zero_mul]
         by_cases hq : HasQuotas nK mZ mX omega
-        · rw [if_pos hq]
+        · rw [ite_eq_left hq]
           have hsumzero :
               (∑ x : RawControl N,
                 if HasQuotas nK mZ mX x then rawControlLaw N pA pB x else 0) = 0 :=
@@ -350,7 +350,7 @@ theorem reconstructedStatusRawLaw_eq
             N nK mZ mX pA pB g (joinSubsetPerm S π)]
           exact hfiber
         by_cases hq : HasQuotas nK mZ mX omega
-        · rw [if_pos hq]
+        · rw [ite_eq_left hq]
           have hisSome : (select nK mZ mX omega).isSome = true :=
             (select_isSome_iff nK mZ mX omega).mpr hq
           obtain ⟨f, hselect⟩ :
@@ -379,11 +379,11 @@ theorem reconstructedStatusRawLaw_eq
             · rintro ⟨rfl, rfl⟩
               exact (join_imageSubset_embeddingPermutation f).symm
           simp_rw [selectedControlKernel_apply,
-            if_neg (hfiberNonzero _ _), hselect, Option.some.injEq, hfiberEq, hpair]
-          simp only [if_false, Finset.sum_const_zero, mul_zero, add_zero]
+            ite_eq_right (hfiberNonzero _ _), hselect, Option.some.injEq, hfiberEq, hpair]
+          simp only [ite_false, Finset.sum_const_zero, mul_zero, add_zero]
           rw [Fintype.sum_eq_single (imageSubset f)]
           · rw [Fintype.sum_eq_single (embeddingPermutation f)]
-            · simp only [true_and, if_true]
+            · simp only [true_and, ite_true]
               have hcardSubset :
                   (Fintype.card
                     (Set.powersetCard (Fin N) (nK + mZ + mX)) : ℝ≥0∞) =
@@ -434,10 +434,10 @@ theorem reconstructedStatusRawLaw_eq
                   selectedInjectionFiberMass N nK mZ mX pA pB f ≠ ∞ := by
                 rw [hmassFormula]
                 exact ENNReal.div_ne_top hsuccessTop hdenom
-              letI : Nonempty
+              let : Nonempty
                   (Set.powersetCard (Fin N) (nK + mZ + mX)) :=
                 ⟨initialRetainedSubset hN⟩
-              letI : Nonempty (Equiv.Perm (Fin (nK + mZ + mX))) :=
+              let : Nonempty (Equiv.Perm (Fin (nK + mZ + mX))) :=
                 ⟨Equiv.refl _⟩
               rw [uniformRetainedSubset, PMF.uniformOfFintype_apply,
                 uniformInnerPerm, PMF.uniformOfFintype_apply, hcardSubset, hcardPerm]
@@ -464,10 +464,10 @@ theorem reconstructedStatusRawLaw_eq
                     mul_one]
             · -- the indicator vanishes off `π = embeddingPermutation f`
               intro π hπ
-              simp only [hπ, and_false, if_false, ENNReal.zero_div, mul_zero]
+              simp only [hπ, and_false, ite_false, ENNReal.zero_div, mul_zero]
           · -- the indicator vanishes off `S = imageSubset f`
             intro S hS
-            simp only [hS, false_and, if_false, ENNReal.zero_div, mul_zero,
+            simp only [hS, false_and, ite_false, ENNReal.zero_div, mul_zero,
               Finset.sum_const_zero]
         · have hselect : select nK mZ mX omega = none := by
             cases hs : select nK mZ mX omega with
@@ -477,11 +477,11 @@ theorem reconstructedStatusRawLaw_eq
                 apply hq
                 exact (select_isSome_iff nK mZ mX omega).mp (by simp [hs])
           simp_rw [selectedControlKernel_apply,
-            if_neg (hfiberNonzero _ _), hselect]
+            ite_eq_right (hfiberNonzero _ _), hselect]
           simp [hq]
   · -- only the tag `(status, omega)` itself can match
     intro x hx
-    exact if_neg fun h => hx (congrArg Prod.snd h).symm
+    exact ite_eq_right fun h => hx (congrArg Prod.snd h).symm
 
 /-! ## Kernel and status formulas -/
 

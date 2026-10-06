@@ -770,7 +770,7 @@ lemma sel_mul_selConjTranspose_eq_diagonal {n : ℕ} (σ : DensityOp n) :
       · intro hx; exact absurd (Finset.mem_univ x) hx
     · have hi0 : ¬ (sigmaHerm σ).eigenvalues i ≠ 0 :=
         fun hne => hi ((mem_range_posEigEmb_iff σ i).mpr hne)
-      simp only [hi0, if_false]
+      simp only [hi0, ite_false]
       apply Finset.sum_eq_zero
       intro x _
       have hix : i ≠ posEigEmb σ x := fun h => hi ⟨x, h.symm⟩

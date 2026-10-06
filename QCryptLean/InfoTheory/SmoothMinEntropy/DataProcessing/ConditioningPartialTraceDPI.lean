@@ -210,7 +210,7 @@ theorem bipartiteMinEntropyOptReal_partialTrace_conditioning_le {dA dC1 dC2 : �
     (ρ : SubDensityOp (dA * (dC1 * dC2))) :
     bipartiteMinEntropyOptReal ρ ≤
       bipartiteMinEntropyOptReal (SubDensityOp.partialTrace_of_conditioning ρ) := by
-  haveI : NeZero (dC1 * dC2) := ⟨Nat.mul_ne_zero (NeZero.ne dC1) (NeZero.ne dC2)⟩
+  have : NeZero (dC1 * dC2) := ⟨Nat.mul_ne_zero (NeZero.ne dC1) (NeZero.ne dC2)⟩
   rw [bipartiteMinEntropyOptReal_eq_sSup, bipartiteMinEntropyOptReal_eq_sSup]
   apply csSup_le (bipartiteMinEntropyOptSet_nonempty ρ)
   rintro v ⟨σ, hfeas, rfl⟩
@@ -235,10 +235,10 @@ theorem purifiedDistance_partialTrace_conditioning_le {dA dC1 dC2 : ℕ}
     purifiedDistance (SubDensityOp.partialTrace_of_conditioning ρ)
         (SubDensityOp.partialTrace_of_conditioning τ) ≤
       purifiedDistance ρ τ := by
-  haveI : NeZero (dA * dC1) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dC1)⟩
-  haveI : NeZero (dA * (dC1 * dC2)) :=
+  have : NeZero (dA * dC1) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dC1)⟩
+  have : NeZero (dA * (dC1 * dC2)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (Nat.mul_ne_zero (NeZero.ne dC1) (NeZero.ne dC2))⟩
-  haveI : NeZero (dA * dC1 * dC2) :=
+  have : NeZero (dA * dC1 * dC2) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dC1)) (NeZero.ne dC2)⟩
   set h : dA * (dC1 * dC2) = dA * dC1 * dC2 := (Nat.mul_assoc dA dC1 dC2).symm
   set Φ : Op (dA * (dC1 * dC2)) → Op (dA * dC1) := fun A => partialTraceB (Op.castDim h A) with hΦ
@@ -286,12 +286,12 @@ theorem smoothBipartiteMinEntropyOptReal_partialTrace_conditioning_le {dA dC1 dC
     [NeZero dA] [NeZero dC1] [NeZero dC2]
     [NeZero (dA * (dC1 * dC2))] [NeZero (dA * dC1)]
     {ε : ℝ} (hε : 0 ≤ ε) (ρ : SubDensityOp (dA * (dC1 * dC2)))
-    (hbdd : BddAbove (setOf (isInSmoothBipartiteMinSet ε
+    (hbdd : BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε
       (SubDensityOp.partialTrace_of_conditioning ρ)))) :
     smoothBipartiteMinEntropyOptReal ε ρ ≤
       smoothBipartiteMinEntropyOptReal ε (SubDensityOp.partialTrace_of_conditioning ρ) := by
   rw [show smoothBipartiteMinEntropyOptReal ε ρ
-        = sSup (setOf (isInSmoothBipartiteMinSet ε ρ)) from rfl]
+        = sSup (Set.ofPred (isInSmoothBipartiteMinSet ε ρ)) from rfl]
   apply csSup_le (smoothBipartiteMinSet_nonempty hε ρ)
   rintro v ⟨τ, hdist, rfl⟩
   have hval : bipartiteMinEntropyOptReal τ ≤

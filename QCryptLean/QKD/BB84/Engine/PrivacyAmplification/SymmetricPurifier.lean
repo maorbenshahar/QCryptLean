@@ -128,7 +128,7 @@ theorem bb84_symmetricPurifier_exists (n : ℕ) [NeZero n] :
   set ρ : DensityOp ((signalDim ^ n) * (signalDim ^ n)) :=
     pairedDeFinettiState signalDim n with hρ_def
   -- the purifier register dimension is the rank `r ≤ g`, and `r ≥ 1`
-  haveI hr : NeZero (Matrix.rank ρ.toOp) := ⟨(densityOp_rank_pos ρ).ne'⟩
+  have hr : NeZero (Matrix.rank ρ.toOp) := ⟨(densityOp_rank_pos ρ).ne'⟩
   have hr_le : Matrix.rank ρ.toOp ≤ bb84PolyDim n := by
     rw [hρ_def]; exact bb84_pairedDeFinettiState_rank_le_polyDim n
   -- the generic rank-dimension purification

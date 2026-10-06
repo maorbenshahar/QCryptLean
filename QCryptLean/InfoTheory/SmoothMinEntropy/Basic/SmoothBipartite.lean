@@ -56,20 +56,20 @@ realized as the `sSup` over the purified-distance ε-ball of the guarded referen
 guard. -/
 noncomputable def smoothBipartiteMinEntropyOptReal {dA dC : ℕ} [NeZero (dA * dC)]
     (ε : ℝ) (ρ : SubDensityOp (dA * dC)) : ℝ :=
-  sSup (setOf (isInSmoothBipartiteMinSet ε ρ))
+  sSup (Set.ofPred (isInSmoothBipartiteMinSet ε ρ))
 
 /-- The smooth bipartite min-entropy optimization set contains the center state's guarded
 optimized min-entropy value when the smoothing radius is nonnegative. -/
 theorem smoothBipartiteMinSet_nonempty {dA dC : ℕ} [NeZero (dA * dC)]
     {ε : ℝ} (hε : 0 ≤ ε) (ρ : SubDensityOp (dA * dC)) :
-    (setOf (isInSmoothBipartiteMinSet ε ρ)).Nonempty :=
+    (Set.ofPred (isInSmoothBipartiteMinSet ε ρ)).Nonempty :=
   ⟨bipartiteMinEntropyOptReal ρ, ρ, by rw [purifiedDistance_self_zero]; exact hε, rfl⟩
 
 /-- Every ball member's guarded optimized min-entropy is a lower bound for the smooth bipartite
 min-entropy (the `sSup` witness bound), given that the optimization set is bounded above. -/
 theorem smoothBipartiteMinEntropyOptReal_ge_of_mem_ball {dA dC : ℕ} [NeZero (dA * dC)]
     (ε : ℝ) (ρ ρ' : SubDensityOp (dA * dC))
-    (hbdd : BddAbove (setOf (isInSmoothBipartiteMinSet ε ρ)))
+    (hbdd : BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε ρ)))
     (hd : purifiedDistance ρ ρ' ≤ ε) :
     bipartiteMinEntropyOptReal ρ' ≤ smoothBipartiteMinEntropyOptReal ε ρ :=
   le_csSup hbdd ⟨ρ', hd, rfl⟩
@@ -84,7 +84,7 @@ theorem smoothBipartiteMinEntropyOptReal_zero_eq {dA dC : ℕ} [NeZero (dA * dC)
     (ρ : SubDensityOp (dA * dC)) :
     smoothBipartiteMinEntropyOptReal 0 ρ = bipartiteMinEntropyOptReal ρ := by
   unfold smoothBipartiteMinEntropyOptReal
-  have hset : setOf (isInSmoothBipartiteMinSet 0 ρ) = {bipartiteMinEntropyOptReal ρ} := by
+  have hset : Set.ofPred (isInSmoothBipartiteMinSet 0 ρ) = {bipartiteMinEntropyOptReal ρ} := by
     apply Set.eq_singleton_iff_unique_mem.mpr
     refine ⟨⟨ρ, by rw [purifiedDistance_self_zero], rfl⟩, ?_⟩
     rintro h ⟨ρ', hd, rfl⟩
@@ -120,7 +120,7 @@ supremum. Requires `0 ≤ ε` (so the smaller ball is nonempty) and boundedness 
 larger-ball optimization set. -/
 theorem smoothBipartiteMinEntropyOptReal_monotone_eps {dA dC : ℕ} [NeZero (dA * dC)]
     {ε ε' : ℝ} (hε : 0 ≤ ε) (h : ε ≤ ε') (ρ : SubDensityOp (dA * dC))
-    (hbdd : BddAbove (setOf (isInSmoothBipartiteMinSet ε' ρ))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε' ρ))) :
     smoothBipartiteMinEntropyOptReal ε ρ ≤ smoothBipartiteMinEntropyOptReal ε' ρ := by
   unfold smoothBipartiteMinEntropyOptReal
   refine csSup_le_csSup hbdd (smoothBipartiteMinSet_nonempty hε ρ) ?_

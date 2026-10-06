@@ -131,10 +131,10 @@ theorem CQState.fidelityGen_le_fidelityGen_blockwise_cptp
     (hσ' : ∀ x, (σ'.stateMap x).toOp = T x (σ.stateMap x).toOp) :
     fidelityGen ρ.toJointDensity σ.toJointDensity ≤
       fidelityGen ρ'.toJointDensity σ'.toJointDensity := by
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (dIn * Fintype.card X) :=
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (dIn * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dIn) (NeZero.ne _)⟩
-  haveI : NeZero (dOut * Fintype.card X) :=
+  have : NeZero (dOut * Fintype.card X) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dOut) (NeZero.ne _)⟩
   have hF :
       Quantum.Metrics.fidelity
@@ -273,7 +273,7 @@ theorem fidelity_sum_le_fidelity_sum
     (A B : Z → PosSemidefOp n) :
     ∑ z, fidelity (A z) (B z) ≤ fidelity (∑ z, A z) (∑ z, B z) := by
   classical
-  haveI : NeZero (Fintype.card Z) := ⟨fun h =>
+  have : NeZero (Fintype.card Z) := ⟨fun h =>
     NeZero.ne (n * Fintype.card Z) (by rw [h, Nat.mul_zero])⟩
   have hstep1 : fidelity (cqBlockPosSemidefOp A) (cqBlockPosSemidefOp B)
       = ∑ z, fidelity (A z) (B z) := by

@@ -438,8 +438,8 @@ lemma quantum_seedKey_LHL_of_isFeasible
         ((seedKeyExtractorOutputState H ρ).toJointDensity.toOp -
           (seedUniformOutputState (S := S) (Z := Z) ρ.quantumMarginal).toJointDensity.toOp) ≤
       Real.sqrt ((Fintype.card Z : ℝ) * t) := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   rw [cqState_joint_traceNorm_eq_sum_blocks]
   exact (joint_traceNorm_seedKey_sum_blocks_le_sqrt_card_mul_lambda_subNorm
@@ -461,8 +461,8 @@ lemma quantum_seedKey_LHL_zero_floor
         ((seedKeyExtractorOutputState H ρ).toJointDensity.toOp -
           (seedUniformOutputState (S := S) (Z := Z) ρ.quantumMarginal).toJointDensity.toOp) ≤
       Real.sqrt ((Fintype.card Z : ℝ)) := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   let A (s : S) (z : Z) : Op n :=
     ∑ x : X, if H.hash s x = z then (ρ.stateMap x).toOp else 0
@@ -550,8 +550,8 @@ lemma traceDistanceGen_seedKeyExtractorOutput_uniformOutput_le_of_minEntropy
         (seedKeyExtractorOutputState H ρ).toJointDensity.toOp
         (seedUniformOutputState (S := S) (Z := Z) ρ.quantumMarginal).toJointDensity.toOp ≤
       (1 / 2) * Real.sqrt ((Fintype.card Z : ℝ) * 2 ^ (-k)) := by
-  haveI : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
-  haveI : NeZero (n * Fintype.card (S × Z)) :=
+  have : NeZero (Fintype.card (S × Z)) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (n * Fintype.card (S × Z)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne n) Fintype.card_ne_zero⟩
   have htr_E :=
     seedKeyExtractorOutputState_joint_trace_eq_quantumMarginal_trace H ρ

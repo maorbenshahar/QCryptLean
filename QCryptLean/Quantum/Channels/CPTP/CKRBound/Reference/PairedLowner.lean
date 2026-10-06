@@ -120,7 +120,7 @@ lemma mapTensorId_opLe_card_smul_one_of_marginalNorm {d n dimOut : ℕ}
     opLe (mapTensorId Δ ρ')
       ((Complex.ofReal (((d ^ n : ℕ) : ℝ) * c)) •
         (1 : Op (dimOut * d ^ n))) := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
   -- The lifted block is PSD; apply the generic card bound.
   have hcp : IsCompletelyPositive
       (⇑(mapTensorIdLinear (k := d ^ n) Δ)) := by

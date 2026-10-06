@@ -50,10 +50,12 @@ def unitAnnouncementSpaceEquiv (B : Boundary P) :
   apply LinearMap.ext
   intro rho
   ext p q
-  simp only [reindexOp, LinearMap.comp_apply, LinearMap.coe_mk, AddHom.coe_mk,
-    Matrix.submatrix_apply, unitAnnouncementSpaceEquiv_symm_apply,
-    matrixConjLinear, Matrix.mul_apply, Matrix.conjTranspose_apply,
-    publicInclKraus_apply, publicSpaceEquiv_apply, LinearMap.id_apply]
+  change matrixConjLinear (publicInclKraus (fun _ : Unit => B) ()) rho
+    ((unitAnnouncementSpaceEquiv B).symm p) ((unitAnnouncementSpaceEquiv B).symm q) = _
+  rw [matrixConjLinear_apply]
+  change (∑ q' : B.space, ∑ p' : B.space,
+    (if (⟨(), p⟩ : Σ _ : Unit, B.space) = ⟨(), p'⟩ then (1 : ℂ) else 0) *
+      rho p' q' * star (if (⟨(), q⟩ : Σ _ : Unit, B.space) = ⟨(), q'⟩ then 1 else 0)) = _
   simp
 
 /-- Operators on a boundary are block diagonal when distinct complete exits have no cross terms. -/
@@ -145,8 +147,7 @@ private theorem sum_path_comp {In Mid H : Type}
 private theorem pathKraus_complete_done {R : MultipartiteSystem P} :
     ∑ b : (Program.done : Program R (.leaf R)).Branch,
       (b.pathKraus)ᴴ * b.pathKraus = 1 := by
-  simp only [Branch, Branch.pathKraus, Fintype.sum_unique]
-  change (1 : Op R.total)ᴴ * (1 : Op R.total) = (1 : Op R.total)
+  change ∑ _ : Unit, (1 : Op R.total)ᴴ * (1 : Op R.total) = (1 : Op R.total)
   simp
 
 /-- Completeness of path Kraus matrices is preserved by an announced node. -/
@@ -443,7 +444,7 @@ theorem kraus_apply_eq_zero_of_exit_ne {R : MultipartiteSystem P} {B : Boundary 
   simp only [kraus, Matrix.mul_apply, Boundary.exitKraus_apply]
   apply Finset.sum_eq_zero
   intro q _
-  rw [if_neg]
+  rw [ite_eq_right]
   · simp
   · intro heq
     exact h (congrArg Sigma.fst heq)
@@ -539,8 +540,14 @@ not definitional: the announced program retains a `Unit` transcript cell.
     (reindexOp (Boundary.unitAnnouncementSpaceEquiv B)).comp
         ((V.asUnitAnnouncement.then (fun _ => k)).denote) =
       (V.then k).denote := by
-  rw [AnnouncedAction.then, Program.denote_announced,
-    PrivateAction.then, Program.denote_priv]
+  refine (congrArg (reindexOp (Boundary.unitAnnouncementSpaceEquiv B)).comp
+    (Program.denote_announced V.asUnitAnnouncement (B := fun _ : Unit => B)
+      (fun _ => k))).trans ?_
+  refine Eq.trans ?_ (Program.denote_priv V k).symm
+  change (reindexOp (Boundary.unitAnnouncementSpaceEquiv B)).comp
+    (∑ o : V.Outcome, ∑ r : V.instrument.krausIndex o,
+      (matrixConjLinear (Boundary.publicInclKraus (fun _ : Unit => B) ())).comp
+        (k.denote.comp (matrixConjLinear (V.liftedKraus o r)))) = _
   apply LinearMap.ext
   intro rho
   simp only [LinearMap.comp_apply, LinearMap.sum_apply, map_sum]
@@ -551,7 +558,6 @@ not definitional: the announced program retains a `Unit` transcript cell.
   rw [← LinearMap.comp_apply,
     Boundary.reindexOp_comp_matrixConjLinear_publicInclKraus_unit,
     LinearMap.id_apply]
-  rfl
 
 /-- Running a private action agrees with running its singleton-announced presentation after the
 canonical output reindexing.  The latter program still records the explicit `Unit` public node. -/

@@ -109,7 +109,7 @@ lemma haar_moment_vanishing_first_col (d n : ℕ) [NeZero d]
   set D : unitaryGroup (Fin d) ℂ := ⟨Matrix.diagonal f,
     diagonal_unitCircle_mem_unitary f hf_norm⟩
   -- Haar left-invariance: ∫ F(k) dk = ∫ F(D·k) dk
-  haveI : (haarProbUnitary d).IsMulLeftInvariant := by
+  have : (haarProbUnitary d).IsMulLeftInvariant := by
     unfold haarProbUnitary haarOnUnitary; infer_instance
   set F := fun k : unitaryGroup (Fin d) ℂ =>
     (k.val 0 0) ^ n * (starRingEnd ℂ (k.val j 0)) ^ m
@@ -155,7 +155,7 @@ lemma haar_equivariant_integral_zero (d : ℕ) [NeZero d]
     (c : ℂ) (hc : c ≠ 1)
     (h_equi : ∀ k, F (D * k) = c * F k) :
     ∫ k, F k ∂(haarProbUnitary d) = 0 := by
-  haveI : (haarProbUnitary d).IsMulLeftInvariant := by
+  have : (haarProbUnitary d).IsMulLeftInvariant := by
     unfold haarProbUnitary haarOnUnitary; infer_instance
   set I := ∫ k, F k ∂(haarProbUnitary d)
   have h_inv : I = c * I := by
@@ -215,7 +215,7 @@ lemma haar_product_vanishing_first_col (d n : ℕ) [NeZero d]
   exact haar_equivariant_integral_zero d F D _ hω_pow_ne h_equi
 
 /-- The unit circle in ℂ is infinite (needed for polynomial root arguments). -/
-lemma unit_circle_infinite : Set.Infinite (setOf (fun z : ℂ => ‖z‖ = 1)) := by
+lemma unit_circle_infinite : Set.Infinite (Set.ofPred (fun z : ℂ => ‖z‖ = 1)) := by
   apply (Set.infinite_range_of_injective
     (f := fun n : ℕ => Complex.exp (↑(n : ℝ) * Complex.I))
     (fun a b hab => ?_)).mono
@@ -239,7 +239,7 @@ lemma unit_circle_infinite : Set.Infinite (setOf (fun z : ℂ => ‖z‖ = 1)) :
 lemma polynomial_zero_of_vanish_unit_circle {p : Polynomial ℂ}
     (hp : ∀ z : ℂ, ‖z‖ = 1 → p.eval z = 0) : p = 0 := by
   by_contra h
-  exact (Polynomial.finite_setOf_isRoot h).not_infinite
+  exact (Polynomial.finite_setOfPred_isRoot h).not_infinite
     (unit_circle_infinite.mono (fun z hz => hp z hz))
 
 private lemma dft_column_ortho_diag (d : ℕ) [NeZero d]
@@ -339,7 +339,7 @@ lemma coeff_zero_of_vanish_circle (S : Finset ℕ) (a : ℕ → ℂ)
   have h_coeff : p.coeff k = a k := by
     simp only [hp_def, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
     rw [Finset.sum_eq_single k
-      (fun j _ hjk => if_neg (Ne.symm hjk))
+      (fun j _ hjk => ite_eq_right (Ne.symm hjk))
       (fun hk' => absurd hk hk')]
     simp
   rw [← h_coeff, hp_zero]; simp
@@ -419,9 +419,9 @@ lemma monomial_indep_torus : ∀ (d : ℕ),
       -- Show zz ∘ Fin.castSucc = z' and zz (Fin.last d) = w
       have hzz_cast : zz ∘ Fin.castSucc = z' := by
         ext i; simp only [Function.comp, zz, Fin.val_castSucc]
-        rw [dif_pos i.isLt]
+        rw [dite_eq_left i.isLt]
       have hzz_last : zz (Fin.last d) = w := by
-        simp only [zz, Fin.val_last]; rw [dif_neg (lt_irrefl d)]
+        simp only [zz, Fin.val_last]; rw [dite_eq_right (lt_irrefl d)]
       rw [hzz_cast, hzz_last] at this; exact this
     -- Step 4: Apply ih to the inner sum for k = t(Fin.last d)
     have htK : t (Fin.last d) ∈ K := Finset.mem_image.mpr ⟨t, ht, rfl⟩
@@ -472,9 +472,9 @@ lemma perm_rep_mulVec_apply {d n : ℕ} [NeZero d]
     Math.RepresentationTheory.permutationRepresentation, Matrix.of_apply]
   rw [Finset.sum_eq_single (finFunctionFinEquiv (p ∘ ↑σ))]
   · simp only [Equiv.symm_apply_apply,
-      show (p ∘ ↑σ) ∘ ↑σ.symm = p from by ext k; simp, if_true, one_mul]
+      show (p ∘ ↑σ) ∘ ↑σ.symm = p from by ext k; simp, ite_true, one_mul]
   · intro j _ hj
-    rw [ite_mul, one_mul, zero_mul, if_neg]
+    rw [ite_mul, one_mul, zero_mul, ite_eq_right]
     intro heq
     apply hj
     simp only [Equiv.symm_apply_apply] at heq

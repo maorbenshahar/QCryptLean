@@ -64,7 +64,7 @@ lemma minFeasibleLambda_le_pow_neg_k_subNorm
   · have hcme : conditionalMinEntropy ρ σ =
         ENNReal.ofReal (conditionalMinEntropyReal ρ σ) := by
       unfold conditionalMinEntropy
-      rw [if_pos hpos]
+      rw [ite_eq_left hpos]
     rw [hcme] at hk
     have hlog2 : 0 < Real.log 2 := Real.log_pos one_lt_two
     have hlog_le : Real.log lam ≤ 0 := Real.log_nonpos hlam_nn hlam_le_one

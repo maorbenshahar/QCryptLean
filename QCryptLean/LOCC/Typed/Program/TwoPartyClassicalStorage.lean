@@ -229,30 +229,31 @@ theorem IsHonestClassical.denote
   | done =>
       intro e q q' hqq'
       rcases e with ⟨⟩
-      simpa [Program.denote_done, Matrix.coe_reindexLinearEquiv,
-        Matrix.reindex_apply, Boundary.leafSpaceEquiv] using hrho q q' hqq'
-  | announced A next hA hnext ih =>
+      rw [Program.denote_done]
+      exact hrho q q' hqq'
+  | @announced R Y _ _ Bs A next hA hnext ih =>
       intro e q q' hqq'
       rcases e with ⟨y, e⟩
+      change ((Bs y).system e).total at q q'
       rw [Program.denote_announced_eq_sum_liftedOperation]
       simp only [LinearMap.sum_apply, LinearMap.comp_apply, Matrix.sum_apply]
       apply Finset.sum_eq_zero
       intro o _
+      let M := (next (A.announce o)).denote (A.liftedOperation o rho)
       by_cases ho : A.announce o = y
       · subst y
-        simpa [matrixConjLinear, Matrix.mul_apply,
-          Boundary.publicInclKraus_apply] using
-          ih (A.announce o) (A.liftedOperation o rho) (hA o rho hrho) e q q' hqq'
-      · simp only [matrixConjLinear, LinearMap.coe_mk, AddHom.coe_mk,
-          Matrix.mul_apply, Boundary.publicInclKraus_apply,
-          Boundary.publicSpaceEquiv_apply, Sigma.mk.injEq, ite_mul, one_mul,
-          zero_mul, Matrix.conjTranspose_apply, RCLike.star_def,
-          MonoidWithZeroHom.map_ite_one_zero, mul_ite, mul_one, mul_zero]
-        apply Finset.sum_eq_zero
-        intro x _
-        rw [if_neg]
-        intro h
-        exact ho (congrArg Sigma.fst h).symm
+        let E : Matrix (Σ z, (Bs z).space) (Bs (A.announce o)).space ℂ :=
+          sigmaInclKraus (fun z => (Bs z).space) (A.announce o)
+        have hentry : matrixConjLinear E M ⟨A.announce o, ⟨e, q⟩⟩
+            ⟨A.announce o, ⟨e, q'⟩⟩ = M ⟨e, q⟩ ⟨e, q'⟩ := by
+          simp [matrixConjLinear, E, sigmaInclKraus, Matrix.mul_apply,
+            Matrix.conjTranspose_apply]
+        exact hentry.trans
+          (ih (A.announce o) (A.liftedOperation o rho) (hA o rho hrho) e q q' hqq')
+      · exact matrixConjLinear_apply_eq_zero_of_row_left
+          (Boundary.publicInclKraus Bs (A.announce o)) M
+          (funext fun t => Boundary.publicInclKraus_apply_eq_zero_of_fst_ne Bs
+            (p := ⟨⟨y, e⟩, q⟩) (Ne.symm ho) t) ⟨⟨y, e⟩, q'⟩
   | priv A next hA hnext ih =>
       intro e q q' hqq'
       rw [Program.denote_priv_eq_sum_liftedOperation]

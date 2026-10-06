@@ -33,7 +33,7 @@ theorem pureZ_oneX_successMass_zero :
   apply Finset.sum_eq_zero
   intro omega _
   by_cases hq : HasQuotas 0 0 1 omega
-  · simp only [hq, if_true]
+  · simp only [hq, ite_true]
     have hxLength : 0 < (xOrder omega).length :=
       lt_of_lt_of_le Nat.zero_lt_one hq.2
     let i : Fin 1 := (xOrder omega).get ⟨0, hxLength⟩

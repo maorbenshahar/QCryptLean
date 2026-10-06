@@ -161,15 +161,15 @@ lemma mapIdTensor_conj_of_conj
         ∑ a', W a a' * f (finProdFinEquiv (s, a')) := by
     rw [← Equiv.sum_comp finProdFinEquiv, Fintype.sum_prod_type,
       Fintype.sum_eq_single s fun s' hs' => Finset.sum_eq_zero fun a' _ => by
-        rw [hW, if_neg (Ne.symm hs'), zero_mul]]
-    exact Finset.sum_congr rfl fun a' _ => by rw [hW, if_pos rfl]
+        rw [hW, ite_eq_right (Ne.symm hs'), zero_mul]]
+    exact Finset.sum_congr rfl fun a' _ => by rw [hW, ite_eq_left rfl]
   have hcol (t : Fin k) (b : Fin m) (f : Fin (k * m') → ℂ) :
       ∑ q, f q * star (idTensorW (finProdFinEquiv (t, b)) q) =
         ∑ b', f (finProdFinEquiv (t, b')) * star (W b b') := by
     rw [← Equiv.sum_comp finProdFinEquiv, Fintype.sum_prod_type,
       Fintype.sum_eq_single t fun t' ht' => Finset.sum_eq_zero fun b' _ => by
-        rw [hW, if_neg (Ne.symm ht'), star_zero, mul_zero]]
-    exact Finset.sum_congr rfl fun b' _ => by rw [hW, if_pos rfl]
+        rw [hW, ite_eq_right (Ne.symm ht'), star_zero, mul_zero]]
+    exact Finset.sum_congr rfl fun b' _ => by rw [hW, ite_eq_left rfl]
   ext p q
   obtain ⟨⟨s, a⟩, rfl⟩ := finProdFinEquiv.surjective p
   obtain ⟨⟨t, b⟩, rfl⟩ := finProdFinEquiv.surjective q

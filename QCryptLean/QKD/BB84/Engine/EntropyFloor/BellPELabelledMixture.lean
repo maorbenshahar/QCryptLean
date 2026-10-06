@@ -72,7 +72,7 @@ theorem bb84_bellPairedHaarPerSigmaFamily_blocks_continuous {n : ℕ} [NeZero n]
           ((bb84PairedHaarPerSigmaFamily 1 (bb84UnitRegisterEmbed n)
               (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ
             (bellWembed φ)).stateMap x).toOp) := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   intro x
   exact (bb84PairedHaarPerSigmaFamily_blocks_continuous  1 (bb84UnitRegisterEmbed n)
       (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ
@@ -91,8 +91,8 @@ theorem bb84_bellF_blocks_integrable {n : ℕ} [NeZero n] [NeZero (4 ^ n)]
               (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ
             (bellWembed φ)).stateMap x).toOp)
         (deFinetti_haarMeasure 4).measure := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
     (deFinetti_haarMeasure 4).isProbability
   intro x
   exact (bb84_bellPairedHaarPerSigmaFamily_blocks_continuous peSel xSel Q δ
@@ -134,7 +134,7 @@ theorem bb84_siftedLocalPE_blocks_eq_integral_of_toOp_eq_integral {n : ℕ} [NeZ
         ∫ a, ((bb84PostMeasurementCQSiftedLocalPEPassFilter peSel xSel Q δ
             (bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
               (τ a)).toCQState).stateMap x).toOp i j ∂μ := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   intro x i j
   by_cases hpe : bb84SiftedLocalPETestPassed peSel xSel δ Q x
   · -- Accepting branch: read each input block entry through the fixed ℂ-linear functional `L`.
@@ -171,7 +171,7 @@ theorem bb84_siftedLocalPE_blocks_eq_integral_of_toOp_eq_integral {n : ℕ} [NeZ
             (bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
                 σ).toCQState.stateMap x
           else (0 : SubDensityOp _)) = _
-        rw [if_pos hpe]
+        rw [ite_eq_left hpe]
         rfl
       rw [hstate]
       rfl
@@ -188,7 +188,7 @@ theorem bb84_siftedLocalPE_blocks_eq_integral_of_toOp_eq_integral {n : ℕ} [NeZ
           (bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
               σ).toCQState.stateMap x
         else (0 : SubDensityOp _)).toOp) i j = 0
-      rw [if_neg hpe]
+      rw [ite_eq_right hpe]
       rfl
     rw [hzero τ₀]
     exact (MeasureTheory.integral_eq_zero_of_ae
@@ -207,7 +207,7 @@ theorem bb84_bellWembed_reindexedTensorPow_integrable {n : ℕ} [NeZero n] [NeZe
         (densityOp_reindex (interleavingEquiv signalDim n).symm
           ((bellWembed φ).tensorPowGen n)).toOp)
       (deFinetti_haarMeasure 4).measure := by
-  haveI : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
+  have : MeasureTheory.IsProbabilityMeasure (deFinetti_haarMeasure 4).measure :=
     (deFinetti_haarMeasure 4).isProbability
   have htint : MeasureTheory.Integrable
       (fun φ : DensityOp 4 => (φ.tensorPowGen n).toOp) (deFinetti_haarMeasure 4).measure :=
@@ -263,7 +263,7 @@ theorem bb84_pairedHaarPerSigmaFamily_weightRe_eq_preLocalAcceptMass {n : ℕ} [
         ((bb84PairedHaarPerSigmaFamily eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp.trace.re)
       = bb84SiftedPreLocalAcceptMass eveDim pre hpre peSel xSel Q δ (DensityOp.partialTraceB ψ) :=
           by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   have hτpt : (densityOp_reindex (interleavingEquiv signalDim n).symm
         (ψ.tensorPowGen n)).partialTraceB = (DensityOp.partialTraceB ψ).tensorPowGen n :=
     (partialTraceB_tensorPow_eq ψ).symm

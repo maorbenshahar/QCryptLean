@@ -130,8 +130,8 @@ theorem QuantumHashFamily.IsUniversal2Star.seedAvg_traceNorm_offDiag_le
           - (1 / (Fintype.card Z : ℝ)) • (∑ x : X, V x))
       ≤ Real.sqrt ((n : ℝ) * (Fintype.card Z : ℝ) * (1 - 1 / (Fintype.card Z : ℝ))
           * ∑ x : X, (((V x)ᴴ) * (V x)).trace.re) := by
-  haveI : Nonempty Z := H.outputNonempty
-  haveI : Nonempty S := H.seedNonempty
+  have : Nonempty Z := H.outputNonempty
+  have : Nonempty S := H.seedNonempty
   have hS_pos : 0 < (Fintype.card S : ℝ) := by
     exact_mod_cast (Fintype.card_pos : 0 < Fintype.card S)
   have hS_ne : (Fintype.card S : ℝ) ≠ 0 := ne_of_gt hS_pos

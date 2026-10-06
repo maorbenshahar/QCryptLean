@@ -95,9 +95,9 @@ lemma Matrix.reindex_sqrt {n : ℕ} (e : Fin n ≃ Fin n) (A : Matrix (Fin n) (F
     letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
     letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
     CFC.sqrt (Matrix.reindex e e A) = Matrix.reindex e e (CFC.sqrt A) := by
-  letI : PartialOrder (Op n) := Matrix.instPartialOrder
-  letI : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
-  letI : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
+  let : PartialOrder (Op n) := Matrix.instPartialOrder
+  let : StarOrderedRing (Op n) := Matrix.instStarOrderedRing
+  let : NonnegSpectrumClass ℝ (Op n) := Matrix.instNonnegSpectrumClass
   set P := Equiv.Perm.permMatrix ℂ e.symm with hP_def
   have hP_iso : P.conjTranspose * P = 1 := Matrix.permMatrix_isometry e
   have hreindex_M : Matrix.reindex e e A = P * A * P.conjTranspose :=

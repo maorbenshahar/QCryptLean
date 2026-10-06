@@ -136,22 +136,11 @@ example : (9).ascFactorial 4 = 11880 := by decide
 
 /-! ## Rising-factorial monotonicity and log-supermodularity helpers
 
-Two elementary `Nat.ascFactorial` inequalities: base-monotonicity and the log-supermodular cross
-inequality.  These are the Vandermonde/rising-factorial number-theory feeders of the beta-binomial
+The log-supermodular cross inequality for `Nat.ascFactorial`, using base monotonicity
+`Nat.ascFactorial_le`. This supplies the rising-factorial bound for the beta-binomial
 likelihood ratio `Math.Probability.betaBinomialPmf_mlr`. -/
 
 namespace Math.Combinatorics
-
-/-- Rising factorial is monotone in its base. -/
-lemma ascFactorial_base_mono : ∀ (t x y : ℕ), x ≤ y →
-    x.ascFactorial t ≤ y.ascFactorial t := by
-  intro t
-  induction t with
-  | zero => intro x y _; simp
-  | succ n ih =>
-      intro x y h
-      rw [Nat.ascFactorial_succ, Nat.ascFactorial_succ]
-      exact Nat.mul_le_mul (by omega) (ih x y h)
 
 /-- The rising-factorial cross inequality: for `j ≤ k`,
 `(a+1)^{(j)}·a^{(k)} ≤ (a+1)^{(k)}·a^{(j)}` — the log-supermodularity of `x^{(v)}` in `(x, v)`. -/
@@ -160,7 +149,7 @@ lemma ascFactorial_cross (a j k : ℕ) (hjk : j ≤ k) :
   obtain ⟨t, rfl⟩ := Nat.le.dest hjk
   rw [← Nat.ascFactorial_mul_ascFactorial a j t, ← Nat.ascFactorial_mul_ascFactorial (a + 1) j t]
   have hbase : (a + j).ascFactorial t ≤ (a + 1 + j).ascFactorial t :=
-    ascFactorial_base_mono t _ _ (by omega)
+    Nat.ascFactorial_le t (by omega)
   calc (a + 1).ascFactorial j * (a.ascFactorial j * (a + j).ascFactorial t)
       = ((a + 1).ascFactorial j * a.ascFactorial j) * (a + j).ascFactorial t := by ring
     _ ≤ ((a + 1).ascFactorial j * a.ascFactorial j) * (a + 1 + j).ascFactorial t :=

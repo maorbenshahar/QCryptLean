@@ -98,9 +98,9 @@ theorem bb84_f_blocks_integrable {n : ℕ} [NeZero n] [NeZero (4 ^ n)]
         (fun ψ : DensityOp (signalDim * signalDim) =>
           ((bb84PairedHaarPerSigmaFamily eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp)
         (deFinetti_haarMeasure (signalDim * signalDim)).measure := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hSig2 : NeZero ((signalDim * signalDim) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
-  haveI hμ : MeasureTheory.IsProbabilityMeasure
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig2 : NeZero ((signalDim * signalDim) ^ n) := ⟨pow_ne_zero n (by norm_num)⟩
+  have hμ : MeasureTheory.IsProbabilityMeasure
       (deFinetti_haarMeasure (signalDim * signalDim)).measure :=
     (deFinetti_haarMeasure (signalDim * signalDim)).isProbability
   have h_input_entry : ∀ p q : Fin (signalDim ^ n * signalDim ^ n),
@@ -148,7 +148,7 @@ theorem bb84_f_blocks_integrable {n : ℕ} [NeZero n] [NeZero (4 ^ n)]
               (dimR := signalDim ^ n) (bb84OutcomeIndex x) j) := by
       funext ψ
       simp only [bb84PairedHaarPerSigmaFamily, bb84PostMeasurementCQSiftedLocalPEPassFilter,
-        hpass, if_true, bb84SiftedTauPostMeasurementNormalizedCQState,
+        hpass, ite_true, bb84SiftedTauPostMeasurementNormalizedCQState,
         bb84SiftedTauEveRefConditioned, bb84SiftedTauPreOutputDensity,
         densityOpUnitaryConj_toOp, Matrix.submatrix_apply]
       rfl
@@ -182,7 +182,7 @@ theorem bb84_f_blocks_integrable {n : ℕ} [NeZero n] [NeZero (4 ^ n)]
         fun _ : DensityOp (signalDim * signalDim) => (0 : ℂ) := by
       funext ψ
       simp only [bb84PairedHaarPerSigmaFamily, bb84PostMeasurementCQSiftedLocalPEPassFilter,
-        hfail, Bool.false_eq_true, if_false]
+        hfail, Bool.false_eq_true, ite_false]
       rfl
     rw [heq]
     exact MeasureTheory.integrable_const 0
@@ -202,7 +202,7 @@ theorem bb84PairedHaarPerSigmaFamily_blocks_continuous {n : ℕ} [NeZero n] [NeZ
       Continuous
         (fun ψ : DensityOp (signalDim * signalDim) =>
           ((bb84PairedHaarPerSigmaFamily eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp) := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   have h_input_entry : ∀ p q : Fin (signalDim ^ n * signalDim ^ n),
       Continuous (fun ψ : DensityOp (signalDim * signalDim) =>
         (densityOp_reindex (interleavingEquiv signalDim n).symm (ψ.tensorPowGen n)).toOp p q) := by
@@ -244,7 +244,7 @@ theorem bb84PairedHaarPerSigmaFamily_blocks_continuous {n : ℕ} [NeZero n] [NeZ
               (dimR := signalDim ^ n) (bb84OutcomeIndex x) j) := by
       funext ψ
       simp only [bb84PairedHaarPerSigmaFamily, bb84PostMeasurementCQSiftedLocalPEPassFilter,
-        hpass, if_true, bb84SiftedTauPostMeasurementNormalizedCQState,
+        hpass, ite_true, bb84SiftedTauPostMeasurementNormalizedCQState,
         bb84SiftedTauEveRefConditioned, bb84SiftedTauPreOutputDensity,
         densityOpUnitaryConj_toOp, Matrix.submatrix_apply]
       rfl
@@ -278,7 +278,7 @@ theorem bb84PairedHaarPerSigmaFamily_blocks_continuous {n : ℕ} [NeZero n] [NeZ
         fun _ : DensityOp (signalDim * signalDim) => (0 : ℂ) := by
       funext ψ
       simp only [bb84PairedHaarPerSigmaFamily, bb84PostMeasurementCQSiftedLocalPEPassFilter,
-        hfail, Bool.false_eq_true, if_false]
+        hfail, Bool.false_eq_true, ite_false]
       rfl
     rw [heq]
     exact continuous_const
@@ -404,7 +404,7 @@ private lemma sifted_perRound_double_sum (peSel xSel : Bool) (σ : DensityOp sig
   by_cases h : (peSel && xSel) = true
   · -- X-test round: the `H ⊗ H` conjugate's computational diagonal.
     have hU : bb84SiftedSinglePairOp peSel xSel = bb84HadamardPair := by
-      unfold bb84SiftedSinglePairOp; rw [if_pos h]
+      unfold bb84SiftedSinglePairOp; rw [ite_eq_left h]
     have hquad : (∑ x : Fin signalDim, ∑ y : Fin signalDim,
           bb84HadamardPair k x * σ.toOp x y * star (bb84HadamardPair k y)) =
         (bb84HadamardPair * σ.toOp * bb84HadamardPair) k k := by
@@ -419,11 +419,11 @@ private lemma sifted_perRound_double_sum (peSel xSel : Bool) (σ : DensityOp sig
         exact this
       rw [hH]
     rw [hU, hquad, bb84SiftedBorn]
-    rw [if_pos h]
+    rw [ite_eq_left h]
     exact densityOp_diag_ofReal (bb84XBasisConjugate σ) k
   · -- Z-test or key round: the unrotated computational diagonal.
     have hU : bb84SiftedSinglePairOp peSel xSel = (1 : Op signalDim) := by
-      unfold bb84SiftedSinglePairOp; rw [if_neg h]
+      unfold bb84SiftedSinglePairOp; rw [ite_eq_right h]
     have hcollapse : (∑ x : Fin signalDim, ∑ y : Fin signalDim,
           (1 : Op signalDim) k x * σ.toOp x y * star ((1 : Op signalDim) k y)) =
         σ.toOp k k := by
@@ -435,7 +435,7 @@ private lemma sifted_perRound_double_sum (peSel xSel : Bool) (σ : DensityOp sig
         · intro hk; exact absurd (Finset.mem_univ k) hk
       · intro x _ hx; simp [Ne.symm hx]
       · intro hk; exact absurd (Finset.mem_univ k) hk
-    rw [hU, hcollapse, bb84SiftedBorn, if_neg h]
+    rw [hU, hcollapse, bb84SiftedBorn, ite_eq_right h]
     exact densityOp_diag_ofReal σ k
 
 /-- **Per-string Born factorization.**
@@ -531,7 +531,7 @@ theorem bb84UnitRegisterEmbed_localAcceptMass_eq_onComponent (n : ℕ) [NeZero n
     bb84SiftedPreLocalAcceptMass 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n) peSel
         xSel Q δ σ =
       bb84SiftedLocalAcceptProbabilityOnComponent n peSel xSel Q δ σ := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   rw [bb84SiftedPreLocalAcceptMass_eq_sum_quadForm,
     bb84SiftedLocalAcceptProbabilityOnComponent]
   refine Finset.sum_congr rfl (fun ω _ => ?_)

@@ -114,7 +114,7 @@ example (p : Parameters)
       p.tagLength p.leak e).sifted h).2 = 0) :
     (QKD.BB84.boundary p.rounds p.keyRounds p.zTests p.xTests p.keyLength
       p.tagLength p.leak).system e = FinalStage.keySystem p.keyLength := by
-  rw [system_eq_of_sifted _ _ _ _ _ _ _ e h, if_pos haccept]
+  rw [system_eq_of_sifted _ _ _ _ _ _ _ e h, ite_eq_left haccept]
 
 example (p : Parameters)
     (e : (QKD.BB84.boundary p.rounds p.keyRounds p.zTests p.xTests p.keyLength

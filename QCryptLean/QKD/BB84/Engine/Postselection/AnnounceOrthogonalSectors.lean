@@ -62,13 +62,13 @@ lemma traceNorm_tensor_single_diag {d k : ℕ} [NeZero d] [NeZero k] [NeZero (d 
     rw [Finset.sum_eq_single j]
     · simp
     · intro i _ hij
-      rw [if_neg hij]
+      rw [ite_eq_right hij]
       ext a b; simp [Op.tensor, Matrix.zero_apply]
     · intro h; exact absurd (Finset.mem_univ j) h
   rw [hfam, traceNorm_blockDiagonal_sum]
   rw [Finset.sum_eq_single j]
   · simp
-  · intro i _ hij; rw [if_neg hij]; exact traceNorm_zero
+  · intro i _ hij; rw [ite_eq_right hij]; exact traceNorm_zero
   · intro h; exact absurd (Finset.mem_univ j) h
 
 /-! ### `mapTensorId` of "append a rank-one diagonal projector" -/
@@ -135,7 +135,7 @@ lemma traceNorm_mapTensorId_castDimLinear {d d2 k : ℕ} [NeZero d] [NeZero d2] 
           simp only [mapTensorId, Matrix.of_apply, LinearMap.id_coe, id_eq,
             Matrix.single_apply, ite_and, ite_mul, one_mul, zero_mul]
           rw [Finset.sum_comm]
-          simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+          simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
           congr 1 <;> exact (finProdFinEquiv.apply_symm_apply _).symm
       _ = traceNorm (mapTensorId (Op.castDimLinear h.symm)
             (mapTensorId (Op.castDimLinear h) W)) := by

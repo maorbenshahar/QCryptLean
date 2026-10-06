@@ -240,7 +240,7 @@ lemma partialTraceB_blockDiagExtFamily_eq_avg {d k : ℕ} [NeZero d] [NeZero k]
   ext a a'
   simp only [partialTraceB, blockDiagExtFamily, Matrix.of_apply, Matrix.smul_apply,
     Finset.smul_sum, Matrix.sum_apply]
-  simp only [Equiv.symm_apply_apply, if_true, smul_eq_mul]
+  simp only [Equiv.symm_apply_apply, ite_true, smul_eq_mul]
   rw [Finset.sum_comm]
   rw [← Equiv.sum_comp finProdFinEquiv]
   simp_rw [Equiv.symm_apply_apply]

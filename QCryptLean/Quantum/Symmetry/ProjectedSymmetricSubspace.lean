@@ -126,7 +126,7 @@ lemma trace_tensorPow_diagonal_indicator_mul_symmetricProjector {d n : ℕ}
       symmetricProjector d n).trace =
         (Nat.choose (n + s.card - 1) (s.card - 1) : ℂ) := by
   classical
-  haveI : NeZero (Fintype.card s) := ⟨by simpa using hs.card_pos.ne'⟩
+  have : NeZero (Fintype.card s) := ⟨by simpa using hs.card_pos.ne'⟩
   rw [symmetricProjector, Op.trace_tensorPow_mul_symmetricProjectorRep]
   simp_rw [diagonal_indicator_cycle_contraction s]
   have hinv :

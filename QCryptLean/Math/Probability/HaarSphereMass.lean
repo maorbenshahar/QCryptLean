@@ -124,7 +124,7 @@ def haarFirstColumnMeasure (D : ℕ) [NeZero D] : Measure (EuclideanSpace ℂ (F
 
 instance haarFirstColumnMeasure_isProbabilityMeasure (D : ℕ) [NeZero D] :
     IsProbabilityMeasure (haarFirstColumnMeasure D) := by
-  haveI := haarProbUnitary_isProbability D
+  have := haarProbUnitary_isProbability D
   constructor
   rw [haarFirstColumnMeasure, Measure.map_apply firstColumn_measurable MeasurableSet.univ]
   simp
@@ -186,7 +186,7 @@ theorem exists_act_eq [NeZero D] {x y : EuclideanSpace ℂ (Fin D)} (hx : ‖x�
 theorem haarFirstColumnMeasure_act_preimage [NeZero D] (V : unitaryGroup (Fin D) ℂ)
     {A : Set (EuclideanSpace ℂ (Fin D))} (hA : MeasurableSet A) :
     haarFirstColumnMeasure D (act V ⁻¹' A) = haarFirstColumnMeasure D A := by
-  haveI : (haarProbUnitary D).IsMulLeftInvariant := by
+  have : (haarProbUnitary D).IsMulLeftInvariant := by
     unfold haarProbUnitary haarOnUnitary
     infer_instance
   have hmeasV : Measurable (act V) := (act V).continuous.measurable
@@ -214,7 +214,7 @@ theorem haarFirstColumnMeasure_closedBall_eq [NeZero D]
 /-- The Haar first-column measure lives on the unit sphere. -/
 theorem haarFirstColumnMeasure_sphere [NeZero D] :
     haarFirstColumnMeasure D (sphere (0 : EuclideanSpace ℂ (Fin D)) 1) = 1 := by
-  haveI := haarProbUnitary_isProbability D
+  have := haarProbUnitary_isProbability D
   rw [haarFirstColumnMeasure,
     Measure.map_apply firstColumn_measurable Metric.isClosed_sphere.measurableSet]
   have : (firstColumn (D := D)) ⁻¹' (sphere (0 : EuclideanSpace ℂ (Fin D)) 1) = Set.univ := by

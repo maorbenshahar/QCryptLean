@@ -403,35 +403,35 @@ basis permutation.  No relation between `m` and `n` is used. -/
 theorem bb84PEAnnounceAgreeLHLPostprocess_isCPTP (n m ℓ ℓEV leakEC : ℕ) (peSel : Fin n → Bool)
     (eveDim dimR : ℕ) [NeZero eveDim] [NeZero dimR] :
     IsCPTP (⇑(bb84PEAnnounceAgreeLHLPostprocess n m ℓ ℓEV leakEC peSel eveDim dimR)) := by
-  haveI hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
         (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num))))
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
         (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)))⟩
-  haveI hCard : NeZero (Fintype.card (KeyHashSeed n ℓ peSel × Fin (2 ^ ℓ))) :=
+  have hCard : NeZero (Fintype.card (KeyHashSeed n ℓ peSel × Fin (2 ^ ℓ))) :=
     ⟨Fintype.card_ne_zero⟩
-  haveI hSeedCard : NeZero (Fintype.card (KeyHashSeed n ℓ peSel)) :=
+  have hSeedCard : NeZero (Fintype.card (KeyHashSeed n ℓ peSel)) :=
     ⟨Fintype.card_ne_zero⟩
-  haveI hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
-  haveI hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
+  have hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
+  have hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
     ⟨Nat.mul_ne_zero two_ne_zero Fintype.card_ne_zero⟩
-  haveI hIn : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hIn : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) *
       Fintype.card (KeyHashSeed n ℓ peSel × Fin (2 ^ ℓ))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hIn1 : NeZero ((1 * (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hIn1 : NeZero ((1 * (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR)))) *
       Fintype.card (KeyHashSeed n ℓ peSel × Fin (2 ^ ℓ))) :=
     ⟨Nat.mul_ne_zero (Nat.mul_ne_zero one_ne_zero (NeZero.ne _)) (NeZero.ne _)⟩
-  haveI hMid : NeZero ((2 ^ ℓ * 2 ^ ℓ * (2 * Fintype.card (KeyHashSeed n ℓ peSel))) *
+  have hMid : NeZero ((2 ^ ℓ * 2 ^ ℓ * (2 * Fintype.card (KeyHashSeed n ℓ peSel))) *
       (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
         (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR)))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)) (NeZero.ne _))
       (NeZero.ne _)⟩
-  haveI hOut : NeZero (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC eveDim *
+  have hOut : NeZero (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC eveDim *
       dimR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have hcastIn : IsCPTP (⇑(Op.castDimLinear
@@ -529,7 +529,7 @@ private lemma retainedSiftedPEAnnounceAgreePassBranchKraus_mul_conjTranspose_app
       else 0 := by
   classical
   by_cases hd : bb84SiftedKeyStringsDiffer peSel ec ω = true
-  · rw [if_pos hd, if_neg (by simp [bb84SiftedAgreeAcceptKeep, hd])]
+  · rw [ite_eq_left hd, ite_eq_right (by simp [bb84SiftedAgreeAcceptKeep, hd])]
     simp
   · rw [Bool.not_eq_true] at hd
     have hstr : aliceKeyString peSel ω =
@@ -542,7 +542,7 @@ private lemma retainedSiftedPEAnnounceAgreePassBranchKraus_mul_conjTranspose_app
       rw [bb84SiftedLocalPEAndEVPassed_eq_PETestPassed_of_not_differ
         peSel xSel ec δ Q st.2 ω hd]
       simp [bb84SiftedAgreeAcceptKeep, hd]
-    rw [if_neg (by simp [hd])]
+    rw [ite_eq_right (by simp [hd])]
     have hK :
         bb84.retainedSiftedPEAnnouncePassBranchKraus n m ℓ ℓEV eveDim peSel xSel leakEC ec δ Q
             (st, ω) =
@@ -562,16 +562,16 @@ private lemma retainedSiftedPEAnnounceAgreePassBranchKraus_mul_conjTranspose_app
           else 0 := by
       ext a b
       by_cases h : bb84SiftedAgreeAcceptKeep peSel xSel ec δ Q ω = true
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         simp [bb84.retainedSiftedPEAnnouncePassBranchKraus, hgate, h, ← hstr,
           bb84PEBlockIndex, Matrix.kroneckerMap, Matrix.single_apply, Matrix.one_apply,
           finProdFinEquiv_symm_apply,
           Quantum.TensorProducts.sum_single_finProdFinEquiv_apply]
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         simp [bb84.retainedSiftedPEAnnouncePassBranchKraus, hgate, h]
     rw [hK]
     by_cases h : bb84SiftedAgreeAcceptKeep peSel xSel ec δ Q ω = true
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       rw [matrix_single_sum_mul_mul_conjTranspose]
       simpa [h, Matrix.smul_single, smul_eq_mul] using
         finProdFinEquiv_fixed_left_sum_double_single_apply
@@ -623,7 +623,7 @@ private lemma retainedSiftedPEAnnounceAgreeIdealPassKraus_mul_conjTranspose_appl
       else 0 := by
   classical
   by_cases hd : bb84SiftedKeyStringsDiffer peSel ec ω = true
-  · rw [if_pos hd, if_neg (by simp [bb84SiftedAgreeAcceptKeep, hd])]
+  · rw [ite_eq_left hd, ite_eq_right (by simp [bb84SiftedAgreeAcceptKeep, hd])]
     simp
   · rw [Bool.not_eq_true] at hd
     have hgate : bb84SiftedLocalPEAndEVPassed ℓEV peSel xSel ec δ Q st.2 ω =
@@ -631,7 +631,7 @@ private lemma retainedSiftedPEAnnounceAgreeIdealPassKraus_mul_conjTranspose_appl
       rw [bb84SiftedLocalPEAndEVPassed_eq_PETestPassed_of_not_differ
         peSel xSel ec δ Q st.2 ω hd]
       simp [bb84SiftedAgreeAcceptKeep, hd]
-    rw [if_neg (by simp [hd])]
+    rw [ite_eq_right (by simp [hd])]
     have hK :
         bb84.retainedSiftedPEAnnounceIdealPassKraus n m ℓ ℓEV eveDim peSel xSel leakEC ec δ Q
             (ω, z, st) =
@@ -647,15 +647,15 @@ private lemma retainedSiftedPEAnnounceAgreeIdealPassKraus_mul_conjTranspose_appl
           else 0 := by
       ext a b
       by_cases h : bb84SiftedAgreeAcceptKeep peSel xSel ec δ Q ω = true
-      · rw [if_pos h]
+      · rw [ite_eq_left h]
         simp [bb84.retainedSiftedPEAnnounceIdealPassKraus, hgate, h, bb84PEBlockIndex,
           Matrix.kroneckerMap, Matrix.single_apply, Matrix.one_apply, finProdFinEquiv_symm_apply,
           Quantum.TensorProducts.sum_single_finProdFinEquiv_apply]
-      · rw [if_neg h]
+      · rw [ite_eq_right h]
         simp [bb84.retainedSiftedPEAnnounceIdealPassKraus, hgate, h]
     rw [hK]
     by_cases h : bb84SiftedAgreeAcceptKeep peSel xSel ec δ Q ω = true
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       rw [matrix_single_sum_mul_mul_conjTranspose]
       simpa [h, Matrix.smul_single, smul_eq_mul] using
         finProdFinEquiv_fixed_left_sum_double_single_apply
@@ -808,7 +808,7 @@ private lemma bb84AnnounceKernel_toOp_apply {n leakEC : ℕ} (ℓEV : ℕ) (peSe
         verificationTag n ℓEV peSel
           ((Fintype.equivFin (KeyHashSeed n ℓEV peSel)).symm pT) x = qEv) := by
         rintro ⟨rfl, h⟩; exact hE h
-      simp only [hE, and_false, if_false, mul_zero]
+      simp only [hE, and_false, ite_false, mul_zero]
       rcases not_and_or.mp h1 with h | h <;> simp [h]
   · simp [hT]
 
@@ -871,7 +871,7 @@ private lemma bb84SiftedAgreeAcceptCQState_stateMap_apply
   classical
   rw [bb84SiftedAgreeAcceptCQState, CQState.filterKeep_stateMap]
   by_cases h : bb84SiftedAgreeAcceptKeep peSel xSel ec δ Q ω = true
-  · rw [if_pos h, if_pos h]
+  · rw [ite_eq_left h, ite_eq_left h]
     rw [show ((bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
         τ).toCQState.stateMap
           ω).toOp =
@@ -889,7 +889,7 @@ private lemma bb84SiftedAgreeAcceptCQState_stateMap_apply
     simp only [Equiv.symm_apply_apply]
     rw [measurementChannel_apply]
     simp [finProdFinEquiv_apply_divNat, bb84OutcomeEveEmbedding]
-  · rw [if_neg h, if_neg h]
+  · rw [ite_eq_right h, ite_eq_right h]
     rfl
 
 /-- **Digitwise equality test for the pass output index.**  The transcript packing is a
@@ -1038,15 +1038,15 @@ private lemma bb84SiftedPEAnnounceEveVisible_realAgreePass_eq_relabel_sum_blocks
               (bb84PEAnnounceAgreeLHLInput (m := m) ℓEV eveDim pre hpre peSel xSel ec Q δ
                   τ)).stateMap sz).toOp) := by
   classical
-  haveI hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
         (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num))))
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
         (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)))⟩
-  haveI hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
-  haveI hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
+  have hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
+  have hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
     ⟨Nat.mul_ne_zero two_ne_zero Fintype.card_ne_zero⟩
   rw [← mapTensorId_comp, ← mapTensorId_comp]
   ext p q
@@ -1097,7 +1097,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_realAgreePass_eq_relabel_sum_blocks
       refine Finset.sum_eq_zero fun ω _ => ?_
       refine mul_eq_zero_of_right _ ?_
       split_ifs with hg
-      · rw [Matrix.single_apply, if_neg]
+      · rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h1, -⟩
         refine hst ((Equiv.eq_symm_apply _).mpr ?_)
         exact ((bb84_pePassOutIndex_eq_split_iff peSel _ _ st _ _ _
@@ -1112,7 +1112,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_realAgreePass_eq_relabel_sum_blocks
         intro s _ hs
         refine Finset.sum_eq_zero fun x _ => ?_
         refine mul_eq_zero_of_right _ ?_
-        rw [Matrix.single_apply, if_neg]
+        rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h1, -⟩
         exact hs (Equiv.injective _
           ((bb84_keyCopyOutputIndex_eq_split_iff peSel s _ _ pkA pkB pFl _ _).mp h1).2.2.2.1)
@@ -1127,28 +1127,28 @@ private lemma bb84SiftedPEAnnounceEveVisible_realAgreePass_eq_relabel_sum_blocks
           bb84SiftedAgreeAcceptCQState_stateMap_apply, bb84AnnounceKernel_toOp_apply,
           Matrix.of_apply]
         by_cases hagree : bb84SiftedAgreeAcceptKeep peSel xSel ec δ Q ω = true
-        · rw [if_pos hagree, if_pos hagree]
+        · rw [ite_eq_left hagree, ite_eq_left hagree]
           rw [ite_one_mul_eq, ite_one_mul_eq]
           simp only [EmbeddingLike.apply_eq_iff_eq, Prod.mk.injEq, and_true,
             bb84_pePassOutIndex_eq_split_iff, bb84_keyCopyOutputIndex_eq_split_iff,
-            Equiv.apply_symm_apply, ite_and_mul, if_true, and_self, one_mul, mul_one]
+            Equiv.apply_symm_apply, ite_and_mul, ite_true, and_self, one_mul, mul_one]
           rw [show ((Fintype.card (KeyHashSeedPairEV n ℓ ℓEV peSel) : ℂ))⁻¹ =
               ((Fintype.card (KeyHashSeed n ℓ peSel) : ℂ))⁻¹ *
                 ((Fintype.card (KeyHashSeed n ℓEV peSel) : ℂ))⁻¹ from by
             rw [← bb84KeyHashSeedPairEV_card n ℓ ℓEV peSel, Nat.cast_mul, mul_inv]]
           push_cast
           by_cases hqFl : (0 : Fin 2) = qFl
-          · simp only [if_pos hqFl]
+          · simp only [ite_eq_left hqFl]
             ring
-          · simp only [if_neg hqFl]
+          · simp only [ite_eq_right hqFl]
             ring
-        · rw [if_neg hagree, if_neg hagree]
+        · rw [ite_eq_right hagree, ite_eq_right hagree]
           ring
   · refine Eq.trans (Finset.sum_eq_zero fun st _ => Finset.sum_eq_zero fun ω _ => ?_)
       (Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun x _ => ?_).symm
     · refine mul_eq_zero_of_right _ ?_
       split_ifs with hg
-      · rw [Matrix.single_apply, if_neg]
+      · rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h1, h2⟩
         refine hStp ?_
         have e1 := ((bb84_pePassOutIndex_eq_split_iff peSel _ _ st _ _ _
@@ -1183,7 +1183,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_realAgreePass_eq_relabel_sum_blocks
             Prod.ext hS this
           exact (Fintype.equivFin (KeyHashSeedPairEV n ℓ ℓEV peSel)).symm.injective hpair
         -- The seed-tag indicator factor vanishes.
-        simp only [if_neg hT, zero_mul, mul_zero]
+        simp only [ite_eq_right hT, zero_mul, mul_zero]
       · rfl
 
 /-- **Real agree pass output as the leftover-hashing postprocess of the seed-key extractor output.**
@@ -1221,15 +1221,15 @@ theorem realAgreePass_mapTensorId_eq_lhlPostprocess_seedKeyOutput
         (seedKeyExtractorOutputState (aliceKeyHashFamily n ℓ peSel)
           (bb84PEAnnounceAgreeLHLInput (m := m) ℓEV eveDim pre hpre peSel xSel ec Q δ
               τ)).toJointDensity.toOp := by
-  haveI hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
         (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num))))
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
         (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)))⟩
-  haveI hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
-  haveI hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
+  have hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
+  have hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
     ⟨Nat.mul_ne_zero two_ne_zero Fintype.card_ne_zero⟩
   rw [bb84SiftedPEAnnounceEveVisible_realAgreePass_eq_relabel_sum_blocks]
   · simp only [bb84PEAnnounceAgreeLHLPostprocess, LinearMap.comp_apply]
@@ -1276,17 +1276,17 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
               (bb84PEAnnounceAgreeLHLInput (m := m) ℓEV eveDim pre hpre peSel xSel ec Q δ
                 τ).quantumMarginal).stateMap sz).toOp) := by
   classical
-  haveI hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
+  have hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
     (aliceKeyHashFamily n ℓ peSel).seedNonempty
-  haveI hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
         (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num))))
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
         (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)))⟩
-  haveI hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
-  haveI hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
+  have hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
+  have hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
     ⟨Nat.mul_ne_zero two_ne_zero Fintype.card_ne_zero⟩
   rw [← mapTensorId_comp, ← mapTensorId_comp]
   ext p q
@@ -1342,7 +1342,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
         Finset.sum_eq_zero fun t _ => ?_
       refine mul_eq_zero_of_right _ ?_
       split_ifs with hg
-      · rw [Matrix.single_apply, if_neg]
+      · rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h1, -⟩
         refine hs ?_
         have := ((bb84_pePassOutIndex_eq_split_iff peSel _ _ (s, t) _ _ _
@@ -1358,7 +1358,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
         intro s _ hs
         refine Finset.sum_eq_zero fun z _ => Finset.sum_eq_zero fun x _ => ?_
         refine mul_eq_zero_of_right _ ?_
-        rw [Matrix.single_apply, if_neg]
+        rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h1, -⟩
         exact hs (Equiv.injective _
           ((bb84_keyCopyOutputIndex_eq_split_iff peSel s _ _ pkA pkB pFl _ _).mp h1).2.2.2.1)
@@ -1373,7 +1373,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
           refine Finset.sum_eq_zero fun ω _ => ?_
           refine mul_eq_zero_of_right _ ?_
           split_ifs with hg
-          · rw [Matrix.single_apply, if_neg]
+          · rw [Matrix.single_apply, ite_eq_right]
             rintro ⟨h1, -⟩
             refine ht ?_
             have := ((bb84_pePassOutIndex_eq_split_iff peSel _ _ (_, t) _ _ _
@@ -1392,11 +1392,11 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
             bb84SiftedAgreeAcceptCQState_stateMap_apply, bb84AnnounceKernel_toOp_apply,
             Matrix.of_apply]
           by_cases hagree : bb84SiftedAgreeAcceptKeep peSel xSel ec δ Q ω = true
-          · rw [if_pos hagree, if_pos hagree]
+          · rw [ite_eq_left hagree, ite_eq_left hagree]
             rw [ite_one_mul_eq, ite_one_mul_eq]
             simp only [EmbeddingLike.apply_eq_iff_eq, Prod.mk.injEq, and_true,
               bb84_pePassOutIndex_eq_split_iff, bb84_keyCopyOutputIndex_eq_split_iff,
-              Prod.mk.eta, Equiv.apply_symm_apply, ite_and_mul, if_true, and_self, one_mul,
+              Prod.mk.eta, Equiv.apply_symm_apply, ite_and_mul, ite_true, and_self, one_mul,
               mul_one]
             rw [show ((2 ^ ℓ : ℂ) *
                   (Fintype.card (KeyHashSeedPairEV n ℓ ℓEV peSel) : ℂ))⁻¹ =
@@ -1405,11 +1405,11 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
               rw [← bb84KeyHashSeedPairEV_card n ℓ ℓEV peSel, Nat.cast_mul, ← mul_assoc, mul_inv]]
             push_cast
             by_cases hqFl : (0 : Fin 2) = qFl
-            · simp only [if_pos hqFl]
+            · simp only [ite_eq_left hqFl]
               ring
-            · simp only [if_neg hqFl]
+            · simp only [ite_eq_right hqFl]
               ring
-          · rw [if_neg hagree, if_neg hagree]
+          · rw [ite_eq_right hagree, ite_eq_right hagree]
             ring
   · refine Eq.trans (Finset.sum_eq_zero fun s _ => Finset.sum_eq_zero fun z _ =>
       Finset.sum_eq_zero fun ω _ => Finset.sum_eq_zero fun t _ => ?_)
@@ -1417,7 +1417,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
         Finset.sum_eq_zero fun x _ => ?_).symm
     · refine mul_eq_zero_of_right _ ?_
       split_ifs with hg
-      · rw [Matrix.single_apply, if_neg]
+      · rw [Matrix.single_apply, ite_eq_right]
         rintro ⟨h1, h2⟩
         refine hStp ?_
         have e1 := ((bb84_pePassOutIndex_eq_split_iff peSel _ _ (s, t) _ _ _
@@ -1452,7 +1452,7 @@ private lemma bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_block
             Prod.ext hS this
           exact (Fintype.equivFin (KeyHashSeedPairEV n ℓ ℓEV peSel)).symm.injective hpair
         -- The seed-tag indicator factor vanishes.
-        simp only [if_neg hT, zero_mul, mul_zero]
+        simp only [ite_eq_right hT, zero_mul, mul_zero]
       · rfl
 
 /-- **Ideal agree pass output as the leftover-hashing postprocess of the seed-uniform output.**
@@ -1493,17 +1493,17 @@ theorem
         (seedUniformOutputState (S := KeyHashSeed n ℓ peSel)
           (bb84PEAnnounceAgreeLHLInput (m := m) ℓEV eveDim pre hpre peSel xSel ec Q δ
             τ).quantumMarginal).toJointDensity.toOp := by
-  haveI hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
+  have hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
     (aliceKeyHashFamily n ℓ peSel).seedNonempty
-  haveI hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
         (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num))))
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
         (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)))⟩
-  haveI hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
-  haveI hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
+  have hKey : NeZero (2 ^ ℓ) := ⟨pow_ne_zero _ (by norm_num)⟩
+  have hTr : NeZero (2 * Fintype.card (KeyHashSeed n ℓ peSel)) :=
     ⟨Nat.mul_ne_zero two_ne_zero Fintype.card_ne_zero⟩
   rw [bb84SiftedPEAnnounceEveVisible_idealAgreePass_eq_relabel_sum_blocks]
   · simp only [bb84PEAnnounceAgreeLHLPostprocess, LinearMap.comp_apply]
@@ -1592,18 +1592,18 @@ theorem bb84SiftedPEAnnounceEveVisible_agreeBlock_traceDistance_le_LHL_distance
         (seedUniformOutputState (S := KeyHashSeed n ℓ peSel)
           (bb84PEAnnounceAgreeLHLInput (m := m) ℓEV eveDim pre hpre peSel xSel ec Q δ
             τ).quantumMarginal).toJointDensity.toOp := by
-  haveI hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
+  have hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
     (aliceKeyHashFamily n ℓ peSel).seedNonempty
-  haveI hOutDim : NeZero (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC
+  have hOutDim : NeZero (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC
       eveDim) := inferInstance
-  haveI hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))
         (Nat.mul_ne_zero Fintype.card_ne_zero (pow_ne_zero _ (by norm_num))))
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num [signalDim]))
         (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)))⟩
-  haveI hIn : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hIn : NeZero ((2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) *
       Fintype.card (KeyHashSeed n ℓ peSel × Fin (2 ^ ℓ))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) Fintype.card_ne_zero⟩

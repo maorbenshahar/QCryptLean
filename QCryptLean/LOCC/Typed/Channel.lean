@@ -38,7 +38,7 @@ arXiv:1210.4583, Section 2. -/
   · subst y
     by_cases hz : z = o
     · subst z
-      rw [if_pos ⟨rfl, rfl⟩]
+      rw [ite_eq_left ⟨rfl, rfl⟩]
       apply Finset.sum_congr rfl
       intro r _
       simp [Matrix.mul_apply]
@@ -90,7 +90,8 @@ theorem liftAt_operation_apply
     zero_mul, Matrix.conjTranspose_apply, RCLike.star_def]
   simp_rw [hsum]
   simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
-  simp [apply_ite]
+  simp only [apply_ite, map_zero, mul_zero, Finset.sum_ite_eq,
+    Finset.mem_univ, ite_true, Matrix.submatrix_apply]
   rfl
 
 end Instrument

@@ -75,10 +75,9 @@ transported along the canonical equality of its selected multipartite systems. -
   | leaf R => rfl
   | @announce Y _ _ next ih =>
       rcases x with ⟨⟨y, e⟩, q⟩
-      rw [graftSpaceEquiv_announce_apply]
-      have h := ih y (fun f => C ⟨y, f⟩) ⟨e, q⟩
-      rw [h]
-      rfl
+      exact congrArg (fun z : Σ f : (next y).Exit, (C ⟨y, f⟩).space =>
+        (⟨⟨y, z.1⟩, z.2⟩ : Σ f : (Boundary.announce Y next).Exit, (C f).space))
+          (ih y (fun f => C ⟨y, f⟩) ⟨e, q⟩)
 
 /-- The base public exit exposed by `graftSpaceEquiv` is exactly the base component exposed by
 `graftExitEquiv`.  Thus the forward reindex orientation agrees at the type and matrix layers. -/
@@ -192,8 +191,8 @@ the attached continuation space. -/
       (1 : Matrix (C ()).space (C ()).space ℂ) := by
   classical
   refine Matrix.ext (fun (p q : (C ()).space) => ?_)
-  simp only [graftInclKraus, Matrix.submatrix_apply, sigmaInclKraus_apply,
-    graftSpaceEquiv_leaf_apply, Matrix.one_apply, id_eq]
+  change (if (⟨(), p⟩ : Σ e : (Boundary.leaf R).Exit, (C e).space) = ⟨(), q⟩ then
+    (1 : ℂ) else 0) = if p = q then 1 else 0
   apply if_congr
   · constructor
     · intro h
@@ -213,12 +212,18 @@ theorem graftInclKraus_announce {Y : Type} [Fintype Y] [DecidableEq Y]
     graftInclKraus (.announce Y next) C ⟨y, e⟩ =
       publicInclKraus (fun z => (next z).graft fun f => C ⟨z, f⟩) y *
         graftInclKraus (next y) (fun f => C ⟨y, f⟩) e := by
-  ext p q
-  simp only [Matrix.mul_apply]
+  apply Matrix.ext
+  intro (p : ((Boundary.announce Y next).graft C).space) (q : (C ⟨y, e⟩).space)
+  change graftInclKraus (.announce Y next) C ⟨y, e⟩ p q =
+    ∑ r : ((next y).graft fun f => C ⟨y, f⟩).space,
+      publicInclKraus (fun z => (next z).graft fun f => C ⟨z, f⟩) y p r *
+        graftInclKraus (next y) (fun f => C ⟨y, f⟩) e r q
   rw [Finset.sum_eq_single
     ((graftSpaceEquiv (next y) (fun f => C ⟨y, f⟩)).symm ⟨e, q⟩)]
-  · simp only [graftInclKraus_apply, publicInclKraus_apply, Equiv.apply_symm_apply,
-      if_pos, mul_one]
+  · change (if graftSpaceEquiv (.announce Y next) C p = ⟨⟨y, e⟩, q⟩ then
+      (1 : ℂ) else 0) = _
+    simp only [graftInclKraus_apply, Equiv.apply_symm_apply,
+      ite_eq_left, mul_one]
     change (if
         ((Equiv.sigmaCongrRight fun z =>
           graftSpaceEquiv (next z) fun f => C ⟨z, f⟩).trans
@@ -229,14 +234,14 @@ theorem graftInclKraus_announce {Y : Type} [Fintype Y] [DecidableEq Y]
           ⟨y, (graftSpaceEquiv (next y) (fun f => C ⟨y, f⟩)).symm ⟨e, q⟩⟩
         then 1 else 0)
     apply if_congr
-    · exact Equiv.apply_eq_iff_eq_symm_apply
+    · exact (Equiv.eq_symm_apply
         ((Equiv.sigmaCongrRight fun z =>
           graftSpaceEquiv (next z) fun f => C ⟨z, f⟩).trans
-            (Equiv.sigmaAssoc fun z f => (C ⟨z, f⟩).space).symm)
+            (Equiv.sigmaAssoc fun z f => (C ⟨z, f⟩).space).symm)).symm
     · rfl
     · rfl
   · intro r _ hr
-    rw [graftInclKraus_apply, if_neg]
+    rw [graftInclKraus_apply, ite_eq_right]
     · simp
     · intro h
       apply hr
@@ -286,7 +291,7 @@ theorem graftInclKraus_conjTranspose_mul_of_ne (B : Boundary P)
     simp
   · have heq : graftSpaceEquiv B C p ≠ graftSpaceEquiv B C q :=
       fun h => hpq ((graftSpaceEquiv B C).injective h)
-    rw [Matrix.one_apply, if_neg heq, Matrix.one_apply, if_neg hpq]
+    rw [Matrix.one_apply, ite_eq_right heq, Matrix.one_apply, ite_eq_right hpq]
 
 end Boundary
 end TypedLOCC

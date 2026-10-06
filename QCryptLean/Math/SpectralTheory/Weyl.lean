@@ -391,7 +391,6 @@ lemma weyl_inequality_upper_bound {n : ℕ} [NeZero n] (A B : Matrix (Fin n) (Fi
   --
   -- Dimension sum: (n-i+j) + (n-j) + (i+1) = 2n+1 ✓
   -- ==========================================================================
-
   -- Use helper for setup
   have ⟨h_card_eq, h_i_lt_n⟩ := weyl_setup_helpers i
   -- Step 1: Define the three subspaces
@@ -456,7 +455,6 @@ lemma weyl_inequality_upper_bound {n : ℕ} [NeZero n] (A B : Matrix (Fin n) (Fi
   -- Bound 3: x*Bx ≤ eigenvalues₀ j (UPPER bound from x ∈ S₂)
   --   S₂ = eigenvecSpanFrom B j, rayleigh_upper_bound₀ gives this
   -- ==========================================================================
-
   -- Lower bound for A+B: eigenvalues₀ i ≤ x*(A+B)x
   have h_rayleigh_AB_lower : hAB.eigenvalues₀ i ≤
       (dotProduct (star x_norm) ((A + B).mulVec x_norm)).re := by

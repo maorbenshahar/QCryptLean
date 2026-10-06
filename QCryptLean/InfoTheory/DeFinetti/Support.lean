@@ -87,7 +87,7 @@ theorem partialTraceB_pureStateMap_surjective
 theorem haarProbUnitary_isOpenPosMeasure (d : ℕ) [NeZero d] :
     (haarProbUnitary d).IsOpenPosMeasure := by
   unfold haarProbUnitary
-  haveI : (haarOnUnitary d).IsOpenPosMeasure := by
+  have : (haarOnUnitary d).IsOpenPosMeasure := by
     unfold haarOnUnitary
     infer_instance
   exact Measure.isOpenPosMeasure_smul (μ := haarOnUnitary d)
@@ -97,7 +97,7 @@ theorem haarProbUnitary_isOpenPosMeasure (d : ℕ) [NeZero d] :
 theorem partialTraceBDensityMeasure_deFinetti_haarMeasure_isOpenPos
     (d : ℕ) [NeZero d] [NeZero (d * d)] :
     ((partialTraceBDensityMeasure (deFinetti_haarMeasure (d * d))).measure).IsOpenPosMeasure := by
-  haveI : (haarProbUnitary (d * d)).IsOpenPosMeasure :=
+  have : (haarProbUnitary (d * d)).IsOpenPosMeasure :=
     haarProbUnitary_isOpenPosMeasure (d * d)
   have hcont :
       Continuous

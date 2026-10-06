@@ -104,9 +104,9 @@ lemma permRep_mul_tensorPowGen_of_isPure {D n : ℕ} [NeZero D] [NeZero (D ^ n)]
   have hUM : (permutationRepresentation D n τ * M) i j = M i' j := by
     simp only [Matrix.mul_apply, permutationRepresentation, Matrix.of_apply]
     rw [Finset.sum_eq_single i']
-    · rw [if_pos hi'_inv, one_mul]
+    · rw [ite_eq_left hi'_inv, one_mul]
     · intro k _ hk
-      rw [if_neg fun h => hk (e.symm.injective (by
+      rw [ite_eq_right fun h => hk (e.symm.injective (by
         rw [hi'_inv] at h
         exact funext fun x => by
           have hx := congr_fun h (τ x); simp only [Function.comp_apply] at hx
@@ -168,7 +168,7 @@ lemma symmetricProjectorPaired_sandwich_pairedTensorPow {d n : ℕ}
         (densityOp_reindex (interleavingEquiv d n).symm (ψ.tensorPowGen n)).toOp *
         symmetricProjectorPaired d n =
       (densityOp_reindex (interleavingEquiv d n).symm (ψ.tensorPowGen n)).toOp := by
-  haveI : NeZero ((d * d) ^ n) := ⟨pow_ne_zero n (NeZero.ne (d * d))⟩
+  have : NeZero ((d * d) ^ n) := ⟨pow_ne_zero n (NeZero.ne (d * d))⟩
   set X := (densityOp_reindex (interleavingEquiv d n).symm (ψ.tensorPowGen n)).toOp with hX
   set e := interleavingEquiv d n with he
   have hinj : Function.Injective
@@ -258,8 +258,8 @@ theorem cp_pairedTensorPow_opLe_choose_smul_pairedDeFinettiState
     opLe (Φ (densityOp_reindex (interleavingEquiv d n).symm (ψ.tensorPowGen n)).toOp)
       ((↑(Nat.choose (n + (d ^ 2 - 1)) (d ^ 2 - 1)) : ℂ) •
         Φ (pairedDeFinettiState d n).toOp) := by
-  haveI : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
-  haveI : NeZero (d ^ n * d ^ n) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
+  have : NeZero (d ^ n) := ⟨pow_ne_zero n (NeZero.ne d)⟩
+  have : NeZero (d ^ n * d ^ n) := ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have h := cp_linear_preserves_opLe Φ hΦ
     (pairedDeFinettiState_opGe_inv_choose_smul_pairedTensorPow d n ψ hψ)
   rwa [map_smul] at h

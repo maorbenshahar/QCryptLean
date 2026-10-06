@@ -67,7 +67,9 @@ theorem zeroRound_reference_offDiagonal_survives (pA pB : PMF Basis) :
           (Fintype.equivFin (weightedStreamSystem Unit 0).total)
           (fun _ _ => (1 : ℂ)) := by
     ext i j
-    simp [zeroRoundReferenceInput, Matrix.reindex_apply]
+    change (if (finProdFinEquiv.symm (finProdFinEquiv (i, (0 : Fin 2)))).2 = 0 ∧
+      (finProdFinEquiv.symm (finProdFinEquiv (j, (1 : Fin 2)))).2 = 1 then 1 else 0) = (1 : ℂ)
+    simp only [Equiv.symm_apply_apply, and_self, ite_true]
   rw [hblock]
   have hcoord := coordinateLinear_reindex_apply
     (Fintype.equivFin (weightedStreamSystem Unit 0).total)

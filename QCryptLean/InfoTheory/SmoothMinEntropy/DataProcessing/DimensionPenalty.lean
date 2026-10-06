@@ -65,7 +65,7 @@ lemma minFeasibleLambda_maxMixed_le_dim_mul_of_isFeasible
     (ht : isFeasible rho sigma t) :
     minFeasibleLambda rho (DensityOp.toSubDensityOp (DensityOp.maxMixed d)) ≤
       (d : ℝ) * t := by
-  change sInf (setOf
+  change sInf (Set.ofPred
       (isFeasible rho (DensityOp.toSubDensityOp (DensityOp.maxMixed d)))) ≤
     (d : ℝ) * t
   exact csInf_le
@@ -176,29 +176,29 @@ lemma minFeasibleLambda_le_mul_of_isFeasible_scaling
     minFeasibleLambda rhoB sigmaB ≤
       c * minFeasibleLambda rhoA sigmaA := by
   have hsub :
-      c • setOf (isFeasible rhoA sigmaA) ⊆
-        setOf (isFeasible rhoB sigmaB) := by
+      c • Set.ofPred (isFeasible rhoA sigmaA) ⊆
+        Set.ofPred (isFeasible rhoB sigmaB) := by
     rintro _ ⟨t, ht, rfl⟩
     simpa [smul_eq_mul] using hscale ht
   have hscaled_nonempty :
-      (c • setOf (isFeasible rhoA sigmaA) : Set ℝ).Nonempty := by
+      (c • Set.ofPred (isFeasible rhoA sigmaA) : Set ℝ).Nonempty := by
     obtain ⟨t, ht⟩ := hfeasA
     exact ⟨c • t, ⟨t, ht, rfl⟩⟩
   have hle_scaled :
-      sInf (setOf (isFeasible rhoB sigmaB)) ≤
-        sInf (c • setOf (isFeasible rhoA sigmaA) : Set ℝ) :=
+      sInf (Set.ofPred (isFeasible rhoB sigmaB)) ≤
+        sInf (c • Set.ofPred (isFeasible rhoA sigmaA) : Set ℝ) :=
     csInf_le_csInf (minFeasibleLambda_bddBelow rhoB sigmaB)
       hscaled_nonempty hsub
   have hscaled_inf :
-      sInf (c • setOf (isFeasible rhoA sigmaA) : Set ℝ) =
-        c * sInf (setOf (isFeasible rhoA sigmaA)) := by
+      sInf (c • Set.ofPred (isFeasible rhoA sigmaA) : Set ℝ) =
+        c * sInf (Set.ofPred (isFeasible rhoA sigmaA)) := by
     simpa [smul_eq_mul] using
-      Real.sInf_smul_of_nonneg hc_nonneg (setOf (isFeasible rhoA sigmaA))
+      Real.sInf_smul_of_nonneg hc_nonneg (Set.ofPred (isFeasible rhoA sigmaA))
   calc
     minFeasibleLambda rhoB sigmaB
-        = sInf (setOf (isFeasible rhoB sigmaB)) := rfl
-    _ ≤ sInf (c • setOf (isFeasible rhoA sigmaA) : Set ℝ) := hle_scaled
-    _ = c * sInf (setOf (isFeasible rhoA sigmaA)) := hscaled_inf
+        = sInf (Set.ofPred (isFeasible rhoB sigmaB)) := rfl
+    _ ≤ sInf (c • Set.ofPred (isFeasible rhoA sigmaA) : Set ℝ) := hle_scaled
+    _ = c * sInf (Set.ofPred (isFeasible rhoA sigmaA)) := hscaled_inf
     _ = c * minFeasibleLambda rhoA sigmaA := rfl
 
 /-- Feasibility scaling by a positive constant gives the corresponding
@@ -380,7 +380,7 @@ lemma minFeasibleLambda_maxMixed_le_dim_mul_povmGuessingProb
     minFeasibleLambda rho (DensityOp.toSubDensityOp (DensityOp.maxMixed d)) ≤
       (d : ℝ) * povmGuessingProb rho := by
   classical
-  haveI : Nonempty X := nonempty_of_povmGuessingProb_pos hp
+  have : Nonempty X := nonempty_of_povmGuessingProb_pos hp
   obtain ⟨M, hM_pos, hM_sum, hp_eq⟩ := exists_optimal_povm rho
   obtain ⟨sigma, hsigma_feas⟩ :=
     pgm_sigma_feasible rho M hM_pos hM_sum hp hp_eq.symm
@@ -554,10 +554,10 @@ lemma isFeasible_smul_sigma_iff {X : Type*} [Fintype X] {d : ℕ}
 feasibility set. -/
 lemma setOf_isFeasible_smul_sigma {X : Type*} [Fintype X] {d : ℕ}
     (ρ : CQState X d) (σ : SubDensityOp d) {c : ℝ} (hc : 0 < c) (hc_le : c ≤ 1) :
-    setOf (isFeasible ρ (σ.smul c hc.le hc_le)) =
-      (c⁻¹) • setOf (isFeasible ρ σ) := by
+    Set.ofPred (isFeasible ρ (σ.smul c hc.le hc_le)) =
+      (c⁻¹) • Set.ofPred (isFeasible ρ σ) := by
   ext t
-  simp only [Set.mem_setOf_eq, Set.mem_smul_set]
+  simp only [Set.mem_ofPred_eq, Set.mem_smul_set]
   rw [isFeasible_smul_sigma_iff ρ σ hc hc_le]
   constructor
   · intro h
@@ -578,7 +578,7 @@ lemma minFeasibleLambda_smul_sigma {X : Type*} [Fintype X] {d : ℕ}
   unfold minFeasibleLambda
   rw [setOf_isFeasible_smul_sigma ρ σ hc hc_le]
   have hinv_nn : 0 ≤ c⁻¹ := le_of_lt (inv_pos.mpr hc)
-  have := Real.sInf_smul_of_nonneg hinv_nn (setOf (isFeasible ρ σ))
+  have := Real.sInf_smul_of_nonneg hinv_nn (Set.ofPred (isFeasible ρ σ))
   simpa [smul_eq_mul] using this
 
 /-- Pointwise: for `0 < c ≤ 1` and any CQ state `ρ'`, the conditional real
@@ -636,8 +636,8 @@ theorem smoothMinEntropyReal_smul_sigma_sub_log
         conditionalMinEntropyReal ρ' (σ.smul c hc.le hc_le) := fun ρ' =>
     conditionalMinEntropyReal_smul_sigma_ge ρ' σ hc hc_le
   -- Set abbreviations.
-  set A := setOf (isInSmoothedSetReal ε ρ σ) with hA
-  set B := setOf (isInSmoothedSetReal ε ρ (σ.smul c hc.le hc_le)) with hB
+  set A := Set.ofPred (isInSmoothedSetReal ε ρ σ) with hA
+  set B := Set.ofPred (isInSmoothedSetReal ε ρ (σ.smul c hc.le hc_le)) with hB
   have hA_ne : A.Nonempty := ⟨conditionalMinEntropyReal ρ σ, ρ, rfl, by
     rw [CQState.purifiedDistance_self_zero]; exact hε_nn⟩
   have hB_ne : B.Nonempty := ⟨conditionalMinEntropyReal ρ (σ.smul c hc.le hc_le), ρ, rfl, by
@@ -721,7 +721,7 @@ theorem smoothMinEntropyReal_ge_of_smul_opLe
         hasFeasibleLambda ρ' (σ.smul c hc.le hc_le))
     (hpos_sigma_prime : ∀ ρ' : CQState X d, CQState.purifiedDistance ρ ρ' ≤ ε →
         0 < minFeasibleLambda ρ' σ')
-    (hbdd : BddAbove (setOf (isInSmoothedSetReal ε ρ σ'))) :
+    (hbdd : BddAbove (Set.ofPred (isInSmoothedSetReal ε ρ σ'))) :
     smoothMinEntropyReal ε ρ σ + Real.log c / Real.log 2 ≤ smoothMinEntropyReal ε ρ σ' := by
   have hscale :
       smoothMinEntropyReal ε ρ σ + Real.log c / Real.log 2 ≤

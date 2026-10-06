@@ -268,7 +268,7 @@ theorem ckrSecurity_bellTight_tightRate_sharpCharge_secondOrderSharp_klTailPhase
         mul_nonneg (Nat.cast_nonneg leakEC : (0 : ℝ) ≤ leakEC) hL,
         mul_nonneg (Nat.cast_nonneg ℓEV : (0 : ℝ) ≤ ℓEV) hL, mul_nonneg hL hpen,
         mul_nonneg (Nat.cast_nonneg n : (0 : ℝ) ≤ n) (sq_nonneg δ)]
-    haveI hnK := bb84KeyRoundCount_neZero hmn
+    have hnK := bb84KeyRoundCount_neZero hmn
     refine ckrSecurity_bellTight_tightRate_sharpCharge_secondOrderSharpAt_klTailPhaseOnly
       peSel xSel hcount ec hec Q δ ε_AEP (Real.exp (-(n : ℝ) * δ ^ 2 / 2))
       (secondOrderSharpBeta bb84SharpVarianceCap (bb84KeyRoundCount n m) ε_AEP)

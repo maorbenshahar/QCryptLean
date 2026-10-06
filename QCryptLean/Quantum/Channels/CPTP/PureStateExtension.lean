@@ -69,7 +69,7 @@ lemma appendKetKraus_conjTranspose_mul_self {d k : ℕ}
       simp [hai]
     · intro hi
       exact False.elim (hi (Finset.mem_univ i))
-  · simp only [hij, if_false]
+  · simp only [hij, ite_false]
     apply Finset.sum_eq_zero
     intro a _
     by_cases hai : a = i

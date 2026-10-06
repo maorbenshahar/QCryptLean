@@ -46,7 +46,7 @@ theorem coordinateLinear_reindexOp {A B : Type} [Fintype A] [DecidableEq A]
   apply LinearMap.ext
   intro M
   ext i j
-  simp [coordinateLinear, reindexOp, Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
+  rfl
 
 /-- A structural register relabelling is a channel in any explicit finite coordinates. -/
 theorem coordinateLinear_reindexOp_isCPTP {A B : Type} [Fintype A] [DecidableEq A]

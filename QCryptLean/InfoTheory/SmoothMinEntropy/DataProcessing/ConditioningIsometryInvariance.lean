@@ -204,8 +204,8 @@ hence so do their infima:
 theorem dmaxFeasibleLambda_leftIsometryConjugate_eq {dSrc dTgt : ℕ}
     (K : Matrix (Fin dTgt) (Fin dSrc) ℂ) (hK : Kᴴ * K = 1) (ρ Q : Op dSrc) :
     dmaxFeasibleLambda (K * ρ * Kᴴ) (K * Q * Kᴴ) = dmaxFeasibleLambda ρ Q := by
-  have hset : setOf (dmaxIsFeasible (K * ρ * Kᴴ) (K * Q * Kᴴ)) =
-      setOf (dmaxIsFeasible ρ Q) := by
+  have hset : Set.ofPred (dmaxIsFeasible (K * ρ * Kᴴ) (K * Q * Kᴴ)) =
+      Set.ofPred (dmaxIsFeasible ρ Q) := by
     ext t
     exact dmaxIsFeasible_leftIsometryConjugate_iff K hK ρ Q t
   unfold dmaxFeasibleLambda
@@ -614,8 +614,8 @@ theorem bipartiteMinEntropyOptReal_conditioning_leftIsometryEmbed_eq {dA dC dC' 
         exact hρ0 (Matrix.ext fun i _ => absurd i.isLt (by omega))
       have hdA : dA ≠ 0 := (Nat.mul_ne_zero_iff.mp hdAC).1
       have hdC : dC ≠ 0 := (Nat.mul_ne_zero_iff.mp hdAC).2
-      haveI : NeZero dA := ⟨hdA⟩
-      haveI : NeZero dC := ⟨hdC⟩
+      have : NeZero dA := ⟨hdA⟩
+      have : NeZero dC := ⟨hdC⟩
       have hdC' : dC' ≠ 0 := by
         intro h
         have hVV : (Vᴴ * V) = (0 : Matrix (Fin dC) (Fin dC) ℂ) := by
@@ -626,7 +626,7 @@ theorem bipartiteMinEntropyOptReal_conditioning_leftIsometryEmbed_eq {dA dC dC' 
           ⟨0, Nat.pos_of_ne_zero hdC⟩
         rw [Matrix.one_apply_eq, Matrix.zero_apply] at h10
         exact one_ne_zero h10
-      haveI : NeZero dC' := ⟨hdC'⟩
+      have : NeZero dC' := ⟨hdC'⟩
       have hpb : opLe (((kronIdLeftIso (dH := dA) V)ᴴ)ᴴ * (kronIdLeftIso (dH := dA) V)ᴴ) 1 := by
         rw [Matrix.conjTranspose_conjTranspose]
         exact opLe_left_isometry_range_projection (kronIdLeftIso (dH := dA) V)
@@ -726,14 +726,14 @@ lemma bipartiteMinEntropyOptReal_le_neg_logb_trace {dA dC : ℕ} [NeZero dA] [Ne
   exact Real.log_le_log hcpos hlam
 
 /-- **`BddAbove` for the bipartite optimization set from normalization.** For a normalized bipartite
-center and `0 ≤ ε < 1`, `setOf (isInSmoothBipartiteMinSet ε ρ)` is bounded above by
+center and `0 ≤ ε < 1`, `Set.ofPred (isInSmoothBipartiteMinSet ε ρ)` is bounded above by
 `-log₂((1-ε²)/dA)` — the ℝ-encoding of `H_min(A|C) ≤ log₂ dA`, via the ε-ball weight floor `1-ε²`
 (`SubDensityOp.trace_ge_of_purifiedDistance_of_normalized`) and the value bound
 `bipartiteMinEntropyOptReal_le_neg_logb_trace`. -/
 lemma isInSmoothBipartiteMinSet_bddAbove_of_normalized {dA dC : ℕ} [NeZero dA] [NeZero dC]
     [NeZero (dA * dC)] {ε : ℝ} (hε : 0 ≤ ε) (hε1 : ε < 1)
     (ρ : SubDensityOp (dA * dC)) (hρ : ρ.trace = 1) :
-    BddAbove (setOf (isInSmoothBipartiteMinSet ε ρ)) := by
+    BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε ρ)) := by
   have hηpos : (0 : ℝ) < 1 - ε ^ 2 := by nlinarith
   have hdA : (0 : ℝ) < dA := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne dA)
   have hlog2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
@@ -762,7 +762,7 @@ lemma neg_logb_trace_le_bipartiteMinEntropyOptReal_scaledMaxMixed
     -Real.log (s / dA) / Real.log 2 ≤
       bipartiteMinEntropyOptReal
         ((DensityOp.toSubDensityOp (DensityOp.maxMixed (dA * dC))).smul s hs_nn hs_le) := by
-  haveI : NeZero (dA * dC) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dC)⟩
+  have : NeZero (dA * dC) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dC)⟩
   have hlog2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
   have hdA : (0 : ℝ) < dA := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne dA)
   set μ := (DensityOp.toSubDensityOp (DensityOp.maxMixed (dA * dC))).smul s hs_nn hs_le with hμdef
@@ -855,17 +855,17 @@ theorem smoothBipartiteMinEntropyOptReal_conditioning_leftIsometryEmbed_eq {dA d
     [NeZero (dA * dC)] [NeZero (dA * dC')]
     (V : Matrix (Fin dC') (Fin dC) ℂ) (hV : Vᴴ * V = 1) (ε : ℝ) (hε : 0 ≤ ε)
     (ρ : SubDensityOp (dA * dC))
-    (hbdd : BddAbove (setOf (isInSmoothBipartiteMinSet ε ρ)))
-    (hbdd' : BddAbove (setOf (isInSmoothBipartiteMinSet ε
+    (hbdd : BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε ρ)))
+    (hbdd' : BddAbove (Set.ofPred (isInSmoothBipartiteMinSet ε
       (ρ.leftIsometryConjugate (kronIdLeftIso (dH := dA) V)
         (kronIdLeftIso_left_iso V hV))))) :
     smoothBipartiteMinEntropyOptReal ε
         (ρ.leftIsometryConjugate (kronIdLeftIso (dH := dA) V)
           (kronIdLeftIso_left_iso V hV)) =
       smoothBipartiteMinEntropyOptReal ε ρ := by
-  haveI hneA : NeZero dA := ⟨(Nat.mul_ne_zero_iff.mp (NeZero.ne (dA * dC))).1⟩
-  haveI hneC : NeZero dC := ⟨(Nat.mul_ne_zero_iff.mp (NeZero.ne (dA * dC))).2⟩
-  haveI hneC' : NeZero dC' := ⟨(Nat.mul_ne_zero_iff.mp (NeZero.ne (dA * dC'))).2⟩
+  have hneA : NeZero dA := ⟨(Nat.mul_ne_zero_iff.mp (NeZero.ne (dA * dC))).1⟩
+  have hneC : NeZero dC := ⟨(Nat.mul_ne_zero_iff.mp (NeZero.ne (dA * dC))).2⟩
+  have hneC' : NeZero dC' := ⟨(Nat.mul_ne_zero_iff.mp (NeZero.ne (dA * dC'))).2⟩
   have hpb : opLe (((kronIdLeftIso (dH := dA) V)ᴴ)ᴴ * (kronIdLeftIso (dH := dA) V)ᴴ) 1 := by
     rw [Matrix.conjTranspose_conjTranspose]
     exact opLe_left_isometry_range_projection (kronIdLeftIso (dH := dA) V)

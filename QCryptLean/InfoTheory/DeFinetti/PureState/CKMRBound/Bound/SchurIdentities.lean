@@ -112,9 +112,9 @@ private lemma sum_mul_ckmrKetEmbed {d n : ℕ} [NeZero d] [NeZero n]
     ∑ j, f j * ckmrKetEmbed k hk g j b =
       ∑ c, f (finProdFinEquiv (b, c)) * ckmrVec k hk g c := by
   rw [← finProdFinEquiv.sum_comp, Fintype.sum_prod_type, Fintype.sum_eq_single b]
-  · simp only [ckmrKetEmbed_entry', if_pos]
+  · simp only [ckmrKetEmbed_entry', ite_eq_left]
   · intro x hx
-    simp only [ckmrKetEmbed_entry', if_neg hx, mul_zero, Finset.sum_const_zero]
+    simp only [ckmrKetEmbed_entry', ite_eq_right hx, mul_zero, Finset.sum_const_zero]
 
 /-- Delta collapse against column `a` of V†: only the rows `(a, c)` contribute, with weight
 `v̄(c)`. -/
@@ -124,9 +124,9 @@ private lemma sum_star_ckmrKetEmbed_mul {d n : ℕ} [NeZero d] [NeZero n]
     ∑ i, star (ckmrKetEmbed k hk g i a) * f i =
       ∑ c, star (ckmrVec k hk g c) * f (finProdFinEquiv (a, c)) := by
   rw [← finProdFinEquiv.sum_comp, Fintype.sum_prod_type, Fintype.sum_eq_single a]
-  · simp only [ckmrKetEmbed_entry', if_pos]
+  · simp only [ckmrKetEmbed_entry', ite_eq_left]
   · intro x hx
-    simp only [ckmrKetEmbed_entry', if_neg hx, star_zero, zero_mul, Finset.sum_const_zero]
+    simp only [ckmrKetEmbed_entry', ite_eq_right hx, star_zero, zero_mul, Finset.sum_const_zero]
 
 /-- Entries of the unnormalized operator:
 `unnorm(g)(a, b) = ∑_{c'} ∑_c v̄(c) · Ψ_bip((a,c),(b,c')) · v(c')`. -/
@@ -147,7 +147,7 @@ private lemma ckmrVec_eq_coherentStateKet {d n : ℕ} [NeZero d]
     (k : ℕ) (hk : k ≤ n) [NeZero (n - k)] (g : unitaryGroup (Fin d) ℂ)
     (c : Fin (d ^ (n - k))) :
     ckmrVec k hk g c = (coherentStateKet g (n - k)).vec c :=
-  dif_neg (NeZero.ne (n - k))
+  dite_eq_right (NeZero.ne (n - k))
 
 /-- Schur Identity 1: ∫ dim_{n-k} · unnorm(g) dg = ρ_k.
     Follows from `schur_lemma_symmetric` on (n-k) systems + `symmetric_containment_bipartite`. -/
@@ -161,10 +161,10 @@ lemma ckmr_schur_identity_1 {d n : ℕ} [NeZero d] [NeZero n]
     (InfoTheory.DeFinetti.partialTraceToFirstK k _hk Ψ).toOp := by
   by_cases hnk : n = k
   · subst hnk
-    haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+    have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
     -- When n = k nothing is traced out: the second register is trivial and `v = 1`
     have hdim : d ^ (n - n) = 1 := by rw [Nat.sub_self, pow_zero]
-    haveI : Unique (Fin (d ^ (n - n))) := hdim ▸ Fin.instUnique
+    have : Unique (Fin (d ^ (n - n))) := hdim ▸ Fin.instUnique
     -- so for every `g` the integrand is already the reduced state
     have hconst : ∀ g : unitaryGroup (Fin d) ℂ,
         (↑(Nat.choose (n - n + d - 1) (d - 1)) : ℝ) • ckmrUnnorm Ψ n _hk g =
@@ -173,12 +173,12 @@ lemma ckmr_schur_identity_1 {d n : ℕ} [NeZero d] [NeZero n]
       simp only [Nat.sub_self, zero_add, Nat.choose_self, Nat.cast_one, one_smul]
       ext a b
       rw [ckmrUnnorm_apply]
-      simp only [ckmrVec, dif_pos (Nat.sub_self n), star_one, one_mul, mul_one,
+      simp only [ckmrVec, dite_eq_left (Nat.sub_self n), star_one, one_mul, mul_one,
         Fintype.sum_unique, InfoTheory.DeFinetti.partialTraceToFirstK, DensityOp.partialTraceB,
         PosSemidefOp.partialTraceB, partialTraceB, Matrix.of_apply, densityOp_castDim_toOp]
     rw [integral_congr_ae (ae_of_all _ hconst), integral_const, probReal_univ, one_smul]
-  · haveI : NeZero (n - k) := ⟨by omega⟩
-    haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+  · have : NeZero (n - k) := ⟨by omega⟩
+    have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
     set h_eq := InfoTheory.DeFinetti.pow_eq_mul_pow_sub _hk
     set Ψ_bip := (DensityOp.castDim h_eq Ψ).toOp with hΨ_bip
     -- Define CLM: M(A)(a,b) = ∑_c ∑_c' A(c',c) * Ψ_bip(fPE(a,c), fPE(b,c'))
@@ -360,9 +360,9 @@ private lemma castDim_coherent_bipartite_entry {d n : ℕ} [NeZero d] [NeZero n]
     exact congrFun (congrArg (↑g) (Fin.ext (high m hm))) 0
   · -- Second factor: Fin (n-k) → c₀ digits or 1
     by_cases hnk : n - k = 0
-    · rw [dif_pos hnk]
+    · rw [dite_eq_left hnk]
       exact Finset.prod_eq_one (fun i _ => absurd i.isLt (by omega))
-    · rw [dif_neg hnk]
+    · rw [dite_eq_right hnk]
       apply Finset.prod_congr rfl; intro ⟨m, hm⟩ _
       have h_exp : n - 1 - (k + m) = n - k - 1 - m := by omega
       simp only [Fin.val_natAdd, h_exp]
@@ -419,7 +419,7 @@ lemma ckmr_schur_core_identity {d n : ℕ} [NeZero d] [NeZero n]
   -- Key facts
   have hPΨ := symProj_mul_symState Ψ _hsym
   have hSchur := schur_lemma_symmetric d n
-  haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
   set h_eq := InfoTheory.DeFinetti.pow_eq_mul_pow_sub _hk
   -- Rewrite product using castDim_mul (combine the two castDim'd operators)
   simp_rw [densityOp_castDim_toOp]
@@ -561,7 +561,7 @@ lemma ckmr_schur_identity_2' {d n : ℕ} [NeZero d] [NeZero n]
     rw [h_pw g, Matrix.conjTranspose_smul, star_natCast]
   simp_rw [h_pw2]
   -- Prove integrability and continuity of the integrand
-  haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
+  have : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
   have h_P_cont : Continuous (fun g : unitaryGroup (Fin d) ℂ =>
       (coherentStateDensityOp g k).toOp) :=
     continuous_matrix (fun a b => coherentStateDensityOp_entry_continuous a b)

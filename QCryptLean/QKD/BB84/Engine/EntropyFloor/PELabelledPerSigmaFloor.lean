@@ -48,8 +48,8 @@ lemma CQState.coarsen_eq_relabel_coarsen {Xc Yc Zc : Type*} [Fintype Xc] [Fintyp
   rw [hL, hR]
   refine Finset.sum_congr rfl (fun x _ => ?_)
   by_cases hx : g x = y
-  · rw [if_pos hx, if_pos (by rw [← he x, hx])]
-  · rw [if_neg hx, if_neg (fun hcon => hx (e.injective (by rw [he x]; exact hcon)))]
+  · rw [ite_eq_left hx, ite_eq_left (by rw [← he x, hx])]
+  · rw [ite_eq_right hx, ite_eq_right (fun hcon => hx (e.injective (by rw [he x]; exact hcon)))]
 
 /-- Coarsening the classical register commutes with a heterogeneous reindex of the quantum
 register: the two act on independent factors. -/
@@ -67,8 +67,8 @@ lemma CQState.coarsen_reindexQHetero {Xc Yc : Type*} [Fintype Xc] [Fintype Yc] [
   rw [hL, hR, ← Matrix.coe_reindexLinearEquiv ℂ ℂ, map_sum]
   refine Finset.sum_congr rfl (fun x _ => ?_)
   by_cases hx : g x = y
-  · rw [if_pos hx, if_pos hx, Matrix.coe_reindexLinearEquiv]
-  · rw [if_neg hx, if_neg hx]
+  · rw [ite_eq_left hx, ite_eq_left hx, Matrix.coe_reindexLinearEquiv]
+  · rw [ite_eq_right hx, ite_eq_right hx]
     simp [Matrix.coe_reindexLinearEquiv, Matrix.reindex_apply]
 
 /-- **An announce kernel that factors through a second classical map is the announce kernel of the
@@ -115,7 +115,7 @@ lemma CQState.coarsen_tensorLeftKernel_factor {Xc Yc Zc : Type*}
   rw [Finset.sum_ite_eq' Finset.univ y
     (fun y' => ∑ z : Zc, Op.tensor (K z).toOp
       (∑ x : Xc, if (g x, h x) = (y', z) then (ρ.stateMap x).toOp else 0))]
-  rw [if_pos (Finset.mem_univ y)]
+  rw [ite_eq_left (Finset.mem_univ y)]
   -- Push the tensor through the inner `Xc` sum, then exchange the sums.
   have hpush : ∀ z : Zc,
       Op.tensor (K z).toOp (∑ x : Xc, if (g x, h x) = (y, z) then (ρ.stateMap x).toOp else 0) =
@@ -124,21 +124,21 @@ lemma CQState.coarsen_tensorLeftKernel_factor {Xc Yc Zc : Type*}
     rw [tensor_sum_op]
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : (g x, h x) = (y, z)
-    · rw [if_pos hx, if_pos hx]
-    · rw [if_neg hx, if_neg hx, Op.tensor_zero_right]
+    · rw [ite_eq_left hx, ite_eq_left hx]
+    · rw [ite_eq_right hx, ite_eq_right hx, Op.tensor_zero_right]
   simp_rw [hpush]
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun x _ => ?_
   by_cases hx : g x = y
-  · rw [if_pos hx, Finset.sum_eq_single (h x)]
-    · rw [if_pos (show (g x, h x) = (y, h x) by rw [hx])]
+  · rw [ite_eq_left hx, Finset.sum_eq_single (h x)]
+    · rw [ite_eq_left (show (g x, h x) = (y, h x) by rw [hx])]
     · intro z _ hz
-      exact if_neg (fun hcon => hz (congrArg Prod.snd hcon).symm)
+      exact ite_eq_right (fun hcon => hz (congrArg Prod.snd hcon).symm)
     · intro hmem
       exact absurd (Finset.mem_univ (h x)) hmem
-  · rw [if_neg hx, Finset.sum_eq_zero]
+  · rw [ite_eq_right hx, Finset.sum_eq_zero]
     intro z _
-    exact if_neg (fun hcon => hx (congrArg Prod.fst hcon))
+    exact ite_eq_right (fun hcon => hx (congrArg Prod.fst hcon))
 
 /-! ## Register casts on the low factor of an announced pair -/
 
@@ -193,11 +193,11 @@ def bb84PELabelledProductRefSplit {n m : ℕ} [NeZero n] [NeZero (4 ^ n)]
           (fun q => ((bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).stateMap q).trace)
       simp_rw [hprod]
       rw [← Finset.mul_sum, hreindex]
-      refine mul_le_one₀
-        (((bb84SiftedKeyRoundCQ ψ).tensorPower
-          (bb84KeyRoundCount n m)).quantumMarginal).trace_le_one
+      exact (mul_le_of_le_one_left
         (Finset.sum_nonneg fun q _ =>
           ((bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).stateMap q).trace_nonneg)
+        (((bb84SiftedKeyRoundCQ ψ).tensorPower
+          (bb84KeyRoundCount n m)).quantumMarginal).trace_le_one).trans
         (bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).weight_le_one)
 
 /-- **The PE label kernel on the sorted PE-outcome register, at a general test-set size `m`.**
@@ -260,7 +260,10 @@ theorem bb84_reindexHetero_rotateLead_peLabelledProductRefSplit {n m : ℕ} [NeZ
     (fun q => Op.tensor ((bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).stateMap q).toOp
       (bb84PELabelKernelSorted (m := m) q).toOp))
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [bb84PELabelKernelSorted, Equiv.apply_symm_apply, stdProj_toOp]
+  exact (congrArg (fun i : Fin (bb84PEAnnounceLabelDim n m) =>
+    Op.tensor ((bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).stateMap
+      (finFunctionFinEquiv.symm p)).toOp (stdProj (bb84PEAnnounceLabelDim n m) i).toOp)
+    (finFunctionFinEquiv.apply_symm_apply p)).symm
 
 /-- **The trivial-attack key/PE product factorisation on the pair-coarsened per-σ family, at a
 general test-set size `m`.**
@@ -287,7 +290,7 @@ theorem bb84_coarsenKeyPair_transport {n m : ℕ} [NeZero n] [NeZero (4 ^ n)]
                   (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ ψ)))) =
       ((bb84SiftedKeyRoundCQ ψ).tensorPower (bb84KeyRoundCount n m)).tensor
         (bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ) := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   rw [CQState.reindexQHetero_eq_reindexQ]
   have hinner : CQState.reindexQ (registerPerm signalDim n (bb84SortRoundPerm peSel).symm)
       (bb84CastCQState (bb84UnitEveDim_mul_signalPow n)
@@ -365,8 +368,10 @@ theorem bb84_peLabelledSorted_quantumMarginalOp_eq_productRef {n m : ℕ} [NeZer
           (bb84KeyRoundCount n m)).quantumMarginal).toOp
         ((bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ).stateMap q).toOp))).symm ?_
   refine Finset.sum_congr rfl fun p _ => ?_
-  rw [bb84PELabelKernelSorted, Equiv.apply_symm_apply, stdProj_toOp,
-    bb84_subDensityOp_tensor_toOp]
+  unfold bb84PELabelKernelSorted
+  rw [Equiv.apply_symm_apply]
+  exact congrArg (Op.tensor (stdProj (bb84PEAnnounceLabelDim n m) p).toOp)
+    (bb84_subDensityOp_tensor_toOp _ _).symm
 
 /-- **(e) The key-round tensor-power isometric invariance, at a general test-set size `m`.**
 
@@ -398,8 +403,8 @@ theorem bb84_keyRoundCQ_tensorPower_smoothMinEntropy_ge_componentAliceZ {n m : �
       smoothMinEntropy εTensor
         ((bb84SiftedKeyRoundCQ ψ).tensorPower (bb84KeyRoundCount n m))
         (((bb84SiftedKeyRoundCQ ψ).tensorPower (bb84KeyRoundCount n m)).quantumMarginal) := by
-  haveI hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
+  have hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
   obtain ⟨W, hWblock, hWmarg⟩ := bb84SiftedKeyRoundCQ_eq_componentAliceZ_conj ψ hψPure
   rw [tensorPower_quantumMarginal_eq (bb84SiftedKeyRoundCQ ψ) (bb84KeyRoundCount n m)]
@@ -464,20 +469,20 @@ theorem bb84_peLabelledAnnounce_smoothMinEntropy_ge_key {n m : ℕ} [NeZero n] [
               (bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ)).tensorLeftKernel
             (fun zq => bb84PELabelKernelSorted (m := m) zq.2)))
         (bb84PELabelledProductRefSplit (m := m) peSel xSel δ Q ψ) := by
-  haveI hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
+  have hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hPEpow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
+  have hPEpow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hAnn : NeZero (bb84PEAnnounceLabelDim n m) := ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hsplit : NeZero (bb84PEAnnounceLabelDim n m *
+  have hAnn : NeZero (bb84PEAnnounceLabelDim n m) := ⟨pow_ne_zero _ (NeZero.ne _)⟩
+  have hsplit : NeZero (bb84PEAnnounceLabelDim n m *
       (signalDim ^ bb84KeyRoundCount n m *
         signalDim ^ (n - bb84KeyRoundCount n m))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
-  haveI hτ : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
+  have hτ : NeZero (signalDim ^ (n - bb84KeyRoundCount n m) *
       bb84PEAnnounceLabelDim n m) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hrot : NeZero (signalDim ^ bb84KeyRoundCount n m *
+  have hrot : NeZero (signalDim ^ bb84KeyRoundCount n m *
       (signalDim ^ (n - bb84KeyRoundCount n m) * bb84PEAnnounceLabelDim n m)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   -- Rotate object and reference together, then announce the decoupled ancilla.
@@ -523,7 +528,7 @@ theorem bb84_peLabelledCoarsenAliceKey_eq_pairCoarsen {n m : ℕ} [NeZero n] [Ne
               (bb84PairedHaarPerSigmaFamily 1 (bb84UnitRegisterEmbed n)
                   (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ ψ)).tensorLeftKernel
             (fun zq => bb84PELabelKernelSorted (m := m) zq.2))) := by
-  haveI : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have : NeZero (signalDim ^ n) := signalDim_pow_neZero n
   rw [CQState.coarsen_eq_relabel_coarsen (bb84SortedKeyBitEquiv peSel hcount)
       (aliceKeyString peSel)
       (fun ω : Fin n → Fin signalDim =>
@@ -574,24 +579,24 @@ theorem bb84_peLabelledCoarsenAliceKey_smoothMinEntropy_quantumMarginal_eq_sorte
               (bb84SiftedPERoundProd (m := m) peSel xSel δ Q ψ)).tensorLeftKernel
             (fun zq => bb84PELabelKernelSorted (m := m) zq.2)))
         (bb84PELabelledProductRefSplit (m := m) peSel xSel δ Q ψ) := by
-  haveI hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
-  haveI hAnn : NeZero (bb84PEAnnounceLabelDim n m) :=
+  have hSig : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hd4 : NeZero signalDim := ⟨by norm_num [signalDim]⟩
+  have hAnn : NeZero (bb84PEAnnounceLabelDim n m) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hEve : NeZero (1 * signalDim ^ n) :=
+  have hEve : NeZero (1 * signalDim ^ n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hfine : NeZero (bb84PEAnnounceLabelDim n m * (1 * signalDim ^ n)) :=
+  have hfine : NeZero (bb84PEAnnounceLabelDim n m * (1 * signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
+  have hKpow : NeZero (signalDim ^ bb84KeyRoundCount n m) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hPEpow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
+  have hPEpow : NeZero (signalDim ^ (n - bb84KeyRoundCount n m)) :=
     ⟨pow_ne_zero _ (NeZero.ne _)⟩
-  haveI hsplit : NeZero (bb84PEAnnounceLabelDim n m *
+  have hsplit : NeZero (bb84PEAnnounceLabelDim n m *
       (signalDim ^ bb84KeyRoundCount n m *
         signalDim ^ (n - bb84KeyRoundCount n m))) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _)
       (Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _))⟩
-  haveI hmid : NeZero (bb84PEAnnounceLabelDim n m * signalDim ^ n) :=
+  have hmid : NeZero (bb84PEAnnounceLabelDim n m * signalDim ^ n) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have hCast : ∀ {Xc : Type} [Fintype Xc] {a b : ℕ} (h : a = b) (ρ : CQState Xc a),
       SubDensityOp.castDim h ρ.quantumMarginal =

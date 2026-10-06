@@ -106,7 +106,7 @@ probability measure has total mass `1`). -/
 private lemma fmPartialTraceB_twirlMap_eq (dA dR n : ℕ) [NeZero dR]
     (T : Op (dA ^ n * dR ^ n)) :
     partialTraceB (twirlMap dA dR n T) = partialTraceB T := by
-  haveI : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
+  have : MeasureTheory.IsProbabilityMeasure (haarProbUnitary dR) :=
     haarProbUnitary_isProbability dR
   rw [twirlMap, partialTraceB_integral _ (twirlIntegrand_integrable dA dR n T)]
   simp_rw [fmPartialTraceB_kraus_conj_eq_self]
@@ -151,8 +151,8 @@ theorem fixedMarginalMeasure_twirl_identity {dA dB n : ℕ}
     (σA : DensityOp dA) :
     ∃ μ : DensityMeasure (dA * dB), IsFixedMarginalMeasure σA μ ∧
       partialTraceB (fixedMarginalTwirlReference dA dB n σA) = (σA.tensorPowGen n).toOp := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
   -- The two conjuncts are logically decoupled: the operator identity below never mentions
   -- `μ`, so any `μ` satisfying `IsFixedMarginalMeasure σA μ` discharges the first conjunct.
@@ -162,7 +162,7 @@ theorem fixedMarginalMeasure_twirl_identity {dA dB n : ℕ}
   · -- `IsFixedMarginalMeasure σA μ`
     have hmarg : DensityOp.partialTraceB (σA.tensor (DensityOp.maxMixed dB)) = σA :=
       DensityOp.ext (partialTraceB_tensor σA (DensityOp.maxMixed dB))
-    haveI hT2 : T2Space (DensityOp dA) :=
+    have hT2 : T2Space (DensityOp dA) :=
       Topology.IsEmbedding.t2Space ⟨⟨rfl⟩, fun _ _ h => DensityOp.ext h⟩
     have hp : MeasurableSet
         (DensityOp.partialTraceB ⁻¹' ({σA} : Set (DensityOp dA)) : Set (DensityOp (dA * dB))) :=
@@ -331,9 +331,9 @@ private lemma perU_marginal_traceE_eq (dA dB n : ℕ) [NeZero dA] [NeZero dB] [N
               * (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op (dA * dB ^ 2)) n))ᴴ)
           * CFC.sqrt (Op.tensor (σA.tensorPowGen n).toOp (1 : Op ((dA * dB ^ 2) ^ n)))))
       = ((fixedMarginalSingleRoundState σA hσA U).tensorPowGen n).toOp := by
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
   set ie := interleavingEquivGen dA (dA * dB ^ 2) n with hie
   set S := CFC.sqrt (Op.tensor (σA.tensorPowGen n).toOp (1 : Op ((dA * dB ^ 2) ^ n))) with hSdef
   set MU : Op (dA * (dA * dB ^ 2)) := Op.tensor (CFC.sqrt σA.toOp) (U : Op (dA * dB ^ 2)) with hMU
@@ -476,12 +476,12 @@ theorem fmTwirlReference_reindex_partialTraceB_eq {dA dB n : ℕ}
           (pairedToBlockedEquiv dA dB n).symm
           (fixedMarginalTwirlReference dA dB n σA)) =
       (deFinettiMixtureFixedMarginal dA dB n (fixedMarginalHaarMeasure σA hσA)).toOp := by
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
-  haveI hprob : MeasureTheory.IsProbabilityMeasure (haarProbUnitary (dA * dB ^ 2)) :=
+  have hprob : MeasureTheory.IsProbabilityMeasure (haarProbUnitary (dA * dB ^ 2)) :=
     haarProbUnitary_isProbability (dA * dB ^ 2)
   set S := CFC.sqrt (Op.tensor (σA.tensorPowGen n).toOp (1 : Op ((dA * dB ^ 2) ^ n))) with hSdef
   set ptb := pairedToBlockedEquiv dA dB n with hptbdef
@@ -620,9 +620,9 @@ theorem deFinetti_fixedMarginal_purified_op_le {dA dB n : ℕ} [NeZero dA] [NeZe
       ∃ τ_ABE : Op ((dA * dB) ^ n * (dA * dB) ^ n), τ_ABE.PosSemidef ∧
         partialTraceB τ_ABE = (deFinettiMixtureFixedMarginal dA dB n μ).toOp ∧
         (((deFinettiPrefactor (dA ^ 2 * dB ^ 2) n : ℂ) • τ_ABE) - Ψ.toOp).PosSemidef := by
-  haveI : NeZero (dA * dB ^ 2) :=
+  have : NeZero (dA * dB ^ 2) :=
     ⟨Nat.mul_ne_zero (NeZero.ne dA) (pow_ne_zero 2 (NeZero.ne dB))⟩
-  haveI hprob : MeasureTheory.IsProbabilityMeasure (haarProbUnitary (dA * dB ^ 2)) :=
+  have hprob : MeasureTheory.IsProbabilityMeasure (haarProbUnitary (dA * dB ^ 2)) :=
     haarProbUnitary_isProbability (dA * dB ^ 2)
   -- The witness reference `τ_ABE` is PSD: `maxEntangledUnitaryTwirl` is a Haar integral of the PSD
   -- conjugates `K U · Θₙ · K Uᴴ`, and `S · (·) · S` (with `S = √(σ̂A^{⊗n}⊗id)` Hermitian) preserves
@@ -659,7 +659,7 @@ theorem deFinetti_fixedMarginal_purified_op_le {dA dB n : ℕ} [NeZero dA] [NeZe
   -- transport `Ψ` to the blocked register, undo the `σ̂A^{1/2}`- and SP1 `κ^{1/2}`-conjugations,
   -- bound the flattened state by `P_Sym` at trace `g` (the D1 marginal supplies `Tr(ρ̂) = g`),
   -- and conjugate/reindex back.
-  haveI : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
+  have : NeZero (dA ^ n) := ⟨pow_ne_zero n (NeZero.ne dA)⟩
   -- SP1: the Schur–Weyl flattening κ of the Haar twirl
   obtain ⟨κ, hκ_psd, hκ_unit, hκ_comm, hT_eq⟩ :=
     exists_flatten_maxEntangledUnitaryTwirl dA (dA * dB ^ 2) n (dA_le_dA_mul_dBsq dA dB)
@@ -907,8 +907,8 @@ theorem deFinetti_fixedMarginal_op_le {dA dB n : ℕ} [NeZero dA] [NeZero dB] [N
     ∃ μ : DensityMeasure (dA * dB), IsFixedMarginalMeasure σA μ ∧
       (((deFinettiPrefactor (dA ^ 2 * dB ^ 2) n : ℂ) •
           (deFinettiMixtureFixedMarginal dA dB n μ).toOp) - ρ.toOp).PosSemidef := by
-  haveI : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
-  haveI : NeZero ((dA * dB) ^ n) :=
+  have : NeZero (dA * dB) := ⟨Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB)⟩
+  have : NeZero ((dA * dB) ^ n) :=
     ⟨pow_ne_zero n (Nat.mul_ne_zero (NeZero.ne dA) (NeZero.ne dB))⟩
   -- Part B: symmetrically purify `ρ` (SP2 = Renner 4.2.2, proven), apply the purified
   -- fixed-marginal domination (Part A / Nahar et al. Theorem 1), then trace out the purifying

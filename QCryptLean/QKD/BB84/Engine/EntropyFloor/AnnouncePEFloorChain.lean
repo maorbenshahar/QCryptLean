@@ -84,7 +84,7 @@ lemma coarsen_coarsen {Xc Yc Zc : Type*} [Fintype Xc] [Fintype Yc] [Fintype Zc]
   intro x _
   rw [Finset.sum_eq_single (f x)]
   · simp
-  · intro y _ hy; rw [if_neg (Ne.symm hy)]; simp
+  · intro y _ hy; rw [ite_eq_right (Ne.symm hy)]; simp
   · intro h; exact absurd (Finset.mem_univ (f x)) h
 
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup Matrix.frobeniusNormedSpace

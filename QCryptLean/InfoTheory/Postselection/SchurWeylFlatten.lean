@@ -335,11 +335,11 @@ private lemma D_mem_span [NeZero dA] [NeZero dR] [NeZero n] (hdim : dA ≤ dR) :
     (maxEntangledUnitaryTwirl dA dR n hdim -
         Op.tensor (kappa dA dR n) (1 : Op (dR ^ n)) * symmetricProjectorPairedGen dA dR n) ∈
       Submodule.span ℂ
-        (setOf fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
+        (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
           T = Op.tensor X (permutationRepresentation dR n π)) := by
   have hcomm : (maxEntangledUnitaryTwirl dA dR n hdim -
       Op.tensor (kappa dA dR n) (1 : Op (dR ^ n)) * symmetricProjectorPairedGen dA dR n) ∈
-      (setOf fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
+      (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
         Commute (Op.tensor (1 : Op (dA ^ n)) (Op.tensorPow (U : Op dR) n)) T) :=
     fun U => D_commute_kraus hdim U
   rw [commutant_pairedUnitaryTensorPow_eq_tensorPermSpan] at hcomm
@@ -350,7 +350,7 @@ span — in particular to `D` itself, giving `Tr[Dᴴ D] = 0`. -/
 private lemma trace_conjTranspose_mul_D_eq_zero_of_mem_span [NeZero dA] [NeZero dR] [NeZero n]
     (hdim : dA ≤ dR) (S : Op (dA ^ n * dR ^ n))
     (hS : S ∈ Submodule.span ℂ
-        (setOf fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
+        (Set.ofPred fun T : Op (dA ^ n * dR ^ n) => ∃ (X : Op (dA ^ n)) (π : Equiv.Perm (Fin n)),
           T = Op.tensor X (permutationRepresentation dR n π))) :
     (Sᴴ * (maxEntangledUnitaryTwirl dA dR n hdim -
         Op.tensor (kappa dA dR n) (1 : Op (dR ^ n)) * symmetricProjectorPairedGen dA dR n)).trace

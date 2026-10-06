@@ -77,10 +77,10 @@ lemma oneHotPovm_isHermitian {X : Type*} [DecidableEq X] {n : ℕ}
     (x₀ : X) (x : X) : ((oneHotPovm x₀ x : Op n)).IsHermitian := by
   unfold oneHotPovm
   by_cases hx : x = x₀
-  · rw [if_pos hx]
+  · rw [ite_eq_left hx]
     change (1 : Op n)ᴴ = 1
     exact Matrix.conjTranspose_one
-  · rw [if_neg hx]
+  · rw [ite_eq_right hx]
     change (0 : Op n)ᴴ = 0
     exact Matrix.conjTranspose_zero
 
@@ -88,8 +88,8 @@ lemma oneHotPovm_posSemidef {X : Type*} [DecidableEq X] {n : ℕ}
     (x₀ : X) (x : X) : ((oneHotPovm x₀ x : Op n)).PosSemidef := by
   unfold oneHotPovm
   by_cases hx : x = x₀
-  · rw [if_pos hx]; exact Matrix.PosSemidef.one
-  · rw [if_neg hx]; exact Matrix.PosSemidef.zero
+  · rw [ite_eq_left hx]; exact Matrix.PosSemidef.one
+  · rw [ite_eq_right hx]; exact Matrix.PosSemidef.zero
 
 /-- The one-hot family witnesses nonemptiness of `povmFeasibleHerm`. -/
 lemma oneHotPovm_mem_povmFeasibleHerm
@@ -344,19 +344,19 @@ positive semidefiniteness is closed by `isClosed_setOf_posSemidef`.) -/
 lemma povmFeasibleHerm_isClosed
     {X : Type*} [Fintype X] {n : ℕ} :
     IsClosed (povmFeasibleHerm : Set (X → Op n)) := by
-  have h_sum : IsClosed (setOf (fun M : X → Op n => ∑ x, M x = 1)) :=
+  have h_sum : IsClosed (Set.ofPred (fun M : X → Op n => ∑ x, M x = 1)) :=
     isClosed_eq (continuous_finsetSum _ fun x _ => continuous_apply x) continuous_const
   have h_psd : ∀ x : X,
-      IsClosed (setOf (fun M : X → Op n => (M x).PosSemidef)) := by
+      IsClosed (Set.ofPred (fun M : X → Op n => (M x).PosSemidef)) := by
     intro x
-    simpa only [Set.preimage, Set.mem_setOf_eq] using
+    simpa only [Set.preimage, Set.mem_ofPred_eq] using
       IsClosed.preimage (f := fun M : X → Op n => M x)
         (continuous_apply x) (isClosed_setOf_posSemidef (n := n))
   have hEq : (povmFeasibleHerm : Set (X → Op n)) =
-      (⋂ x, setOf (fun M : X → Op n => (M x).PosSemidef)) ∩
-        (setOf (fun M : X → Op n => ∑ x, M x = 1)) := by
+      (⋂ x, Set.ofPred (fun M : X → Op n => (M x).PosSemidef)) ∩
+        (Set.ofPred (fun M : X → Op n => ∑ x, M x = 1)) := by
     ext M
-    simp only [povmFeasibleHerm, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter]
+    simp only [povmFeasibleHerm, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter]
   rw [hEq]
   exact (isClosed_iInter h_psd).inter h_sum
 

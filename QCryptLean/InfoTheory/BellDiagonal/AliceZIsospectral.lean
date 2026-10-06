@@ -145,13 +145,13 @@ lemma aliceZDephaseEmbed_isometry :
       apply_ite (star : ℂ → ℂ), star_one, star_zero]
   rw [Finset.sum_congr rfl (fun i _ => hterm i),
       Finset.sum_eq_single (cqJointEquiv (Fin 2) 4 (c, aliceZBit c))]
-  · rw [if_pos rfl, one_mul]
+  · rw [ite_eq_left rfl, one_mul]
     by_cases hcc : c = c'
     · subst hcc; simp
-    · rw [if_neg hcc, if_neg]
+    · rw [ite_eq_right hcc, ite_eq_right]
       intro h
       exact hcc (Prod.ext_iff.mp ((cqJointEquiv (Fin 2) 4).injective h)).1
-  · intro i _ hi; rw [if_neg hi, zero_mul]
+  · intro i _ hi; rw [ite_eq_right hi, zero_mul]
   · intro h; exact absurd (Finset.mem_univ _) h
 
 /-- Row-collapse for the embedding: summing a function against the embedding indicator selects the
@@ -167,10 +167,10 @@ lemma aliceZEmbed_collapse (g : Fin 4 → ℂ) (q : Fin 4 × Fin 2) :
       rw [(cqJointEquiv (Fin 2) 4).apply_eq_iff_eq, Prod.ext_iff]
       simp
     by_cases h : q.2 = aliceZBit q.1
-    · rw [if_pos (hcond.mpr h), one_mul, if_pos h]
-    · rw [if_neg (fun hh => h (hcond.mp hh)), zero_mul, if_neg h]
+    · rw [ite_eq_left (hcond.mpr h), one_mul, ite_eq_left h]
+    · rw [ite_eq_right (fun hh => h (hcond.mp hh)), zero_mul, ite_eq_right h]
   · intro c _ hc
-    rw [if_neg (fun heq =>
+    rw [ite_eq_right (fun heq =>
       hc ((Prod.ext_iff.mp ((cqJointEquiv (Fin 2) 4).injective heq)).1.symm)), zero_mul]
   · intro hmem; exact absurd (Finset.mem_univ _) hmem
 
@@ -199,7 +199,7 @@ lemma aliceZEmbed_conj_apply (M : Op 4) (p q : Fin 4 × Fin 2) :
       apply_ite (star : ℂ → ℂ), star_one, star_zero]
   simp only [hVdag, aliceZEmbed_mul_apply]
   by_cases hp : p.2 = aliceZBit p.1
-  · simp only [if_pos hp]
+  · simp only [ite_eq_left hp]
     rw [show (∑ c' : Fin 4, M p.1 c'
             * (if cqJointEquiv (Fin 2) 4 q = cqJointEquiv (Fin 2) 4 (c', aliceZBit c')
                 then (1 : ℂ) else 0))
@@ -207,7 +207,7 @@ lemma aliceZEmbed_conj_apply (M : Op 4) (p q : Fin 4 × Fin 2) :
                 then (1 : ℂ) else 0) * M p.1 c' from by
         apply Finset.sum_congr rfl; intro c' _; ring]
     exact aliceZEmbed_collapse (fun c' => M p.1 c') q
-  · simp only [if_neg hp, zero_mul, Finset.sum_const_zero]
+  · simp only [ite_eq_right hp, zero_mul, Finset.sum_const_zero]
 
 /-- Scalar identity underlying the reconciliation: the doubly-bit-gated dephasing entry equals the
 block-diagonal entry of the per-bit block. -/
@@ -230,7 +230,7 @@ lemma aliceZDephase_entropy_eq_jointDensity (σ : DensityOp 4) :
     vonNeumannEntropy (aliceZDephase σ)
       = vonNeumannEntropy
           ((aliceZDephaseCQState σ).toJointDensityOp (aliceZDephaseCQState_norm σ)) := by
-  haveI : NeZero (4 * Fintype.card (Fin 2)) := ⟨by simp⟩
+  have : NeZero (4 * Fintype.card (Fin 2)) := ⟨by simp⟩
   rw [← InfoTheory.RelativeEntropy.vonNeumannEntropy_isometry_invariance aliceZDephaseEmbed
         aliceZDephaseEmbed_isometry (aliceZDephase σ)]
   congr 1
@@ -282,7 +282,7 @@ theorem aliceZ_measuredJoint_entropy_eq_dephase
         partialTraceA (Op.tensor (aliceZProj z) (1 : Op 4) * Ψ.toOp
           * Op.tensor (aliceZProj z) (1 : Op 4))) :
     vonNeumannEntropy (ρ.toJointDensityOp hρ_norm) = vonNeumannEntropy (aliceZDephase σ) := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
   rw [aliceZDephase_entropy_eq_jointDensity σ,
       CQState.vonNeumannEntropy_toJointDensityOp_eq_classicalShannon_add_weightedBlockEntropy
         ρ hρ_norm,
@@ -304,7 +304,7 @@ theorem aliceZ_measuredJoint_entropy_eq_dephase
       vonNeumannEntropy (ρ.conditionalState z)
         = vonNeumannEntropy ((aliceZDephaseCQState σ).conditionalState z) := by
     intro z hz
-    haveI : NeZero (4 * 4) := ⟨by norm_num⟩
+    have : NeZero (4 * 4) := ⟨by norm_num⟩
     have hMherm : (Op.tensor (aliceZProj z) (1 : Op 4)).IsHermitian :=
       aliceZProjTensor_isHermitian z
     have hΨpsd : Ψ.toOp.PosSemidef := posSemidefOp_implies_mathlib Ψ.toPosSemidefOp
@@ -366,15 +366,19 @@ theorem aliceZ_measuredJoint_entropy_eq_dephase
     have hτA : DensityOp.partialTraceA τ = ρ.conditionalState z := by
       apply DensityOp.ext
       change partialTraceA τ.toOp = (ρ.conditionalState z).toOp
-      rw [hτtoOp, partialTraceA_smul, hPTA, CQState.conditionalState, dif_pos hz,
-          normalizePosSemidefOp_toOp]
+      rw [hτtoOp, partialTraceA_smul, hPTA, CQState.conditionalState, dite_eq_left hz]
+      change ((a⁻¹ : ℝ) : ℂ) • (ρ.stateMap z).toOp =
+        ((((ρ.stateMap z).toOp.trace.re)⁻¹ : ℝ) : ℂ) • (ρ.stateMap z).toOp
       congr 2
       rw [hadef, htr_eq]
     have hτB : DensityOp.partialTraceB τ = (aliceZDephaseCQState σ).conditionalState z := by
       apply DensityOp.ext
       change partialTraceB τ.toOp = ((aliceZDephaseCQState σ).conditionalState z).toOp
       rw [hτtoOp, partialTraceB_smul, hPTB, CQState.conditionalState,
-          dif_pos (hcm z ▸ hz), normalizePosSemidefOp_toOp]
+          dite_eq_left (hcm z ▸ hz)]
+      change ((a⁻¹ : ℝ) : ℂ) • (aliceZProj z * σ.toOp * aliceZProj z) =
+        (((((aliceZDephaseCQState σ).stateMap z).toOp.trace.re)⁻¹ : ℝ) : ℂ) •
+          ((aliceZDephaseCQState σ).stateMap z).toOp
       congr 2
       rw [aliceZDephaseCQState_stateMap, aliceZDephaseBlock_toOp]
       have hblockre : (aliceZProj z * σ.toOp * aliceZProj z).trace.re = a := by
@@ -423,8 +427,8 @@ theorem aliceZ_quantumMarginal_entropy_eq_self
         partialTraceA (Op.tensor (aliceZProj z) (1 : Op 4) * Ψ.toOp
           * Op.tensor (aliceZProj z) (1 : Op 4))) :
     vonNeumannEntropy (ρ.quantumMarginalDensityOp hρ_norm) = vonNeumannEntropy σ := by
-  haveI : NeZero (4 : ℕ) := ⟨by norm_num⟩
-  haveI : NeZero (4 * 4) := ⟨by norm_num⟩
+  have : NeZero (4 : ℕ) := ⟨by norm_num⟩
+  have : NeZero (4 * 4) := ⟨by norm_num⟩
   have hqm : (ρ.quantumMarginalDensityOp hρ_norm).toOp = (DensityOp.partialTraceA Ψ).toOp := by
     change ρ.quantumMarginalOp = partialTraceA Ψ.toOp
     rw [CQState.quantumMarginalOp, Fin.sum_univ_two, horigin 0, horigin 1,

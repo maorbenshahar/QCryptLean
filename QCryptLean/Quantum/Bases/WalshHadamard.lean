@@ -127,11 +127,11 @@ theorem sum_walshSign_mul (y z : Fin n → Bool) :
   by_cases h : y = z
   · subst h
     simp
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     obtain ⟨i, hi⟩ : ∃ i, y i ≠ z i := by
       by_contra hcon
       exact h (funext fun i => not_not.mp (fun hne => hcon ⟨i, hne⟩))
-    exact Finset.prod_eq_zero (Finset.mem_univ i) (if_neg hi)
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (ite_eq_right hi)
 
 /-! ## The Walsh–Hadamard basis -/
 
@@ -179,8 +179,8 @@ theorem walshKet_orthonormal (e f : Fin n → Bool) :
     sum_walshSign_bitIndex_mul e f]
   have h2n : ((2 : ℂ) ^ n) ≠ 0 := pow_ne_zero n (by norm_num)
   by_cases h : e = f
-  · rw [if_pos h, if_pos h, mul_inv_cancel₀ h2n]
-  · rw [if_neg h, if_neg h, zero_mul]
+  · rw [ite_eq_left h, ite_eq_left h, mul_inv_cancel₀ h2n]
+  · rw [ite_eq_right h, ite_eq_right h, zero_mul]
 
 /-- **Completeness of the Walsh–Hadamard basis:** `∑_e |e⟩_H⟨e|_H = 1` on `ℂ^{2ⁿ}`. -/
 theorem walshKet_complete :
@@ -200,8 +200,8 @@ theorem walshKet_complete :
   rw [Finset.sum_congr rfl fun e _ => hterm e, ← Finset.sum_mul,
     sum_walshSign_mul (bitIndex n i) (bitIndex n j), Matrix.one_apply]
   by_cases h : i = j
-  · rw [if_pos h, if_pos (congrArg (bitIndex n) h), mul_inv_cancel₀ h2n]
-  · rw [if_neg h, if_neg fun hb => h ((bitIndex n).injective hb), zero_mul]
+  · rw [ite_eq_left h, ite_eq_left (congrArg (bitIndex n) h), mul_inv_cancel₀ h2n]
+  · rw [ite_eq_right h, ite_eq_right fun hb => h ((bitIndex n).injective hb), zero_mul]
 
 /-! ## Flatness against the computational basis -/
 

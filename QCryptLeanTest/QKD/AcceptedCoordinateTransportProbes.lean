@@ -81,25 +81,25 @@ def rightPoint : (rightBoundary.system rightExit).total :=
 theorem left_fst_definition :
     (leftLayout.acceptCoordinates leftAccepted leftPoint).1 = 1 := by
   change Equiv.cast _ (1 : Fin (2 ^ 1)) = 1
-  simp
+  rfl
 
 /-- The left accepted specialization preserves Bob's key. -/
 theorem left_snd_fst_definition :
     (leftLayout.acceptCoordinates leftAccepted leftPoint).2.1 = 0 := by
   change Equiv.cast _ (0 : Fin (2 ^ 1)) = 0
-  simp
+  rfl
 
 /-- The right accepted specialization preserves Alice's key. -/
 theorem right_fst_definition :
     (rightLayout.acceptCoordinates rightAccepted rightPoint).1 = 1 := by
   change Equiv.cast _ (1 : Fin (2 ^ 1)) = 1
-  simp
+  rfl
 
 /-- The right accepted specialization preserves Bob's key. -/
 theorem right_snd_fst_definition :
     (rightLayout.acceptCoordinates rightAccepted rightPoint).2.1 = 0 := by
   change Equiv.cast _ (0 : Fin (2 ^ 1)) = 0
-  simp
+  rfl
 
 /-- Alice's two unspecialized key coordinates are heterogeneously equal. -/
 theorem coordinates_fst_heq :

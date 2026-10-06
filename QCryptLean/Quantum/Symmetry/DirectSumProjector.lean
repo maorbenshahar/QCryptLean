@@ -145,9 +145,7 @@ private def blockIndexFiberEquiv {k : ℕ} (dv : Fin k → ℕ) (i : Fin k) :
     exact finSigmaFinEquiv.apply_symm_apply a
   right_inv := by
     intro x
-    dsimp only
     apply Fin.ext
-    rw [Fin.val_cast]
     exact congrArg (fun p => (p.snd : ℕ))
       (Equiv.symm_apply_apply finSigmaFinEquiv (⟨i, x⟩ : Σ j, Fin (dv j)))
 
@@ -236,7 +234,7 @@ private lemma sum_card_alignedPair_fixed_eq {k : ℕ} (dAv dRv : Fin k → ℕ) 
   have hcardY : Fintype.card
       {p : Fin (∑ i, dAv i) × Fin (∑ i, dRv i) // IsAlignedPair dAv dRv p} =
         ∑ i, dAv i * dRv i := card_alignedPair_eq dAv dRv
-  haveI : NeZero
+  have : NeZero
       (Fintype.card {p : Fin (∑ i, dAv i) × Fin (∑ i, dRv i) // IsAlignedPair dAv dRv p}) :=
     ⟨hcardY ▸ aligned_dim_ne_zero dAv dRv⟩
   have key := Math.RepresentationTheory.sum_card_fixedBy_perm_fun_eq_of_fintype

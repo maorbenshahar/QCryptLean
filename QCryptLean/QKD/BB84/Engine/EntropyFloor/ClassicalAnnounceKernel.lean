@@ -118,7 +118,7 @@ lemma seedGraphProj_eq_diagonal {S m : ℕ} (g : Fin S → Fin m) :
       · by_cases h1 : g a = b <;> by_cases h2 : g a = d <;> simp_all
     · simp [hac]
   · intro j _ hj
-    simp only [hj, if_false, zero_mul]
+    simp only [hj, ite_false, zero_mul]
   · intro h
     exact absurd (Finset.mem_univ a) h
 
@@ -149,7 +149,7 @@ lemma seedGraphProj_trace {S m : ℕ} (g : Fin S → Fin m) :
   rw [seedGraphProj_eq_diagonal, Matrix.trace_diagonal,
     ← Equiv.sum_comp (finProdFinEquiv (m := S) (n := m))]
   simp only [Equiv.symm_apply_apply, Fintype.sum_prod_type]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true, Finset.sum_const, Finset.card_univ,
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true, Finset.sum_const, Finset.card_univ,
     Fintype.card_fin, nsmul_eq_mul, mul_one]
 
 /-- **The uniformly seeded announcement block.**

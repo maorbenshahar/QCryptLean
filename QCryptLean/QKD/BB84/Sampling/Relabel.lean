@@ -186,13 +186,14 @@ theorem select_relabel {N : ℕ} (τ : Fin N ≃ Fin N) (omega : RawControl N)
     simp [HasQuotas, horders.2.1, horders.2.2]
   by_cases h : HasQuotas nK mZ mX omega
   · have hr : HasQuotas nK mZ mX (rawControlRelabel τ omega) := hquotas.mpr h
-    simp only [select, hr, h, dif_pos, Option.map_some, Option.some.injEq]
+    simp only [select, hr, h, dite_eq_left, Option.map_some, Option.some.injEq]
     ext k
     simp only [selectedEmbedding, relabelEmbedding, Function.Embedding.coeFn_mk,
       Function.Embedding.coe_trans, Function.comp_apply]
     generalize (packedRoleEquiv nK mZ mX).symm k = role
     rcases role with (⟨key | z⟩ | x) <;>
-      simp [selectedRoleValue, hzPrefix, hxPrefix]
+      simp only [selectedRoleValue, hzPrefix, hxPrefix, List.get_eq_getElem, List.getElem_map]
+      <;> rfl
   · have hr : ¬HasQuotas nK mZ mX (rawControlRelabel τ omega) :=
       fun hr => h (hquotas.mp hr)
     simp [select, hr, h]

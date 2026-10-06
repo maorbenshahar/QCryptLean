@@ -152,12 +152,14 @@ lemma CQState.smul_conditionalState_toOp
       = (ρ.stateMap x).toOp := by
   unfold CQState.conditionalState
   by_cases h : 0 < ρ.classicalMarginal x
-  · rw [dif_pos h, Quantum.Metrics.normalizePosSemidefOp_toOp]
+  · rw [dite_eq_left h]
+    change ((ρ.classicalMarginal x : ℝ) : ℂ) •
+      ((((Matrix.trace (ρ.stateMap x).toOp).re)⁻¹ : ℝ) : ℂ) • (ρ.stateMap x).toOp = _
     have htr : (Matrix.trace ((ρ.stateMap x).toPosSemidefOp.toOp)).re
         = ρ.classicalMarginal x := rfl
     rw [htr, smul_smul, ← Complex.ofReal_mul, mul_inv_cancel₀ (ne_of_gt h),
         Complex.ofReal_one, one_smul]
-  · rw [dif_neg h]
+  · rw [dite_eq_right h]
     have hp0 : ρ.classicalMarginal x = 0 :=
       le_antisymm (not_lt.mp h) (ρ.classicalMarginal_nonneg x)
     have hpsd : Matrix.PosSemidef (ρ.stateMap x).toOp :=
@@ -183,9 +185,9 @@ lemma CQState.conditionalState_isEigenvalueSpectrum
   -- toOp of the conditional state is the rescaled block
   have hcond_toOp : (ρ.conditionalState x).toOp
       = ((a⁻¹ : ℝ) : ℂ) • (ρ.stateMap x).toOp := by
-    have hare : (Matrix.trace (ρ.stateMap x).toOp).re = a := rfl
     unfold CQState.conditionalState
-    rw [dif_pos h, Quantum.Metrics.normalizePosSemidefOp_toOp, hare]
+    rw [dite_eq_left h]
+    rfl
   -- spectral decomposition of the block
   let U : Op n := (H.eigenvectorUnitary.val : Op n)
   have h_spec : (ρ.stateMap x).toOp
@@ -261,7 +263,7 @@ theorem CQState.weightedBlockEntropy_le_vonNeumannEntropy_quantumMarginal
     (ρ : CQState X n) (hρ_norm : ∑ x : X, (ρ.stateMap x).trace = 1) :
     ρ.weightedBlockEntropy ≤ vonNeumannEntropy (ρ.quantumMarginalDensityOp hρ_norm) := by
   classical
-  haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
+  have : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
   set e := Fintype.equivFin X with he
   set probs : Fin (Fintype.card X) → ℝ :=
     fun i => ρ.classicalMarginal (e.symm i) with hprobs
@@ -347,7 +349,7 @@ lemma sum_entropyTerm_le_log_card_support
     rw [hp_sum] at hsum0
     exact one_ne_zero hsum0
   set k := S.card with hk
-  haveI : NeZero k := ⟨hk_pos.ne'⟩
+  have : NeZero k := ⟨hk_pos.ne'⟩
   -- reindex the support to `Fin k`
   set e := S.equivFin with he
   set q : Fin k → ℝ := fun j => p ↑(e.symm j) with hq
@@ -388,7 +390,7 @@ theorem CQState.shannonEntropy_classicalMarginal_le_log_classicalRank
   have h := sum_entropyTerm_le_log_card_support ρ.classicalMarginal
     (fun x => ρ.classicalMarginal_nonneg x)
     (by simpa [CQState.classicalMarginal] using hρ_norm)
-  simpa [CQState.classicalRank, CQState.classicalMarginal] using h
+  exact h
 
 /-- **Nat-level CQ conditional entropy bound.** For a normalized CQ state,
 `S(ρ_XB) − S(ρ_B) ≤ log (classicalRank ρ)`. -/

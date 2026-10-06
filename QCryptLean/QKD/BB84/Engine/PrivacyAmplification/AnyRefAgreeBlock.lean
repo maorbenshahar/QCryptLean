@@ -60,11 +60,11 @@ theorem agreeBlockTraceDistance_le_lhlOutput_of_floor_anyRef
               xSel leakEC ec Q δ)
         τ ≤
       epsPA + 2 * r := by
-  haveI hEveDimR : NeZero (eveDim * dimR) :=
+  have hEveDimR : NeZero (eveDim * dimR) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
-  haveI hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
+  have hSeedNE : Nonempty (KeyHashSeed n ℓ peSel) :=
     (aliceKeyHashFamily n ℓ peSel).seedNonempty
-  haveI hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
+  have hCond : NeZero (2 ^ leakEC * (Fintype.card (KeyHashSeed n ℓEV peSel) * 2 ^ ℓEV) *
       (signalDim ^ (n - bb84KeyRoundCount n m) * (eveDim * dimR))) :=
     ⟨Nat.mul_ne_zero
       (Nat.mul_ne_zero (pow_ne_zero _ (by norm_num))

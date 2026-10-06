@@ -83,9 +83,9 @@ lemma bb84_EnV_siftedTauEveRefConditioned_partialTraceB_eq {n : ℕ} [NeZero n]
               ω).toOp) =
       (bb84SiftedTauEveRefConditioned eveDim pre hpre peSel xSel
         (pairedDeFinettiState signalDim n) ω).toOp := by
-  haveI hVdv : NeZero V.dV := V.dV_neZero
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hR : NeZero (signalDim ^ n * V.dV) :=
+  have hVdv : NeZero V.dV := V.dV_neZero
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hR : NeZero (signalDim ^ n * V.dV) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   have hcancel : ∀ {p q : ℕ} (h : p = q) (x : Op p),
       (h.symm ▸ (h ▸ x : Op q) : Op p) = x := by
@@ -155,9 +155,9 @@ theorem bb84_EnV_rhoEV_partialTraceB_eq_forCoarsen {n : ℕ} [NeZero n] [NeZero 
               (bb84SiftedTauPostMeasurementNormalizedCQState eveDim pre hpre peSel xSel
                 (bb84EnVCKRPurification V)).toCQState)).stateMap x).toOp) =
         ((bb84EnVRhoEtilde eveDim pre hpre peSel xSel Q δ).stateMap x).toOp := by
-  haveI hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
-  haveI hVdv : NeZero V.dV := V.dV_neZero
-  haveI hEnDim : NeZero (eveDim * (signalDim ^ n)) :=
+  have hSignal : NeZero (signalDim ^ n) := signalDim_pow_neZero n
+  have hVdv : NeZero V.dV := V.dV_neZero
+  have hEnDim : NeZero (eveDim * (signalDim ^ n)) :=
     ⟨Nat.mul_ne_zero (NeZero.ne _) (NeZero.ne _)⟩
   intro x
   rw [bb84CastCQState_SiftedLocalPEPassFilter
