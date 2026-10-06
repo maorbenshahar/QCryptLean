@@ -1,20 +1,6 @@
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.IsometricInvarianceReferee
 import QCryptLean.InfoTheory.SmoothMinEntropy.Mixture.FinitePostFilterFloorCoarsen
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy
-open InfoTheory.SmoothMinEntropy.SymmetricAEP
-open InfoTheory.QuantumLHL
-open InfoTheory.VonNeumannEntropy
-open Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # Classical-coarsening commutation lemmas for CQ-state register transport
 
@@ -29,6 +15,20 @@ BB84 content) and are consumed by the key/PE-round coarsening machinery of
 - `coarsen_reindexQ`: classical coarsening commutes with a quantum-register reindex.
 - `coarsen_coarsen`: coarsening by `f` then `g` equals coarsening by `g ∘ f`.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy
+open InfoTheory.SmoothMinEntropy.SymmetricAEP
+open InfoTheory.QuantumLHL
+open InfoTheory.VonNeumannEntropy
+open Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ### Register-plumbing: coarsening commutes with the register transports
 

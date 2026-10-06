@@ -5,6 +5,10 @@ import QCryptLean.QKD.BB84.Engine.PerRound.DevetakWinter
 import QCryptLean.InfoTheory.SmoothMinEntropy.Uncertainty.PureCoreUncertainty
 import QCryptLean.Quantum.TensorProducts.TensorPow
 
+/-! The generic tensor-power isometric-invariance block: tensor-power conjugation,
+    smooth-min-entropy invariance, the key-scoped DW register bridge and collective/per-σ/per-point
+    smooth floors, the accepting set, and the non-accepting trace-norm bound. -/
+
 -- The paired-Haar per-σ family wiring (below) states Bochner integrability of `Op`-valued block
 -- maps; as in `FinitePostFilterFloor.lean`/`Reference/Mixed.lean`, this uses the Frobenius norm on
 -- matrices.
@@ -24,10 +28,6 @@ open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
 noncomputable section
 
 namespace QKD.BB84.Engine
-
-/-! The generic tensor-power isometric-invariance block: tensor-power conjugation,
-    smooth-min-entropy invariance, the key-scoped DW register bridge and collective/per-σ/per-point
-    smooth floors, the accepting set, and the non-accepting trace-norm bound. -/
 
 /-! ### Generic tensor-power isometric invariance.
 

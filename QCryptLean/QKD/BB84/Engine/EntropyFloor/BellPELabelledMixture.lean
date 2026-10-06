@@ -1,14 +1,6 @@
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.BellFloorChain
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPerSigmaFloor
 
--- The de Finetti coarsening assembler states Bochner integrability of `Op`-valued block maps; as in
--- `PerSigmaFamily.lean` / `AcceptSplit.lean`, this uses the Frobenius norm on matrices.
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
-private noncomputable local instance (d : ℕ) : ContinuousENorm (Quantum.Operators.Op d) :=
-  SeminormedAddGroup.toContinuousENorm
-
 /-!
 # The analytic data of the Bell de Finetti mixture floor
 
@@ -42,6 +34,14 @@ accept-block mixture split `\label{eq:tausplit}`
 Christandl–König–Renner 2009 (`arXiv:0809.3019`) `main.tex:268`–`:401` (\emph{Main Result}: the
 Post-Selection Theorem `\label{thm:main}` :291–:301, the substate-extraction Lemma
 `\label{lem:extractpart}` :319–:328). -/
+
+-- The de Finetti coarsening assembler states Bochner integrability of `Op`-valued block maps; as in
+-- `PerSigmaFamily.lean` / `AcceptSplit.lean`, this uses the Frobenius norm on matrices.
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
+
+private noncomputable local instance (d : ℕ) : ContinuousENorm (Quantum.Operators.Op d) :=
+  SeminormedAddGroup.toContinuousENorm
 
 open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
 open InfoTheory.SmoothMinEntropy

@@ -2,14 +2,6 @@ import QCryptLean.Quantum.Operators.Types
 import QCryptLean.Quantum.Operators.BraKet.Projector
 import QCryptLean.Quantum.TensorProducts.Basic
 
-namespace Quantum.TensorProducts
-
-open Quantum.Operators
-open scoped Matrix BigOperators ComplexConjugate TensorProduct Kronecker
-open Matrix
-
-noncomputable section
-
 /-!
 # Type-Safe Quantum Mechanics - Tensor Product Calculus
 
@@ -25,6 +17,14 @@ This module contains the calculus properties of tensor products:
 
 These properties are essential for proving theorems about composite quantum systems.
 -/
+
+namespace Quantum.TensorProducts
+
+open Quantum.Operators
+open scoped Matrix BigOperators ComplexConjugate TensorProduct Kronecker
+open Matrix
+
+noncomputable section
 
 -- ============================================================================
 -- Tensor Product Calculus

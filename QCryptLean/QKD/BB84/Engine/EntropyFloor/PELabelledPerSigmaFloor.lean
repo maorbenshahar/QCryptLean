@@ -6,15 +6,6 @@ import QCryptLean.InfoTheory.SmoothMinEntropy.DataProcessing.SpectatorKernelRein
 import QCryptLean.InfoTheory.SmoothMinEntropy.Announcement.ClassicalAnnounceKernelFibreRef
 import QCryptLean.InfoTheory.SmoothMinEntropy.ChainRule.SmoothEntropyBridgeLemmas
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
-open InfoTheory.SmoothMinEntropy
-open InfoTheory.SmoothMinEntropy.SymmetricAEP
-open InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
 /-!
 # Product-reference and register transport for PE-labelled component floors
 
@@ -26,6 +17,15 @@ loss. The announced PE register is a spectator to the key-round IID AEP.
 References: Renner 2005, `cor:Hmincondrepclass`; Nahar et al. 2024, arXiv:2403.11851,
 Appendix B, `eq:boundingsmoothedmin`, `lemma:infsmoothedmin`.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
+open InfoTheory.SmoothMinEntropy
+open InfoTheory.SmoothMinEntropy.SymmetricAEP
+open InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 

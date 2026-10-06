@@ -101,7 +101,7 @@ lemma coherent_bilinear_form_identity (d n : ℕ) [NeZero d] [NeZero n]
     rw [h1, h2]
     -- Simplify integrand: star(vg) ⬝ᵥ (|vk⟩⟨vk| *ᵥ vh) = ⟨vg|vk⟩ * ⟨vk|vh⟩
     congr 1; ext k
-    simp only [coherentStateDensityOp, DensityOp.fromPure, instHMulKetBra, Ket.dag,
+    simp only [coherentStateDensityOp, DensityOp.fromPure, Ket.dag,
       bra_mul_ket_eq, dotProduct, Matrix.mulVec, Pi.star_apply]
     -- Unfold of wrapper and factor sums
     change ∑ x, star ((coherentStateKet g n).vec x) *
@@ -502,14 +502,11 @@ lemma haar_entry_moment_pow (d n : ℕ) [NeZero d] [NeZero n] :
     { toFun := fun M => M (0 : Fin (d ^ n)) (0 : Fin (d ^ n))
       map_add' := fun _ _ => rfl
       map_smul' := fun _ _ => rfl }
-  have hL : ∀ M : Op (d ^ n), L M = M 0 0 := fun _ => rfl
   -- The integral of entries = entry of integral (via CLM.integral_comp_comm)
   have h_interchange :
       ∫ g, (coherentStateDensityOp g n).toOp 0 0 ∂haarProbUnitary d =
       (∫ g, (coherentStateDensityOp g n).toOp ∂haarProbUnitary d) 0 0 := by
-    have := L.integral_comp_comm h_int
-    simp only [hL] at this
-    exact this
+    exact L.integral_comp_comm h_int
   rw [h_interchange]
   -- Step 3: Apply Schur proportionality
   rw [coherent_integral_eq_inv_dim_smul_symProj_schur d n]

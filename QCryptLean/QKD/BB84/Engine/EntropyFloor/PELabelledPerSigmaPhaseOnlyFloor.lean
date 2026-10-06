@@ -5,17 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPerSigmaFloor
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.PhaseOnlyPivot
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
-open InfoTheory.SmoothMinEntropy
-open InfoTheory.SmoothMinEntropy.SymmetricAEP
-open InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The component AEP floor at the phase-only pivot
 
@@ -30,6 +19,17 @@ The window `δ` controls acceptance, and `dev` controls the soundness edge `Q + 
 References: Renner 2005, `cor:Hmincondrepclass`; Nahar et al. 2024, arXiv:2403.11851,
 Appendix B, `eq:boundingsmoothedmin` and `lemma:infsmoothedmin`.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
+open InfoTheory.SmoothMinEntropy
+open InfoTheory.SmoothMinEntropy.SymmetricAEP
+open InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-- The labelled Alice-key component floor against its own quantum marginal.
 At the soundness edge `Q + δ + dev ≤ 1/2`, the floor is the phase-only entropy rate minus the

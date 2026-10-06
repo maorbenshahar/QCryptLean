@@ -1,12 +1,6 @@
 import QCryptLean.Math.CodingTheory.CSS.ErrorModel
 import QCryptLean.Quantum.TensorProducts.PSDOrder
 
-open Quantum.Operators Quantum.TensorProducts Math.CodingTheory
-
-noncomputable section
-
-namespace Math.CodingTheory.CSS
-
 /-!
 # CSS Code Structure — syndrome decoding, error correction, minimum weight representatives
 
@@ -23,6 +17,12 @@ coset representatives, minimum weight decoding, and the main error correction th
 - `CSSCode.corrects_errors`: CSS codes correct t errors when 2t+1 ≤ distance
 - `PauliError.equiv_act_same`: equivalent errors act identically on code space
 -/
+
+open Quantum.Operators Quantum.TensorProducts Math.CodingTheory
+
+noncomputable section
+
+namespace Math.CodingTheory.CSS
 
 /-- CSS code constructed from C₁ ⊇ C₂ -/
 structure CSSCode (n : ℕ) where

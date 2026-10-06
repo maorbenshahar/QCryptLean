@@ -147,8 +147,7 @@ theorem halfSplit_operationallyEquivalent (I : Instrument A B Outcome) :
   apply LinearMap.ext
   intro ρ
   simp only [Instrument.operation, LinearMap.sum_apply, halfSplit, matrixConjLinear,
-    LinearMap.coe_mk, AddHom.coe_mk, Fintype.sum_prod_type, Finset.sum_const, Finset.card_univ,
-    Fintype.card_bool]
+    LinearMap.coe_mk, AddHom.coe_mk]
   change (∑ x, I.kraus o x * ρ * (I.kraus o x)ᴴ) =
     ∑ x : I.krausIndex o × Bool,
       ((((Real.sqrt 2)⁻¹ : ℝ) : ℂ) • I.kraus o x.1) * ρ *

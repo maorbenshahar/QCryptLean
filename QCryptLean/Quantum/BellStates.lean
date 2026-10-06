@@ -602,7 +602,7 @@ theorem bellState00_density_is_pure : bellState00_density.IsPure := by
   simp only [Matrix.mul_apply, ket_mul_bra_apply, Ket.dag, starRingEnd_apply]
   have h_inner : ∑ k : Fin 4, star (bellState00.vec k) * bellState00.vec k = 1 := by
     have h := bellState00_normalized
-    simp only [instHMulBraKet, Ket.dag, starRingEnd_apply] at h
+    simp only [Ket.dag, starRingEnd_apply] at h
     exact h
   calc ∑ k, bellState00.vec i * star (bellState00.vec k) *
            (bellState00.vec k * star (bellState00.vec j))

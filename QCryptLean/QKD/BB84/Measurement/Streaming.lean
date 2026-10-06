@@ -333,12 +333,14 @@ theorem weightedStreamRoundProgram_denote_eq_online
   rfl
 
 /-- Nonzero input dimension derived from the explicit inhabited stream multipartite system. -/
+@[implicit_reducible]
 def streamRoundInputCardNeZero (F : Type)
     [Nonempty F] [Fintype F] [DecidableEq F] (n : ℕ) :
     NeZero (Fintype.card (weightedStreamSystem F (n + 1)).total) :=
   ⟨Fintype.card_ne_zero⟩
 
 /-- Nonzero output dimension derived from the explicit inhabited next-round leaf. -/
+@[implicit_reducible]
 def streamRoundOutputCardNeZero (F : Type)
     [Nonempty F] [Fintype F] [DecidableEq F] (n : ℕ) :
     NeZero (Fintype.card

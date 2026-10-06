@@ -3,9 +3,6 @@ import QCryptLean.Quantum.Operators.MatrixIntegral
 import QCryptLean.Quantum.Metrics.TraceNormIntegral
 import Mathlib.Analysis.Matrix.Normed
 
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
 /-!
 # CKR Mixed Paired References — reindexed Haar integrals and tensor-power transport
 
@@ -25,6 +22,9 @@ to transfer pure paired collective bounds to `pairedDeFinettiState`.
 - `densityOp_reindex_integralTensorPower_toOp`: reindexing commutes with tensor-power integration
 - `mapTensorId_reindex_integral_commute`: `mapTensorId` commutes with the reindexed integral
 -/
+
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
 
 open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Metrics Quantum.Channels
 open Math.RepresentationTheory Quantum.Symmetry InfoTheory.DeFinetti

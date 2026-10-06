@@ -3,18 +3,6 @@ import QCryptLean.QKD.BB84.Engine.EntropyFloor.AnnouncePEFloorChain
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.IsometricInvariance
 import QCryptLean.QKD.BB84.Engine.Budgets
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
-open InfoTheory.SmoothMinEntropy
-open InfoTheory.QuantumLHL
-open Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # Tracing out the symmetric purifier register recovers the sifted de Finetti reference
 
@@ -37,6 +25,18 @@ channel, the sift conjugation, per-outcome submatrix extraction), applied with t
 References: Nahar, Tupkary, Zhao, Lütkenhaus, Tan 2024 (`arXiv:2403.11851`) App. B,
 `\label{eq:splittingoffV}` (main.tex:1393–:1396).
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
+open InfoTheory.SmoothMinEntropy
+open InfoTheory.QuantumLHL
+open Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## Register plumbing for the left-oriented announcement -/
 

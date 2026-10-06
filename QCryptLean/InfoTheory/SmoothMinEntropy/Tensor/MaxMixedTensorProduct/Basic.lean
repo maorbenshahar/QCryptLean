@@ -79,20 +79,13 @@ private lemma tensorFinProd_maxMixed_aux {d : ℕ} [NeZero d] (n : ℕ) :
       DensityOp.toSubDensityOp (DensityOp.maxMixed (d ^ n)) := by
   induction n with
   | zero =>
+      simp only [SubDensityOp.tensorFinProd, Nat.pow_zero]
       refine SubDensityOp.ext ?_
+      change (!![(1 : ℂ)] : Op 1) = (1 / ((1 : ℕ) : ℂ)) • (1 : Op 1)
       ext i j
-      have hij : i = j := by
-        apply Fin.ext
-        have hi := i.isLt
-        have hj := j.isLt
-        simp only [pow_zero] at hi hj
-        omega
-      subst hij
-      simp [SubDensityOp.tensorFinProd, SubDensityOp.castDim, SubDensityOp.trivialOne,
-        DensityOp.toSubDensityOp, DensityOp.maxMixed, DensityOp.trivial, Matrix.one_apply_eq]
-      change Fin 1 at i
-      change (1 : ℂ) = ((1 : ℂ) • (1 : Quantum.Operators.Op 1)) i i
-      simp [Matrix.one_apply_eq]
+      fin_cases i
+      fin_cases j
+      simp
   | succ k ih =>
       haveI : NeZero (d ^ k) := NeZero.pow
       haveI : NeZero (d * d ^ k) :=

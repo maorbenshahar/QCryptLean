@@ -515,7 +515,7 @@ theorem comparisonPreInstrument_channel_apply
   cases c <;> cases c'
   all_goals simp only [comparisonPreEntry]
   case inl.inl S S' =>
-    simp only [Prod.mk.injEq, reduceCtorEq, and_false, and_self, ↓reduceIte,
+    simp only [reduceCtorEq, and_false, and_self, ↓reduceIte,
       Finset.sum_const_zero, add_zero]
     by_cases hSS : S = S'
     · subst S'
@@ -539,7 +539,7 @@ theorem comparisonPreInstrument_channel_apply
   case inr.inl => simp
   case inr.inr j j' =>
     simp only [reduceCtorEq, and_self, ↓reduceIte, Finset.sum_const_zero,
-      Prod.mk.injEq, Finset.sum_ite_irrel, zero_add]
+      Finset.sum_ite_irrel, zero_add]
     by_cases hcond :
         j.val = 0 ∧ j'.val = 0 ∧
           x = comparisonZeroNativeInput (nK + mZ + mX) ∧

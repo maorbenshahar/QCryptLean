@@ -6,8 +6,6 @@ import QCryptLean.Math.Concentration.BinomialPassSum
 import QCryptLean.Math.Concentration.BernoulliKL
 import QCryptLean.Math.Concentration.BinomialKLChernoff
 
-set_option linter.style.longLine false
-
 /-!
 # Split-test bad-branch concentration: the per-round sift Born weight and accept mass
 
@@ -34,7 +32,8 @@ accept-mass concentration bound at the subsample rate `exp(−2·m·δ²)`.
 Each arm drops the other conjunct of the two-basis test
 (`Math.Concentration.SelectedBinomialPassSum.passSum_mono_of_imp`) and then marginalises the
 unselected rounds
-(`Math.Concentration.SelectedBinomialPassSum.selectedFlagOutcomePassSum_eq_binomialPassSum_perRound`).
+(`Math.Concentration.SelectedBinomialPassSum.selectedFlagOutcomePassSum_eq_binomialPassSum_perRound`
+).
 The per-round form of the marginalisation is needed because on the Z arm the unselected rounds are
 of two kinds — X-PE rounds carrying the `H⊗H`-rotated Born vector and key rounds carrying the
 unrotated one — so a single unselected weight vector cannot express them.
@@ -43,6 +42,8 @@ References: Renner (2005), `arXiv:quant-ph/0512258v2`, §6.5; Nahar, Tupkary, Zh
 (2024), `arXiv:2403.11851`, Lemma 9 Eq.44; Shor–Preskill (2000) for the `Z ↔ X` duality carried by
 `bb84_xBasisConjugate_bitRate_eq_phaseRate`.
 -/
+
+set_option linter.style.longLine false
 
 open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
 open Quantum.Basis.BellStates InfoTheory.DeFinetti MeasureTheory

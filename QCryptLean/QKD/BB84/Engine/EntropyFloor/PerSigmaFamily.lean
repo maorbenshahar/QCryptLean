@@ -1,24 +1,5 @@
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AcceptSplit
 
--- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
--- as in `PerSigmaFamily.lean`/`AcceptSplit.lean`, this uses the Frobenius norm on matrices.
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy
-open InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
-private local instance {n : ℕ} : ContinuousENorm (Op n) :=
-  SeminormedAddGroup.toContinuousENorm
-
 /-!
 # The genuine-LOCC de Finetti mixture and its two analytic data
 
@@ -45,6 +26,25 @@ step `\label{eq:splittingoffV}` (main.tex:1393–:1396), closing at main.tex:141
 (arXiv:quant-ph/0512258v2) §6.5; Christandl–König–Renner 2009 (PRL 102, 020504) main.tex:268–:401
 (\emph{Main Result}: Theorem `\label{thm:main}` :291–:301, Lemma `\label{lem:extractpart}`
 :319–:328). -/
+
+-- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
+-- as in `PerSigmaFamily.lean`/`AcceptSplit.lean`, this uses the Frobenius norm on matrices.
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy
+open InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
+
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
 
 /-! ## 1. The `Eⁿ`-marginal de Finetti reference `bb84EnVRhoEtilde` -/
 

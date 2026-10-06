@@ -187,6 +187,7 @@ theorem boundary_card_ne_zero
   Fintype.card_ne_zero
 
 /-- Internal coordinate evidence for the explicit complete output boundary. -/
+@[implicit_reducible]
 def boundaryCardNeZero
     (N nK mZ mX ℓ ℓEV leakEC : ℕ) :
     NeZero (Fintype.card

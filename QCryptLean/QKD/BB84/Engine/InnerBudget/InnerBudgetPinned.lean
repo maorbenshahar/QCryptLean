@@ -15,7 +15,6 @@ import QCryptLean.Quantum.Metrics.TraceNorm.SubNormalized
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AgreeAxisFloorTransfer
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AgreeBlockLHLBridge
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.SymmetricPurifier
-import QCryptLean.QKD.BB84.Engine.Budgets
 
 /-!
 # CPTP preservation and the error-verification correctness leg for the announced-PE BB84 channels

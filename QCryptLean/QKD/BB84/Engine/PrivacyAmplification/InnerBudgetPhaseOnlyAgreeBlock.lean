@@ -5,17 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.InnerBudgetAgreeBlock
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPhaseOnlyFloorChain
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # Basic phase-only agree-block secrecy
 
@@ -26,6 +15,17 @@ The phase-only bad branch has mass at most `E`. The own-marginal mixture floor u
 Reference: Nahar et al. 2024, arXiv:2403.11851, Appendix B, `eq:boundingsmoothedmin`,
 `eq:splittingoffV` and `eq:condLHL`.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## 1. The PE-label axis floor at the phase-only pivot -/
 

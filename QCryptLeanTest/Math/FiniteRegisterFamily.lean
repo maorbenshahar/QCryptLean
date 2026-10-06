@@ -136,6 +136,7 @@ trace.Meta.synthInstance true` command. -/
 example : FiniteRegisterFamily DemoParty := ⟨hetRegDirect⟩
 
 /-- Explicit finiteness instances for the direct family. -/
+@[implicit_reducible]
 def hetFinDirect : ∀ i, Fintype (hetRegDirect i) := fun i =>
   match i with
   | .alice => inferInstance

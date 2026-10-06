@@ -5,22 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.KLAcceptTailPhaseOnly
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPhaseOnlyFloorChain
 
--- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
--- this uses the Frobenius norm.
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The accept tail at the realised X-subsample, on the phase-only pivot
 
@@ -74,6 +58,22 @@ References: Nahar, Tupkary, Zhao, Lütkenhaus, Tan 2024 (`arXiv:2403.11851`) Lem
 Renner 2005 (`arXiv:quant-ph/0512258v2`) §5, §6.5; Christandl–König–Renner 2009 (`arXiv:0809.3019`)
 `main.tex:268`–`:401`.
 -/
+
+-- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
+-- this uses the Frobenius norm.
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## 1. The tail at the realised X-subsample -/
 

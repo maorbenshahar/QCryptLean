@@ -71,8 +71,7 @@ theorem liftAt_alice_operation_apply (R : MultipartiteSystem Party)
       I.operation o (rho.submatrix (fun x => R.pairEquiv.symm (x, b))
         (fun x => R.pairEquiv.symm (x, b'))) a a' := by
   rw [liftAt_operation_apply]
-  simp only [MultipartiteSystem.splitAtSet_apply, MultipartiteSystem.pairEquiv_symm_apply_alice,
-    cast_eq]
+  simp only [MultipartiteSystem.splitAtSet_apply, MultipartiteSystem.pairEquiv_symm_apply_alice]
   apply congrArg (fun sigma => I.operation o sigma a a')
   congr 1 <;> funext x j <;> cases j <;>
     simp [MultipartiteSystem.splitAt, MultipartiteSystem.pairEquiv] <;> rfl
@@ -87,8 +86,7 @@ theorem liftAt_bob_operation_apply (R : MultipartiteSystem Party)
       I.operation o (rho.submatrix (fun x => R.pairEquiv.symm (a, x))
         (fun x => R.pairEquiv.symm (a', x))) b b' := by
   rw [liftAt_operation_apply]
-  simp only [MultipartiteSystem.splitAtSet_apply, MultipartiteSystem.pairEquiv_symm_apply_bob,
-    cast_eq]
+  simp only [MultipartiteSystem.splitAtSet_apply, MultipartiteSystem.pairEquiv_symm_apply_bob]
   apply congrArg (fun sigma => I.operation o sigma b b')
   congr 1 <;> funext x j <;> cases j <;>
     simp [MultipartiteSystem.splitAt, MultipartiteSystem.pairEquiv] <;> rfl

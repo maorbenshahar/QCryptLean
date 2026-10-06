@@ -147,7 +147,7 @@ theorem basisOrders_relabel {N : ℕ} (τ : Fin N ≃ Fin N) (omega : RawControl
   have hmatched :
       matchedOrder (rawControlRelabel τ omega) = (matchedOrder omega).map τ := by
     simp only [matchedOrder, rawControlRelabel, relabelRaw, relabelOrder,
-      matchedRelabelEquiv, Equiv.trans_apply, Equiv.coe_fn_mk, List.map_ofFn]
+      matchedRelabelEquiv, Equiv.coe_fn_mk, List.map_ofFn]
     apply List.ext_getElem
     · simpa using matched_relabel_card τ omega.a omega.b
     · intro n hn₁ hn₂
@@ -190,7 +190,7 @@ theorem select_relabel {N : ℕ} (τ : Fin N ≃ Fin N) (omega : RawControl N)
     simp only [select, hr, h, dif_pos, Option.map_some, Option.some.injEq]
     ext k
     simp only [selectedEmbedding, relabelEmbedding, Function.Embedding.coeFn_mk,
-      Function.Embedding.coe_trans, Function.comp_apply, Equiv.toEmbedding_apply]
+      Function.Embedding.coe_trans, Function.comp_apply]
     generalize (packedRoleEquiv nK mZ mX).symm k = role
     rcases role with (⟨key | z⟩ | x) <;>
       simp [selectedRoleValue, hzPrefix, hxPrefix]

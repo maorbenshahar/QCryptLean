@@ -4,22 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPerSigmaFamily
 
--- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
--- as in `AcceptSplit.lean` / `PerSigmaFamily.lean`, this uses the Frobenius norm.
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy
-open InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The phase-only pivot set and the `hmXZ`-free accept split
 
@@ -78,6 +62,22 @@ the window `δ`.  The `2δ` forms in the Main results list are the case `dev = �
 half-width charged twice, once as window and once as deviation).  Reference: Nahar et al. 2024
 (arXiv:2403.11851) Lemma 9 Eq. 44, §V.C.
 -/
+
+-- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
+-- as in `AcceptSplit.lean` / `PerSigmaFamily.lean`, this uses the Frobenius norm.
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy
+open InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## 1. The phase-only pivot set -/
 

@@ -1,12 +1,6 @@
 import QCryptLean.Quantum.Symmetry.BellHaarIntegral
 import QCryptLean.InfoTheory.SmoothMinEntropy.Uncertainty.PureCoreUncertainty
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-
 /-!
 # Bell de Finetti inner-budget core — purity of the Bell-doubling embedding
 
@@ -16,6 +10,12 @@ and `BellHaarIntegral.lean`): the Bell-doubling embedding `bellWembed` preserves
 ## Main results
 - `bellWembed_isPure`: `Wembed φ` is pure whenever `φ` is pure.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
 
 noncomputable section
 

@@ -4,14 +4,6 @@ import Mathlib.Data.Fin.Basic
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Analysis.Matrix.Order  -- For PosSemidef.kronecker
 
-namespace Quantum.TensorProducts
-
-open Quantum.Operators
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder TensorProduct Kronecker
-open Matrix
-
-noncomputable section
-
 /-!
 # Type-Safe Quantum Mechanics - Tensor Products (HMul Foundation)
 
@@ -29,6 +21,14 @@ built on the HMul-primary foundation from `BraKet/Basic.lean`.
 
 The calculus properties (linearity, distributivity) are in `PartialTrace.lean`.
 -/
+
+namespace Quantum.TensorProducts
+
+open Quantum.Operators
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder TensorProduct Kronecker
+open Matrix
+
+noncomputable section
 
 /-- Complex conjugation distributes over an `if` expression whose false branch
 is zero. -/

@@ -211,11 +211,9 @@ theorem bb84SiftedPEAnnounceEveVisible_baseChannel_real_sub_ideal_eq_passBranch_
     bb84SiftedPEAnnounceEveVisibleRealPassChannel,
     bb84SiftedPEAnnounceEveVisibleIdealPassChannel,
     bb84.retainedSiftedPEAnnouncePrivacyAmplifyAndAbortLinearMap,
-    bb84.retainedSiftedPEAnnounceIdealKeyAndAbortChannel,
-    LinearMap.comp_assoc]
+    bb84.retainedSiftedPEAnnounceIdealKeyAndAbortChannel]
   ext M i j
-  simp only [LinearMap.comp_apply, LinearMap.sub_apply, LinearMap.add_apply,
-    Matrix.sub_apply, Matrix.add_apply]
+  simp only [LinearMap.comp_apply, LinearMap.sub_apply, Matrix.sub_apply]
   change ((_ : ℂ) + _) - (_ + _) = _ - _
   abel
 

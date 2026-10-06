@@ -665,8 +665,7 @@ lemma isFeasible_tensorMaxMixed_of_isFeasible
         (DensityOp.toSubDensityOp (DensityOp.maxMixed dR)).toPosSemidefOp
     simpa [mR, toSubDensityOp_maxMixed_toOp_eq] using h
   have hmR_herm : mR.IsHermitian := by
-    have h := (DensityOp.toSubDensityOp (DensityOp.maxMixed dR)).isHermitian
-    simpa [mR, toSubDensityOp_maxMixed_toOp_eq] using h
+    simp [mR]
   have ht_tensor :
       opLe ((ρE.stateMap x).toOp ⊗ mR)
         (((Complex.ofReal t) • σE.toOp) ⊗ mR) := by

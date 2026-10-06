@@ -138,7 +138,7 @@ theorem bb84SymChannels_sub_eq_passBlocks
   unfold bb84SymRealChannel bb84SymIdealChannel bb84SymPassBlockDelta
   rw [← smul_sub, ← Finset.sum_sub_distrib, ← smul_add, ← Finset.sum_add_distrib]
   refine congrArg _ (Finset.sum_congr rfl fun π _ => ?_)
-  simp only [← LinearMap.comp_sub, ← LinearMap.sub_comp, ← LinearMap.comp_add,
+  simp only [← LinearMap.comp_sub, ← LinearMap.comp_add,
     ← LinearMap.add_comp]
   rw [← hsplit]
   rfl

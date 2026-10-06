@@ -2,8 +2,6 @@ import QCryptLean.InfoTheory.QuantumLHL.FlagPackCoarsening
 import QCryptLean.InfoTheory.SmoothMinEntropy.DataProcessing.DimensionPenalty
 import QCryptLean.InfoTheory.SmoothMinEntropy.Tensor.TensorProduct
 
-set_option linter.unusedFintypeInType false
-
 /-!
 # Entropy of flagged blocks
 
@@ -12,6 +10,8 @@ conditional entropy floor, and nearby feasible block witnesses yield a packed sm
 floor. The real exponential sums are formed before conversion to `ENNReal`, so negative component
 rates retain their meaning.
 -/
+
+set_option linter.unusedFintypeInType false
 
 open Quantum.Operators Quantum.Metrics Matrix
 open InfoTheory.QuantumLHL

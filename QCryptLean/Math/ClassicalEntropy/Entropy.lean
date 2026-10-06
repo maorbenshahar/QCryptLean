@@ -538,7 +538,7 @@ theorem binaryEntropyBits_strictMonoOn :
     This is the non-strict form of `binaryEntropy_strictMonoOn`, used to convert
     an upper bound on the true error rate into a lower bound on the Shor–Preskill
     per-round key rate. -/
-theorem binaryEntropy_le_of_le_of_le_half {p q : ℝ} (hp : 0 ≤ p) (hpq : p ≤ q) (hq : q ≤ 1/2) :
+theorem binaryEntropy_le_of_le_of_le_half {p q : ℝ} (hp : 0 ≤ p) (hpq : p ≤ q) (hq : q ≤ 1 / 2) :
     binaryEntropy p ≤ binaryEntropy q := by
   rcases eq_or_lt_of_le hpq with rfl | hlt
   · exact le_refl _

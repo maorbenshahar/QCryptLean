@@ -26,7 +26,7 @@ theorem consTranscriptEquivFin_val
     (x : Outcome) (t : Transcript T) :
     ((consTranscriptEquivFin Outcome e) (x, t)).val =
       (Fintype.equivFin Outcome x).val + Fintype.card Outcome * (e t).val := by
-  simp only [consTranscriptEquivFin, Equiv.trans_apply, Equiv.prodCongr_apply]
+  simp only [consTranscriptEquivFin]
   rfl
 
 /-- The empty transcript has numeral coordinate zero. -/

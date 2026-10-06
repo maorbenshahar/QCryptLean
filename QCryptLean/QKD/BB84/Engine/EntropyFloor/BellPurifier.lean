@@ -5,12 +5,6 @@ import QCryptLean.Quantum.Symmetry.Covariance
 import QCryptLean.Quantum.Channels.CPTP.CKRBound.CovarianceBundles
 import QCryptLean.Quantum.Channels.CPTP.CKRBound.Reference.TensorTraceNormInvariance
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-
 /-!
 # Bell de Finetti inner-budget core — the Bell symmetric purifier `V_Bell`
 
@@ -19,6 +13,12 @@ and `BellFloorChain.lean`): the Bell symmetric-purifier datum `BB84BellSymmetric
 its `Eⁿ⊗V` purification, and the B19 purification-register-invariance identity for the CKR tensor
 trace norm.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
 
 noncomputable section
 

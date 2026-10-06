@@ -7,16 +7,6 @@ import QCryptLean.InfoTheory.SmoothMinEntropy.Announcement.BlockRefRegularizatio
 import QCryptLean.QKD.BB84.Engine.InnerBudget.InnerBudgetPinned
 import QCryptLean.Quantum.Channels.CPTP.DiamondNormAncilla
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The tightened collective inner budget at an abstract accept tail
 
@@ -34,6 +24,16 @@ Reference: Nahar, Tupkary, Zhao, Lütkenhaus, Tan 2024 (`arXiv:2403.11851`) `\la
 `main.tex:976`), App. B; Renner 2005 (`arXiv:quant-ph/0512258v2`) `\label{thm:Hmincondrep}`
 (`main.tex:4561`), §5, §6.5; Christandl–König–Renner 2009 (`arXiv:0809.3019`).
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-- **The tightened collective inner budget at an abstract accept-tail scale `E`.**
 

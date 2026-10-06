@@ -125,7 +125,7 @@ theorem retainedAnalysisProgram_denote_apply
       simp only [bobPrivateMeasurement, alicePrivateMeasurement,
         PrivateAction.computationalMeasurement_out]
     unfold retainedAnalysisProgram retainedAnalysisPrefix permutationStage
-    simp only [AnnouncedAction.then, Program.graft_announced]
+    simp only [AnnouncedAction.then]
     change Program.announced _ _ = Program.announced _ _
     congr 1
     funext pi

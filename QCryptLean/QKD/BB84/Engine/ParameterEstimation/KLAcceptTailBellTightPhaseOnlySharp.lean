@@ -7,18 +7,6 @@ import QCryptLean.QKD.BB84.Engine.ParameterEstimation.BellAcceptTailCapPhaseOnly
 import QCryptLean.QKD.BB84.Engine.PerRound.BellPerSigmaFloorSecondOrderSharpPhaseOnly
 import QCryptLean.QKD.BB84.Engine.InnerBudget.PassBlocks
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open InfoTheory.SmoothMinEntropy.SymmetricAEP
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # Extended Bell entropy floors and privacy amplification
 
@@ -35,6 +23,18 @@ Free Rényi offsets require `0 < β < 1` and positive smoothing. The fixed optim
 References: Nahar et al. 2024, arXiv:2403.11851, Appendix B, `eq:boundingsmoothedmin`,
 `eq:splittingoffV` and `eq:condLHL`; Dupuis–Fawzi 2018, arXiv:1805.11652, Corollary IV.2.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open InfoTheory.SmoothMinEntropy.SymmetricAEP
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## 0. Register-cast plumbing -/
 

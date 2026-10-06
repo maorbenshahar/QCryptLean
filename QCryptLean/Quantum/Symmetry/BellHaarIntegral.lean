@@ -1,12 +1,5 @@
 import QCryptLean.Quantum.Symmetry.BellDickeCore
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Engine
-
 /-!
 # Bell de Finetti — the Bell joint de Finetti Haar-integral representation
 
@@ -15,6 +8,13 @@ Part of the Bell reference/floor construction (with `BellPairedDeFinetti.lean`,
 Protocol-independent (no BB84 or QKD-protocol object beyond the pure scalar dimension
 `bb84PolyDimTight`).
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Engine
 
 noncomputable section
 

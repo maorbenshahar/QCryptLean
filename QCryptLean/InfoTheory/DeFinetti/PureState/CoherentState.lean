@@ -274,7 +274,7 @@ lemma coherentSingleCopy_measurable {d : ℕ} [NeZero d] :
   have hcont : Continuous (fun g : unitaryGroup (Fin d) ℂ => (coherentSingleCopy g).toOp) := by
     apply continuous_matrix
     intro i j
-    simp only [coherentSingleCopy, DensityOp.fromPure, instHMulKetBra, Ket.dag]
+    simp only [coherentSingleCopy, DensityOp.fromPure, Ket.dag]
     apply Continuous.mul
     · exact continuous_subtype_val.matrix_elem i 0
     · apply Continuous.comp continuous_star
@@ -305,7 +305,7 @@ lemma coherentState_perm_invariant {d n : ℕ} [NeZero d] [NeZero n]
     congr 1
     -- Show v.dag * U† = v.dag (dual of hUv)
     ext i
-    simp only [instHMulBraOp, Ket.dag, Matrix.conjTranspose_apply]
+    simp only [Ket.dag]
     change ∑ x, (starRingEnd ℂ) (v.vec x) * (starRingEnd ℂ) (U i x) = (starRingEnd ℂ) (v.vec i)
     rw [show ∑ x, (starRingEnd ℂ) (v.vec x) * (starRingEnd ℂ) (U i x) =
         (starRingEnd ℂ) (∑ x, U i x * v.vec x) from by

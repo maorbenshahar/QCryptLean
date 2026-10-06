@@ -3,25 +3,6 @@ import QCryptLean.QKD.BB84.Engine.InnerBudget.SiftedPassSupport
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.BadBranchConcentration
 import QCryptLean.Math.Concentration.DisjointSelectedBinomialPassSum
 
--- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
--- as in `PerSigmaFamily.lean`/`FinitePostFilterFloor.lean`, this uses the Frobenius norm.
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy
-open InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
-open QKD.BB84.Model
-
-noncomputable section
-
-private local instance {n : ℕ} : ContinuousENorm (Op n) :=
-  SeminormedAddGroup.toContinuousENorm
-
-namespace QKD.BB84.Engine
-
 /-!
 # The genuine-LOCC pure-paired-Haar per-σ family and its accept mass
 
@@ -56,6 +37,25 @@ arXiv:2403.11851, `main.tex:909` (general test-set size `m`), `:913` (`n_key = n
 `:970` in `\label{sec:plots}` (`m = 0.05n`); Renner 2005 (arXiv:quant-ph/0512258v2) §6.5;
 Christandl–König–Renner 2009 (PRL 102, 020504) main.tex:268–:401 (\emph{Main Result}: Theorem
 `\label{thm:main}` :291–:301, Lemma `\label{lem:extractpart}` :319–:328). -/
+
+-- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
+-- as in `PerSigmaFamily.lean`/`FinitePostFilterFloor.lean`, this uses the Frobenius norm.
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy
+open InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
+open QKD.BB84.Model
+
+noncomputable section
+
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
+namespace QKD.BB84.Engine
 
 /-! ## 1. The pure-paired-Haar per-σ family -/
 

@@ -793,6 +793,7 @@ def reconstructionInputEquiv
   (Equiv.prodCongr (Equiv.refl _) (Fintype.equivFin _)).trans finProdFinEquiv
 
 /-- The reconstruction input coordinate dimension is nonzero. -/
+@[implicit_reducible]
 def reconstructionInputDimNeZero
     (N nK mZ mX ell ellEV leakEC : ℕ) :
     NeZero (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC *

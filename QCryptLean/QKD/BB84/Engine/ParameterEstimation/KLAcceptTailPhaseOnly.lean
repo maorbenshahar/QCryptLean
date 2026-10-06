@@ -7,25 +7,6 @@ import QCryptLean.QKD.BB84.Engine.InnerBudget.InnerBudgetPinned
 import QCryptLean.Quantum.Channels.CPTP.DiamondNormAncilla
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.PhaseOnlyPivot
 
--- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
--- as in `PhaseOnlyPivot.lean`, this uses the Frobenius norm.
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
-private noncomputable local instance (d : ℕ) : ContinuousENorm (Quantum.Operators.Op d) :=
-  SeminormedAddGroup.toContinuousENorm
-
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # Exact-KL accept splits at the phase-only pivot
 
@@ -44,6 +25,25 @@ Adjoining the announced-PE label preserves these bounds because its kernel has u
 References: Nahar, Tupkary, Zhao, Lütkenhaus, Tan 2024 (arXiv:2403.11851), Lemma 9 Eq. 44,
 §V.C and Appendix B; Renner 2005 (arXiv:quant-ph/0512258v2), §5 and §6.5.
 -/
+
+-- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
+-- as in `PhaseOnlyPivot.lean`, this uses the Frobenius norm.
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
+
+private noncomputable local instance (d : ℕ) : ContinuousENorm (Quantum.Operators.Op d) :=
+  SeminormedAddGroup.toContinuousENorm
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## 1. The exact-KL source cap at a free phase-error deviation -/
 

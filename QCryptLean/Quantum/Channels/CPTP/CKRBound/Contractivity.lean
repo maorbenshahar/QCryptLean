@@ -231,7 +231,7 @@ lemma mapTensorId_isCompletelyPositive {n m k : ℕ} [NeZero n] [NeZero m] [NeZe
   conv_lhs => arg 2; ext ℓ; rw [← Equiv.sum_comp finProdFinEquiv]
   simp only [Fintype.sum_prod_type]
   simp_rw [finProdFinEquiv_apply_divNat, finProdFinEquiv_apply_modNat]
-  simp only [mul_ite, mul_one, mul_zero, ite_mul, zero_mul]
+  simp only [mul_one, mul_zero, ite_mul, zero_mul]
   simp_rw [Fintype.sum_ite_eq]
   conv_lhs =>
     arg 2; ext ℓ; arg 2; ext j; arg 1

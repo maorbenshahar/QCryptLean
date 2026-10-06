@@ -234,11 +234,11 @@ theorem Op.tensorProdFin_eq_tensorFamilyPi (k : ℕ) (dim : Fin k → ℕ) (f : 
       arg 2
       arg 2
       tactic => exact tensorFamilyPi_rev_castSucc f
-    simp only [Op.tensor_castDim_left, Op.tensor_castDim_right, Op.castDim_trans]
+    simp only [Op.tensor_castDim_right, Op.castDim_trans]
     conv_rhs =>
       arg 2
       tactic => exact Op.tensor_castDim_left _ _ _
-    simp only [Op.tensor_castDim_right, Op.castDim_trans]
+    simp only [Op.castDim_trans]
     conv_rhs =>
       arg 2
       tactic => exact Op.tensor_castDim_right _ _ _

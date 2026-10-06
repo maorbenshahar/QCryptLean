@@ -9,6 +9,10 @@ import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPerSigmaFloor
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AnyRefAgreeBlock
 import QCryptLean.QKD.BB84.Engine.InnerBudget.InnerBudgetCorrectness
 
+/-!
+## The general-`m` labelled Bell mixture as the Bell Haar block integral
+-/
+
 open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
 open Math.RepresentationTheory
 open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
@@ -20,10 +24,6 @@ open QKD.BB84.Model
 noncomputable section
 
 namespace QKD.BB84.Engine
-
-/-!
-## The general-`m` labelled Bell mixture as the Bell Haar block integral
--/
 
 /-- **The general-`m` PE-labelled Bell mixture, as a Haar block integral.**
 

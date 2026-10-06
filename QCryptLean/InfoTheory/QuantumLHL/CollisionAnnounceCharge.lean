@@ -347,7 +347,7 @@ Elementary: no external reference is needed or claimed. The proof is the paralle
 (`Matrix.trace_conjTranspose`). -/
 theorem weightedFrobeniusSq_add_of_weightedOrthogonal {d : ℕ} [NeZero d]
     (σ : Op d) (hσ : σ.PosDef) (A B : Op d) (hA : Aᴴ = A)
-    (horth : (A * σ ^ (-1/2 : ℝ) * B * σ ^ (-1/2 : ℝ)).trace = 0) :
+    (horth : (A * σ ^ (-1 / 2 : ℝ) * B * σ ^ (-1 / 2 : ℝ)).trace = 0) :
     weightedFrobeniusSq σ (A + B) = weightedFrobeniusSq σ A + weightedFrobeniusSq σ B := by
   simp only [weightedFrobeniusSq]
   set F : Op d := σ ^ (-1/4 : ℝ) with hF

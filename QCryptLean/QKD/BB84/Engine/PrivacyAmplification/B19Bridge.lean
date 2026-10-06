@@ -4,6 +4,9 @@ import QCryptLean.QKD.BB84.Engine.PerRound.DevetakWinter
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.IsometricInvarianceReferee
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.AnnouncePEFloorChain
 
+/-! The Nahar et al. B19 bridge infrastructure: `ckrTensorTraceNorm` purification-register
+    invariance and the `bb84_ckrTensorTraceNorm_EnV_eq_canonical` factorization. -/
+
 -- The paired-Haar per-σ family wiring (below) states Bochner integrability of `Op`-valued block
 -- maps; as in `FinitePostFilterFloor.lean`/`Reference/Mixed.lean`, this uses the Frobenius norm on
 -- matrices.
@@ -23,9 +26,6 @@ open scoped Matrix BigOperators ComplexConjugate ComplexOrder Kronecker
 noncomputable section
 
 namespace QKD.BB84.Engine
-
-/-! The Nahar et al. B19 bridge infrastructure: `ckrTensorTraceNorm` purification-register
-    invariance and the `bb84_ckrTensorTraceNorm_EnV_eq_canonical` factorization. -/
 
 /-! ### B19 bridge infrastructure — `ckrTensorTraceNorm` purification-register invariance
 

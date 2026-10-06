@@ -89,7 +89,7 @@ theorem testPrivateAction_entry
   have hlocal := testLiftedOperation_eq_local (Instrument.computationalMeasurement (Fin 2))
     o rho (outputAt a s) (outputAt a' s')
   refine hlocal.trans ?_
-  simp [Instrument.computationalMeasurement, outputAt, inputAt]
+  simp only [Instrument.computationalMeasurement, outputAt, inputAt, Equiv.apply_symm_apply]
   exact Instrument.nondemolitionReadout_operation_apply id o _ a a'
 
 /-- Summing the private outcomes dephases only Alice's coordinate. -/

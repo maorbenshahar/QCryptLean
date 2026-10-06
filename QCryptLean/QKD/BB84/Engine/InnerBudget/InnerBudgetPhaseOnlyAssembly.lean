@@ -7,17 +7,6 @@ import QCryptLean.QKD.BB84.Engine.InnerBudget.InnerBudgetCorrectness
 import QCryptLean.QKD.BB84.Engine.InnerBudget.PassBlocks
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.InnerBudgetPhaseOnlyAgreeBlock
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The basic agree-block budget at the phase-only pivot
 
@@ -28,6 +17,17 @@ Verification is charged separately by the engine's exact agree/differ decomposit
 References: Nahar et al. 2024, arXiv:2403.11851, Appendix B, `eq:condLHL`;
 Christandl–König–Renner 2009, arXiv:0809.3019, Theorem 1.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-- The agree-block CKR secrecy budget at the phase-only pivot.
 The labelled extended entropy floor supplies the leftover-hashing bound on a symmetric purifier.

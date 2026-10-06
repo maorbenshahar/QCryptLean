@@ -1,13 +1,6 @@
 import QCryptLean.Quantum.Symmetry.BellPairedDeFinetti
 import QCryptLean.InfoTheory.DeFinetti.Theorem.Interleaving
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Engine
-
 /-!
 # Bell de Finetti — the `Wembed`/`f_Bell` W-conjugation Dicke core
 
@@ -24,6 +17,13 @@ QKD-protocol object beyond the pure scalar dimension `bb84PolyDimTight`).
 facts `bellSinglePairRotation_star` / `bellRotation_star` are **public**: any readout of a reference
 built from `bellPairedKraus = √τ_Bell · Q_T` needs the eigen*value* (not just block-diagonality)
 and, because the vec-correspondence produces a transpose, the realness of `R`. -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Engine
 
 noncomputable section
 

@@ -5,17 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.AnnouncePEFloorChainEnV
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPerSigmaPhaseOnlyFloor
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The basic PE-labelled phase-only entropy floor
 
@@ -31,6 +20,17 @@ The announcement costs `leakEC + ℓEV` bits. Adjoining the symmetric purifier c
 Reference: Nahar et al. 2024, arXiv:2403.11851, Appendix B, `eq:boundingsmoothedmin`,
 `eq:splittingoffV`, `lemma:infsmoothedmin`.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## 1. The phase-only accept-split interface -/
 

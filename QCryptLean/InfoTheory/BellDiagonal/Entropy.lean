@@ -150,7 +150,7 @@ theorem bellDephasing_eigenvalues (ρ : DensityOp 4) :
   use U
   have hUUdag_entry : ∀ i j, (U * U†) i j = (states j).dag * (states i) := fun i j => by
     simp only [Matrix.mul_apply, Matrix.conjTranspose_apply]
-    simp only [instHMulBraKet, Ket.dag]
+    simp only [Ket.dag]
     congr 1; ext k
     change
       (Matrix.of fun a b => (states a).vec b) i k *

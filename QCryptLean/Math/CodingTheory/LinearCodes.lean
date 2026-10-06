@@ -22,8 +22,6 @@ Classical linear codes over F₂ with no quantum dependencies.
 
 noncomputable section
 
-instance : Fact (Nat.Prime 2) := Fact.mk (by decide)
-
 namespace Math.CodingTheory
 
 /-!

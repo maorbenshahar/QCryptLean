@@ -11,11 +11,6 @@ import QCryptLean.InfoTheory.DistanceBounds.AcceptSplit
 import QCryptLean.InfoTheory.QuantumLHL.SeedKeyAcceptSplit
 import QCryptLean.InfoTheory.SmoothMinEntropy.Announcement.BlockRefRegularization
 
--- The de Finetti coarsening assembler states Bochner integrability of `Op`-valued block maps; as in
--- `PerSigmaFamily.lean` / `AcceptSplit.lean`, this uses the Frobenius norm on matrices.
-attribute [local instance] Matrix.frobeniusNormedAddCommGroup
-attribute [local instance] Matrix.frobeniusNormedSpace
-
 /-!
 # The Bell de Finetti reference inner budget
 
@@ -70,6 +65,11 @@ References: Nahar, Tupkary, Zhao, Lütkenhaus, Tan 2024 (`arXiv:2403.11851`),
 `main.tex:268`–`:401` (Main Result: the Post-Selection Theorem `\label{thm:main}` :291–:301, the
 substate-extraction Lemma `\label{lem:extractpart}` :319–:328).
 -/
+
+-- The de Finetti coarsening assembler states Bochner integrability of `Op`-valued block maps; as in
+-- `PerSigmaFamily.lean` / `AcceptSplit.lean`, this uses the Frobenius norm on matrices.
+attribute [local instance] Matrix.frobeniusNormedAddCommGroup
+attribute [local instance] Matrix.frobeniusNormedSpace
 
 open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
 open Math.RepresentationTheory

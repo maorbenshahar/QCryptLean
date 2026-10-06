@@ -5,17 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import QCryptLean.QKD.BB84.Engine.InnerBudget.InnerBudgetPhaseOnlyAssembly
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.KLAcceptTailPhaseOnlyGeneral
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The basic BB84 security bound
 
@@ -36,6 +25,17 @@ numerical conditions are positive smoothing, the key-rate inequality and `Q + 2�
 References: Nahar et al. 2024, arXiv:2403.11851, Appendix B; Renner 2005,
 `cor:Hmincondrepclass`; Christandl–König–Renner 2009, arXiv:0809.3019, Theorem 1.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-- The basic BB84 diamond bound at the exact phase-only KL acceptance tail.
 The decoder and selectors are arbitrary. The key-count identity ties the entropy copy count

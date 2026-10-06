@@ -150,7 +150,7 @@ theorem eigenvalues_le_top_eigenvalue (hA : A.IsHermitian) (i : n) :
     hA.eigenvalues i ≤ hA.eigenvalues₀ 0 := by
   let e : Fin (Fintype.card n) ≃ n := Fintype.equivOfCardEq (by simp)
   have hzero : (0 : Fin (Fintype.card n)) ≤ e.symm i := by
-    simp [Fin.le_def]
+    simp
   simpa [Matrix.IsHermitian.eigenvalues, e] using hA.eigenvalues₀_antitone hzero
 
 /-- The largest eigenvalue belongs to the complex spectrum. -/

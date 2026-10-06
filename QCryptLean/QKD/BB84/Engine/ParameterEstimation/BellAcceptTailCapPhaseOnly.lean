@@ -5,17 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.KLAcceptTailBellTightPhaseOnly
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.KLAcceptTailPhaseOnlyGeneral
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The Bell accept split at the realised-X-subsample KL tail, on the phase-only pivot
 
@@ -58,6 +47,17 @@ per-component accept-mass bound at the subsample the statistic is measured on), 
 `\label{eq:tausplit}` (`main.tex:1356`–`:1361`), §V.C (`main.tex:909`, `:913`, `:970`); Renner 2005
 (`arXiv:quant-ph/0512258v2`) §5, §6.5.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## 1. The interface instance at the free phase-error deviation
 

@@ -1,14 +1,10 @@
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AgreeAxisFloorTransfer
 import QCryptLean.Quantum.Metrics.TraceNorm.SubNormalized
-import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AgreeAxisFloorTransfer
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AgreeBlockLHLBridge
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.SymmetricPurifier
 import QCryptLean.QKD.BB84.Engine.Budgets
 import QCryptLean.QKD.BB84.Engine.InnerBudget.AgreeChannels
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AnyRefAgreeBlock
-import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AgreeBlockLHLBridge
-import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.SymmetricPurifier
-import QCryptLean.QKD.BB84.Engine.Budgets
 
 /-!
 # The basic agree-block leftover-hash bound

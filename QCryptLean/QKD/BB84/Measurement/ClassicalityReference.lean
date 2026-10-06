@@ -32,12 +32,14 @@ attribute [local instance] storedRecordVectorDecidableEq
 
 /-- The physical input coordinate dimension is nonzero, derived from its explicit inhabited
 finite type rather than supplied by a caller. -/
+@[implicit_reducible]
 def weightedStreamInputCardNeZero (N : ℕ) :
     NeZero (Fintype.card (weightedStreamSystem Unit N).total) :=
   ⟨Fintype.card_ne_zero⟩
 
 /-- The terminal record-coordinate dimension is nonzero, derived from its explicit inhabited
 finite type rather than supplied by a caller. -/
+@[implicit_reducible]
 def weightedScheduleRecordCardNeZero (N : ℕ) :
     NeZero (Fintype.card
       ((Unit × (Fin N → StoredRecord)) ×

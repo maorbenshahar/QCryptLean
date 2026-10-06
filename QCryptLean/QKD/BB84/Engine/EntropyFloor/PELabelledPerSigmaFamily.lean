@@ -2,6 +2,21 @@ import QCryptLean.QKD.BB84.Engine.EntropyFloor.PerSigmaFamily
 import QCryptLean.QKD.BB84.Engine.PrivacyAmplification.AgreeBlockLHLBridge
 import QCryptLean.InfoTheory.SmoothMinEntropy.DataProcessing.TensorLeftKernelSpectator
 
+/-!
+# The PE-labelled component family and mixture
+
+The public PE outcome is a normalised projector determined by the outcome string. Attaching it
+to the conditioning register preserves total weight and transports the component family and
+its mixture's Haar integral entry by entry. Continuity, integrability and the accepted-weight
+identity supply the own-marginal coarsening assembler. The good set depends only on phase rate;
+light components remain in it and use zero smoothing witnesses.
+
+The label dimension is `signalDim ^ (n - bb84KeyRoundCount n m)` at general test size `m`.
+
+Reference: Nahar et al. 2024, arXiv:2403.11851, Appendix B, `eq:boundingsmoothedmin` and
+`lemma:infsmoothedmin`.
+-/
+
 -- The paired-Haar per-σ family wiring states Bochner integrability of `Op`-valued block maps;
 -- as in `PerSigmaFamily.lean` / `AcceptSplit.lean`, this uses the Frobenius norm on matrices.
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup
@@ -19,21 +34,6 @@ namespace QKD.BB84.Engine
 
 private local instance {n : ℕ} : ContinuousENorm (Op n) :=
   SeminormedAddGroup.toContinuousENorm
-
-/-!
-# The PE-labelled component family and mixture
-
-The public PE outcome is a normalised projector determined by the outcome string. Attaching it
-to the conditioning register preserves total weight and transports the component family and
-its mixture's Haar integral entry by entry. Continuity, integrability and the accepted-weight
-identity supply the own-marginal coarsening assembler. The good set depends only on phase rate;
-light components remain in it and use zero smoothing witnesses.
-
-The label dimension is `signalDim ^ (n - bb84KeyRoundCount n m)` at general test size `m`.
-
-Reference: Nahar et al. 2024, arXiv:2403.11851, Appendix B, `eq:boundingsmoothedmin` and
-`lemma:infsmoothedmin`.
--/
 
 /-! ## 1. The PE-labelled family and mixture -/
 

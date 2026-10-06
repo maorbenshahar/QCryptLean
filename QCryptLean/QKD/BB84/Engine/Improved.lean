@@ -7,17 +7,6 @@ import QCryptLean.QKD.BB84.Engine.Budgets.ImprovedKeyRateCondition
 import QCryptLean.QKD.BB84.Engine.Postselection.BellReductionGeneral
 import QCryptLean.Quantum.Channels.CPTP.DiamondNormComp
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The Bell tight-rate budget at the sharp Cor IV.2 penalty, exact KL accept tail, general selectors
 
@@ -74,6 +63,17 @@ size `m` at `:909`, `n_key = n − m` at `:913`, `m = 0.05·n` at `:970`); Renne
 (`arXiv:quant-ph/0512258v2`) `\label{thm:Hmincondrep}` (`main.tex:4561`), §5, §6.5;
 Christandl–König–Renner 2009 (`arXiv:0809.3019`) `main.tex:447`–`:448`.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
 
 /-! ## The selector-generic sharp-cap bound at free `ε_PA` and Rényi offset `β` -/
 

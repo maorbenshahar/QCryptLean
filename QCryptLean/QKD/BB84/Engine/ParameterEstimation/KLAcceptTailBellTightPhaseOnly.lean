@@ -6,18 +6,6 @@ import QCryptLean.QKD.BB84.Engine.ParameterEstimation.KLAcceptTailBellTight
 import QCryptLean.QKD.BB84.Engine.ParameterEstimation.KLAcceptTailPhaseOnly
 import QCryptLean.QKD.BB84.Engine.PerRound.BellPerSigmaFloorBennettPhaseOnly
 
-open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
-open Math.RepresentationTheory
-open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
-open InfoTheory.SmoothMinEntropy.SymmetricAEP
-open Quantum.Symmetry InfoTheory.DeFinetti
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open QKD.BB84.Model
-
-noncomputable section
-
-namespace QKD.BB84.Engine
-
 /-!
 # The Bell accept split at the phase-only pivot
 
@@ -51,6 +39,19 @@ References: Nahar, Tupkary, Zhao, Lütkenhaus, Tan 2024 (`arXiv:2403.11851`) App
 `\label{eq:tausplit}` (`main.tex:1356`–`:1361`) through `\label{eq:boundingsmoothedmin}`
 (`main.tex:1380`–`:1387`), Lemma 9 Eq. 44; Renner 2005 (`arXiv:quant-ph/0512258v2`) §5, §6.5.
 -/
+
+open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
+open Math.RepresentationTheory
+open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
+open InfoTheory.SmoothMinEntropy.SymmetricAEP
+open Quantum.Symmetry InfoTheory.DeFinetti
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open QKD.BB84.Model
+
+noncomputable section
+
+namespace QKD.BB84.Engine
+
 /-! ## 1. The phase-only accept-tail interface of the Bell chain -/
 
 /-- **The accept-tail interface of the Bell chain, at the phase-only pivot.**

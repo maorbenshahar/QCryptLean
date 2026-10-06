@@ -1,6 +1,21 @@
 import QCryptLean.QKD.BB84.Engine.EntropyFloor.EnVDecompositionReferee
 import QCryptLean.InfoTheory.SmoothMinEntropy.AEP.IIDSmoothRankBound
 
+/-!
+# The Devetak–Winter collective key-rate route
+
+The per-σ collective smooth-min-entropy floor, discharged through the Devetak–Winter single-round
+von-Neumann key rate `H(Z_A|E) ≥ 1 − h(q_phase)/log 2`, lifted by the Renner smooth AEP against
+the component's own quantum marginal. Alice's classical register is a bit, so its finite-size
+penalty coefficient is `2 log₂ 5`. The proof uses the witness single-round CQ state, purification
+unitary freedom, and Bell twirling with error-rate preservation.
+
+## Main definitions
+
+- `QKD.BB84.Engine.bb84ComponentAliceZCQState`: the single-round Alice-`Z` bit-CQ state of an AB
+  component `σ`, the IID building block of the Devetak–Winter rate `H(Z_A|E)_σ`.
+-/
+
 -- The paired-Haar per-σ family wiring (below) states Bochner integrability of `Op`-valued block
 -- maps; as in `FinitePostFilterFloor.lean`/`Reference/Mixed.lean`, this uses the Frobenius norm on
 -- matrices.
@@ -22,21 +37,6 @@ open QKD.BB84.Model
 noncomputable section
 
 namespace QKD.BB84.Engine
-
-/-!
-# The Devetak–Winter collective key-rate route
-
-The per-σ collective smooth-min-entropy floor, discharged through the Devetak–Winter single-round
-von-Neumann key rate `H(Z_A|E) ≥ 1 − h(q_phase)/log 2`, lifted by the Renner smooth AEP against
-the component's own quantum marginal. Alice's classical register is a bit, so its finite-size
-penalty coefficient is `2 log₂ 5`. The proof uses the witness single-round CQ state, purification
-unitary freedom, and Bell twirling with error-rate preservation.
-
-## Main definitions
-
-- `QKD.BB84.Engine.bb84ComponentAliceZCQState`: the single-round Alice-`Z` bit-CQ state of an AB
-  component `σ`, the IID building block of the Devetak–Winter rate `H(Z_A|E)_σ`.
--/
 
 /-- **The witness state `ρ_σ`.** The single-round Alice-`Z` bit-CQ state of the AB component
 `σ`: the round state is the explicit canonical Schmidt purification `sameAncillaPurificationDensity

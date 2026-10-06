@@ -223,14 +223,17 @@ noncomputable def retainedAnalysisDefaultRawTailOutput
   (Boundary.graftSpaceEquiv _ _).symm ⟨preExit, finalSpace⟩
 
 /-- The round-grouped input dimension is nonzero for every retained size. -/
+@[implicit_reducible]
 def retainedAnalysisRoundDimNeZero (n : ℕ) : NeZero (4 ^ n) :=
   ⟨pow_ne_zero _ (by decide)⟩
 
 /-- The Alice/Bob-block input dimension is nonzero for every retained size. -/
+@[implicit_reducible]
 def retainedAnalysisBlockDimNeZero (n : ℕ) : NeZero (2 ^ n * 2 ^ n) :=
   ⟨Nat.mul_ne_zero (pow_ne_zero _ (by decide)) (pow_ne_zero _ (by decide))⟩
 
 /-- The explicit permutation-times-tail output dimension is nonzero. -/
+@[implicit_reducible]
 def retainedAnalysisOutputDimNeZero
     (nK mZ mX ell ellEV leakEC : ℕ) :
     NeZero (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC) := by
