@@ -186,7 +186,7 @@ lemma eigenvalueSpectrum_multiset_eq {n : ℕ} (ρ : DensityOp n)
       convert hspec1 using 1
       rw [Matrix.mul_assoc]
     rw [hconj]
-    exact Matrix.charpoly_units_conj starU1_unit D1
+    simpa only [Matrix.coe_units_inv] using Matrix.charpoly_units_conj starU1_unit D1
   have hcharpoly2 : ρ.toOp.charpoly = D2.charpoly := by
     have hconj : ρ.toOp = starU2_unit.val * D2 * starU2_unit⁻¹.val := by
       change ρ.toOp = U2.conjTranspose * D2 * U2
@@ -194,7 +194,7 @@ lemma eigenvalueSpectrum_multiset_eq {n : ℕ} (ρ : DensityOp n)
       convert hspec2 using 1
       rw [Matrix.mul_assoc]
     rw [hconj]
-    exact Matrix.charpoly_units_conj starU2_unit D2
+    simpa only [Matrix.coe_units_inv] using Matrix.charpoly_units_conj starU2_unit D2
   have hD_charpoly : D1.charpoly = D2.charpoly := by
     rw [← hcharpoly1, hcharpoly2]
   -- From equal charpolys of complex diagonal matrices, get equal complex multisets

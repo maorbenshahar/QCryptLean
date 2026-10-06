@@ -83,7 +83,7 @@ theorem integralTensorPower_partialTraceBDensityMeasure
       simp [deintK, densityOp_reindex, Matrix.reindex_apply, Matrix.submatrix_apply]
     simp_rw [hdeintK]
     simp only [integralTensorPower, Matrix.of_apply]
-    rw [integral_finset_sum Finset.univ]
+    rw [integral_finsetSum Finset.univ]
     intro x _
     set a := (interleavingEquiv d k) (finProdFinEquiv (i, x))
     set b := (interleavingEquiv d k) (finProdFinEquiv (j, x))

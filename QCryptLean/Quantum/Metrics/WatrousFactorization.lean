@@ -188,7 +188,7 @@ theorem mul_conjTranspose_eq_sum_vecMulVec {d : ℕ}
   ext i j
   simp only [Matrix.mul_apply, conjTranspose_apply]
   -- Pull (i, j) inside the sum: (∑ a, f a) i j = ∑ a, f a i j
-  rw [Finset.sum_apply _ Finset.univ, Finset.sum_apply _ Finset.univ]
+  rw [Matrix.sum_apply]
   simp only [vecMulVec_apply, Pi.star_apply, mulVec, dotProduct,
     Pi.single_apply, mul_ite, mul_one, mul_zero,
     Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]

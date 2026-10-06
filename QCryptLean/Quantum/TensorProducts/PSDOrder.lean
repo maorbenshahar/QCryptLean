@@ -682,7 +682,8 @@ theorem opLe_le_card_smul_partialTraceB_tensor_one
   let z : Fin dR → Fin (dE * dR) → ℂ := fun r => referenceBlockSupport r v
   have hv : (∑ r : Fin dR, z r) = v := by
     funext p
-    simp [z, referenceBlockSupport]
+    simp only [z, referenceBlockSupport, Finset.sum_apply,
+      Finset.sum_ite_eq, Finset.mem_univ, if_true]
   have hsum :=
     quadraticForm_sum_le_card_mul_sum_quadraticForm (A := A) hA z
   have hblock :=

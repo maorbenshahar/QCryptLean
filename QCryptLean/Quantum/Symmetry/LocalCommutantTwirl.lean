@@ -23,6 +23,8 @@ namespace Quantum.Symmetry
 
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup Matrix.frobeniusNormedSpace
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- The commutant of a reference action acts locally after restriction to `Q`. -/
 def HasLocalCommutant {H : Type*} {a b : ℕ} (U : H → Op b) (Q : Op (a * b)) : Prop :=
   ∀ T : Op (a * b), (∀ g, Commute (Op.tensor (1 : Op a) (U g)) T) →
@@ -91,15 +93,16 @@ lemma partialTraceB_referenceTwirl {H : Type*} [MeasurableSpace H] {a b : ℕ}
       map_add' := partialTraceB_add
       map_smul' := partialTraceB_smul }
   change L.toContinuousLinearMap (∫ g, _ ∂μ) = _
-  rw [← L.toContinuousLinearMap.integral_comp_comm hint]
+  refine (L.toContinuousLinearMap.integral_comp_comm hint).symm.trans ?_
   have htrace (g : H) : L (Op.tensor (1 : Op a) (U g : Op b) * T *
       (Op.tensor (1 : Op a) (U g : Op b))ᴴ) = partialTraceB T := by
     change partialTraceB _ = _
     rw [Op.tensor_conjTranspose, conjTranspose_one]
     apply partialTraceB_one_tensor_sandwich_of_mul_eq_one
     exact (Matrix.mem_unitaryGroup_iff').mp (U g).2
-  simp only [LinearMap.coe_toContinuousLinearMap', htrace, integral_const,
-    probReal_univ, one_smul]
+  calc
+    _ = ∫ _ : H, partialTraceB T ∂μ := integral_congr_ae (Filter.Eventually.of_forall htrace)
+    _ = _ := by simp only [integral_const, probReal_univ, one_smul]
 
 /-- A left-invariant average is invariant under conjugation by the reference action. -/
 lemma referenceTwirl_conj {H : Type*} [Group H] [MeasurableSpace H] [MeasurableMul H]
@@ -115,7 +118,7 @@ lemma referenceTwirl_conj {H : Type*} [Group H] [MeasurableSpace H] [MeasurableM
   let L := ((LinearMap.mulRight ℂ (K g)ᴴ).comp
     (LinearMap.mulLeft ℂ (K g))).toContinuousLinearMap
   change L (∫ h, K h * T * (K h)ᴴ ∂μ) = ∫ h, K h * T * (K h)ᴴ ∂μ
-  rw [← L.integral_comp_comm hint]
+  refine (L.integral_comp_comm hint).symm.trans ?_
   calc
     _ = ∫ h, K (g * h) * T * (K (g * h))ᴴ ∂μ := by
       apply integral_congr_ae
@@ -151,7 +154,7 @@ lemma referenceTwirl_mul_eq {H : Type*} [MeasurableSpace H] {a b : ℕ}
     referenceTwirl μ U T * Q = referenceTwirl μ U T := by
   let L := (LinearMap.mulRight ℂ Q).toContinuousLinearMap
   change L (∫ g, _ ∂μ) = ∫ g, _ ∂μ
-  rw [← L.integral_comp_comm hint]
+  refine (L.integral_comp_comm hint).symm.trans ?_
   apply integral_congr_ae
   filter_upwards [] with g
   change (Op.tensor (1 : Op a) (U g : Op b) * T *

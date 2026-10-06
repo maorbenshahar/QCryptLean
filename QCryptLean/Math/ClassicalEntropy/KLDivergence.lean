@@ -86,7 +86,7 @@ theorem log_sum_inequality {k : ℕ} [NeZero k]
       intro i hi
       simp only [Finset.mem_sdiff, Finset.mem_univ, true_and] at hi
       have : ¬(p i ≠ 0) := fun h => hi ((hS_mem i).mpr h)
-      push_neg at this
+      push Not at this
       exact this
     linarith
   -- Apply Jensen: Σ p_i log(q_i/p_i) ≤ log(Σ p_i * q_i/p_i)

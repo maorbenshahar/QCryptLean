@@ -486,7 +486,7 @@ theorem measDilation_pure_core_fails_at_zero {d dB : ℕ} [NeZero d] [NeZero dB]
     ext i j
     simp [Quantum.TensorProducts.partialTraceB]
   rw [hZ, hX, bipartiteMinEntropyOptReal_zero, bipartiteMinEntropyOptReal_zero]
-  push_neg
+  push Not
   linarith
 
 end InfoTheory.SmoothMinEntropy

@@ -107,13 +107,14 @@ section Rayleigh42
 variable {n : ℕ} [NeZero n] [DecidableEq (Fin n)]
 
 /-- Span of the first k columns of the eigenvector unitary (first k eigenvectors). -/
-def eigenvecSpanFirst (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian) (k : ℕ) (hk : k ≤ n) :
+noncomputable def eigenvecSpanFirst (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian)
+    (k : ℕ) (hk : k ≤ n) :
     Submodule ℂ (Fin n → ℂ) :=
   Submodule.span ℂ (Set.range (fun j : Fin k =>
     Matrix.col (hA.eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) (Fin.castLE hk j)))
 
 /-- Span of the last (n - k) columns (eigenvectors for eigenvalues₀ indices k,…,n-1). -/
-def eigenvecSpanFrom (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian) (k : Fin n) :
+noncomputable def eigenvecSpanFrom (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian) (k : Fin n) :
     Submodule ℂ (Fin n → ℂ) :=
   Submodule.span ℂ (Set.range (fun j : Fin (n - k.val) =>
     Matrix.col (hA.eigenvectorUnitary : Matrix (Fin n) (Fin n) ℂ) ⟨k.val + j.val, by omega⟩))
@@ -391,7 +392,7 @@ lemma vecNormSq_pos {n : ℕ} (x : Fin n → ℂ) (hx : x ≠ 0) : 0 < vecNormSq
       exact Complex.normSq_nonneg (x i)
     have h_pos : ∃ i, 0 < (star (x i) * x i).re := by
       by_contra h
-      push_neg at h
+      push Not at h
       have h_all_zero : ∀ i, x i = 0 := by
         intro i
         have h_nonpos : (star (x i) * x i).re ≤ 0 := h i

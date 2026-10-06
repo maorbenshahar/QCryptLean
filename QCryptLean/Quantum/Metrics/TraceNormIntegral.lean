@@ -31,6 +31,8 @@ noncomputable section
 
 namespace Quantum.Metrics
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- The trace norm is nonnegative. -/
 lemma traceNorm_nonneg {n : ℕ} [NeZero n] (A : Op n) :
     0 ≤ traceNorm A := by

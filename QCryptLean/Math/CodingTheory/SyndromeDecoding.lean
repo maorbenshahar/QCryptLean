@@ -70,7 +70,8 @@ lemma syndromeRepresentative_eq_of_hamming_separation
   intro f hf hs
   apply sub_eq_zero.mp
   apply hsep
-  · rw [hammingDist_zero_right, ← hammingDist_eq_hammingNorm]
+  · rw [hammingDist_zero_right, sub_eq_neg_add, ← hammingDist_eq_hammingNorm,
+      hammingDist_comm e f]
     have htri := hammingDist_triangle f 0 e
     rw [hammingDist_comm 0 e] at htri
     have hf' := (Finset.mem_filter.mp hf).2

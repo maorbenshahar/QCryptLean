@@ -37,6 +37,8 @@ noncomputable section
 
 namespace InfoTheory.DeFinetti.PureState
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- **Bilinear form identity**: ⟨v_g, I v_h⟩ = I(0,0) · ⟨v_g, v_h⟩ for all g, h ∈ U(d).
 
     Here the bilinear form is expressed as: for the Haar integral operator I and
@@ -193,10 +195,10 @@ lemma coherent_bilinear_form_identity (d n : ℕ) [NeZero d] [NeZero n]
     simp_rw [h_rearrange]
     -- Interchange ∫ and ∑ (finite sum)
     haveI : IsProbabilityMeasure (haarProbUnitary d) := haarProbUnitary_isProbability d
-    rw [MeasureTheory.integral_finset_sum _ (fun p _ => by
+    rw [MeasureTheory.integral_finsetSum _ (fun p _ => by
       apply Continuous.integrable_of_hasCompactSupport
       · exact continuous_const.mul ((continuous_subtype_val.matrix_elem 0 0).pow n |>.mul
-          (continuous_finset_prod Finset.univ fun i _ =>
+          (continuous_finsetProd Finset.univ fun i _ =>
             (continuous_subtype_val.matrix_elem (p i) 0).star))
       · exact HasCompactSupport.of_compactSpace _)]
     -- Factor constants out of integral: ∫ c_p * f(k) dk = c_p * ∫ f(k) dk
@@ -208,7 +210,7 @@ lemma coherent_bilinear_form_identity (d n : ℕ) [NeZero d] [NeZero n]
     · -- Vanishing: for p ≠ const 0, the integral is 0
       intro p _ hp
       have ⟨i₀, hi₀⟩ : ∃ i, p i ≠ 0 := by
-        by_contra h; push_neg at h; exact hp (funext fun i => by ext; simp [h i])
+        by_contra h; push Not at h; exact hp (funext fun i => by ext; simp [h i])
       rw [haar_product_vanishing_first_col d n n p ⟨i₀, hi₀⟩, mul_zero]
   rw [h_computation]
   -- Step 4: Identify the terms with I_op(0,0) and the overlap ⟨v_g|v_h⟩

@@ -160,7 +160,7 @@ lemma bhattacharyya_floor_sq_le_sq_of_coord
   have ht_nonneg : 0 ≤ a * c - b * s := le_of_lt ht_pos
   have htx : a * c - b * s ≤ x := by
     by_contra hnot
-    push_neg at hnot
+    push Not at hnot
     have hx_lt_t : x < a * c - b * s := hnot
     have hbs_nonneg : 0 ≤ b * s := mul_nonneg hb hs
     have hx_lt_ac : x < a * c := by

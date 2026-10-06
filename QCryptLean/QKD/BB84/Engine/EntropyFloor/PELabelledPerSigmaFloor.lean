@@ -533,8 +533,9 @@ theorem bb84_peLabelledCoarsenAliceKey_eq_pairCoarsen {n m : ℕ} [NeZero n] [Ne
         (bb84UnitRegisterEmbed_isCPTP n) peSel xSel Q δ ψ =
       (bb84PairedHaarPerSigmaFamily 1 (bb84UnitRegisterEmbed n) (bb84UnitRegisterEmbed_isCPTP n)
           peSel xSel Q δ ψ).tensorLeftKernel
-        (fun ω => bb84PELabelKernelSorted (m := m) ((bb84PartEquiv (m := m) peSel ω).2)) from rfl,
-    CQState.coarsen_tensorLeftKernel_factor]
+        (fun ω => bb84PELabelKernelSorted (m := m) ((bb84PartEquiv (m := m) peSel ω).2)) from rfl]
+  exact congrArg (CQState.relabel (bb84SortedKeyBitEquiv peSel hcount))
+    (CQState.coarsen_tensorLeftKernel_factor _ _ _ _)
 
 /-- The own-marginal smooth min-entropy of the PE-labelled Alice key equals the sorted
 key/PE product expression. Classical relabelling preserves the marginal, while dimension
@@ -599,21 +600,39 @@ theorem bb84_peLabelledCoarsenAliceKey_smoothMinEntropy_quantumMarginal_eq_sorte
     subst h
     rfl
   dsimp only
-  rw [bb84_peLabelledCoarsenAliceKey_eq_pairCoarsen peSel xSel hcount Q δ ψ,
-    CQState.relabel_quantumMarginal, smoothMinEntropy_relabel]
-  rw [bb84_smoothMinEntropy_castDim
-      (congrArg (fun k => bb84PEAnnounceLabelDim n m * k) (bb84UnitEveDim_mul_signalPow n))
-      εTensor _ _, hCast, ← coarsen_bb84CastCQState,
+  rw [bb84_peLabelledCoarsenAliceKey_eq_pairCoarsen peSel xSel hcount Q δ ψ]
+  conv_lhs =>
+    arg 3
+    tactic => exact CQState.relabel_quantumMarginal (bb84SortedKeyBitEquiv peSel hcount) _
+  conv_lhs =>
+    tactic => exact smoothMinEntropy_relabel (bb84SortedKeyBitEquiv peSel hcount) _ _ _
+  conv_lhs =>
+    tactic =>
+      exact bb84_smoothMinEntropy_castDim
+        (congrArg (fun k => bb84PEAnnounceLabelDim n m * k) (bb84UnitEveDim_mul_signalPow n))
+        εTensor _ _
+  conv_lhs =>
+    arg 3
+    tactic => exact hCast _ _
+  rw [← coarsen_bb84CastCQState,
     bb84CastCQState_tensorLeftKernel (bb84UnitEveDim_mul_signalPow n)]
-  rw [← smoothMinEntropy_reindexQHetero
-      (tensorRightCongrEquiv (bb84PEAnnounceLabelDim n m)
-        (registerPerm signalDim n (bb84SortRoundPerm peSel).symm)) εTensor _ _,
-    ← CQState.reindexQHetero_quantumMarginal, ← CQState.coarsen_reindexQHetero,
+  conv_lhs =>
+    tactic =>
+      exact (smoothMinEntropy_reindexQHetero
+        (tensorRightCongrEquiv (bb84PEAnnounceLabelDim n m)
+          (registerPerm signalDim n (bb84SortRoundPerm peSel).symm)) εTensor _ _).symm
+  rw [← CQState.reindexQHetero_quantumMarginal, ← CQState.coarsen_reindexQHetero,
     CQState.reindexQHetero_tensorRightCongr_tensorLeftKernel]
-  rw [bb84_smoothMinEntropy_castDim
-      (congrArg (fun k => bb84PEAnnounceLabelDim n m * k)
-        (bb84SignalPow_keyPE_split n m).symm)
-      εTensor _ _, hCast, ← coarsen_bb84CastCQState,
+  conv_lhs =>
+    tactic =>
+      exact bb84_smoothMinEntropy_castDim
+        (congrArg (fun k => bb84PEAnnounceLabelDim n m * k)
+          (bb84SignalPow_keyPE_split n m).symm)
+        εTensor _ _
+  conv_lhs =>
+    arg 3
+    tactic => exact hCast _ _
+  rw [← coarsen_bb84CastCQState,
     bb84CastCQState_tensorLeftKernel (bb84SignalPow_keyPE_split n m).symm,
     bb84_coarsenKeyPair_transport peSel xSel hcount Q δ ψ]
   congr 1

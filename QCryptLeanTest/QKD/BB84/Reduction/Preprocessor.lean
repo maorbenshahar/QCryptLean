@@ -89,7 +89,12 @@ theorem failureKraus_successControl_zero
     comparisonPreFailureKraus N nK mZ mX pA pB j a
         (x, Sum.inl S) a' = 0 := by
   by_cases hj : j.val = 0
-  · simp [comparisonPreFailureKraus, hj]
+  · simp only [comparisonPreFailureKraus, hj, if_pos]
+    refine (Matrix.smul_apply _ _ _ _).trans ?_
+    refine (congrArg (fun z : ℂ => (_ : ℂ) • z)
+      (Matrix.single_apply_of_row_ne ?_ _ _ (1 : ℂ))).trans (smul_zero _)
+    intro h
+    exact Sum.inr_ne_inl (congrArg Prod.snd h)
   · simp [comparisonPreFailureKraus, hj]
 
 /-- The literal success formula applies the selected marginal associated with its own subset,

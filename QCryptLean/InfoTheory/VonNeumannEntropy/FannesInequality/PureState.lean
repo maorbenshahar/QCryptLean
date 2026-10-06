@@ -454,7 +454,7 @@ theorem entropy_bound_near_pure {n : ℕ} [NeZero n] (ρ : DensityOp n) (ψ : Ke
           linarith
   case neg =>
     -- n = 1: In dimension 1, all density operators have zero entropy
-    push_neg at hn
+    push Not at hn
     have hn1 : n = 1 := by
       have hne : n ≠ 0 := NeZero.ne n
       omega
@@ -511,7 +511,7 @@ theorem entropy_bound_near_pure_tight {n : ℕ} [NeZero n] (ρ : DensityOp n) (�
       entropy_bound_with_large_eigenvalue (eigenvaluesOf ρ) h_eig_nonneg h_eig_sum
         ε hε_small h_max_eig_ge
     simpa [vonNeumannEntropy, shannonEntropy] using h_entropy_bound
-  · push_neg at hn
+  · push Not at hn
     have hn1 : n = 1 := by
       have hne : n ≠ 0 := NeZero.ne n
       omega

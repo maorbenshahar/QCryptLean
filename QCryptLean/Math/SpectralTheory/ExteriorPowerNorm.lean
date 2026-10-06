@@ -142,7 +142,7 @@ lemma exteriorPower_toCLM_pow (B : Matrix (Fin N) (Fin N) ℂ) (k m : ℕ) :
   -- have to be identified, as a direct `map_pow` along `Module.End.toContinuousLinearMap` would.
   refine ContinuousLinearMap.coeFn_injective ?_
   -- right side: `⇑(Tᵐ) = (⇑T)^[m]` for the continuous map `T`
-  refine Eq.trans ?_ (ContinuousLinearMap.coe_pow _ m).symm
+  refine Eq.trans ?_ (ContinuousLinearMap.coe_pow' _ m).symm
   -- left side: compound-matrix functoriality, then `⇑(fᵐ) = (⇑f)^[m]` for the linear map `f`.
   simp only [exteriorPower_map_pow]
   exact Module.End.coe_pow (exteriorPower.map k (Matrix.toEuclideanLin B)) m
@@ -212,7 +212,7 @@ private lemma det_mul_aux_rect {k : ℕ} {J : Type*}
       = 0 := by
   obtain ⟨i, j, hpij, hij⟩ : ∃ i j, q i = q j ∧ i ≠ j := by
     rw [Function.Injective] at H
-    push_neg at H
+    push Not at H
     exact H
   exact
     Finset.sum_involution (fun σ _ => σ * Equiv.swap i j)

@@ -22,6 +22,8 @@ namespace InfoTheory.Postselection
 
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup Matrix.frobeniusNormedSpace
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- The distribution of a measurable family of density operators. -/
 def densityMeasureOfFamily {α : Type*} [MeasurableSpace α] {d : ℕ}
     (ν : Measure α) [IsProbabilityMeasure ν] (f : α → DensityOp d) (hf : Measurable f) :
@@ -195,8 +197,8 @@ lemma referenceOrbit_tensorPower_moment {α : Type*} [TopologicalSpace α] [Comp
   have hF : Integrable F ν :=
     ((hK.matrix_mul continuous_const).matrix_mul hK.matrix_conjTranspose).integrable_of_compactSpace
   change L (∫ x, ((f x).tensorPowGen n).toOp ∂ν) = C (∫ x, F x ∂ν)
-  rw [← L.integral_comp_comm (tensorPower_family_integrable ν f hf),
-    ← C.integral_comp_comm hF]
+  refine (L.integral_comp_comm (tensorPower_family_integrable ν f hf)).symm.trans
+    (Eq.trans ?_ (C.integral_comp_comm hF))
   apply integral_congr_ae
   filter_upwards [] with x
   change Matrix.reindex _ _ ((f x).tensorPowGen n).toOp = _
@@ -247,7 +249,7 @@ lemma partialTraceB_pairedToBlocked_family_moment {α : Type*} [MeasurableSpace 
     (Matrix.reindexLinearEquiv ℂ ℂ (interleavingEquivGen a (a * b ^ 2) n).symm
       (interleavingEquivGen a (a * b ^ 2) n).symm).toLinearMap)).toContinuousLinearMap
   change L (∫ x, ((f x).tensorPowGen n).toOp ∂ν) = _
-  rw [← L.integral_comp_comm (tensorPower_family_integrable ν f hf)]
+  refine (L.integral_comp_comm (tensorPower_family_integrable ν f hf)).symm.trans ?_
   exact integral_congr_ae (ae_of_all _ fun x => partialTraceB_pairedToBlocked_tensorPow (f x))
 
 /-- Tracing Bob and the purification reference leaves the original Alice marginal. -/

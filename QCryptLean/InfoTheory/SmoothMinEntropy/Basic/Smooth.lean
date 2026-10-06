@@ -238,7 +238,7 @@ theorem smoothMinEntropyReal_bddAbove {X : Type*} [Fintype X] [DecidableEq X] [N
             ≤ Real.log ((Fintype.card X : ℝ) / (1 - ε ^ 2)) := by linarith
       exact div_le_div_of_nonneg_right h_neg hlog2.le
     · -- Degenerate case: minFeasibleLambda = 0, so h = 0.
-      push_neg at hm_pos
+      push Not at hm_pos
       have hm_zero : minFeasibleLambda rho2 σ = 0 :=
         le_antisymm hm_pos (minFeasibleLambda_nonneg rho2 σ)
       rw [hh_eq]
@@ -250,7 +250,7 @@ theorem smoothMinEntropyReal_bddAbove {X : Type*} [Fintype X] [DecidableEq X] [N
         nlinarith [hone_sub_le_one, hcard_ge_one, hone_sub_pos]
       exact div_nonneg (Real.log_nonneg h_ratio_ge_one) hlog2.le
   · -- Vacuous case: ε < 0 implies the ε-ball is empty.
-    push_neg at hε_nn
+    push Not at hε_nn
     refine ⟨0, ?_⟩
     intro h hh
     obtain ⟨rho2, _, hd⟩ := hh
@@ -496,7 +496,7 @@ lemma conditionalMinEntropyReal_le_of_weight_floor
           Real.log (minFeasibleLambda ρ σ) :=
       Real.log_le_log h_lb_pos hmlam_lb
     exact div_le_div_of_nonneg_right (neg_le_neg hlog_le) hlog2.le
-  · push_neg at hm_pos
+  · push Not at hm_pos
     have hm_zero : minFeasibleLambda ρ σ = 0 :=
       le_antisymm hm_pos (minFeasibleLambda_nonneg ρ σ)
     rw [hm_zero, Real.log_zero, neg_zero, zero_div]
@@ -853,7 +853,7 @@ theorem smoothMinEntropy_exists_approx {ε : ℝ}
   refine ⟨τ, hd, ?_, hlt⟩
   by_contra hfeas
   rw [conditionalMinEntropy_eq_zero_of_not_hasFeasibleLambda τ σ hfeas] at hlt
-  exact (not_lt_of_ge (zero_le k)) hlt
+  exact (not_lt_of_ge (zero_le)) hlt
 
 /-- A fixed reference is bounded by the optimized smooth entropy
 (Tomamichel 2016, Definitions 6.2 and 6.5). -/
@@ -926,7 +926,7 @@ theorem smoothMinEntropy_eq_ofReal_of_eps_sq_lt_weight
       exact le_csSup
         (smoothMinEntropyReal_bddAbove_of_eps_sq_lt_weight ε hε ρ σ hweight) ⟨τ, rfl, hd⟩
     · rw [conditionalMinEntropy_eq_zero_of_not_hasFeasibleLambda τ σ hfeas]
-      exact zero_le _
+      exact zero_le
   · exact ofReal_smoothMinEntropyReal_le_smoothMinEntropy hε ρ σ
 
 /-- The extended value is finite below the zero-state threshold at every reference

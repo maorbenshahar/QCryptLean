@@ -18,6 +18,8 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- **Weighted feasibility integration.**  The λ-integral replacement for the accept-split's
 uniform floor `isFeasible_of_ae_minFeasibleLambda_le_of_integral_subprob`: instead of charging
 every component the same scalar `B` (which forces bad components to be discarded before the

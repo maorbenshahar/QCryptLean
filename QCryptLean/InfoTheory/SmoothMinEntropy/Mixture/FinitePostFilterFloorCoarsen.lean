@@ -18,6 +18,11 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
+private local instance {n : ℕ} : ESeminormedAddCommMonoid (Op n) :=
+  (NormedAddCommGroup.toENormedAddCommMonoid (E := Op n)).toESeminormedAddCommMonoid
+
 /-- **The coarsened analytic data of a de Finetti post-filter family.**
 
 `CQState.coarsen g` acts blockwise as the fibre sum `∑_{g x = y} (·).stateMap x`
@@ -82,7 +87,8 @@ private lemma coarsen_deFinetti_postFilter_data
         fun τ : DensityOp d => ∑ x : Xc, if g x = y then ((f τ).stateMap x).toOp else 0 := by
       funext τ; exact CQState.coarsen_stateMap_toOp g (f τ) y
     rw [hrw]
-    refine MeasureTheory.integrable_finset_sum _ (fun x _ => ?_)
+    refine MeasureTheory.integrable_finsetSum (f := fun x (τ : DensityOp d) =>
+      if g x = y then ((f τ).stateMap x).toOp else 0) _ (fun x _ => ?_)
     by_cases hx : g x = y
     · simp only [if_pos hx]; exact h_int x
     · simp only [if_neg hx]; exact MeasureTheory.integrable_zero _ _ _
@@ -100,7 +106,7 @@ private lemma coarsen_deFinetti_postFilter_data
               ∂μ.measure from
         MeasureTheory.integral_congr_ae
           (Filter.Eventually.of_forall (fun τ => hcoarsenEntry (f τ) y i j)),
-      MeasureTheory.integral_finset_sum _ hintSum]
+      MeasureTheory.integral_finsetSum _ hintSum]
     refine Finset.sum_congr rfl (fun x _ => ?_)
     by_cases hx : g x = y
     · simp only [if_pos hx]; exact hf_lin x i j
@@ -111,7 +117,7 @@ private lemma coarsen_deFinetti_postFilter_data
         fun τ : DensityOp d => ∑ x : Xc, if g x = y then ((f τ).stateMap x).toOp else 0 := by
       funext τ; exact CQState.coarsen_stateMap_toOp g (f τ) y
     rw [hrw]
-    refine continuous_finset_sum _ (fun x _ => ?_)
+    refine continuous_finsetSum _ (fun x _ => ?_)
     by_cases hx : g x = y
     · simp only [if_pos hx]; exact hcont x
     · simp only [if_neg hx]; exact continuous_const
@@ -127,7 +133,7 @@ private lemma coarsen_deFinetti_postFilter_data
       simp only [Matrix.sum_apply, Matrix.of_apply]
       rw [MeasureTheory.integral_congr_ae
             (Filter.Eventually.of_forall (fun τ => hcoarsenEntry (f τ) y i j)),
-        MeasureTheory.integral_finset_sum _ (fun x _ => by
+        MeasureTheory.integral_finsetSum _ (fun x _ => by
           by_cases hx : g x = y
           · simp only [if_pos hx]; exact ((entryCLM i j).integrable_comp (h_int x)).integrableOn
           · simp only [if_neg hx]; exact MeasureTheory.integrableOn_zero)]
@@ -161,7 +167,7 @@ fibre sum of the good-branch blocks of the *fine* family `f`:
 
 Both sides are `∑_{x ∈ g⁻¹ y} ∫_{goodSet} ((f τ).stateMap x).toOp dμ`; the only thing to check is
 that the finite fibre sum passes through the Bochner set integral, which is
-`MeasureTheory.integral_finset_sum` on the restricted measure.  `h_int` pays for exactly that: it
+`MeasureTheory.integral_finsetSum` on the restricted measure.  `h_int` pays for exactly that: it
 supplies the entrywise integrability of each fine block, restricted to `goodSet`.
 
 **Why this is true at all — the good set carries no fine index.**  `goodSet : Set (DensityOp d)`
@@ -205,7 +211,7 @@ lemma goodBranchBlockOp_coarsen_eq_sum_fiber
     by_cases hx : g x = y <;> simp [hx]
   simp only [goodBranchBlockOp, Matrix.of_apply, Matrix.sum_apply]
   rw [MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall hentry),
-    MeasureTheory.integral_finset_sum _ (fun x _ => by
+    MeasureTheory.integral_finsetSum _ (fun x _ => by
       by_cases hx : g x = y
       · simp only [if_pos hx]
         exact ((entryCLM i j).integrable_comp (h_int x)).integrableOn

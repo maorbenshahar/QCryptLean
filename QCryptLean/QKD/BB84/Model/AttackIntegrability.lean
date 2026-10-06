@@ -24,6 +24,9 @@ noncomputable section
 
 namespace QKD.BB84.Model
 
+private local instance {m n : Type*} [Fintype m] [Fintype n] : ContinuousENorm (Matrix m n ℂ) :=
+  SeminormedAddGroup.toContinuousENorm
+
 /-- A matrix-valued map into a finite matrix space is integrable if all scalar
 entries are integrable. -/
 lemma matrix_integrable_of_entry_integrable

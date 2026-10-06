@@ -259,7 +259,7 @@ theorem one_le_bennettFactor_of_three_quarters_le {a : ℝ} (h : 3 / 4 ≤ a) :
   · have : Real.sqrt (a + a ^ 2 / 36) ≥ 0 := Real.sqrt_nonneg _
     unfold bennettFactor
     linarith
-  · push_neg at h6
+  · push Not at h6
     have hb : (0 : ℝ) ≤ 1 - a / 6 := by linarith
     have hsq : (1 - a / 6) ^ 2 ≤ a + a ^ 2 / 36 := by nlinarith
     have := Real.sqrt_le_sqrt hsq

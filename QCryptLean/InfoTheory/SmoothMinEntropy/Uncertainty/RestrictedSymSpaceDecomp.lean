@@ -373,7 +373,7 @@ theorem finFunctionFinEquiv_symm_cast_finProdFinEquiv {d n r : ℕ} [NeZero d]
       Nat.add_mul_mod_self_left]
   · rw [dif_neg hm, finFunctionFinEquiv_symm_apply_val]
     -- High block: digit `m` of `(b + d^r·a)` equals digit `m-r` of `a`.
-    push_neg at hm
+    push Not at hm
     -- `(b + d^r·a) / d^m = a / d^(m-r)` since `b < d^r ≤ d^m`.
     have hdiv : ((b : ℕ) + d ^ r * (a : ℕ)) / d ^ (m : ℕ) = (a : ℕ) / d ^ ((m : ℕ) - r) := by
       have hbr : ((b : ℕ) + d ^ r * (a : ℕ)) / d ^ r = (a : ℕ) := by
@@ -584,7 +584,7 @@ theorem inRestrictedSymSpace_computationalBasisExpansion
     rw [tupleProductVec_inner_cast_tensor_eq_zero hr e xbar he_on _ _ h_dim, mul_zero]
     -- Some high slot `m ≥ r` of `bx ∘ perms t` carries a non-`xbar` letter.
     by_contra hall
-    push_neg at hall
+    push Not at hall
     -- `hall : ∀ m, r ≤ m → bx (perms t m) = xbar` (the high block all carry `xbar`).
     refine Nat.not_lt.mpr ?_ hfreq
     -- The `n − r` high slots `⟨r+j, _⟩` map injectively by `perms t` into the
@@ -649,7 +649,7 @@ theorem exists_placementAssignment
   have hcard : ∀ bx, β bx ≠ 0 → m ≤ (slots bx).card := by
     intro bx hβ
     by_contra hlt
-    push_neg at hlt
+    push Not at hlt
     exact hβ (hβ_supp bx (by rw [thetaFreq]; exact hlt))
   -- The canonical `m`-subset of `slots bx` (chosen via `exists_subset_card_eq`).
   have hchoice : ∀ bx, ∃ t : Finset (Fin n), t ⊆ slots bx ∧

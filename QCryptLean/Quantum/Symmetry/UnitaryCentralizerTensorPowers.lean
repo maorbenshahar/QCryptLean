@@ -46,7 +46,7 @@ lemma differentiable_tensorPow {d n : ℕ} {f : ℂ → Op d} (hf : Differentiab
   apply differentiable_pi.mpr
   intro j
   simp only [Op.tensorPow_apply]
-  exact Differentiable.fun_finset_prod fun k _ =>
+  exact Differentiable.fun_finsetProd fun k _ =>
     differentiable_pi.mp (differentiable_pi.mp hf _) _
 
 /-- Applying a scalar function to a diagonal matrix preserves its commutant. -/

@@ -35,6 +35,19 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
+private local instance {n : ℕ} : ContinuousENorm (Op n × Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
+private local instance {n : ℕ} : SecondCountableTopology (Op n) :=
+  inferInstanceAs (SecondCountableTopology (Fin n → Fin n → ℂ))
+
+private local instance {n : ℕ} : TopologicalSpace.PseudoMetrizableSpace (Op n) :=
+  inferInstanceAs (TopologicalSpace.PseudoMetrizableSpace (Fin n → Fin n → ℂ))
+
+private local instance {n : ℕ} : OpensMeasurableSpace (Op n × Op n) := Prod.opensMeasurableSpace
+
 /-- Package a PSD matrix as a `PosSemidefOp`. -/
 def PosSemidefOp.ofMatrix {n : ℕ} (M : Op n) (h : M.PosSemidef) : PosSemidefOp n :=
   ⟨⟨M, h.isHermitian⟩, fun v => posSemidef_re_quadraticForm_nonneg h v⟩
@@ -84,7 +97,7 @@ lemma sandwich_posSemidef {n : ℕ} {A B : Op n} (_hA : A.PosSemidef) (hB : B.Po
 lemma continuous_trace_re {n : ℕ} :
     Continuous (fun M : Op n => (Matrix.trace M).re) := by
   apply Complex.continuous_re.comp
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro i _
   exact (continuous_apply i).comp (continuous_apply i)
 
@@ -301,7 +314,7 @@ lemma sum_goodBranchBlockOp_trace_re_eq_setIntegral {d dE : ℕ} {X : Type*} [Fi
       (fun τ : DensityOp d => ((g τ).stateMap x).toOp) μ.measure) :
     ∑ x, (goodBranchBlockOp μ g goodSet x).trace.re =
       ∫ τ in goodSet, ∑ x, ((g τ).stateMap x).trace ∂μ.measure := by
-  rw [MeasureTheory.integral_finset_sum _
+  rw [MeasureTheory.integral_finsetSum _
     (fun x _ => integrableOn_blockTrace μ g goodSet x (h_int x))]
   exact Finset.sum_congr rfl
     (fun x _ => goodBranchBlockOp_trace_re_eq_setIntegral μ g goodSet x (h_int x))
@@ -611,15 +624,15 @@ theorem exists_continuousMixtureGoodBranch_purifiedDistance_le_of_integrable
   set wg : DensityOp d → ℝ := fun τ => (g τ).toJointDensity.trace with hwg
   -- integrability of the joint trace / fidelity (via the block sums)
   have hwf_int : IntegrableOn wf goodSet μ.measure :=
-    (MeasureTheory.integrable_finset_sum Finset.univ
+    (MeasureTheory.integrable_finsetSum Finset.univ
       (fun x _ => integrableOn_blockTrace μ f goodSet x (hf_int x))).congr
       (by filter_upwards with τ using (CQState.toJointDensity_trace_eq_sum (f τ)).symm)
   have hwg_int : IntegrableOn wg goodSet μ.measure :=
-    (MeasureTheory.integrable_finset_sum Finset.univ
+    (MeasureTheory.integrable_finsetSum Finset.univ
       (fun x _ => integrableOn_blockTrace μ g goodSet x (hg_int x))).congr
       (by filter_upwards with τ using (CQState.toJointDensity_trace_eq_sum (g τ)).symm)
   have hfF_int : IntegrableOn fF goodSet μ.measure :=
-    (MeasureTheory.integrable_finset_sum Finset.univ
+    (MeasureTheory.integrable_finsetSum Finset.univ
       (fun x _ => integrableOn_fidOp_blocks μ f g goodSet x (hf_int x) (hg_int x))).congr
       (by filter_upwards with τ
           change ∑ x, fidOp (((f τ).stateMap x).toOp, ((g τ).stateMap x).toOp)
@@ -650,7 +663,7 @@ theorem exists_continuousMixtureGoodBranch_purifiedDistance_le_of_integrable
     have hL : (∫ τ in goodSet, fF τ ∂μ.measure)
         = ∑ x : X, ∫ τ in goodSet,
             fidOp (((f τ).stateMap x).toOp, ((g τ).stateMap x).toOp) ∂μ.measure := by
-      rw [← MeasureTheory.integral_finset_sum _
+      rw [← MeasureTheory.integral_finsetSum _
         (fun x _ => integrableOn_fidOp_blocks μ f g goodSet x (hf_int x) (hg_int x))]
       refine MeasureTheory.integral_congr_ae (ae_of_all _ fun τ => ?_)
       change fidelity (f τ).toJointDensity.toPosSemidefOp (g τ).toJointDensity.toPosSemidefOp
@@ -673,7 +686,7 @@ theorem exists_continuousMixtureGoodBranch_purifiedDistance_le_of_integrable
     rw [CQState.toJointDensity_trace_eq_sum ρ,
       MeasureTheory.integral_congr_ae
         (ae_of_all _ fun τ => CQState.toJointDensity_trace_eq_sum (h τ)),
-      MeasureTheory.integral_finset_sum _
+      MeasureTheory.integral_finsetSum _
         (fun x _ => integrableOn_blockTrace μ h goodSet x (hh_int x))]
     refine Finset.sum_congr rfl (fun x _ => ?_)
     rw [← goodBranchBlockOp_trace_re_eq_setIntegral μ h goodSet x (hh_int x), ← hρ_eq x]
@@ -704,7 +717,7 @@ theorem exists_continuousMixtureGoodBranch_purifiedDistance_le_of_integrable
     have hle : 1 - εBar ^ 2 ≤ Real.sqrt (1 - εBar ^ 2) ^ 2 := by
       by_cases h : 0 ≤ 1 - εBar ^ 2
       · rw [Real.sq_sqrt h]
-      · push_neg at h; nlinarith [sq_nonneg (Real.sqrt (1 - εBar ^ 2))]
+      · push Not at h; nlinarith [sq_nonneg (Real.sqrt (1 - εBar ^ 2))]
     nlinarith [hfg_ge, hc_nn, hfgnn, hle]
   unfold CQState.purifiedDistance InfoTheory.SmoothMinEntropy.purifiedDistance
   calc Real.sqrt (1 - fidelityGen ρ_good.toJointDensity ρ_good'.toJointDensity ^ 2)

@@ -29,6 +29,8 @@ section BellJointHaarIntegral
 
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup Matrix.frobeniusNormedSpace
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- **The Haar moment of the `n`-fold tensor power** — the Bochner integral, over Haar-random
 single-pair pure states `φ : DensityOp 4`, of the bare tensor power `φ^{⊗n}` equals the symmetric
 de Finetti state `deFinettiState 4 n`.  (`∫ φ^{⊗n} ∂Haar = deFinettiState 4 n`, entrywise via

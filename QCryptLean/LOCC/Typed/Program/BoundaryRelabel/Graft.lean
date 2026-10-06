@@ -200,7 +200,7 @@ theorem cc_comp_cc {B : Boundary P} {C : B.Exit → Boundary P}
       show (graftAssocProgram k l e).denote (blockAt B e M) =
           Program.controlledContinuation (graftAssocCont l e)
             ((k e).denote (blockAt B e M)) from by
-        rw [graftAssocProgram, Program.denote_graft]; rfl]
+        exact LinearMap.congr_fun ((k e).denote_graft (graftAssocCont l e)) (blockAt B e M)]
     by_cases hff : f = f'
     · subst hff
       rw [cc_sameExit, Program.controlledContinuation_sameExit,

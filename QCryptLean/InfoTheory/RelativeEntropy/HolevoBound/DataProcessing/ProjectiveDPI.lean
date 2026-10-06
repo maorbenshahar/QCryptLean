@@ -134,7 +134,7 @@ lemma projector_sum_eigenvalue_in_fin {N m : ℕ} [NeZero N] [NeZero m]
   have hv_ne : v_j ≠ 0 := unitary_column_ne_zero U hUstarU j
   have h_sum_v : ∑ y : Fin m, (P y).mulVec v_j = v_j := by
     rw [← Matrix.sum_mulVec, h_complete, Matrix.one_mulVec]
-  by_contra h_none; push_neg at h_none
+  by_contra h_none; push Not at h_none
   exact hv_ne (by
     rw [← h_sum_v]
     exact Finset.sum_eq_zero fun y _ =>
@@ -220,7 +220,7 @@ lemma projector_adapted_column_identity {N m : ℕ} [NeZero N] [NeZero m]
   have h_identity : ∀ j, g j = y → ∀ i, (P y * U) i j = U i j := by
     intro j hgj i
     have h_sum := congr_fun (congr_fun h_sum_eq i) j
-    rw [Finset.sum_apply, Finset.sum_apply] at h_sum
+    rw [Matrix.sum_apply] at h_sum
     rw [Finset.sum_eq_single y] at h_sum
     · exact h_sum
     · intro y' _ hy'

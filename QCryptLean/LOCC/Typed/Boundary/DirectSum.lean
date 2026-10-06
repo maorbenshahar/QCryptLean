@@ -344,7 +344,9 @@ is the continuation's complete-exit extraction. -/
     (next : Y → Boundary P) (y : Y) (e : (next y).Exit) :
     (exitKraus (Boundary.announce Y next) ⟨y, e⟩)ᴴ * publicInclKraus next y =
       (exitKraus (next y) e)ᴴ := by
-  rw [exitKraus_announce, Matrix.conjTranspose_mul, Matrix.mul_assoc,
+  rw [exitKraus_announce]
+  change (publicInclKraus next y * exitKraus (next y) e)ᴴ * publicInclKraus next y = _
+  rw [Matrix.conjTranspose_mul, Matrix.mul_assoc,
     publicInclKraus_conjTranspose_mul_self, Matrix.mul_one]
 
 /-- Extracting a complete exit through a distinct outer public block gives the rectangular zero
@@ -353,8 +355,11 @@ theorem exitKraus_announce_conjTranspose_mul_publicInclKraus_of_ne
     {Y : Type} [Fintype Y] [DecidableEq Y]
     (next : Y → Boundary P) {y z : Y} (e : (next y).Exit) (h : y ≠ z) :
     (exitKraus (Boundary.announce Y next) ⟨y, e⟩)ᴴ * publicInclKraus next z = 0 := by
-  rw [exitKraus_announce, Matrix.conjTranspose_mul, Matrix.mul_assoc,
+  rw [exitKraus_announce]
+  change (publicInclKraus next y * exitKraus (next y) e)ᴴ * publicInclKraus next z = _
+  rw [Matrix.conjTranspose_mul, Matrix.mul_assoc,
     publicInclKraus_conjTranspose_mul_of_ne next h, Matrix.mul_zero]
+  rfl
 
 end Boundary
 end TypedLOCC

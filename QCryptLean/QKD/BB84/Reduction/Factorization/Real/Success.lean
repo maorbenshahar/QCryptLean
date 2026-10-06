@@ -1,3 +1,4 @@
+import QCryptLean.QKD.BB84.Acceptance
 import QCryptLean.QKD.BB84.Reduction.BasisErasure
 import QCryptLean.QKD.BB84.Reduction.Factorization.Reconstruction
 import QCryptLean.QKD.BB84.Reduction.RetainedBlocks
@@ -76,7 +77,10 @@ private theorem successfulCompleteContinuation_output_apply
             else 0
       else 0 := by
   unfold QKD.BB84.successfulCompleteContinuation
-  rw [Program.denote_graft]
+  conv_lhs =>
+    tactic => exact congrFun (congrFun (LinearMap.congr_fun
+      (Program.denote_graft (QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)) _)
+      sigma) _) _
   let B : Boundary TwoParty.Party := .leaf (FinalStage.rawSystem (nK + mZ + mX))
   let C : B.Exit → Boundary TwoParty.Party := fun _ =>
     QKD.BB84.rawClassicalTailBoundary (nK + mZ + mX) (mZ + mX)
@@ -116,8 +120,8 @@ private theorem successfulCompleteContinuation_output_apply
       have htau : tau x x =
           (QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma
             ⟨(), x⟩ ⟨(), x⟩ := by
-        simp [tau, B, Matrix.mul_apply, Matrix.conjTranspose_apply,
-          Boundary.exitKraus_apply]
+        exact congrFun (congrFun (BoundaryRelabel.exitKraus_sandwich_eq_blockAt B ()
+          ((QKD.BB84.selectedBitsToRawProgram N (nK + mZ + mX)).denote sigma)) x) x
       rw [htau]
       exact selectedBitsToRawProgram_denote_diag N (nK + mZ + mX) sigma x
     · rw [if_neg hout, if_neg hout]
@@ -150,7 +154,10 @@ private theorem program_denote_success_eq_continuation
       (successContinuationSpaceEquiv
         N nK mZ mX ell ellEV leakEC omega hquota qb) := by
   unfold QKD.BB84.program
-  rw [Program.denote_graft]
+  conv_lhs =>
+    tactic => exact congrFun (congrFun (LinearMap.congr_fun
+      (Program.denote_graft (Measurement.weightedLatePublicSelectionProgram
+        pA pB N nK mZ mX) _) rho) _) _
   let G := Boundary.graftSpaceEquiv
     (Measurement.lateSelectionBoundary N nK mZ mX)
     (QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC)
@@ -259,35 +266,7 @@ private theorem program_denote_success_raw_formula
           (Measurement.lateSelectionBoundary N nK mZ mX).space) =
         Measurement.lateSelectionSuccessAt N nK mZ mX
           omega hquota (qA, qB) := by
-    rcases omega with ⟨aBasis, bBasis, order⟩
-    let hleaf : Measurement.lateSelectionLeaf N nK mZ mX
-        ⟨aBasis, bBasis, order⟩ =
-          .leaf (Measurement.weightedSelectedRecordSystem N (nK + mZ + mX)) := by
-      simp [Measurement.lateSelectionLeaf, hquota]
-    apply (Boundary.publicSpaceEquiv (fun a : Fin N → Basis =>
-      .announce (Fin N → Basis) fun b =>
-        .announce (Shuffle a b) fun order =>
-          Measurement.lateSelectionLeaf N nK mZ mX
-            ⟨a, b, order⟩)).injective
-    simp only [Boundary.publicSpaceEquiv, Equiv.sigmaAssoc, lateSelectionExit, eq_mpr_eq_cast,
-        cast_eq, id_eq, hquota, Equiv.coe_fn_mk, lateSelectionSuccessAt, Boundary.leafSpaceEquiv,
-        Equiv.coe_fn_symm_mk, Sigma.mk.injEq, heq_eq_eq, ↓reduceDIte, true_and, ESystem, e]
-    have castBoundarySnd
-        {B C : Boundary TwoParty.Party} (h : B = C) (z : B.space) :
-        (cast (congrArg Boundary.space h) z).2 ≍ z.2 := by
-      cases h
-      rfl
-    constructor
-    · congr
-      exact Subsingleton.elim _ _
-    · change
-        (cast (congrArg MultipartiteSystem.total hstart).symm
-          ((TwoParty.pairEquiv _ _).symm (qA, qB))) ≍
-        (cast (congrArg Boundary.space hleaf).symm
-          ⟨(), (TwoParty.pairEquiv _ _).symm (qA, qB)⟩).2
-      exact (cast_heq _ _).trans
-        (castBoundarySnd hleaf.symm
-          ⟨(), (TwoParty.pairEquiv _ _).symm (qA, qB)⟩).symm
+    exact (QKD.BB84.lateSelectionSuccessAt_eq N nK mZ mX omega hquota (qA, qB)).symm
   have hdiag (qA qB : Measurement.SelectedLocalRecord N (nK + mZ + mX)) :
       (((Boundary.exitKraus (Measurement.lateSelectionBoundary N nK mZ mX) e)ᴴ *
           (Measurement.weightedLatePublicSelectionProgram
@@ -629,7 +608,7 @@ private theorem reconstruction_success
           (successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC
             omega hquota q) x = 0
     unfold reconstructionShortageKraus
-    rw [Matrix.smul_apply]
+    refine (Matrix.smul_apply _ _ _ _).trans ?_
     rw [Matrix.single_apply_of_row_ne]
     · exact smul_zero _
     · intro heq
@@ -661,7 +640,7 @@ private theorem reconstruction_success
   simp only [Fintype.sum_unique, LinearMap.sum_apply, Matrix.sum_apply, matrixConjLinear_apply,
     ← Finset.sum_mul]
   simp only [reconstructionInstrument]
-  rw [Fintype.sum_sum_type]
+  conv_lhs => tactic => exact Fintype.sum_sum_type _
   simp only [Fintype.sum_sigma]
   simp_rw [hfailureRow]
   simp only [zero_mul, Finset.sum_const_zero, star_zero, mul_zero, add_zero]
@@ -775,24 +754,24 @@ private theorem reconstruction_success
                 rw [← hdata, D.symm_apply_apply]
           · exact hcS
         · rfl
+    have hrows
+        (q : RawClassicalTailOutput (nK + mZ + mX) (mZ + mX) ell ellEV
+          (@Sampling.packedPESel nK mZ mX) leakEC) :
+        reconstructionKraus N nK mZ mX ell ellEV leakEC pA pB (Sum.inl ⟨S, pi, eta0⟩)
+            (successCompleteOutputEmbedding N nK mZ mX ell ellEV leakEC omega hquota q) =
+          Pi.single (E (D.symm (pi, q)), Sum.inl S)
+            (Instrument.weightedChoiceScale K omega) := by
+      funext x
+      exact (hrow_self q x).trans (Pi.single_apply _ _ _).symm
     rw [Finset.sum_eq_single eta0]
-    · rw [Finset.sum_eq_single xB]
-      · rw [hrow_self qb xB, if_pos rfl]
-        rw [Finset.sum_eq_single xA]
-        · rw [hrow_self qa xA, if_pos rfl]
-          calc
-            (Instrument.weightedChoiceScale K omega * sigma xA xB) *
-                star (Instrument.weightedChoiceScale K omega) =
-              (star (Instrument.weightedChoiceScale K omega) *
-                Instrument.weightedChoiceScale K omega) * sigma xA xB := by ring
-            _ = ((K omega).toReal : ℂ) * sigma xA xB := by
-              rw [Instrument.weightedChoiceScale_star_mul]
-        · intro x _ hx
-          rw [hrow_self qa x, if_neg hx, zero_mul]
-        · exact fun h => absurd (Finset.mem_univ _) h
-      · intro x _ hx
-        rw [hrow_self qb x, if_neg hx, star_zero, mul_zero]
-      · exact fun h => absurd (Finset.mem_univ _) h
+    · refine (matrixConjLinear_apply_of_row_eq_single _ sigma (hrows qa) (hrows qb)).trans ?_
+      calc
+        (Instrument.weightedChoiceScale K omega * sigma xA xB) *
+            star (Instrument.weightedChoiceScale K omega) =
+          (star (Instrument.weightedChoiceScale K omega) *
+            Instrument.weightedChoiceScale K omega) * sigma xA xB := by ring
+        _ = ((K omega).toReal : ℂ) * sigma xA xB := by
+          rw [Instrument.weightedChoiceScale_star_mul]
     · intro eta _ heta
       have hcontrol : eta.1 ≠ omega := by
         intro h

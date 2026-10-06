@@ -25,6 +25,14 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
+private local instance {X : Type*} [Fintype X] {n : ℕ} : ContinuousENorm (X → Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
+private local instance {X : Type*} [Fintype X] {n : ℕ} : ESeminormedAddMonoid (X → Op n) :=
+  (NormedAddGroup.toENormedAddMonoid (F := X → Op n)).toESeminormedAddMonoid
+
 /-- Sum over a finite type of a function obtained by extending along an embedding `e : σ ↪ ι`,
 where the extension vanishes off the range of `e`, equals the sum of the original function. -/
 private lemma sum_eq_sum_of_embedding {σ ι : Type*} [Fintype σ] [Fintype ι] {M : Type*}
@@ -35,7 +43,7 @@ private lemma sum_eq_sum_of_embedding {σ ι : Type*} [Fintype σ] [Fintype ι] 
   have h2 : ∑ b ∈ Finset.univ.map e, g b = ∑ j, g j :=
     Finset.sum_subset (Finset.subset_univ _) (fun j _ hj => hg2 j (by
       rw [Finset.mem_map] at hj
-      push_neg at hj
+      push Not at hj
       rintro ⟨i, rfl⟩
       exact hj i (Finset.mem_univ i) rfl))
   rw [← h2, Finset.sum_map Finset.univ e g]
@@ -52,13 +60,13 @@ private lemma isCompact_convexHull_of_isCompact_finiteDim
   set d := Module.finrank ℝ E with hd
   have hgcont : Continuous (fun p : (Fin (d + 1) → ℝ) × (Fin (d + 1) → E) =>
       ∑ i, p.1 i • p.2 i) := by
-    apply continuous_finset_sum
+    apply continuous_finsetSum
     intro i _
     exact ((continuous_apply i).comp continuous_fst).smul
       ((continuous_apply i).comp continuous_snd)
   have hKcompact : IsCompact ((stdSimplex ℝ (Fin (d + 1))) ×ˢ
       (Set.univ.pi (fun _ : Fin (d + 1) => s))) :=
-    (isCompact_stdSimplex (Fin (d + 1))).prod (isCompact_univ_pi (fun _ => hs))
+    (isCompact_stdSimplex ℝ (Fin (d + 1))).prod (isCompact_univ_pi (fun _ => hs))
   have himg : convexHull ℝ s = (fun p : (Fin (d + 1) → ℝ) × (Fin (d + 1) → E) =>
       ∑ i, p.1 i • p.2 i) '' ((stdSimplex ℝ (Fin (d + 1))) ×ˢ
         (Set.univ.pi (fun _ : Fin (d + 1) => s))) := by
@@ -206,7 +214,9 @@ theorem integralRestrict_eq_finite_subConvexCombination
     have hcinv_ne_top : (μ.measure goodSet)⁻¹ ≠ ∞ := ENNReal.inv_ne_top.mpr hzero
     have hFint_ν : Integrable F ν := by
       rw [hνdef]
-      exact (MeasureTheory.integrable_smul_measure hcinv_ne_zero hcinv_ne_top).mpr hFint_restrict
+      exact (MeasureTheory.integrable_smul_measure (f := F)
+        (μ := μ.measure.restrict goodSet)
+        hcinv_ne_zero hcinv_ne_top).mpr hFint_restrict
     set Y : X → Op dE := ∫ τ in goodSet, F τ ∂μ.measure with hYdef
     have hae : ∀ᵐ τ ∂ν, F τ ∈ convexHull ℝ (F '' (goodSet ∩ P)) := by
       rw [hνdef]
@@ -775,7 +785,7 @@ private lemma conditionalMinEntropyReal_subMixture_ge_inf_component
       rw [Finset.sum_comm]
     obtain ⟨z₀, hz₀_pos⟩ : ∃ z, 0 < p z := by
       by_contra hnone
-      push_neg at hnone
+      push Not at hnone
       have : ∑ z, p z = 0 := by
         apply Finset.sum_eq_zero
         intro z _

@@ -222,12 +222,28 @@ theorem Op.tensorProdFin_eq_tensorFamilyPi (k : ℕ) (dim : Fin k → ℕ) (f : 
   induction k with
   | zero =>
     rw [Op.tensorProdFin_zero, Op.castDim_one,
-      Subsingleton.elim (fun j => f (Fin.rev j)) fun _ => 1, tensorFamilyPi_one, Op.castDim_one]
+      Subsingleton.elim (fun j => f (Fin.rev j)) fun _ => 1]
+    have hone : tensorFamilyPi (fun j : Fin 0 => (1 : Op (dim (Fin.rev j)))) = 1 :=
+      tensorFamilyPi_one
+    exact ((congrArg (Op.castDim _) hone).trans (Op.castDim_one _)).symm
   | succ k ih =>
     rw [Op.tensorProdFin_succ, ih, tensorFamilyPi_castSucc, tensorRect_square,
-      ← Op.castDim_eq_reindex_finCongr, apply_eq_castDim f (Fin.rev_last k),
-      tensorFamilyPi_rev_castSucc f]
+      ← Op.castDim_eq_reindex_finCongr, apply_eq_castDim f (Fin.rev_last k)]
+    conv_rhs =>
+      arg 2
+      arg 2
+      arg 2
+      tactic => exact tensorFamilyPi_rev_castSucc f
     simp only [Op.tensor_castDim_left, Op.tensor_castDim_right, Op.castDim_trans]
+    conv_rhs =>
+      arg 2
+      tactic => exact Op.tensor_castDim_left _ _ _
+    simp only [Op.tensor_castDim_right, Op.castDim_trans]
+    conv_rhs =>
+      arg 2
+      tactic => exact Op.tensor_castDim_right _ _ _
+    simp only [Op.castDim_trans]
+    rfl
 
 /-! ## Equal dimensions -/
 
@@ -238,7 +254,7 @@ theorem Op.tensorProdFin_const {d : ℕ} (k : ℕ) (f : Fin k → Op d) :
     Op.tensorProdFin k (fun _ => d) f =
       Op.castDim (Fin.prod_const k d).symm (tensorFamily fun j => f (Fin.rev j)) := by
   induction k with
-  | zero => rw [Op.tensorProdFin_zero, tensorFamily_zero, Op.castDim_one]
+  | zero => simp +instances only [Op.tensorProdFin_zero, tensorFamily_zero, Op.castDim_one]
   | succ k ih =>
     rw [Op.tensorProdFin_succ, ih, tensorFamily_comp_rev_castSucc, tensorRect_square,
       ← Op.castDim_eq_reindex_finCongr, Op.tensor_castDim_right, Op.castDim_trans,

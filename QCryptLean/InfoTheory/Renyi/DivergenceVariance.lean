@@ -129,6 +129,9 @@ noncomputable section
 
 namespace InfoTheory.Renyi
 
+private local instance (m : Type*) [Fintype m] [DecidableEq m] :
+    CStarAlgebra (Matrix m m ℂ) := {}
+
 /-!
 ## The divergence variance and its conditional form
 -/
@@ -481,9 +484,9 @@ private lemma sq_log_div_antitoneOn :
   have hb' : (0 : ℝ) < b := lt_of_lt_of_le (Real.exp_pos 2) hb
   change (Real.log b) ^ 2 / b ≤ (Real.log a) ^ 2 / a
   have hanti := Real.log_div_self_rpow_antitoneOn (a := 1 / 2) (by norm_num)
-  have hhalf : (1 / (1 / 2 : ℝ)) = 2 := by norm_num
-  have hmemA : Real.exp (1 / (1 / 2 : ℝ)) ≤ a := by rw [hhalf]; exact ha
-  have hmemB : Real.exp (1 / (1 / 2 : ℝ)) ≤ b := by rw [hhalf]; exact hb
+  have hhalf : (1 / 2 : ℝ)⁻¹ = 2 := by norm_num
+  have hmemA : Real.exp (1 / 2 : ℝ)⁻¹ ≤ a := by rw [hhalf]; exact ha
+  have hmemB : Real.exp (1 / 2 : ℝ)⁻¹ ≤ b := by rw [hhalf]; exact hb
   have h : Real.log b / b ^ (1 / 2 : ℝ) ≤ Real.log a / a ^ (1 / 2 : ℝ) := hanti hmemA hmemB hab
   rw [key a ha', key b hb']
   exact pow_le_pow_left₀ (hnn b hb) h 2
@@ -1734,7 +1737,7 @@ theorem classical_var_le_log_sqrt_budget {ι : Type*} [Fintype ι] (w Y : ι →
   -- strict positivity of the two budgets: both moments are strictly positive
   have hwpos : ∃ i, 0 < w i := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have h := Finset.sum_nonpos (fun i (_ : i ∈ Finset.univ) => hcon i)
     rw [hw1] at h
     norm_num at h
@@ -1944,7 +1947,7 @@ theorem condDivergenceVariance_le_logb_sqrt_card {X : Type*} [Fintype X] [Decida
   have hpt2pos : (0 : ℝ) < petzTrace (1 + 1) ρ.toJointOp
       (Matrix.blockDiagonal (fun _ : X => ρ.quantumMarginalOp)) := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hle : (∑ p : (Fin n × X) × (Fin n × X), nsW hRh hSh p
         * Real.exp (1 * (nsL hRh hSh p - nsD hRh hSh))) ≤ 0 := by
       rw [hM1eq]

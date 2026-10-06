@@ -29,7 +29,7 @@ open TypedLOCC
 open TypedLOCC.TwoParty
 
 /-- Explicit decidable equality for finite chronological stored-record vectors. -/
-def storedRecordVectorDecidableEq (N : ℕ) :
+@[implicit_reducible] def storedRecordVectorDecidableEq (N : ℕ) :
     DecidableEq (Fin N → StoredRecord) :=
   Fintype.decidablePiFintype
 
@@ -192,7 +192,11 @@ theorem weightedMeasurementScheduleAux_preserves_accumulator_block_zero
   | zero =>
       -- With no rounds the schedule is the identity on the empty streams.
       intro rA rA' rB rB'
-      rw [weightedMeasurementScheduleAux_zero, Program.denote_done]
+      rw [weightedMeasurementScheduleAux_zero]
+      have hdone := LinearMap.congr_fun
+        (Program.denote_done (R := weightedStreamSystem F 0)) rho
+      refine (congrArg (fun M => reindexOp (weightedScheduleOutputEquiv F 0) M
+        ((fA, rA), (fB, rB)) ((fA', rA'), (fB', rB'))) hdone).trans ?_
       exact hzero (fun i => Fin.elim0 i) (fun i => Fin.elim0 i)
         (fun i => Fin.elim0 i) (fun i => Fin.elim0 i)
   | succ n ih =>

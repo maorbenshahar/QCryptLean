@@ -122,7 +122,11 @@ theorem weightedMeasureAliceWithSpectator_liftedOperation_apply
   rw [hout_fst stored s, hout_fst stored' s']
   simp_rw [hrestore]
   unfold weightedMeasureAndRecord
-  rw [Instrument.keeping_operation_apply]
+  have hkeep := Instrument.keeping_operation_apply
+    (Instrument.weightedChoice p fixedBasisMeasurement) observed
+    (rho.submatrix (fun x => aliceInputAt x s) (fun y => aliceInputAt y s'))
+    stored.1 stored'.1 stored.2 stored'.2
+  refine hkeep.trans ?_
   by_cases hstored : stored.2 = observed ∧ stored'.2 = observed
   · rw [if_pos hstored, if_pos hstored]
     rw [Instrument.weightedChoice_operation]

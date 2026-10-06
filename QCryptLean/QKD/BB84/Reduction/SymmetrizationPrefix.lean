@@ -127,7 +127,9 @@ theorem alicePermutationAnnouncement_liftedOperation_apply
     (FinalStage.rawSystem n) .alice).operation (π, ()) rho q q' = _
   rw [Instrument.liftAt_operation_apply]
   unfold alicePermutationInstrument
-  rw [Instrument.uniformChoice_operation]
+  refine (congrFun (congrFun (LinearMap.congr_fun
+    (Instrument.uniformChoice_operation (fun π => siftPermutationInstrument n peSel xSel π)
+      π ()) _) _) _).trans ?_
   simp only [LinearMap.smul_apply, Matrix.smul_apply, smul_eq_mul]
   apply congrArg (fun z : ℂ => (Fintype.card (Equiv.Perm (Fin n)) : ℂ)⁻¹ * z)
   calc

@@ -112,9 +112,9 @@ private theorem tendsto_rpow_aux [Nonempty n] {X : Type*} {l : Filter X} {A : X 
   · have hev : ∀ᶠ x in l, ‖A x‖₊ ≤ ‖A₀‖₊ + 1 :=
       h.nnnorm.eventually (Iic_mem_nhds (lt_add_one _))
     filter_upwards [hev] with x hx y hy
-    exact ⟨zero_le y, (spectrum.le_nnnorm_of_mem hy).trans hx⟩
+    exact ⟨zero_le, (spectrum.le_nnnorm_of_mem hy).trans hx⟩
   · filter_upwards [hA] with x hx using hx.nonneg
-  · exact fun y hy => ⟨zero_le y, (spectrum.le_nnnorm_of_mem hy).trans (le_add_right le_rfl)⟩
+  · exact fun y hy => ⟨zero_le, (spectrum.le_nnnorm_of_mem hy).trans (le_add_right le_rfl)⟩
   · exact hA₀.nonneg
   · exact (NNReal.continuous_rpow_const ht).continuousOn
 

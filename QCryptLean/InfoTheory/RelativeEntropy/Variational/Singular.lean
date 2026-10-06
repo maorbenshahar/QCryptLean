@@ -34,6 +34,8 @@ noncomputable section
 
 namespace InfoTheory.RelativeEntropy
 
+private local instance (n : Type*) [Fintype n] [DecidableEq n] : CStarAlgebra (Matrix n n ℂ) := {}
+
 open Math.ClassicalEntropy InfoTheory.VonNeumannEntropy
 
 /-- Taking the real part of the trace pairing is linear in the right factor. -/

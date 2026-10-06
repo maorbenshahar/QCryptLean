@@ -448,8 +448,9 @@ private theorem failKraus_apply
             (t, Sum.inr j) = x then
         Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j) om.1
       else 0) := by
-  simp only [reconstructionShortageKraus, Matrix.smul_apply, Matrix.single_apply,
-    smul_eq_mul, mul_ite, mul_one, mul_zero]
+  unfold reconstructionShortageKraus
+  refine (Matrix.smul_apply _ _ _ _).trans ?_
+  simp only [Matrix.single_apply, smul_eq_mul, mul_ite, mul_one, mul_zero]
 
 /-- The reconstruction channel expanded into its explicit Kraus family. -/
 private theorem postChannel_eq_krausSum
@@ -818,6 +819,7 @@ private theorem succControlBlock :
         (k, Sum.inl emptySubset) := by
     intro k
     simp [reconstructionInputEquiv]
+    rfl
   have hblock : (Matrix.of fun i j =>
       successInput
         (finProdFinEquiv (i,

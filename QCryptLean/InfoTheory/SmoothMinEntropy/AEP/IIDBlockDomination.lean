@@ -126,7 +126,7 @@ theorem iidAEPCrossingCutIndex_below_lt {m : ℕ} [NeZero m]
   unfold iidAEPCrossingCutIndex at hz
   split_ifs at hz with h
   · by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hmem : z ∈ Finset.univ.filter (fun z : Fin m => (2 : ℝ) ^ (-T) ≤ lam z) := by
       simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact hcon
     exact absurd hz (not_lt.mpr (Finset.min'_le _ z hmem))

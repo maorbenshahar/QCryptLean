@@ -19,6 +19,8 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 variable {d dE : ℕ} [NeZero d] [NeZero dE] {X : Type*}
   [Fintype X] [DecidableEq X] [Nonempty X]
 

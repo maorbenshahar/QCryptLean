@@ -60,14 +60,14 @@ lemma naimarkProjector_idem (n m : ℕ) [NeZero m] (y : Fin m) :
       simp
     · intro b _ hb
       apply ite_and_mul_ite_and_zero
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       obtain ⟨⟨_, hbm, hbd⟩, _⟩ := hc
       exact hb (by rw [← Fin.divNat_mkDivMod_modNat b, hbm, hbd])
     · simp
   · rw [if_neg h]
     apply Finset.sum_eq_zero; intro k _
     apply ite_and_mul_ite_and_zero
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     obtain ⟨⟨h1a, _, h1c⟩, ⟨_, h2b, h2c⟩⟩ := hc
     exact h ⟨h1a, h2b, h1c.trans h2c⟩
 
@@ -100,7 +100,7 @@ lemma naimarkProjector_complete (n m : ℕ) [NeZero m] :
     ∑ y : Fin m, naimarkProjector n m y = 1 := by
   ext i j
   simp only [Matrix.one_apply]
-  rw [Finset.sum_apply, Finset.sum_apply]
+  rw [Matrix.sum_apply]
   simp only [naimarkProjector]
   by_cases hij : i = j
   · subst hij; simp only [ite_true]
@@ -193,7 +193,7 @@ lemma naimarkIsometry_isometry {n m : ℕ} [NeZero n] [NeZero m]
   -- ∑ y, M_y(a,b) = 1(a,b) by POVM completeness
   convert (show (∑ y : Fin m, M.elements y) a b =
     (if a = b then 1 else 0) from by rw [M.complete]; rfl) using 1
-  rw [Finset.sum_apply, Finset.sum_apply]
+  rw [Matrix.sum_apply]
 
 private lemma fin_eq_of_divNat_modNat {n m : ℕ} (i j : Fin (n * m))
     (h1 : i.divNat = j.divNat) (h2 : i.modNat = j.modNat) : i = j := by

@@ -193,7 +193,9 @@ noncomputable def channel (K R : Type) [Fintype K] [DecidableEq K] [Nonempty K]
 theorem channel_eq_kraus_sum (K R : Type) [Fintype K] [DecidableEq K] [Nonempty K]
     [Fintype R] [DecidableEq R] :
     channel K R = ∑ r : K × K × K, matrixConjLinear (kraus (R := R) r) := by
-  simp [channel, instrument, Instrument.channel, Instrument.operation]
+  simp only [channel, instrument, Instrument.channel, Instrument.operation,
+    Fintype.sum_unique]
+  rfl
 
 /-- Exact coordinate action of uniform shared-key replacement.
 

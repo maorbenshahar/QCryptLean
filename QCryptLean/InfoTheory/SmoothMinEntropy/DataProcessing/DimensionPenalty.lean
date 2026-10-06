@@ -312,7 +312,7 @@ theorem conditionalMinEntropyReal_sub_log_le_of_isFeasible_scaling_sameState
     · -- `lamB = 0` ⟹ `isFeasible rho sigmaB 0` ⟹ `isFeasible rho sigmaA 0` ⟹
       -- `lamA = 0`, contradicting `0 < lamA`.  So this branch is impossible.
       exfalso
-      push_neg at hlamB_pos
+      push Not at hlamB_pos
       have hlamB_zero : minFeasibleLambda rho sigmaB = 0 :=
         le_antisymm hlamB_pos hlamB_nonneg
       have hfeasB : hasFeasibleLambda rho sigmaB :=
@@ -326,7 +326,7 @@ theorem conditionalMinEntropyReal_sub_log_le_of_isFeasible_scaling_sameState
         minFeasibleLambda_le_of_isFeasible rho sigmaA h0A
       linarith
   · -- `lamA = 0`: source entropy is the sentinel `0`; scaling forces `lamB = 0`.
-    push_neg at hlamA_pos
+    push Not at hlamA_pos
     have hlamA_zero : minFeasibleLambda rho sigmaA = 0 :=
       le_antisymm hlamA_pos hlamA_nonneg
     have hlamB_zero : minFeasibleLambda rho sigmaB = 0 :=
@@ -535,7 +535,7 @@ lemma isFeasible_smul_sigma_iff {X : Type*} [Fintype X] {d : ℕ}
   · rintro ⟨h_ct_nn, hdom⟩
     have ht_nn : 0 ≤ t := by
       by_contra ht_lt
-      push_neg at ht_lt
+      push Not at ht_lt
       have : c * t < 0 := mul_neg_of_pos_of_neg hc ht_lt
       linarith
     refine ⟨ht_nn, fun x v => ?_⟩

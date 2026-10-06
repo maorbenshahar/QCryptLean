@@ -212,7 +212,7 @@ theorem binaryInnerProductHashFamily_isUniversal2Star
   intro x x' hne
   obtain ⟨i0, hi0⟩ : ∃ i, x i ≠ x' i := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hne (funext h)
   have hS : Fintype.card (BinaryHashSeed I ℓ) = (Fintype.card (I → Fin 2)) ^ ℓ := by
     simp only [BinaryHashSeed, Fintype.card_fun, Fintype.card_fin]

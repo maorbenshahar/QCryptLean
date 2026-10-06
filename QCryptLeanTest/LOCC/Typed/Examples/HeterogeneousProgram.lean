@@ -114,10 +114,16 @@ def branchKraus (o : Bool) :
 /-- The two branch-dependent Kraus matrices form a complete instrument on Alice's input bit. -/
 theorem branchKraus_complete :
     ∑ o : Bool, (branchKraus o)ᴴ * branchKraus o = 1 := by
+  rw [Fintype.sum_bool]
+  let Kt : Matrix (Bool × Bool) Bool ℂ := branchKraus true
+  let Kf : Matrix Unit Bool ℂ := branchKraus false
+  change Ktᴴ * Kt + Kfᴴ * Kf = (1 : Matrix Bool Bool ℂ)
   ext i j
-  cases i <;> cases j <;>
-    simp [branchKraus, outputRegister, Matrix.mul_apply,
-      Matrix.conjTranspose_apply]
+  simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.conjTranspose_apply]
+  have hKt (a : Bool × Bool) (b : Bool) :
+      Kt a b = if a = (false, false) ∧ b = true then 1 else 0 := rfl
+  have hKf (a : Unit) (b : Bool) : Kf a b = if b = false then 1 else 0 := rfl
+  cases i <;> cases j <;> simp [hKt, hKf]
 
 /-- Alice announces the raw bit and obtains a successor multipartite system whose register dimension
 depends on that bit. -/
@@ -146,7 +152,7 @@ instance instNeZeroInputSystemTotalCard : NeZero (Fintype.card privateMeasure.ou
 
 /-- The heterogeneous output space is inhabited by its small public branch. -/
 instance instNonemptyBranchBoundarySpace : Nonempty branchBoundary.space :=
-  (inferInstanceAs (Nonempty (branchAction.out false).total)).elim fun q => ⟨⟨⟨false, ()⟩, q⟩⟩
+  (inferInstance : Nonempty (branchAction.out false).total).elim fun q => ⟨⟨⟨false, ()⟩, q⟩⟩
 
 /-- The heterogeneous output coordinate dimension is nonzero. -/
 instance instNeZeroBranchBoundarySpaceCard : NeZero (Fintype.card branchBoundary.space) :=
@@ -221,19 +227,30 @@ theorem privateThenBranch_liftedKraus_mul_eq_zero_of_ne
     apply Finset.sum_eq_zero
     intro x _
     cases hx : x .alice <;>
-      simp [AnnouncedAction.liftedKraus, PrivateAction.liftedKraus, localKrausLift_apply,
-        branchAction, privateMeasure, PrivateAction.ofInstrument, computationalMeasure,
-        branchKraus, outputRegister, inputSystem, MultipartiteSystem.splitAt,
-        MultipartiteSystem.splitAtSet_apply, hx]
+      simp only [AnnouncedAction.liftedKraus, inputSystem, privateMeasure, computationalMeasure,
+        PrivateAction.ofInstrument, branchAction, branchKraus, outputRegister, id_eq,
+        localKrausLift_apply, MultipartiteSystem.splitAtSet_apply, ne_eq,
+        MultipartiteSystem.splitAt, Equiv.piSplitAt_apply, hx, PrivateAction.liftedKraus,
+        Matrix.of_apply, mul_ite, mul_one, mul_zero, ite_eq_right_iff, and_imp]
+    · intro _ _ _ _
+      change (if _ then (1 : ℂ) else 0) = 0
+      simp
+    · intro _ hc
+      exact Bool.noConfusion hc
   · ext a b
     simp only [Matrix.mul_apply, Matrix.zero_apply]
     apply Finset.sum_eq_zero
     intro x _
     cases hx : x .alice <;>
-      simp [AnnouncedAction.liftedKraus, PrivateAction.liftedKraus, localKrausLift_apply,
-        branchAction, privateMeasure, PrivateAction.ofInstrument, computationalMeasure,
-        branchKraus, outputRegister, inputSystem, MultipartiteSystem.splitAt,
-        MultipartiteSystem.splitAtSet_apply, hx]
+      simp only [AnnouncedAction.liftedKraus, inputSystem, privateMeasure, computationalMeasure,
+        PrivateAction.ofInstrument, branchAction, branchKraus, outputRegister, id_eq,
+        localKrausLift_apply, MultipartiteSystem.splitAtSet_apply, ne_eq,
+        MultipartiteSystem.splitAt, Equiv.piSplitAt_apply, hx, PrivateAction.liftedKraus,
+        Matrix.of_apply, mul_ite, mul_one, mul_zero, ite_eq_right_iff, and_imp]
+    · intro _ hc
+      exact Bool.noConfusion hc
+    · intro _ _ _ _
+      rfl
   · exact (h rfl).elim
 
 /-- A syntactically present private-then-announced path with mismatched outcomes has zero path
@@ -243,7 +260,10 @@ theorem privateThenBranch_pathKraus_eq_zero_of_ne
     Program.Branch.pathKraus (p := privateThenBranch)
         (privateThenBranchBranch privateOutcome publicOutcome) = 0 := by
   simp only [privateThenBranchBranch, privateThenBranch, PrivateAction.then, branchProgram,
-    AnnouncedAction.run, AnnouncedAction.then, Program.Branch.pathKraus, Matrix.one_mul]
+    AnnouncedAction.run, AnnouncedAction.then, Program.Branch.pathKraus]
+  change (1 : Op (branchAction.out (branchAction.announce publicOutcome)).total) *
+    branchAction.liftedKraus publicOutcome () * privateMeasure.liftedKraus privateOutcome () = 0
+  rw [Matrix.one_mul]
   exact privateThenBranch_liftedKraus_mul_eq_zero_of_ne privateOutcome publicOutcome h
 
 /-- Function-style nested authoring: first coarse-grain a measurement to `Unit`, then branch on a
@@ -267,6 +287,11 @@ theorem nestedProgram_pathKraus_order (first : coarseAction.Outcome) (second : B
       branchAction.liftedKraus second () *
         (show Matrix privateMeasure.out.total inputSystem.total ℂ from
           coarseAction.liftedKraus first ()) := by
-  simp [nestedBranch, nestedProgram, AnnouncedAction.then, Program.Branch.pathKraus]
+  simp only [nestedBranch, nestedProgram, AnnouncedAction.then, Program.Branch.pathKraus]
+  change (1 : Op (branchAction.out (branchAction.announce second)).total) *
+    branchAction.liftedKraus second () *
+    (show Matrix privateMeasure.out.total inputSystem.total ℂ from
+      coarseAction.liftedKraus first ()) = _
+  rw [Matrix.one_mul]
 
 end TypedLOCC.Examples.HeterogeneousProgram

@@ -607,49 +607,18 @@ lemma eigenvalue_kronecker_multiset_eq {n m : ℕ} [NeZero n] [NeZero m]
       kroneckerMap (· * ·) D_A D_B *
       kroneckerMap (· * ·) U_A.conjTranspose U_B.conjTranspose := by
     rw [hAB_def, h_A_spec, h_B_spec, mul_kronecker_mul, mul_kronecker_mul]
-  -- (U_A⊗U_B) is invertible
-  have h_U_isUnit : IsUnit (kroneckerMap (· * ·) U_A U_B) := by
-    rw [Matrix.isUnit_iff_isUnit_det, det_kronecker]
-    have hU_A_det : IsUnit (det U_A) := by
-      have h := hA.eigenvectorUnitary.2.2; have h_det := congr_arg det h
-      simp only [det_mul, det_one] at h_det
-      have h_star_det : (star U_A).det = star (U_A.det) := det_conjTranspose U_A
-      rw [h_star_det] at h_det; exact IsUnit.of_mul_eq_one (star (det U_A)) h_det
-    have hU_B_det : IsUnit (det U_B) := by
-      have h := hB.eigenvectorUnitary.2.2; have h_det := congr_arg det h
-      simp only [det_mul, det_one] at h_det
-      have h_star_det : (star U_B).det = star (U_B.det) := det_conjTranspose U_B
-      rw [h_star_det] at h_det; exact IsUnit.of_mul_eq_one (star (det U_B)) h_det
-    exact (hU_A_det.pow _).mul (hU_B_det.pow _)
-  let U_units : Units (Matrix (Fin n × Fin m) (Fin n × Fin m) ℂ) := h_U_isUnit.unit
-  -- The inverse is the conjugate transpose
-  have h_U_inv : U_units⁻¹.val = (kroneckerMap (· * ·) U_A U_B).conjTranspose := by
-    have h_U_val : U_units.val = kroneckerMap (· * ·) U_A U_B := IsUnit.unit_spec h_U_isUnit
-    have h_prod : U_units.val * U_units⁻¹.val = 1 := Units.mul_inv _
-    rw [h_U_val] at h_prod
-    have h_star_left : (kroneckerMap (· * ·) U_A U_B).conjTranspose *
-        (kroneckerMap (· * ·) U_A U_B) = 1 := by
-      rw [conjTranspose_kronecker, ← mul_kronecker_mul]
-      have hU_A' : U_A.conjTranspose * U_A = 1 := by
-        have := hA.eigenvectorUnitary.2.1; simp only [star] at this; exact this
-      have hU_B' : U_B.conjTranspose * U_B = 1 := by
-        have := hB.eigenvectorUnitary.2.1; simp only [star] at this; exact this
-      rw [hU_A', hU_B', one_kronecker_one]
-    calc U_units⁻¹.val
-        = 1 * U_units⁻¹.val := by rw [one_mul]
-      _ = ((kroneckerMap (· * ·) U_A U_B).conjTranspose *
-          (kroneckerMap (· * ·) U_A U_B)) * U_units⁻¹.val := by rw [h_star_left]
-      _ = (kroneckerMap (· * ·) U_A U_B).conjTranspose *
-          ((kroneckerMap (· * ·) U_A U_B) * U_units⁻¹.val) := by rw [mul_assoc]
-      _ = (kroneckerMap (· * ·) U_A U_B).conjTranspose * 1 := by rw [h_prod]
-      _ = (kroneckerMap (· * ·) U_A U_B).conjTranspose := by rw [mul_one]
-  -- AB = U * D_AB * U⁻¹
-  have h_AB_as_conj : AB = U_units.val * D_AB * U_units⁻¹.val := by
-    rw [h_AB_decomp, h_diag_kron, h_U_inv, conjTranspose_kronecker]
-    rw [← IsUnit.unit_spec h_U_isUnit]
-  -- AB.charpoly = D_AB.charpoly (by similarity)
+  have h_star_left : (kroneckerMap (· * ·) U_A U_B).conjTranspose *
+      kroneckerMap (· * ·) U_A U_B = 1 := by
+    rw [conjTranspose_kronecker, ← mul_kronecker_mul]
+    have hU_A' : U_A.conjTranspose * U_A = 1 :=
+      Unitary.coe_star_mul_self hA.eigenvectorUnitary
+    have hU_B' : U_B.conjTranspose * U_B = 1 :=
+      Unitary.coe_star_mul_self hB.eigenvectorUnitary
+    rw [hU_A', hU_B', one_kronecker_one]
+  -- Cyclic invariance of the characteristic polynomial cancels the unitary factors.
   have h_charpoly_eq : AB.charpoly = D_AB.charpoly := by
-    rw [h_AB_as_conj]; exact charpoly_units_conj U_units _
+    rw [h_AB_decomp, h_diag_kron, ← conjTranspose_kronecker, charpoly_mul_comm,
+      ← Matrix.mul_assoc, h_star_left, one_mul]
   -- D_AB is Hermitian (diagonal with real entries on diagonal)
   have h_D_AB_herm : D_AB.IsHermitian := by
     rw [hD_AB_def, isHermitian_diagonal_iff]

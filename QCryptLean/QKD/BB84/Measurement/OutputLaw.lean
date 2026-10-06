@@ -123,8 +123,11 @@ theorem weightedMeasurementScheduleAux_output_apply
         rw [matrixConjLinear_apply, Fintype.sum_unique, Fintype.sum_unique]
         simp only [Sampling.basisStringLaw_apply, fixedBasisPairKraus, Fin.prod_univ_zero,
           ENNReal.toReal_one, Complex.ofReal_one, one_mul, mul_one, star_one]
-        rw [weightedMeasurementScheduleAux_zero, Program.denote_done]
-        rfl
+        rw [weightedMeasurementScheduleAux_zero]
+        have hdone := LinearMap.congr_fun
+          (Program.denote_done (R := weightedStreamSystem F 0)) rho
+        exact congrArg (fun M => reindexOp (weightedScheduleOutputEquiv F 0) M
+          ((fA, rA), (fB, rB)) ((fA', rA), (fB', rB))) hdone
     | succ n ih =>
         have hout := weightedStreamBobAction_out pA pB F n
         let sigma (observedA observedB : Record) :=
@@ -140,9 +143,20 @@ theorem weightedMeasurementScheduleAux_output_apply
         rw [weightedMeasurementScheduleAux_succ,
           Program.denote_priv_eq_sum_liftedOperation]
         simp only [LinearMap.sum_apply, LinearMap.comp_apply, Matrix.sum_apply]
-        simp_rw [Program.denote_priv_eq_sum_liftedOperation]
+        conv_lhs =>
+          arg 2
+          ext observedA
+          tactic =>
+            exact congrFun (congrFun (LinearMap.congr_fun
+              (Program.denote_priv_eq_sum_liftedOperation
+                (weightedStreamBobAction pA pB F n) _) _) _) _
         simp only [LinearMap.sum_apply, LinearMap.comp_apply, Matrix.sum_apply]
-        simp_rw [Program.denote_cast hout rfl]
+        conv_lhs =>
+          arg 2
+          ext observedA
+          arg 2
+          ext observedB
+          tactic => exact Program.denote_cast_apply hout rfl _ _ _ _
         have hrec (observedA observedB : Record) :
             (weightedMeasurementScheduleAux pA pB (F × StoredRecord) n).denote
                 (sigma observedA observedB)

@@ -83,7 +83,7 @@ theorem sum_kronecker_single_eq_blockDiagonal {d k : ℕ} (B : Fin k → Op d) :
     ∑ i, B i ⊗ₖ (Matrix.single i i (1 : ℂ)) = Matrix.blockDiagonal B := by
   ext ⟨a, p⟩ ⟨b, q⟩
   simp only [Matrix.blockDiagonal_apply]
-  rw [Finset.sum_apply, Finset.sum_apply]
+  rw [Matrix.sum_apply]
   simp only [kroneckerMap_apply, Matrix.single_apply, mul_ite, mul_one, mul_zero]
   split_ifs with h
   · subst h; simp only [and_self, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
@@ -113,7 +113,7 @@ theorem sum_single_kronecker_eq_reindex_blockDiagonal {d k : ℕ} (B : Fin k →
   ext ⟨p, a⟩ ⟨q, b⟩
   simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Equiv.prodComm_symm,
     Equiv.prodComm_apply, Prod.swap_prod_mk, Matrix.blockDiagonal_apply]
-  rw [Finset.sum_apply, Finset.sum_apply]
+  rw [Matrix.sum_apply]
   simp only [kroneckerMap_apply, Matrix.single_apply, ite_mul, one_mul, zero_mul]
   split_ifs with h
   · subst h; simp only [and_self, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]

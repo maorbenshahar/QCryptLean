@@ -360,7 +360,9 @@ lemma traceNorm_mul_le_opNorm_mul_traceNorm {d : ℕ} [NeZero d]
   have h_nn_BB : (0 : Op d) ≤ B.conjTranspose * B := (posSemidef_conjTranspose_mul_self B).nonneg
   have h_sqrt_smul := sqrt_smul_eq (‖A‖ ^ 2) (sq_nonneg _) _ h_nn_BB
   -- Step 6: trace monotonicity + simplify
-  have h_trace_le := trace_re_le_of_le _ _ h_sqrt_le
+  have h_trace_le : (CFC.sqrt (B.conjTranspose * A.conjTranspose * A * B)).trace.re ≤
+      (CFC.sqrt ((‖A‖ ^ 2 : ℝ) • (B.conjTranspose * B))).trace.re :=
+    trace_re_le_of_le _ _ h_sqrt_le
   rw [h_sqrt_smul, Matrix.trace_smul] at h_trace_le
   simp only [Complex.real_smul] at h_trace_le
   rw [Complex.mul_re, Complex.ofReal_im, Complex.ofReal_re] at h_trace_le

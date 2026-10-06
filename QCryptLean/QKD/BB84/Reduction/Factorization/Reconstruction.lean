@@ -71,7 +71,7 @@ def comparisonPreToRetainedControlEquiv (N n : ℕ) :
       finProdFinEquiv)
 
 /-- The complete comparison-control dimension is nonzero for every `N,n`. -/
-def comparisonControlCardNeZero (N n : ℕ) :
+@[implicit_reducible] def comparisonControlCardNeZero (N n : ℕ) :
     NeZero (Fintype.card (ComparisonControl N n)) := by
   letI : Nonempty (ComparisonControl N n) := comparisonControlNonempty N n
   exact ⟨Fintype.card_ne_zero⟩
@@ -260,8 +260,9 @@ theorem reconstructionKraus_complete
       reconstructionShortageKraus
           N nK mZ mX ell ellEV leakEC pA pB l t omega y x = 0 := by
     unfold reconstructionShortageKraus
-    rw [Matrix.smul_apply]
-    rw [Matrix.single_apply_of_col_ne _ _ hcol]
+    refine (Matrix.smul_apply _ _ _ _).trans ?_
+    refine (congrArg (fun z : ℂ => (_ : ℂ) • z)
+      (Matrix.single_apply_of_col_ne _ _ hcol (1 : ℂ))).trans ?_
     exact smul_zero _
   have hfailure_sum_zero_on_success
       (a : Fin (RetainedAnalysisOutputDim nK mZ mX ell ellEV leakEC))
@@ -454,8 +455,9 @@ theorem reconstructionKraus_complete
         have hz : reconstructionShortageKraus
             N nK mZ mX ell ellEV leakEC pA pB l t omega y (r, Sum.inl S) = 0 := by
           unfold reconstructionShortageKraus
-          rw [Matrix.smul_apply]
-          rw [Matrix.single_apply_of_col_ne _ _ hcol]
+          refine (Matrix.smul_apply _ _ _ _).trans ?_
+          refine (congrArg (fun z : ℂ => (_ : ℂ) • z)
+            (Matrix.single_apply_of_col_ne _ _ hcol (1 : ℂ))).trans ?_
           exact smul_zero _
         rw [hz]
         simp
@@ -504,8 +506,9 @@ theorem reconstructionKraus_complete
         have hz : reconstructionShortageKraus
             N nK mZ mX ell ellEV leakEC pA pB l t omega y (s, Sum.inl S) = 0 := by
           unfold reconstructionShortageKraus
-          rw [Matrix.smul_apply]
-          rw [Matrix.single_apply_of_col_ne _ _ hcol]
+          refine (Matrix.smul_apply _ _ _ _).trans ?_
+          refine (congrArg (fun z : ℂ => (_ : ℂ) • z)
+            (Matrix.single_apply_of_col_ne _ _ hcol (1 : ℂ))).trans ?_
           exact smul_zero _
         rw [hz, mul_zero]
       ]
@@ -555,7 +558,12 @@ theorem reconstructionKraus_complete
                 N nK mZ mX ell ellEV leakEC omega.1
                   (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j omega)
               rw [Fintype.sum_eq_single y0]
-              · simpa [reconstructionShortageKraus, y0] using
+              · dsimp only [reconstructionShortageKraus]
+                change star ((_ : ℂ) * _) * ((_ : ℂ) * _) = _
+                refine (congrArg (fun z : ℂ => star ((_ : ℂ) * z) * ((_ : ℂ) * z))
+                  (Matrix.single_apply_same y0 (r, (Sum.inr j : ComparisonControl N _))
+                    (1 : ℂ))).trans ?_
+                simpa only [mul_one] using
                   Instrument.weightedChoiceScale_star_mul
                     (totalFailureControlKernel N nK mZ mX pA pB j) omega.1
               · intro y hy
@@ -564,7 +572,7 @@ theorem reconstructionKraus_complete
                     N nK mZ mX ell ellEV leakEC pA pB j r omega y
                       (r, Sum.inr j) = 0 := by
                   unfold reconstructionShortageKraus
-                  rw [Matrix.smul_apply]
+                  refine (Matrix.smul_apply _ _ _ _).trans ?_
                   rw [Matrix.single_apply_of_row_ne hrow]
                   exact smul_zero _
                 rw [hz]
@@ -609,7 +617,8 @@ theorem reconstructionKraus_complete
             exact hlj (Sum.inr.inj (congrArg Prod.snd h))
           rw [hfailure_col_zero l t omega y (r, Sum.inr j) hcol]
           simp
-      · simp only [zero_add, Matrix.one_apply, if_neg hinput]
+      · simp only [zero_add, Matrix.one_apply]
+        refine Eq.trans ?_ (if_neg hinput).symm
         rw [Fintype.sum_eq_single j]
         · rw [Fintype.sum_eq_single r]
           · apply Finset.sum_eq_zero
@@ -626,7 +635,7 @@ theorem reconstructionKraus_complete
                   N nK mZ mX ell ellEV leakEC pA pB j r omega y
                     (r, Sum.inr j) = 0 := by
                 unfold reconstructionShortageKraus
-                rw [Matrix.smul_apply]
+                refine (Matrix.smul_apply _ _ _ _).trans ?_
                 rw [Matrix.single_apply_of_row_ne hrow]
                 exact smul_zero _
               rw [hz]
@@ -743,7 +752,9 @@ theorem reconstructionShortageKraus_eq_single
         (r, Sum.inr j)
         (Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j)
           omega.1) := by
-  rw [reconstructionShortageKraus, Matrix.smul_single, smul_eq_mul, mul_one]
+  unfold reconstructionShortageKraus
+  refine (Matrix.smul_single _ _ _ _).trans ?_
+  rw [smul_eq_mul, mul_one]
 
 /-- The reconstruction channel is the sum of its supported success and shortage branches. -/
 theorem reconstructionInstrument_channel_apply

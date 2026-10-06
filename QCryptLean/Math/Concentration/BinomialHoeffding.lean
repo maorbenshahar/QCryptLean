@@ -514,7 +514,7 @@ theorem binomial_failProb_le_half_margin
       have h_or : (k : ℝ) / n - Q > δ ∨ (k : ℝ) / n - Q < -δ := by
         by_cases hsgn : 0 ≤ (k : ℝ) / n - Q
         · left; rwa [abs_of_nonneg hsgn] at h_pass
-        · push_neg at hsgn
+        · push Not at hsgn
           right; rw [abs_of_neg hsgn] at h_pass; linarith
       rcases h_or with hUp | hLo
       · -- k/n > Q + δ, and since p ≤ Q, k/n - p ≥ (Q + δ) - p ≥ δ, hence p + δ ≤ k/n.

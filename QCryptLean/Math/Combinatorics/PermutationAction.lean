@@ -1,5 +1,4 @@
 import Mathlib.Data.List.Sort
-import Mathlib.Deprecated.Sort
 import Mathlib.GroupTheory.Perm.Basic
 import Mathlib.Algebra.Group.Hom.Basic
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
@@ -131,7 +130,7 @@ theorem permutationRepresentation_one (d n : ℕ) [NeZero d] :
     permutationRepresentation d n 1 = 1 := by
   ext i j
   unfold permutationRepresentation
-  simp only [Matrix.of_apply, Matrix.one_apply, Equiv.Perm.one_symm]
+  simp only [Matrix.of_apply, Matrix.one_apply, pull_end]
   by_cases h : i = j
   · simp [h]
   · simp only [h, ↓reduceIte]

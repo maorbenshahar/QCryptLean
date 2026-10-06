@@ -152,5 +152,6 @@ theorem onFactor_operation_apply [Fintype A] [DecidableEq A]
   simp_rw [hsum]
   simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
   simp [apply_ite]
+  rfl
 
 end TypedLOCC.Instrument

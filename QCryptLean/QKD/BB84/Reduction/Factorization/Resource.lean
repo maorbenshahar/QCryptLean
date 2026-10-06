@@ -159,7 +159,8 @@ theorem reconstructionShortageKraus_resource_intertwines
             star (Instrument.weightedChoiceScale (totalFailureControlKernel N nK mZ mX pA pB j)
               omega.1)) := by
     intro M
-    simp_rw [reconstructionShortageKraus_eq_single, matrixConjLinear_single]
+    simp_rw [reconstructionShortageKraus_eq_single]
+    refine (Finset.sum_congr rfl (fun r _ => matrixConjLinear_single _ _ _ M)).trans ?_
     rw [Finset.mul_sum, Finset.sum_mul]
     generalize shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega.1
       (failureControlSupport_not_hasQuotas N nK mZ mX pA pB j omega) = y
@@ -226,6 +227,9 @@ theorem reconstruction_resource_intertwines
         (reconstructionInputEquiv N nK mZ mX ell ellEV leakEC)
         (retainedControlResource N nK mZ mX ell ellEV leakEC) :=
     mapTensorIdLinear_eq_coordinateLinear (Fintype.equivFin _) _
-  rw [hA, hT, reconstruction, ← coordinateLinear_comp, ← coordinateLinear_comp, hchan]
+  rw [hA, hT, reconstruction]
+  refine (coordinateLinear_comp _ _ _ _ _).symm.trans ?_
+  refine Eq.trans ?_ (coordinateLinear_comp _ _ _ _ _)
+  exact congrArg (coordinateLinear _ _) hchan
 
 end QKD.BB84.Reduction

@@ -26,6 +26,8 @@ noncomputable section
 
 namespace InfoTheory.DeFinetti
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- The canonical IID purification is integrable against every density measure. -/
 lemma integrable_purificationDensityOp_tensorPowGen {d n : ℕ} [NeZero d] [NeZero n]
     (μ : DensityMeasure d) :

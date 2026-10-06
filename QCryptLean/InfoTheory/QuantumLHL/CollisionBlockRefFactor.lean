@@ -111,11 +111,10 @@ theorem collisionRootFactor_spec_of_supportProj {d : ℕ} (σ A : Op d)
   rw [h, hL, hR]
 
 /-- At a positive definite `σ` the support projector is the identity: `σ^{1/4} σ^{−1/4} = 1`
-(`CFC.rpow_mul_rpow_neg`, whose `IsUnit` side condition is `Matrix.PosDef.isUnit`). -/
+(`CFC.rpow_mul_rpow_neg`, using `Matrix.PosDef.isStrictlyPositive`). -/
 theorem rpow_quarter_mul_rpow_neg_quarter {d : ℕ} {σ : Op d} (hσ : σ.PosDef) :
     σ ^ (1 / 4 : ℝ) * σ ^ (-1 / 4 : ℝ) = 1 := by
-  have hnn : (0 : Op d) ≤ σ := Matrix.nonneg_iff_posSemidef.mpr hσ.posSemidef
-  have h := CFC.rpow_mul_rpow_neg (a := σ) (1 / 4 : ℝ) hσ.isUnit hnn
+  have h := CFC.rpow_mul_rpow_neg (a := σ) (1 / 4 : ℝ) hσ.isStrictlyPositive
   rw [show (-1 / 4 : ℝ) = -(1 / 4 : ℝ) by norm_num]
   exact h
 

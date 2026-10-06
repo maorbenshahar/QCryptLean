@@ -91,7 +91,7 @@ theorem one_sub_binomialPassSum_le_two_hoeffding (m : ℕ) (hm : m ≠ 0) (Q δ 
             rw [abs_of_nonpos (by linarith)]
             exact h
           have hneg : ¬ (-((k : ℝ) / m - Q) ≤ δ) := fun h => hband (this h)
-          push_neg at hneg
+          push Not at hneg
           linarith
         · right
           have : (k : ℝ) / m - Q ≤ δ → |(k : ℝ) / m - Q| ≤ δ := by
@@ -99,7 +99,7 @@ theorem one_sub_binomialPassSum_le_two_hoeffding (m : ℕ) (hm : m ≠ 0) (Q δ 
             rw [abs_of_nonneg (by linarith)]
             exact h
           have hpos : ¬ ((k : ℝ) / m - Q ≤ δ) := fun h => hband (this h)
-          push_neg at hpos
+          push Not at hpos
           linarith
       rw [if_pos htail]
   have htwo := Math.Concentration.BinomialHoeffding.binomial_two_tail_le m hm Q δ δ hQ0 hQ1 hδ hδ

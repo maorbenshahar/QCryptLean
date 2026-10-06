@@ -119,7 +119,7 @@ theorem packingNumber_le_of_subset_closedBall (μ : Measure E) [μ.IsAddHaarMeas
   have hall : ∀ C : Set E, C ⊆ S → Metric.IsSeparated ε C → C.encard ≤ (K : ℕ∞) := by
     intro C hCS hCsep
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hinf : ∃ F : Finset E, (↑F : Set E) ⊆ C ∧ F.card = K + 1 := by
       rcases C.finite_or_infinite with hCfin | hCinf
       · refine ⟨hCfin.toFinset, by simp, ?_⟩

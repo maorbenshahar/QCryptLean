@@ -420,7 +420,7 @@ lemma exists_norm_one_vecMulVec_eq_of_rank_one_projection {n : ℕ} [NeZero n]
   have hp_idem : IsIdempotentElem p := by
     rw [IsIdempotentElem, Module.End.mul_eq_comp, ← Matrix.toLpLin_mul_same, hP_proj]
   have hp_symm : p.IsSymmetric := by
-    simpa [p] using (Matrix.isHermitian_iff_isSymmetric.mp hP_herm)
+    simpa [p] using (Matrix.isSymmetric_toEuclideanLin_iff.mpr hP_herm)
   have hp_proj : p.IsSymmetricProjection := ⟨hp_idem, hp_symm⟩
   have h_range_finrank : Module.finrank ℂ (LinearMap.range p) = 1 := by
     have h_rank_range : P.rank = Module.finrank ℂ (LinearMap.range p) := by

@@ -747,7 +747,7 @@ theorem stratifiedBellDeFinettiDensity_eq_of_k_eq_one (n : Fin 1 → ℕ) [∀ j
     Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.kroneckerMap_apply]
   simp only [DensityOp.trivial, finProdFinEquiv, Matrix.of_apply, Matrix.cons_val_fin_one,
     mul_one]
-  congr 1 <;> · apply Fin.ext; simp [Fin.divNat, Nat.div_one]
+  congr 1 <;> (apply Fin.ext; simp [Fin.divNat, Nat.div_one]; rfl)
 
 end Quantum.Symmetry
 

@@ -952,7 +952,8 @@ theorem finiteKeyRate_tendsto (minEntropyRate ε : ℝ) (_hε : 0 < ε) (_hε' :
     simp only [mul_zero] at this
     exact this
   -- minEntropyRate - (→ 0) → minEntropyRate
-  have := tendsto_const_nhds (x := minEntropyRate).sub h_corr
+  have := h_corr.neg.add_const minEntropyRate
+  simp only [neg_add_eq_sub] at this
   simp only [sub_zero] at this
   exact this
 

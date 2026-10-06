@@ -93,8 +93,8 @@ the output space of a syntactic boundary can be empty is for the boundary to dec
 hypothesis `Nonempty B.Exit` must be supplied, and for a concrete protocol it is a theorem about
 that protocol's construction. -/
 instance instNonemptySpace (B : Boundary P) [Nonempty B.Exit] : Nonempty B.space :=
-  (inferInstanceAs (Nonempty B.Exit)).elim fun e =>
-    (inferInstanceAs (Nonempty (B.system e).total)).elim fun x => ⟨⟨e, x⟩⟩
+  (inferInstance : Nonempty B.Exit).elim fun e =>
+    (inferInstance : Nonempty (B.system e).total).elim fun x => ⟨⟨e, x⟩⟩
 
 /-- Replace every leaf of `B` by the boundary assigned to its complete exit. -/
 def graft (B : Boundary P) (C : B.Exit → Boundary P) : Boundary P :=

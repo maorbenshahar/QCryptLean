@@ -69,9 +69,7 @@ theorem quantum_seedKey_LHL_smooth_of_refOptimisedFloor
   have hk_tendsto : Filter.Tendsto kseq Filter.atTop (nhds k) := by
     have h1 : Filter.Tendsto (fun m : ℕ => 1 / ((m : ℝ) + 1)) Filter.atTop (nhds 0) :=
       tendsto_one_div_add_atTop_nhds_zero_nat
-    have h2 : Filter.Tendsto (fun m : ℕ => k - 1 / ((m : ℝ) + 1)) Filter.atTop (nhds (k - 0)) :=
-      tendsto_const_nhds.sub h1
-    simpa [kseq, sub_zero] using h2
+    simpa only [hkseq_def, neg_zero, zero_add, neg_add_eq_sub] using h1.neg.add_const k
   have hf_tendsto : Filter.Tendsto (fun m => f (kseq m)) Filter.atTop (nhds (f k)) :=
     (hf_cont.tendsto k).comp hk_tendsto
   exact ge_of_tendsto' hf_tendsto hbd

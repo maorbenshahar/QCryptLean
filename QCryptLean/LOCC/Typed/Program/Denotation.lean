@@ -145,8 +145,9 @@ private theorem sum_path_comp {In Mid H : Type}
 private theorem pathKraus_complete_done {R : MultipartiteSystem P} :
     ∑ b : (Program.done : Program R (.leaf R)).Branch,
       (b.pathKraus)ᴴ * b.pathKraus = 1 := by
-  simp only [Branch, Branch.pathKraus, Fintype.sum_unique, Matrix.conjTranspose_one,
-    Matrix.one_mul]
+  simp only [Branch, Branch.pathKraus, Fintype.sum_unique]
+  change (1 : Op R.total)ᴴ * (1 : Op R.total) = (1 : Op R.total)
+  simp
 
 /-- Completeness of path Kraus matrices is preserved by an announced node. -/
 private theorem pathKraus_complete_announced {R : MultipartiteSystem P} {Y : Type}
@@ -157,7 +158,8 @@ private theorem pathKraus_complete_announced {R : MultipartiteSystem P} {Y : Typ
   simp only [Branch]
   rw [Fintype.sum_sigma]
   simp_rw [Fintype.sum_sigma]
-  simp only [Branch.pathKraus]
+  change ∑ o, ∑ r, ∑ b : (k (A.announce o)).Branch,
+    (b.pathKraus * A.liftedKraus o r)ᴴ * (b.pathKraus * A.liftedKraus o r) = 1
   have hcomp (o : A.Outcome) (r : A.krausIndex o) :=
     sum_path_comp
       (Final := fun b : (k (A.announce o)).Branch =>
@@ -174,7 +176,8 @@ private theorem pathKraus_complete_priv {R : MultipartiteSystem P} {B : Boundary
   simp only [Branch]
   rw [Fintype.sum_sigma]
   simp_rw [Fintype.sum_sigma]
-  simp only [Branch.pathKraus]
+  change ∑ o, ∑ r, ∑ b : k.Branch,
+    (b.pathKraus * A.liftedKraus o r)ᴴ * (b.pathKraus * A.liftedKraus o r) = 1
   have hcomp (o : A.Outcome) (r : A.instrument.krausIndex o) :=
     sum_path_comp (Final := fun b : k.Branch => (B.system b.exit).total)
       (A.liftedKraus o r) (fun b => b.pathKraus) ih
@@ -224,7 +227,8 @@ arXiv:1210.4583, Section 2. -/
       Boundary.publicInclKraus B (A.announce o) *
         ((k (A.announce o)).kraus b * A.liftedKraus o r) := by
   simp only [kraus, Branch.exit, Branch.pathKraus, Boundary.exitKraus_announce]
-  rw [Matrix.mul_assoc, Matrix.mul_assoc]
+  rw [Matrix.mul_assoc]
+  exact Matrix.mul_assoc _ _ _
 
 /-- The common-output Kraus matrix of a private node is the continuation Kraus matrix multiplied
 by the current local Kraus matrix.
@@ -237,6 +241,7 @@ in Chitambar--Leung--Mančinska--Ozols--Winter, arXiv:1210.4583, Section 2. -/
     (Program.priv A k).kraus ⟨o, ⟨r, b⟩⟩ =
       k.kraus b * A.liftedKraus o r := by
   simp only [kraus, Branch.exit, Branch.pathKraus, Matrix.mul_assoc]
+  rfl
 
 /-- The common-output Kraus family of a complete program is complete. -/
 theorem kraus_complete {R : MultipartiteSystem P} {B : Boundary P} (p : Program R B) :
@@ -267,7 +272,8 @@ noncomputable def denote {R : MultipartiteSystem P} {B : Boundary P} (p : Progra
 /-- The denotation is the sum of conjugations by all common-output path Kraus matrices. -/
 theorem denote_eq_krausSum {R : MultipartiteSystem P} {B : Boundary P} (p : Program R B) :
     p.denote = ∑ b : p.Branch, matrixConjLinear (p.kraus b) := by
-  simp [denote, toInstrument, Instrument.channel, Instrument.operation]
+  simp only [denote, toInstrument, Instrument.channel, Instrument.operation, Fintype.sum_unique]
+  rfl
 
 /-- Termination places the input operator in the unique terminal output block, inserting the
 trivial exit coordinate of the terminal boundary.
@@ -278,15 +284,22 @@ Chitambar--Leung--Mančinska--Ozols--Winter, arXiv:1210.4583, Section 2. -/
     (Program.done : Program R (.leaf R)).denote =
       (Matrix.reindexLinearEquiv ℂ ℂ (Boundary.leafSpaceEquiv R).symm
         (Boundary.leafSpaceEquiv R).symm).toLinearMap := by
+  have hkraus : (Program.done : Program R (.leaf R)).kraus () =
+      Boundary.exitKraus (.leaf R) () := Matrix.mul_one _
+  rw [denote_eq_krausSum]
+  change (∑ b : Unit, matrixConjLinear ((Program.done : Program R (.leaf R)).kraus b)) = _
+  rw [Fintype.sum_unique, hkraus]
   apply LinearMap.ext
   intro ρ
   ext p q
   rcases p with ⟨⟨⟩, p⟩
   rcases q with ⟨⟨⟩, q⟩
-  simp [denote, toInstrument, Instrument.channel, Instrument.operation, kraus,
-    Branch, Branch.exit, Branch.pathKraus, matrixConjLinear, Boundary.exitKraus,
-    sigmaInclKraus, Boundary.leafSpaceEquiv, Matrix.reindexLinearEquiv_apply,
-    Matrix.reindex_apply, Matrix.mul_apply]
+  change R.total at p q
+  let E : Matrix (Σ _ : Unit, R.total) R.total ℂ := Boundary.exitKraus (.leaf R) ()
+  have hE (x : Σ _ : Unit, R.total) (y : R.total) :
+      E x y = if x = ⟨(), y⟩ then 1 else 0 := rfl
+  change (E * ρ * Eᴴ) ⟨(), p⟩ ⟨(), q⟩ = ρ p q
+  simp [Matrix.mul_apply, Matrix.conjTranspose_apply, hE]
 
 /-- Denotation of an announced node is the sum over its raw outcomes and hidden Kraus indices of
 the current local operation, the selected continuation, and inclusion into the selected public

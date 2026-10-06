@@ -198,7 +198,7 @@ lemma kl_group_le_sum {ι : Type*}
       fun j hj => (Finset.mem_filter.mp hj).2
     have hqj_pos : ∀ j ∈ S, 0 < q j := by
       intro j hj; have hjs := (Finset.mem_filter.mp hj).1
-      by_contra h; push_neg at h
+      by_contra h; push Not at h
       linarith [h_support j hjs (le_antisymm h (hq_nonneg j hjs)),
                 hpj_pos j hj]
     set qs' := ∑ j ∈ S, q j

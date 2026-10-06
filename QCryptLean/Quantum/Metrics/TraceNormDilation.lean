@@ -342,7 +342,7 @@ private lemma blockMap_eq_kraus_sum {n m : ℕ} (Φ : Op n → Op m)
   rcases finSumFinEquiv.symm b with b' | b' <;> (
     simp only [Matrix.of_apply, Sum.elim_inl, Sum.elim_inr]
     -- Remaining: (∑ f) a' b' = ∑ f a' b' (Finset.sum_apply)
-    rw [Finset.sum_apply, Finset.sum_apply])
+    rw [Matrix.sum_apply])
 
 /-- Kraus decomposition from CP and linearity alone (no trace-preservation required):
     if Φ is linear and completely positive then Φ(A) = ∑_k K_k * A * K_k† for some operators K_k. -/

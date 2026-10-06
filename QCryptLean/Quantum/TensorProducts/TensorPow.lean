@@ -110,7 +110,10 @@ single-copy entries, digit by digit. No nonzero-dimension assumption is needed: 
 @[simp] theorem Op.tensorPow_apply_finFunctionFinEquiv (M : Op d) {n : ℕ} (f g : Fin n → Fin d) :
     Op.tensorPow M n (finFunctionFinEquiv f) (finFunctionFinEquiv g) = ∏ k, M (f k) (g k) := by
   induction n with
-  | zero => simp [Subsingleton.elim f g]
+  | zero =>
+    change (1 : Op 1) _ _ = _
+    rw [Subsingleton.elim f g]
+    exact (Matrix.one_apply_eq _).trans (Fin.prod_univ_zero _).symm
   | succ n ih =>
     rw [Op.tensorPow_succ, Op.castDim_apply]
     simp only [Op.tensor, reindex_apply, submatrix_apply, kroneckerMap_apply]
@@ -161,7 +164,7 @@ theorem Op.tensorPow_one (M : Op d) : Op.tensorPow M 1 = Op.castDim (pow_one d).
 theorem Op.mul_tensorPow (A B : Op d) (n : ℕ) :
     Op.tensorPow (A * B) n = Op.tensorPow A n * Op.tensorPow B n := by
   induction n with
-  | zero => simp
+  | zero => change (1 : Op 1) = 1 * 1; exact (one_mul _).symm
   | succ n ih => rw [Op.tensorPow_succ, Op.tensorPow_succ, Op.tensorPow_succ, ih,
       ← Op.tensor_mul, Op.castDim_mul]
 
@@ -169,7 +172,7 @@ theorem Op.mul_tensorPow (A B : Op d) (n : ℕ) :
 @[simp] theorem Op.conjTranspose_tensorPow (M : Op d) (n : ℕ) :
     (Op.tensorPow M n)ᴴ = Op.tensorPow Mᴴ n := by
   induction n with
-  | zero => simp
+  | zero => change (1 : Op 1)ᴴ = 1; exact Matrix.conjTranspose_one
   | succ n ih => rw [Op.tensorPow_succ, Op.tensorPow_succ, Op.castDim_conjTranspose,
       Op.tensor_conjTranspose, ih]
 
@@ -238,7 +241,7 @@ theorem Op.tensorPow_diagonal (v : Fin d → ℂ) (n : ℕ) :
 @[simp] theorem Op.trace_tensorPow (M : Op d) (n : ℕ) :
     (Op.tensorPow M n).trace = M.trace ^ n := by
   induction n with
-  | zero => simp
+  | zero => change (1 : Op 1).trace = _; simp
   | succ n ih => rw [Op.tensorPow_succ, Op.castDim_trace, Op.trace_tensor, ih, pow_succ']
 
 /-! ## Positivity -/

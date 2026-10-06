@@ -476,7 +476,7 @@ theorem bellState00_tensor_one : bellState00_tensor 1 = bellState00 := by
   congr 1
   ext
   change (Fin.cast _ i).val / 1 = i.val
-  simp only [Nat.div_one, Fin.coe_cast]
+  simp only [Nat.div_one, Fin.val_cast]
 
 /-- The n-fold tensor product is normalized. -/
 theorem bellState00_tensor_normalized (n : ℕ) :
@@ -506,7 +506,7 @@ theorem bellState00_projector_hermitian :
   unfold Matrix.IsHermitian
   ext i j
   simp only [Matrix.conjTranspose_apply]
-  simp only [instHMulKetBra, Matrix.of_apply, Ket.dag, starRingEnd_apply]
+  simp only [ket_mul_bra_apply, Ket.dag, starRingEnd_apply]
   rw [star_mul, star_star, mul_comm]
 
 /-- bellState00 projector is positive semidefinite (for PosSemidefOp) -/
@@ -515,7 +515,7 @@ theorem bellState00_projector_pos_semidef :
   intro x
   -- ⟨x|(|β₀₀⟩⟨β₀₀|)|x⟩ = |⟨β₀₀|x⟩|² ≥ 0
   unfold quadraticForm
-  simp only [instHMulKetBra, Matrix.of_apply, Ket.dag, Matrix.mulVec,
+  simp only [ket_mul_bra_apply, Ket.dag, Matrix.mulVec,
              dotProduct, Pi.star_apply, starRingEnd_apply]
   -- Sum collapses to |∑ᵢ star(β₀₀ᵢ) * xᵢ|²
   have h : (∑ i, star (x i) * ∑ j, bellState00.vec i * star (bellState00.vec j) * x j).re =
@@ -580,9 +580,9 @@ theorem bellState00_projector_pos_semidef :
 theorem bellState00_projector_trace_one :
     (bellState00 * bellState00.dag).trace = 1 := by
   unfold Matrix.trace Matrix.diag
-  simp only [instHMulKetBra, Matrix.of_apply, Ket.dag, starRingEnd_apply]
+  simp only [ket_mul_bra_apply, Ket.dag, starRingEnd_apply]
   have h_norm : bellState00.dag * bellState00 = 1 := bellState00_normalized
-  simp only [instHMulBraKet, Ket.dag, starRingEnd_apply] at h_norm
+  simp only [bra_mul_ket_eq, Ket.dag_vec, starRingEnd_apply] at h_norm
   convert h_norm using 1
   apply Finset.sum_congr rfl
   intro i _
@@ -599,7 +599,7 @@ theorem bellState00_density_is_pure : bellState00_density.IsPure := by
   unfold DensityOp.IsPure bellState00_density
   simp only []
   ext i j
-  simp only [Matrix.mul_apply, instHMulKetBra, Matrix.of_apply, Ket.dag, starRingEnd_apply]
+  simp only [Matrix.mul_apply, ket_mul_bra_apply, Ket.dag, starRingEnd_apply]
   have h_inner : ∑ k : Fin 4, star (bellState00.vec k) * bellState00.vec k = 1 := by
     have h := bellState00_normalized
     simp only [instHMulBraKet, Ket.dag, starRingEnd_apply] at h

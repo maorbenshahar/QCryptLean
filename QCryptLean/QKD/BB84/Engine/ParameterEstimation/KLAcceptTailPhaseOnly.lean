@@ -12,6 +12,9 @@ import QCryptLean.QKD.BB84.Engine.ParameterEstimation.PhaseOnlyPivot
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup
 attribute [local instance] Matrix.frobeniusNormedSpace
 
+private noncomputable local instance (d : ℕ) : ContinuousENorm (Quantum.Operators.Op d) :=
+  SeminormedAddGroup.toContinuousENorm
+
 open Quantum.Operators Quantum.TensorProducts Matrix Quantum.Channels Quantum.Metrics
 open Math.RepresentationTheory
 open InfoTheory.SmoothMinEntropy InfoTheory.QuantumLHL Math.ClassicalEntropy
@@ -235,7 +238,7 @@ theorem bb84_rhoEtilde_phaseBadBranch_traceNorm_le_ofSourceCap_of_goodSet {n : �
       (partialTraceB_continuous_general.comp hpost)
     change Continuous (fun σ => bb84SiftedPreLocalAcceptMass eveDim pre hpre peSel xSel Q δ σ)
     simp_rw [bb84SiftedPreLocalAcceptMass_eq_sum_quadForm]
-    refine continuous_finset_sum _ (fun ω _ => ?_)
+    refine continuous_finsetSum _ (fun ω _ => ?_)
     split_ifs
     · simp_rw [← trace_ketbra_mul]
       exact Complex.continuous_re.comp (continuous_const.mul hmarg).matrix_trace
@@ -261,9 +264,9 @@ theorem bb84_rhoEtilde_phaseBadBranch_traceNorm_le_ofSourceCap_of_goodSet {n : �
       intro x
       rw [Matrix.trace]
       simp only [Matrix.diag_apply, Matrix.of_apply]
-      rw [← MeasureTheory.integral_finset_sum _ (fun i _ => hentInt x i), ← Complex.reCLM_apply,
+      rw [← MeasureTheory.integral_finsetSum _ (fun i _ => hentInt x i), ← Complex.reCLM_apply,
         ← ContinuousLinearMap.integral_comp_comm Complex.reCLM
-          (MeasureTheory.integrable_finset_sum _ (fun i _ => hentInt x i))]
+          (MeasureTheory.integrable_finsetSum _ (fun i _ => hentInt x i))]
       refine MeasureTheory.setIntegral_congr_fun hSpairedMeas (fun ψ _ => ?_)
       simp only [Complex.reCLM_apply, Matrix.trace, Matrix.diag_apply, Complex.re_sum]
     rw [Finset.sum_congr rfl (fun x _ => hperx x)]
@@ -281,9 +284,9 @@ theorem bb84_rhoEtilde_phaseBadBranch_traceNorm_le_ofSourceCap_of_goodSet {n : �
                 i i).re := by
         funext ψ; simp only [Matrix.trace, Matrix.diag_apply, Complex.re_sum]
       rw [heq]
-      exact MeasureTheory.integrable_finset_sum _ fun i _ =>
+      exact MeasureTheory.integrable_finsetSum _ fun i _ =>
         Complex.reCLM.integrable_comp (hentInt x i)
-    rw [← MeasureTheory.integral_finset_sum _ (fun x _ => htrInt x),
+    rw [← MeasureTheory.integral_finsetSum _ (fun x _ => htrInt x),
       MeasureTheory.setIntegral_congr_fun hSpairedMeas (fun ψ _ => hsumψ ψ),
       show Spaired = (DensityOp.partialTraceB :
             DensityOp (signalDim * signalDim) → DensityOp signalDim) ⁻¹' S by

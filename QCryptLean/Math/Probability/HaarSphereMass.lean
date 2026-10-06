@@ -88,7 +88,7 @@ theorem firstColumn_mul [NeZero D] (V U : unitaryGroup (Fin D) ℂ) :
 theorem norm_firstColumn [NeZero D] (U : unitaryGroup (Fin D) ℂ) : ‖firstColumn U‖ = 1 := by
   rw [firstColumn, ← show act U = Matrix.toEuclideanCLM (𝕜 := ℂ)
     (U : Matrix (Fin D) (Fin D) ℂ) from rfl, norm_act]
-  simp [EuclideanSpace.norm_single]
+  simp [PiLp.norm_single]
 
 /-- The first column, written as an `ℓ²` vector of matrix entries. -/
 theorem firstColumn_eq_toLp [NeZero D] (U : unitaryGroup (Fin D) ℂ) :

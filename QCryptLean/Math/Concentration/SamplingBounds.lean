@@ -28,7 +28,7 @@ lemma abs_gt_iff_or {x ε : ℝ} : |x| > ε ↔ x > ε ∨ x < -ε := by
   · intro h
     by_cases hx : x ≥ 0
     · left; rwa [abs_of_nonneg hx] at h
-    · right; push_neg at hx; rw [abs_of_neg hx] at h; linarith
+    · right; push Not at hx; rw [abs_of_neg hx] at h; linarith
   · intro h
     rcases h with h | h
     · have h1 : |x| ≥ x := le_abs_self x; linarith

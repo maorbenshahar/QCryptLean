@@ -314,7 +314,7 @@ lemma coherentState_perm_invariant {d n : ℕ} [NeZero d] [NeZero n]
     exact congr_fun (congr_arg Ket.vec hUv) i
   -- Step 2: Prove U_σ * v = v (permutation acts trivially on product state)
   ext ⟨i, hi⟩
-  simp only [instHMulOpKet, Matrix.mulVec, dotProduct]
+  simp only [op_mul_ket_vec, Matrix.mulVec, dotProduct]
   simp only [v, coherentStateKet, U, Math.RepresentationTheory.permutationRepresentation,
     Matrix.of_apply]
   set e := @finFunctionFinEquiv d n
@@ -383,7 +383,7 @@ lemma coherentState_is_tensorPow {d n : ℕ} [NeZero d] [NeZero n]
   -- ket.vec i = ∏_l g_{digit(i,l), 0}
   -- ρ(a)(b) = g_{a,0} * conj(g_{b,0})
   -- RHS = ∏_k g_{fi(k),0} * conj(g_{fj(k),0}) = (∏ g_{fi(k),0}) * (∏ conj(g_{fj(k),0}))
-  simp only [instHMulKetBra, Matrix.of_apply, Ket.dag,
+  simp only [ket_mul_bra_apply, Ket.dag_vec,
     coherentStateKet, coherentSingleCopy, DensityOp.fromPure]
   -- Goal: (∏ j, g_{digit(i,j), 0}) * conj(∏ j, g_{digit(j,j), 0})
   --     = ∏ x, g_{fi(x), 0} * conj(g_{fj(x), 0})

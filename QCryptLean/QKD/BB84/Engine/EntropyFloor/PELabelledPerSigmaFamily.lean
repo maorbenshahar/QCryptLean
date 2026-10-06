@@ -17,6 +17,9 @@ noncomputable section
 
 namespace QKD.BB84.Engine
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
 /-!
 # The PE-labelled component family and mixture
 

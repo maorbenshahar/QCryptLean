@@ -17,6 +17,9 @@ open QKD.BB84.Model
 
 noncomputable section
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
 namespace QKD.BB84.Engine
 
 /-!
@@ -124,8 +127,8 @@ theorem bb84_f_blocks_integrable {n : ℕ} [NeZero n] [NeZero (4 ^ n)]
         (deFinetti_haarMeasure (signalDim * signalDim)).measure := by
     intro r s
     simp only [mapTensorId, Matrix.of_apply]
-    exact MeasureTheory.integrable_finset_sum _ fun i' _ =>
-      MeasureTheory.integrable_finset_sum _ fun j' _ => (h_input_entry _ _).const_mul _
+    exact MeasureTheory.integrable_finsetSum _ fun i' _ =>
+      MeasureTheory.integrable_finsetSum _ fun j' _ => (h_input_entry _ _).const_mul _
   intro x
   refine matrix_integrable_of_entry_integrable (fun i j => ?_)
   by_cases hpass : bb84SiftedLocalPETestPassed peSel xSel δ Q x = true
@@ -170,8 +173,8 @@ theorem bb84_f_blocks_integrable {n : ℕ} [NeZero n] [NeZero (4 ^ n)]
       intro s _
       rw [Matrix.mul_apply, Finset.sum_mul]
     simp_rw [hentry]
-    exact MeasureTheory.integrable_finset_sum _ fun s _ =>
-      MeasureTheory.integrable_finset_sum _ fun r _ =>
+    exact MeasureTheory.integrable_finsetSum _ fun s _ =>
+      MeasureTheory.integrable_finsetSum _ fun r _ =>
         ((h_tau_entry r s).const_mul _).mul_const _
   · have hfail : bb84SiftedLocalPETestPassed peSel xSel δ Q x = false := Bool.eq_false_iff.mpr hpass
     have heq : (fun ψ : DensityOp (signalDim * signalDim) =>
@@ -220,8 +223,8 @@ theorem bb84PairedHaarPerSigmaFamily_blocks_continuous {n : ℕ} [NeZero n] [NeZ
               by
     intro r s
     simp only [mapTensorId, Matrix.of_apply]
-    exact continuous_finset_sum _ fun i' _ =>
-      continuous_finset_sum _ fun j' _ => continuous_const.mul (h_input_entry _ _)
+    exact continuous_finsetSum _ fun i' _ =>
+      continuous_finsetSum _ fun j' _ => continuous_const.mul (h_input_entry _ _)
   intro x
   refine continuous_matrix (fun i j => ?_)
   by_cases hpass : bb84SiftedLocalPETestPassed peSel xSel δ Q x = true
@@ -266,8 +269,8 @@ theorem bb84PairedHaarPerSigmaFamily_blocks_continuous {n : ℕ} [NeZero n] [NeZ
       intro s _
       rw [Matrix.mul_apply, Finset.sum_mul]
     simp_rw [hentry]
-    exact continuous_finset_sum _ fun s _ =>
-      continuous_finset_sum _ fun r _ =>
+    exact continuous_finsetSum _ fun s _ =>
+      continuous_finsetSum _ fun r _ =>
         (continuous_const.mul (h_tau_entry r s)).mul continuous_const
   · have hfail : bb84SiftedLocalPETestPassed peSel xSel δ Q x = false := Bool.eq_false_iff.mpr hpass
     have heq : (fun ψ : DensityOp (signalDim * signalDim) =>

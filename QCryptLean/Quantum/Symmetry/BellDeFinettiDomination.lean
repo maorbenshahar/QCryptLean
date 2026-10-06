@@ -569,7 +569,7 @@ private theorem symmetricProjector_four_diag_pos (n : ℕ) [NeZero n] (i : Fin (
   have hcardpos : 0 < (Finset.univ.filter
       (fun σ : Equiv.Perm (Fin n) => e.symm i = e.symm i ∘ ⇑σ.symm)).card := by
     rw [Finset.card_pos]
-    exact ⟨1, by rw [Finset.mem_filter]; exact ⟨Finset.mem_univ _, by simp⟩⟩
+    exact ⟨1, by rw [Finset.mem_filter]; exact ⟨Finset.mem_univ _, by simp [pull_end]⟩⟩
   rw [hsum]
   have hreal : (1 / (Nat.factorial n : ℂ)) *
         (((Finset.univ.filter

@@ -526,7 +526,7 @@ private lemma conditionalMinEntropyReal_eveTensorUniformClassical_le_optReal
     -- Show 0 < lB.
     have hlB_pos : 0 < minFeasibleLambda ρ σ'.partialTraceB := by
       by_contra hnot
-      push_neg at hnot
+      push Not at hnot
       have hlB_zero : minFeasibleLambda ρ σ'.partialTraceB = 0 :=
         le_antisymm hnot hlB_nn
       have h_zero_feas_B : isFeasible ρ σ'.partialTraceB 0 := by
@@ -574,7 +574,7 @@ private lemma conditionalMinEntropyReal_eveTensorUniformClassical_le_optReal
       _ ≤ conditionalMinEntropyOptReal ρ :=
           le_csSup hbdd ⟨σ'.partialTraceB, rfl⟩
   · -- lA ≤ 0, so lA = 0, hence H_LHS = 0.
-    push_neg at hlA_pos
+    push Not at hlA_pos
     have hlA_zero :
         minFeasibleLambda (ρ.eveTensorUniformClassical k) σ' = 0 :=
       le_antisymm hlA_pos hlA_nn

@@ -40,6 +40,8 @@ noncomputable section
 
 namespace InfoTheory.DeFinetti.PureState
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-!
 ## Section 4: Post-Measurement State and De Finetti Measure
 
@@ -83,10 +85,10 @@ lemma postMeasurementWeight_integrable {d n : ℕ} [NeZero d] [NeZero n]
   apply Integrable.const_mul
   apply ContinuousLinearMap.integrable_comp Complex.reCLM
   simp only [Matrix.trace, Matrix.diag]
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro i _
   simp only [Matrix.mul_apply]
-  apply integrable_finset_sum
+  apply integrable_finsetSum
   intro j _
   exact (coherentStateDensityOp_entry_integrable i j).mul_const _
 

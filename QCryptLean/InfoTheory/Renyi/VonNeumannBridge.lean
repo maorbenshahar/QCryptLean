@@ -35,6 +35,9 @@ noncomputable section
 
 namespace InfoTheory.Renyi
 
+private local instance (m : Type*) [Fintype m] [DecidableEq m] :
+    CStarAlgebra (Matrix m m ℂ) := {}
+
 /-! ## Traces of a continuous functional calculus in the eigenbasis -/
 
 private lemma contOn_spec_bridge {ι : Type*} [Fintype ι] [DecidableEq ι]

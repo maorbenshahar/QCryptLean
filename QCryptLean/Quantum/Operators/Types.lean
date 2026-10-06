@@ -16,13 +16,6 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Analysis.Matrix.PosDef
 
-namespace Quantum.Operators
-
-open scoped Matrix BigOperators ComplexConjugate ComplexOrder
-open Matrix
-
-noncomputable section
-
 /-!
 # Quantum Operator Types — Op, HermitianOp, PosSemidefOp, DensityOp, UnitaryOp, Ket, Bra
 
@@ -53,6 +46,13 @@ rank-one projector identities are in `BraKet/Projector.lean`.
 - `UnitaryOp.preserves_inner`: unitary operators preserve inner products
 - `trace_unitary_conj`: unitary conjugation preserves matrix trace
 -/
+
+namespace Quantum.Operators
+
+open scoped Matrix BigOperators ComplexConjugate ComplexOrder
+open Matrix
+
+noncomputable section
 
 -- ============================================================================
 -- Section 1: Basic Operator Type

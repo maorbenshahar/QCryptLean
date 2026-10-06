@@ -36,6 +36,8 @@ noncomputable section
 
 namespace InfoTheory.DeFinetti.PureState
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- The partial ket embedding V = (I_k ⊗ |v^g_{n-k}⟩) as a rectangular matrix.
 
     Maps d^k-vectors to d^(k*(n-k))-vectors by tensoring with the coherent state
@@ -221,7 +223,7 @@ lemma ckmr_schur_identity_1 {d n : ℕ} [NeZero d] [NeZero n]
       (continuous_const.smul h_Pg_cont).integrable_of_hasCompactSupport
         (HasCompactSupport.of_compactSpace _)
     -- Interchange integral and CLM
-    rw [M.integral_comp_comm h_int]
+    refine (M.integral_comp_comm h_int).trans ?_
     -- Apply Schur lemma: ∫ dim_{n-k} • Pg^{n-k} dg = symProj_{n-k}
     change M (∫ g, (↑((n - k + d - 1).choose (d - 1)) : ℝ) •
       (coherentStateDensityOp g (n - k)).toOp ∂haarProbUnitary d) = _
@@ -451,7 +453,7 @@ lemma ckmr_schur_core_identity {d n : ℕ} [NeZero d] [NeZero n]
     (continuous_const.smul h_Pg_cont).integrable_of_hasCompactSupport
       (HasCompactSupport.of_compactSpace _)
   -- Apply CLM.integral_comp_comm: ∫ M(f(g)) dg = M(∫ f(g) dg)
-  rw [M.integral_comp_comm h_int]
+  refine (M.integral_comp_comm h_int).trans ?_
   -- Apply Schur: ∫ c • Pg dg = Psym
   change M (∫ g, (↑((n + d - 1).choose (d - 1)) : ℝ) • (coherentStateDensityOp g n).toOp
       ∂haarProbUnitary d) = _
@@ -567,14 +569,14 @@ lemma ckmr_schur_identity_2' {d n : ℕ} [NeZero d] [NeZero n]
     intro i a'; simp only [ckmrKetEmbed, Matrix.of_apply]
     split_ifs
     · exact continuous_const
-    · apply continuous_finset_prod; intro j _; exact continuous_subtype_val.matrix_elem _ _
+    · apply continuous_finsetProd; intro j _; exact continuous_subtype_val.matrix_elem _ _
     · exact continuous_const
   have h_A_cont : Continuous (fun g : unitaryGroup (Fin d) ℂ => ckmrUnnorm Ψ k _hk g) := by
     apply continuous_matrix; intro a b
     simp only [ckmrUnnorm, Matrix.mul_apply, Matrix.conjTranspose_apply]
-    apply continuous_finset_sum; intro j _
+    apply continuous_finsetSum; intro j _
     apply Continuous.mul
-    · apply continuous_finset_sum; intro i _; exact (h_V_entry i a).star.mul continuous_const
+    · apply continuous_finsetSum; intro i _; exact (h_V_entry i a).star.mul continuous_const
     · exact h_V_entry j b
   have h_int : Integrable (fun g => (↑((n - k + d - 1).choose (d - 1)) : ℝ) •
       ((coherentStateDensityOp g k).toOp * ckmrUnnorm Ψ k _hk g)) (haarProbUnitary d) :=

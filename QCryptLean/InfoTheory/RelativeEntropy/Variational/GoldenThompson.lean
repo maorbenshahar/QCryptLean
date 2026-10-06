@@ -166,7 +166,7 @@ lemma real_exp_sub_one_sub_le_sq_mul_exp {t : ℝ} (ht : 0 ≤ t) :
     have h3 : t ^ 2 ≤ t ^ 2 * Real.exp t :=
       le_mul_of_one_le_right (sq_nonneg t) (Real.one_le_exp ht)
     linarith
-  · push_neg at h1
+  · push Not at h1
     have h2 : t + 1 ≤ Real.exp t := Real.add_one_le_exp t
     have h3 : 1 ≤ t ^ 2 := by nlinarith
     have hexp := Real.exp_pos t
@@ -532,7 +532,7 @@ lemma lie_trotter_product_formula {N : ℕ}
   have htop := @matrix_nhds_eq_linftyOp_nhds N
   rw [htop] at *
   open scoped Matrix.Norms.Operator in
-  rw [NormedAddCommGroup.tendsto_atTop]
+  apply NormedAddCommGroup.tendsto_atTop.mpr
   open scoped Matrix.Norms.Operator in
   intro ε hε
   open scoped Matrix.Norms.Operator in
@@ -633,7 +633,7 @@ lemma golden_thompson_trace_ineq {N : ℕ}
   have htend := dyadic_lie_trotter_product_formula A B
   have htrace_cont : Continuous (fun M : Matrix (Fin N) (Fin N) ℂ => M.trace.re) := by
     apply Complex.continuous_re.comp
-    exact continuous_finset_sum _ (fun i _ => continuous_apply_apply i i)
+    exact continuous_finsetSum _ (fun i _ => continuous_apply_apply i i)
   have htrace_tend : Filter.Tendsto
       (fun k => ((NormedSpace.exp (((2 ^ k : ℕ) : ℂ)⁻¹ • A) *
                   NormedSpace.exp (((2 ^ k : ℕ) : ℂ)⁻¹ • B)) ^ (2 ^ k)).trace.re)

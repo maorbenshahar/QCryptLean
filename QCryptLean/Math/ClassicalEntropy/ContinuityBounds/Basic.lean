@@ -67,7 +67,7 @@ private lemma sum_negMulLog_le_log_sub_one_of_zero {n : ℕ}
   set S := Finset.univ.erase j
   have h_exists_pos : ∃ k, 0 < r k := by
     by_contra h_pos
-    push_neg at h_pos
+    push Not at h_pos
     have hr_zero : ∀ i, r i = 0 := fun i => le_antisymm (h_pos i) (hr_nonneg i)
     have : ∑ i, r i = 0 := by simp [hr_zero]
     linarith [hr_sum]
@@ -226,9 +226,9 @@ private lemma entropy_diff_coupling_bound {n : ℕ} (hn : 1 ≤ n)
     have h_r_bound : ∑ i, Real.negMulLog (max (p i - q i) 0 / s) ≤
         Real.log (↑n - 1) := by
       have ⟨j, hj⟩ : ∃ j, max (p j - q j) 0 = 0 := by
-        by_contra h; push_neg at h
+        by_contra h; push Not at h
         have hpi : ∀ i, q i < p i := fun i => by
-          by_contra h'; push_neg at h'
+          by_contra h'; push Not at h'
           exact h i (max_eq_right (sub_nonpos.mpr h'))
         have : ∑ i, q i < ∑ i, p i :=
           Finset.sum_lt_sum (fun i _ => le_of_lt (hpi i))
@@ -386,7 +386,7 @@ lemma entropyTerm_lipschitz (ε : ℝ) (hε : 0 < ε) (x y : ℝ)
       rw [abs_of_nonpos hlog_ε]
       linarith
     · -- log z + 1 < 0, so |log z + 1| = -(log z + 1)
-      push_neg at h
+      push Not at h
       rw [abs_of_neg h]
       have hlog_ε : Real.log ε ≤ 0 := Real.log_nonpos (le_of_lt hε) hε1
       rw [abs_of_nonpos hlog_ε]
@@ -627,7 +627,7 @@ lemma entropy_bound_with_large_eigenvalue {n : ℕ}
     exact lt_of_le_of_lt hT_bound h_one_sub_lt_one
   have hp_max_ge_inv_n : p_max ≥ 1 / (n : ℝ) := by
     by_contra h_neg
-    push_neg at h_neg
+    push Not at h_neg
     have h_all_lt : ∀ i, evals i < 1 / (n : ℝ) := fun i => by
       calc evals i ≤ p_max := hi_max_is_max i (Finset.mem_univ i)
         _ < 1 / n := h_neg
@@ -697,7 +697,7 @@ lemma entropy_bound_with_large_eigenvalue {n : ℕ}
             exact le_of_lt (Real.binEntropy_strictMonoOn h_1mp_in h_T_in
               (lt_of_le_of_ne hsmall_le_T heq))
         linarith only [h1, h2]
-      · push_neg at hT_half
+      · push Not at hT_half
         rw [binaryEntropy_symm p_max, binaryEntropy_symm (1 - T)]
         simp only [sub_sub_cancel]
         rw [binaryEntropy_add_mul_log_eq_qaryEntropy,
@@ -710,7 +710,7 @@ lemma entropy_bound_with_large_eigenvalue {n : ℕ}
           · rw [heq]
           · exact le_of_lt (Real.qaryEntropy_strictMonoOn hn h_1mp_in h_T_in
               (lt_of_le_of_ne hsmall_le_T heq))
-        · push_neg at hT_in_incr
+        · push Not at hT_in_incr
           linarith only [hT_bound, hT_in_incr]
     calc entropyTerm p_max + ∑ i ∈ Finset.univ.erase i_max, entropyTerm (evals i)
         ≤ entropyTerm p_max + ((1 - p_max) * Real.log (n - 1) + entropyTerm (1 - p_max)) :=

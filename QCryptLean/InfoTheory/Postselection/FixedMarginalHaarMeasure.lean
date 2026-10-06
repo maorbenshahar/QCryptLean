@@ -251,7 +251,7 @@ private lemma fixedMarginalPureState_continuous (σA : DensityOp dA) (hσA : σA
         (p * fmTheta dA dB).vec) := by
       apply continuous_pi; intro k
       simp only [op_mul_ket_vec, Matrix.mulVec, dotProduct]
-      exact continuous_finset_sum _ (fun l _ =>
+      exact continuous_finsetSum _ (fun l _ =>
         Continuous.mul
           (show Continuous (fun a : Op (dA * (dA * dB ^ 2)) => a k l) from
             (continuous_apply l).comp (continuous_apply k))

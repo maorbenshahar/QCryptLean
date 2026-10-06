@@ -153,6 +153,7 @@ theorem fiberDefaultHasQuotas
     · intro n h1 h2
       simp [matchedOrder, fiberDefaultRawControl, fiberDefaultShuffle,
         selfMatchedEquiv, Matched]
+      rfl
   have hZMem (k : Fin (nK + mZ)) :
       f (Fin.castAdd mX k) ∈ zOrder (fiberDefaultRawControl f) := by
     have hnotX :
@@ -230,6 +231,7 @@ theorem selectFiberDefault
     · intro n h1 h2
       simp [matchedOrder, fiberDefaultRawControl, fiberDefaultShuffle,
         selfMatchedEquiv, Matched]
+      rfl
   have hsequence :
       matchedOrder (fiberDefaultRawControl f) =
         List.ofFn f ++

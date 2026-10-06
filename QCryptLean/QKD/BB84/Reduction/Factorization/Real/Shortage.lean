@@ -110,7 +110,7 @@ private theorem reconstruction_shortage
         pA pB j r eta
           (shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega hshort) x = 0
     unfold reconstructionShortageKraus
-    rw [Matrix.smul_apply]
+    refine (Matrix.smul_apply _ _ _ _).trans ?_
     rw [Matrix.single_apply_of_row_ne]
     · exact smul_zero _
     · intro heq
@@ -138,7 +138,7 @@ private theorem reconstruction_shortage
           (shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega hshort)
           (shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega hshort) = 0 :=
     matrixConjLinear_apply_eq_zero_of_row_left _ _ (funext (hsuccessRow k.1 k.2.1 k.2.2)) _
-  rw [Fintype.sum_sum_type]
+  conv_lhs => tactic => exact Fintype.sum_sum_type _
   simp only [hsuccess, Finset.sum_const_zero, zero_add]
   rw [Fintype.sum_sigma]
   refine Finset.sum_congr rfl fun j _ => ?_
@@ -158,11 +158,17 @@ private theorem reconstruction_shortage
           pA pB j r eta0
             (shortageCompleteOutput N nK mZ mX ell ellEV leakEC omega hshort) x = _
       unfold reconstructionShortageKraus
-      rw [Matrix.smul_apply, Pi.single_apply]
+      refine (Matrix.smul_apply _ _ _ _).trans ?_
+      rw [Pi.single_apply]
       by_cases hx : x = x0
       · subst x
-        rw [if_pos rfl, Matrix.single_apply_same, smul_eq_mul, mul_one]
-      · rw [if_neg hx, Matrix.single_apply_of_col_ne _ _ (Ne.symm hx), smul_zero]
+        rw [if_pos rfl]
+        refine (congrArg (fun z : ℂ => (_ : ℂ) • z)
+          (Matrix.single_apply_same _ _ (1 : ℂ))).trans ?_
+        exact mul_one _
+      · rw [if_neg hx]
+        exact (congrArg (fun z : ℂ => (_ : ℂ) • z)
+          (Matrix.single_apply_of_col_ne _ _ (Ne.symm hx) (1 : ℂ))).trans (smul_zero _)
     rw [Fintype.sum_eq_single eta0 fun eta heta =>
         matrixConjLinear_apply_eq_zero_of_row_left _ _
           (funext (hrow_of_control_ne j r eta fun h => heta (Subtype.ext h))) _,
@@ -191,7 +197,10 @@ private theorem program_denote_shortage_eq_abort
       (Measurement.lateSelectionAbortAt N nK mZ mX omega hshort)
       (Measurement.lateSelectionAbortAt N nK mZ mX omega hshort) := by
   unfold QKD.BB84.program
-  rw [Program.denote_graft]
+  conv_lhs =>
+    tactic => exact congrFun (congrFun (LinearMap.congr_fun
+      (Program.denote_graft (Measurement.weightedLatePublicSelectionProgram
+        pA pB N nK mZ mX) _) rho) _) _
   let outer := Measurement.lateSelectionAbortAt N nK mZ mX omega hshort
   -- The complete shortage output, typed as a point of the grafted boundary.
   let y : ((Measurement.lateSelectionBoundary N nK mZ mX).graft

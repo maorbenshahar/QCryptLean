@@ -85,14 +85,14 @@ private lemma fidelitySq_ge_one_sub_traceDistance {n : ℕ} [NeZero n] (ρ : Den
         congr 1; ext i
         by_cases hx : 0 ≤ evA i
         · rw [max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), sub_zero]
-        · push_neg at hx
+        · push Not at hx
           rw [max_eq_left (le_of_lt hx), max_eq_right (neg_pos.mpr hx).le, zero_sub, neg_neg]
       rw [h_ev_sum_zero, Finset.sum_sub_distrib] at h1; linarith only [h1]
     have h_abs_split : ∀ i, |evA i| = max 0 (evA i) + max 0 (-evA i) := by
       intro i
       by_cases hx : 0 ≤ evA i
       · rw [abs_of_nonneg hx, max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), add_zero]
-      · push_neg at hx
+      · push Not at hx
         rw [abs_of_neg hx, max_eq_left (le_of_lt hx), zero_add,
             max_eq_right (neg_pos.mpr hx).le]
     have h_sum_abs : ∑ i, |evA i| = pos_sum_A + ∑ i, max 0 (-evA i) := by
@@ -118,7 +118,7 @@ private lemma fidelitySq_ge_one_sub_traceDistance {n : ℕ} [NeZero n] (ρ : Den
     by_cases h : 0 ≤ evA i
     · calc evA i * pA i ≥ 0 := mul_nonneg h (h_pA_nonneg i)
         _ ≥ min 0 (evA i) := by simp [min_eq_left h]
-    · push_neg at h
+    · push Not at h
       have : min 0 (evA i) = evA i := min_eq_right (le_of_lt h)
       rw [this]
       have hle : evA i * pA i ≥ evA i * 1 :=
@@ -201,7 +201,7 @@ lemma max_eigenvalue_ge_one_sub_traceDistance {n : ℕ} [NeZero n] (ρ : Density
   · calc eigenvaluesOf ρ i_max ≥ 1 / n := h_one_div_n_le_max
       _ ≥ 1 - traceDistance ρ.toOp σ.toOp := by linarith only [h_D_large]
   -- For D < 1 - 1/n (small trace distance): use F² ≤ λ_max and F² ≥ 1-D
-  push_neg at h_D_large
+  push Not at h_D_large
   -- Part 1: F² ≥ 1 - D via eigenvalue perturbation
   -- A = ρ - σ has trace 0 and trace norm 2D, so eigenvalues in [-D, D]
   -- ⟨ψ|A|ψ⟩ ≥ -D and F² = ⟨ψ|ρ|ψ⟩ = ⟨ψ|σ|ψ⟩ + ⟨ψ|A|ψ⟩ = 1 + ⟨ψ|A|ψ⟩ ≥ 1 - D

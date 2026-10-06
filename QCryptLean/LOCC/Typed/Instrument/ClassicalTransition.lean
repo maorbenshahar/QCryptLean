@@ -333,7 +333,8 @@ theorem PreservesDiagonalBranches.classicalReplacement_operation_diagonal
       I.classicalReplacement.classicalWeight a (y, b) =
         I.classicalWeight a (y, b) := by
     rw [classicalWeight_eq_sum_normSq]
-    simp only [classicalReplacement, classicalReplacementKraus,
+    change (∑ ab : Hin × Hout, Complex.normSq (I.classicalReplacementKraus y ab b a)) = _
+    simp only [classicalReplacementKraus,
       Matrix.single_apply]
     simp_rw [Fintype.sum_prod_type]
     rw [Finset.sum_eq_single a]

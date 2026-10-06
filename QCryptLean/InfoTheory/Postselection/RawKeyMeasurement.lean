@@ -20,6 +20,9 @@ attribute [local instance] Matrix.frobeniusNormedSpace
 
 noncomputable section
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
 namespace InfoTheory.SmoothMinEntropy
 
 /-! ## The maximally-mixed register extension of a CQ state -/
@@ -103,7 +106,7 @@ def cqStateIntegral {α : Type*} [MeasurableSpace α] {X : Type*} [Fintype X] {d
   weight_le_one := by
     change ∑ x : X, (∫ a, ((f a).stateMap x).toOp ∂μ).trace.re ≤ 1
     simp_rw [integral_block_trace_re f μ h_int]
-    rw [← integral_finset_sum Finset.univ (fun x _ => block_trace_integrable f μ h_int x)]
+    rw [← integral_finsetSum Finset.univ (fun x _ => block_trace_integrable f μ h_int x)]
     calc ∫ a, ∑ x : X, ((f a).stateMap x).trace ∂μ
         ≤ ∫ _a, (1 : ℝ) ∂μ :=
           integral_mono_of_nonneg
@@ -318,7 +321,7 @@ theorem mixCQ_En_weight_eq (μ : DensityMeasure (dA * dB)) (h_int : M.Integrable
         ∫ σ : DensityOp (dA * dB), ((M.rawKeyCQ σ).stateMap x).trace ∂μ.measure := fun x =>
     integral_block_trace_re M.rawKeyCQ μ.measure h_int x
   simp_rw [hblock, RawKeyMeasurement.pAcc]
-  exact (integral_finset_sum Finset.univ
+  exact (integral_finsetSum Finset.univ
     (fun x _ => block_trace_integrable M.rawKeyCQ μ.measure h_int x)).symm
 
 /-! ## The register-extended mixture floor (Nahar et al. App. B, `\label{eq:boundingsmoothedmin}`

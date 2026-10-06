@@ -492,7 +492,7 @@ lemma trace_zero_eigenvalue_bound {n : ℕ} [NeZero n] (A : Op n)
     intro x
     by_cases hx : 0 ≤ x
     · rw [abs_of_nonneg hx, max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), add_zero]
-    · push_neg at hx
+    · push Not at hx
       rw [abs_of_neg hx, max_eq_left (le_of_lt hx), zero_add, max_eq_right (neg_pos.mpr hx).le]
   have h_sum_split : ∑ i, |hA.eigenvalues i| =
       ∑ i, max 0 (hA.eigenvalues i) + ∑ i, max 0 (-hA.eigenvalues i) := by
@@ -511,7 +511,7 @@ lemma trace_zero_eigenvalue_bound {n : ℕ} [NeZero n] (A : Op n)
       funext i
       by_cases hx : 0 ≤ hA.eigenvalues i
       · rw [max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), sub_zero]
-      · push_neg at hx
+      · push Not at hx
         rw [max_eq_left (le_of_lt hx), max_eq_right (neg_pos.mpr hx).le, zero_sub, neg_neg]
     rw [h_sum_real, Finset.sum_sub_distrib] at h1
     linarith

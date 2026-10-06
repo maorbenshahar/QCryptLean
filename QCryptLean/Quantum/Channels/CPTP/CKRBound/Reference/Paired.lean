@@ -467,6 +467,7 @@ private lemma ckrDeFinettiState_zero_toOp (d : ℕ) [NeZero d] :
   fin_cases j
   simp [ckrDeFinettiState, pairedDeFinettiState, DensityOp.castDim, DensityOp.trivial,
     DensityOp.partialTraceB, PosSemidefOp.partialTraceB, partialTraceB]
+  rfl
 
 private lemma ckr_psd_bound_paired_core_zero {d dimOut dimR : ℕ}
     [NeZero d] [NeZero dimOut] [NeZero dimR]
@@ -481,7 +482,9 @@ private lemma ckr_psd_bound_paired_core_zero {d dimOut dimR : ℕ}
     have hτ_toOp := congrArg (fun σ => σ.toOp) hτ.marginal
     simpa [ckrDeFinettiState_zero_toOp d] using hτ_toOp
   have h_dom : (((1 : ℝ) : ℂ) • τ.partialTraceB.toOp - partialTraceB ρ).PosSemidef := by
-    rw [Complex.ofReal_one, one_smul, hτ_ptrace, partialTraceB_dim1_op]
+    rw [Complex.ofReal_one, one_smul, hτ_ptrace]
+    change ((1 : Op 1) - partialTraceB (n := 1) (m := 1) ρ).PosSemidef
+    rw [partialTraceB_dim1_op]
     simpa using Quantum.Operators.psd_le_one_of_trace_le_one ρ hρ_psd hρ_trace
   simpa using
     traceNorm_mapTensorId_substate_bound Δ ρ hρ_psd τ hτ.isPure 1 one_pos h_dom

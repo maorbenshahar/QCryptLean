@@ -135,7 +135,8 @@ theorem coherentPrepareAction_offDiagonal :
     rcases i with ⟨⟩
     rcases j with ⟨⟩
     rfl
-  rw [hsub]
+  refine (congrArg (fun M => coherentPrepareInstrument.operation () M 0 1)
+    (hsub _ _)).trans ?_
   have hsqrt :
       (Real.sqrt 2 : ℂ)⁻¹ * (Real.sqrt 2 : ℂ)⁻¹ = (1 / 2 : ℂ) := by
     rw [← mul_inv]
@@ -317,4 +318,3 @@ theorem unequalReference_indices : (0 : Fin 2) ≠ 1 := by
   decide
 
 end QCryptLeanTest.BB84.ClassicalContinuation
-

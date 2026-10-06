@@ -93,7 +93,7 @@ lemma cqState_univ_isCompact {X : Type*} [Fintype X] {n : ℕ} :
           (continuous_apply x) (isClosed_setOf_posSemidef (n := n))
     have h_trace : IsClosed (setOf (fun M : X → Op n => ∑ x, (M x).trace.re ≤ 1)) := by
       apply isClosed_le ?_ continuous_const
-      exact continuous_finset_sum _ (fun x _ =>
+      exact continuous_finsetSum _ (fun x _ =>
         Complex.continuous_re.comp (continuous_apply x).matrix_trace)
     have hEq : setOf (fun M : X → Op n => (∀ x, (M x).PosSemidef) ∧ ∑ x, (M x).trace.re ≤ 1) =
         (⋂ x, setOf (fun M : X → Op n => (M x).PosSemidef)) ∩
@@ -311,7 +311,7 @@ lemma continuous_minFeasibleLambda_of_posDef
     have hmaj_cont : Continuous (fun τ : CQState X n =>
         (∑ x : X, Quantum.Metrics.traceNorm
           ((τ.stateMap x).toOp - (τ₀.stateMap x).toOp)) * C) := by
-      refine (continuous_finset_sum _ (fun x _ => ?_)).mul continuous_const
+      refine (continuous_finsetSum _ (fun x _ => ?_)).mul continuous_const
       exact Quantum.Metrics.traceNorm_continuous.comp
         ((continuous_cqIncl_apply x).sub continuous_const)
     have htend : Filter.Tendsto (fun τ : CQState X n =>
@@ -352,7 +352,7 @@ lemma weight_pos_on_ball_of_bddAboveReal
   -- Boundedness of the smoothed set forces `ε² < weight(ρ)`.
   have hgt : ε ^ 2 < ∑ x : X, (ρ.stateMap x).trace := by
     by_contra hle
-    push_neg at hle
+    push Not at hle
     exact smoothedSetReal_not_bddAbove_of_weight_le_eps_sq_of_posDef ρ σ hσ_pd ε hε_pos hle hbdd
   -- The explicit purified-distance weight floor is then a positive lower bound on `τ`'s weight.
   have hfloor_pos : 0 < purifiedDistanceWeightFloor ε (∑ x : X, (ρ.stateMap x).trace) :=
@@ -397,7 +397,7 @@ theorem continuousOn_conditionalMinEntropyReal_of_bddAbove
     -- Finish: negate and divide by the constant `log 2`.
     exact hlog.neg.div_const (Real.log 2)
   · -- `ε ≤ 0`: the ball forces `P(ρ, τ) = 0`, so the objective is constant on it.
-    push_neg at hε_pos
+    push Not at hε_pos
     haveI : NeZero (Fintype.card X) := ⟨Fintype.card_ne_zero⟩
     haveI : NeZero (n * Fintype.card X) := ⟨Nat.mul_ne_zero (NeZero.ne n) (NeZero.ne _)⟩
     have heqon : Set.EqOn (fun τ : CQState X n => conditionalMinEntropyReal τ σ)

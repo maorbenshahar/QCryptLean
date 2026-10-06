@@ -26,7 +26,7 @@ private noncomputable def finCardEquiv (n : ℕ) : Fin (Fintype.card (Fin n)) �
 /-- Span of eigenvectors for the k largest eigenvalues (eigenvalues₀ indices 0..k-1).
     Column `finCardEquiv j` has eigenvalue `eigenvalues₀ j`, so this span contains
     eigenvectors for eigenvalues₀ 0, ..., eigenvalues₀ (k-1). -/
-def eigenvecSpanFirst₀ (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian)
+noncomputable def eigenvecSpanFirst₀ (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian)
     (k : ℕ) (hk : k ≤ n) :
     Submodule ℂ (Fin n → ℂ) :=
   let e := finCardEquiv n
@@ -35,7 +35,7 @@ def eigenvecSpanFirst₀ (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian)
       (e ⟨j.val, by rw [Fintype.card_fin n]; exact j.isLt.trans_le hk⟩)))
 
 /-- Span of eigenvectors for eigenvalues₀ indices k..n-1 (the n-k smallest eigenvalues). -/
-def eigenvecSpanFrom₀ (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian)
+noncomputable def eigenvecSpanFrom₀ (A : Matrix (Fin n) (Fin n) ℂ) (hA : A.IsHermitian)
     (k : Fin n) :
     Submodule ℂ (Fin n → ℂ) :=
   let e := finCardEquiv n

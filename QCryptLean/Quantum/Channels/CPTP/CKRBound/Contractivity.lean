@@ -225,11 +225,7 @@ lemma mapTensorId_isCompletelyPositive {n m k : ℕ} [NeZero n] [NeZero m] [NeZe
   simp only [Matrix.single_apply, mul_ite, mul_one, mul_zero, ite_and,
     ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   simp only [L, Matrix.of_apply, Equiv.toFun_as_coe, finProdFinEquiv_symm_apply]
-  simp only [star_mul']
-  have hsi : ∀ (a b : Fin k),
-      star (if a = b then (1:ℂ) else 0) = if a = b then 1 else 0 := by
-    intros a b; split <;> simp
-  simp only [hsi]
+  simp only [star_mul', apply_ite, star_one, star_zero]
   -- Transform RHS: decompose Fin(n*k) sums, simplify, collapse indicators
   symm
   conv_lhs => arg 2; ext ℓ; rw [← Equiv.sum_comp finProdFinEquiv]

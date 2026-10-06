@@ -563,7 +563,7 @@ theorem exists_gt_smoothedSetReal_of_posDef_of_weight_le_eps_sq
         ρ' σ (a + 1) hlamρ'_pos hlamρ'_le_target
     exact ⟨conditionalMinEntropyReal ρ' σ, ⟨ρ', rfl, hP_le⟩, by linarith⟩
   · -- Zero-weight branch: ρ has all blocks zero; witness `maxMixedAt x₀ k`.
-    push_neg at hw_pos
+    push Not at hw_pos
     have hw_zero : w = 0 := le_antisymm hw_pos hw_nn
     have hρ_blocks_zero : ∀ x : X, (ρ.stateMap x).toOp = 0 := by
       intro x
@@ -668,7 +668,7 @@ theorem smoothedSetReal_maxMixed_not_bddAbove_of_weight_eq
     have hweight_n_le_eps_sq :
         (∑ x : X, (ρn.stateMap x).trace) ≤ ε ^ 2 := by
       by_contra hlt
-      push_neg at hlt
+      push Not at hlt
       exact hnot
         (smoothMinEntropyReal_bddAbove_of_eps_sq_lt_weight ε hε_pos.le ρn
           (DensityOp.toSubDensityOp (DensityOp.maxMixed n)) hlt)

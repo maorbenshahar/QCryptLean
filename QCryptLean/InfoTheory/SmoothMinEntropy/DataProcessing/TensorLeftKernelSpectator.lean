@@ -57,6 +57,8 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-! ## 1. Register plumbing: the spectator rides through the trailing partial trace -/
 
 /-- A register-dimension cast of the right tensor factor commutes with left-tensoring a fixed

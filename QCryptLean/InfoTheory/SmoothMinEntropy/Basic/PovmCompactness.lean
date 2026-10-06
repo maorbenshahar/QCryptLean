@@ -345,7 +345,7 @@ lemma povmFeasibleHerm_isClosed
     {X : Type*} [Fintype X] {n : ℕ} :
     IsClosed (povmFeasibleHerm : Set (X → Op n)) := by
   have h_sum : IsClosed (setOf (fun M : X → Op n => ∑ x, M x = 1)) :=
-    isClosed_eq (continuous_finset_sum _ fun x _ => continuous_apply x) continuous_const
+    isClosed_eq (continuous_finsetSum _ fun x _ => continuous_apply x) continuous_const
   have h_psd : ∀ x : X,
       IsClosed (setOf (fun M : X → Op n => (M x).PosSemidef)) := by
     intro x
@@ -435,7 +435,7 @@ lemma continuous_povm_objective
     {X : Type*} [Fintype X] {n : ℕ} (ρ : CQState X n) :
     Continuous (povmObjective ρ : (X → Op n) → ℝ) := by
   unfold povmObjective
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro x _
   fun_prop
 

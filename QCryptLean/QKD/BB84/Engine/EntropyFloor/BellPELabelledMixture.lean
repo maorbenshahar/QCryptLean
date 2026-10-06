@@ -6,6 +6,9 @@ import QCryptLean.QKD.BB84.Engine.EntropyFloor.PELabelledPerSigmaFloor
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup
 attribute [local instance] Matrix.frobeniusNormedSpace
 
+private noncomputable local instance (d : ℕ) : ContinuousENorm (Quantum.Operators.Op d) :=
+  SeminormedAddGroup.toContinuousENorm
+
 /-!
 # The analytic data of the Bell de Finetti mixture floor
 
@@ -172,7 +175,8 @@ theorem bb84_siftedLocalPE_blocks_eq_integral_of_toOp_eq_integral {n : ℕ} [NeZ
         rfl
       rw [hstate]
       rfl
-    rw [hgen τ₀, hτ₀, ← L.integral_comp_comm hint]
+    rw [hgen τ₀, hτ₀]
+    refine (L.integral_comp_comm hint).symm.trans ?_
     exact MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall (fun a => (hgen (τ a)).symm))
   · -- Rejecting branch: the fail-closed filter zeroes the block on both sides.
     have hzero : ∀ (σ : DensityOp (signalDim ^ n * signalDim ^ n)),

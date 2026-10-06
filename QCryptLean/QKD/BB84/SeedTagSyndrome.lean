@@ -157,7 +157,10 @@ theorem fusedAnnouncement_liftedOperation_apply
   rw [Instrument.liftAt_operation_apply (R := FinalStage.rawSystem n) .alice
     (fusedReadoutInstrument n ℓ ℓEV peSel leakEC ec)]
   unfold fusedReadoutInstrument
-  rw [Instrument.uniformChoice_operation]
+  refine (congrFun (congrFun (LinearMap.congr_fun
+    (Instrument.uniformChoice_operation
+      (fun r => Instrument.nondemolitionReadout
+        (Model.evTagSynOf n ℓ ℓEV peSel leakEC ec r)) r v) _) _) _).trans ?_
   simp only [LinearMap.smul_apply, Matrix.smul_apply, smul_eq_mul, Equiv.apply_symm_apply]
   simpa only [mul_ite, mul_zero, Matrix.submatrix_apply, Prod.eta,
     Equiv.symm_apply_apply] using

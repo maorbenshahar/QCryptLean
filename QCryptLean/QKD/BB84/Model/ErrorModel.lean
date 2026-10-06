@@ -120,10 +120,10 @@ def phaseFlipErrorRate_single (ρ : DensityOp 4) : ℝ :=
 lemma continuous_trace_mul_densityOp_toOp {d : ℕ} (A : Op d) :
     Continuous (fun ρ : DensityOp d => (A * ρ.toOp).trace) := by
   unfold Matrix.trace Matrix.diag
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro i _
   simp only [Matrix.mul_apply]
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro k _
   exact continuous_const.mul (((continuous_apply i).comp
     ((continuous_apply k).comp continuous_induced_dom)))

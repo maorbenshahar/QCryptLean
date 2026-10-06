@@ -83,7 +83,7 @@ lemma conj_primitive_root_pow_ne_one (m : ℕ) (hm : 0 < m) :
   have hm_int : (0 : ℤ) < ↑m := Nat.cast_pos.mpr hm
   by_cases hk : 0 ≤ k
   · linarith [mul_nonneg hk (show (0 : ℤ) ≤ ↑m + 1 by linarith)]
-  · push_neg at hk; nlinarith
+  · push Not at hk; nlinarith
 
 /-- **Haar moment vanishing**: For j ≥ 1, ∫ k₀₀^n · conj(k_{j0})^m dk = 0.
 
@@ -331,13 +331,13 @@ lemma coeff_zero_of_vanish_circle (S : Finset ℕ) (a : ℕ → ℂ)
   have hp_eval : ∀ z : ℂ, ‖z‖ = 1 → p.eval z = 0 := by
     intro z hz
     have : p.eval z = ∑ k ∈ S, a k * z ^ k := by
-      simp only [hp_def, Polynomial.eval_finset_sum, Polynomial.eval_mul,
+      simp only [hp_def, Polynomial.eval_finsetSum, Polynomial.eval_mul,
                  Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
     rw [this]; exact hv z hz
   have hp_zero : p = 0 := polynomial_zero_of_vanish_unit_circle hp_eval
   intro k hk
   have h_coeff : p.coeff k = a k := by
-    simp only [hp_def, Polynomial.finset_sum_coeff, Polynomial.coeff_C_mul_X_pow]
+    simp only [hp_def, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow]
     rw [Finset.sum_eq_single k
       (fun j _ hjk => if_neg (Ne.symm hjk))
       (fun hk' => absurd hk hk')]

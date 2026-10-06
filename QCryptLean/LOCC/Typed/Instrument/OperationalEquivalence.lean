@@ -93,6 +93,7 @@ theorem liftAt {P : Type} [Fintype P] [DecidableEq P]
     simp_rw [hsum]
     simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
     simp [apply_ite]
+    rfl
   rw [hlift I, hlift J]
   have hop_entry :=
     congrArg
@@ -148,7 +149,14 @@ theorem halfSplit_operationallyEquivalent (I : Instrument A B Outcome) :
   simp only [Instrument.operation, LinearMap.sum_apply, halfSplit, matrixConjLinear,
     LinearMap.coe_mk, AddHom.coe_mk, Fintype.sum_prod_type, Finset.sum_const, Finset.card_univ,
     Fintype.card_bool]
-  refine Finset.sum_congr rfl fun r _ => ?_
+  change (∑ x, I.kraus o x * ρ * (I.kraus o x)ᴴ) =
+    ∑ x : I.krausIndex o × Bool,
+      ((((Real.sqrt 2)⁻¹ : ℝ) : ℂ) • I.kraus o x.1) * ρ *
+        ((((Real.sqrt 2)⁻¹ : ℝ) : ℂ) • I.kraus o x.1)ᴴ
+  rw [Fintype.sum_prod_type]
+  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_bool]
+  apply Finset.sum_congr rfl
+  intro r hr
   rw [Matrix.conjTranspose_smul, Matrix.smul_mul, Matrix.mul_smul, Matrix.smul_mul, smul_smul]
   have hc : (star (((Real.sqrt 2)⁻¹ : ℝ) : ℂ)) * (((Real.sqrt 2)⁻¹ : ℝ) : ℂ)
       = ((2 : ℂ))⁻¹ := by

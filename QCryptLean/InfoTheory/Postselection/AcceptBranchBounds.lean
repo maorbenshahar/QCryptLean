@@ -27,6 +27,9 @@ noncomputable section
 
 namespace InfoTheory.Postselection
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
 variable {dA dB n : ℕ} [NeZero dA] [NeZero dB] [NeZero n]
 
 /-- An almost-everywhere accept-test bound controls the total bad-branch block weight. -/
@@ -48,7 +51,7 @@ theorem RawKeyMeasurement.badBranchBlockOp_weight_le_of_pAcc_le
   have hpAcc_int : MeasureTheory.Integrable (fun σ : DensityOp (dA * dB) => M.pAcc σ)
       (μ.measure.restrict goodSetᶜ) := by
     simp only [RawKeyMeasurement.pAcc]
-    exact MeasureTheory.integrable_finset_sum Finset.univ
+    exact MeasureTheory.integrable_finsetSum Finset.univ
       (fun x _ => block_trace_integrable M.rawKeyCQ (μ.measure.restrict goodSetᶜ)
         (fun x => (h_int x).restrict) x)
   calc ∫ σ in goodSetᶜ, M.pAcc σ ∂μ.measure
@@ -73,7 +76,7 @@ lemma RawKeyMeasurement.inter_nonempty_of_lt_mixCQ_En_weight
   have hae : ∀ᵐ σ ∂μ.measure, M.pAcc σ ≤ ε :=
     hμ.mono fun σ hσ => hacc σ ⟨hσ, fun hg => hne ⟨σ, hg, hσ⟩⟩
   have hi : MeasureTheory.Integrable M.pAcc μ.measure :=
-    MeasureTheory.integrable_finset_sum Finset.univ
+    MeasureTheory.integrable_finsetSum Finset.univ
       (fun x _ => block_trace_integrable M.rawKeyCQ μ.measure h_int x)
   have hle : ∫ σ, M.pAcc σ ∂μ.measure ≤ ε := by
     simpa using integral_mono_ae hi (integrable_const ε) hae

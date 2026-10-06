@@ -129,7 +129,8 @@ Löwner–Heinz (`CFC.rpow_le_rpow`), the C⋆-identity and `CFC.log_le_log` are
 `[CStarAlgebra A]`. Declared as a `local instance` so the L2Operator `NormedRing` does not
 leak into downstream typeclass synthesis (same pattern as
 `InfoTheory.DeFinetti.instCStarAlgebraOp_def`). -/
-private noncomputable def instCStarAlgebraMatrix (m : Type*) [Fintype m] [DecidableEq m] :
+@[implicit_reducible] private noncomputable def instCStarAlgebraMatrix
+    (m : Type*) [Fintype m] [DecidableEq m] :
     CStarAlgebra (Matrix m m ℂ) where
   norm_mul_self_le := Matrix.instCStarRing.norm_mul_self_le
 
@@ -425,6 +426,8 @@ private lemma trace_mul_log_le_of_le (A B : Matrix m m ℂ) (hA : 0 ≤ A) (hAB 
   linarith
 
 end Toolkit
+
+attribute [local instance] instCStarAlgebraMatrix
 
 /-!
 ## Blockwise facts about a classical-quantum state
@@ -766,9 +769,11 @@ private lemma cqPT_tensorPower {X : Type*} [Fintype X] [DecidableEq X] {n : ℕ}
         rfl
       have hmarg : (CQState.tensorPower ρ 0).quantumMarginalOp = (1 : Op 1) := by
         rw [CQState.quantumMarginalOp, Finset.sum_congr rfl (fun xs _ => hstate xs)]
+        change (∑ _ : Fin 0 → X, (1 : Op 1)) = (1 : Op 1)
         simp
       rw [Fintype.sum_unique, hstate, hmarg]
       unfold ptC
+      change ((1 : Op 1) ^ α * (1 : Op 1) ^ (1 - α)).trace = 1
       rw [CFC.one_rpow, CFC.one_rpow, one_mul, Matrix.trace_one]
       simp
   | succ k ih =>

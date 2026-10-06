@@ -207,7 +207,7 @@ theorem fannes_inequality {n : ℕ} [NeZero n] (hn : n ≥ 2) (ρ σ : DensityOp
           calc vonNeumannEntropy ρ - vonNeumannEntropy σ
               ≤ vonNeumannEntropy ρ := by linarith
             _ ≤ max (vonNeumannEntropy ρ) (vonNeumannEntropy σ) := le_max_left _ _
-        · push_neg at h
+        · push Not at h
           rw [abs_of_neg (sub_neg.mpr h)]
           calc -(vonNeumannEntropy ρ - vonNeumannEntropy σ)
               = vonNeumannEntropy σ - vonNeumannEntropy ρ := by ring
@@ -218,19 +218,19 @@ theorem fannes_inequality {n : ℕ} [NeZero n] (hn : n ≥ 2) (ρ σ : DensityOp
         _ ≤ max B B := max_le_max hρ_bound hσ_bound
         _ = B := max_self B
     · -- ρ has large eigenvalue, σ does not: use distribution_fannes_bound
-      push_neg at hσ_large
+      push Not at hσ_large
       unfold vonNeumannEntropy shannonEntropy
       exact distribution_fannes_bound (by omega) (eigenvaluesOf ρ) (eigenvaluesOf σ)
         hρ_nonneg hρ_sum hσ_nonneg hσ_sum T hT_bound h_pert
   · -- ρ has all eigenvalues < 1-T
-    push_neg at hρ_large
+    push Not at hρ_large
     by_cases hσ_large : ∃ i, eigenvaluesOf σ i ≥ 1 - T
     · -- σ has large eigenvalue, ρ does not: use distribution_fannes_bound
       unfold vonNeumannEntropy shannonEntropy
       exact distribution_fannes_bound (by omega) (eigenvaluesOf ρ) (eigenvaluesOf σ)
         hρ_nonneg hρ_sum hσ_nonneg hσ_sum T hT_bound h_pert
     · -- Neither has large eigenvalue: use distribution_fannes_bound
-      push_neg at hσ_large
+      push Not at hσ_large
       unfold vonNeumannEntropy shannonEntropy
       exact distribution_fannes_bound (by omega) (eigenvaluesOf ρ) (eigenvaluesOf σ)
         hρ_nonneg hρ_sum hσ_nonneg hσ_sum T hT_bound h_pert

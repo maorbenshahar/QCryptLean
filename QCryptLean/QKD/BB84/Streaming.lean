@@ -71,8 +71,16 @@ theorem program_eq_schedule_graft_classicalContinuation
           simp only [Measurement.weightedStreamBobAction, Measurement.weightedStreamAliceAction,
             PrivateAction.out_ofInstrument, Measurement.weightedStreamSystem,
             TwoParty.set_alice, TwoParty.set_bob]
-        simpa only [Program.graft_castInput h] using
-          congrArg (cast _) (ih (F := F × Measurement.StoredRecord) k)
+        refine (congrArg (fun p : Program
+          (Measurement.weightedStreamBobAction pA pB F m).out B => p.graft l)
+          (Program.graft_castInput h
+            (Measurement.weightedMeasurementScheduleAux pA pB (F × Measurement.StoredRecord) m)
+            (fun _ => k))).trans ?_
+        refine (Program.graft_castInput h _ l).trans ?_
+        refine Eq.trans ?_ (Program.graft_castInput h
+          (Measurement.weightedMeasurementScheduleAux pA pB (F × Measurement.StoredRecord) m)
+          (fun _ => k.graft l)).symm
+        exact congrArg (cast _) (ih (F := F × Measurement.StoredRecord) k)
   unfold QKD.BB84.program classicalContinuation
     Measurement.weightedLatePublicSelectionProgram
   simpa [Measurement.weightedMeasurementSchedule] using

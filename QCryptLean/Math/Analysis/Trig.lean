@@ -71,7 +71,7 @@ lemma sin_le_sin_add_sin_of_le_add
       simpa using this
     linarith [hmono, hsin_add, h1, h2]
   · -- Case 2: α + β > π/2.  Show sin α + sin β ≥ 1 ≥ sin γ.
-    push_neg at hcase
+    push Not at hcase
     have hβ_ge : Real.pi / 2 - α ≤ β := by linarith
     have hmem1 : Real.pi / 2 - α ∈ Set.Icc (-(Real.pi / 2)) (Real.pi / 2) :=
       ⟨by linarith, by linarith⟩

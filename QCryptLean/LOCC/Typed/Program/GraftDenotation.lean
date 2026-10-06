@@ -83,8 +83,11 @@ exit inclusion recovers the continuation Kraus matrix. -/
     (b : (k ()).Branch) :
     controlledContinuationKraus k () b * Boundary.exitKraus (.leaf R) () =
       (k ()).kraus b := by
-  simp only [controlledContinuationKraus, Boundary.graftInclKraus_leaf, Matrix.one_mul,
-    Matrix.mul_assoc, Boundary.exitKraus_conjTranspose_mul_self, Matrix.mul_one]
+  rw [controlledContinuationKraus, Boundary.graftInclKraus_leaf]
+  change (1 : Op (C ()).space) * ((k ()).kraus b *
+    (Boundary.exitKraus (.leaf R) ())ᴴ) * Boundary.exitKraus (.leaf R) () = _
+  rw [Matrix.one_mul, Matrix.mul_assoc,
+    Boundary.exitKraus_conjTranspose_mul_self, Matrix.mul_one]
 
 /-- Restricting a controlled continuation on an announced base boundary to the matching public
 block is the corresponding child controlled continuation, included into the matching grafted
@@ -101,8 +104,17 @@ theorem controlledContinuationKraus_announce_mul_publicInclKraus
           (fun z => (next z).graft fun f => C ⟨z, f⟩) y *
         controlledContinuationKraus (fun f => k ⟨y, f⟩) e b := by
   simp only [controlledContinuationKraus, Boundary.graftInclKraus_announce]
+  let G := Boundary.graftInclKraus (next y) (fun f => C ⟨y, f⟩) e
+  let K : Matrix (C ⟨y, e⟩).space ((next y).system e).total ℂ := (k ⟨y, e⟩).kraus b
+  let E : Matrix (Boundary.announce Y next).space ((next y).system e).total ℂ :=
+    Boundary.exitKraus (Boundary.announce Y next) ⟨y, e⟩
+  let I := Boundary.publicInclKraus next y
+  let F := Boundary.exitKraus (next y) e
+  let J := Boundary.publicInclKraus (fun z => (next z).graft fun f => C ⟨z, f⟩) y
+  change (J * G) * (K * Eᴴ) * I = J * (G * (K * Fᴴ))
   simp only [Matrix.mul_assoc]
-  rw [Boundary.exitKraus_announce_conjTranspose_mul_publicInclKraus]
+  rw [show Eᴴ * I = Fᴴ from
+    Boundary.exitKraus_announce_conjTranspose_mul_publicInclKraus next y e]
 
 /-- Restricting a controlled-continuation Kraus matrix to a distinct outer public block gives the
 rectangular zero matrix. -/
@@ -147,7 +159,7 @@ theorem controlledContinuation_eq_krausSum {B : Boundary P}
         matrixConjLinear (controlledContinuationKraus k e b) := by
   simp only [controlledContinuation, controlledContinuationInstrument,
     Instrument.channel, Instrument.operation, Fintype.sum_unique]
-  rw [Fintype.sum_sigma]
+  exact Fintype.sum_sigma _
 
 /-- On the unique block of a terminal base boundary, the controlled family simply runs its sole
 continuation. -/
@@ -175,7 +187,7 @@ theorem controlledContinuation_comp_denote_done (R : MultipartiteSystem P)
   simp only [Branch, Fintype.sum_unique, LinearMap.sum_apply]
   have hdone : (Program.done : Program R (.leaf R)).kraus () =
       Boundary.exitKraus (.leaf R) () := by
-    simp [kraus, Branch.exit, Branch.pathKraus]
+    exact Matrix.mul_one _
   rw [hdone]
   apply Finset.sum_congr rfl
   intro b _
@@ -260,7 +272,9 @@ theorem denote_graft {R : MultipartiteSystem P} {B : Boundary P} (p : Program R 
   | done =>
       exact (controlledContinuation_comp_denote_done _ k).symm
   | @announced R Y _ _ A B next ih =>
-      rw [graft_announced, denote_announced, denote_announced]
+      rw [graft_announced, denote_announced]
+      conv_lhs =>
+        tactic => exact denote_announced A (fun y => (next y).graft (fun e => k ⟨y, e⟩))
       have hdist :
           (controlledContinuation k).comp
               (∑ o : A.Outcome, ∑ r : A.krausIndex o,

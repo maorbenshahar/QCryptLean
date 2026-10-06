@@ -37,6 +37,11 @@ noncomputable local instance instCStarAlgebraMatrixPrincipalBlock
     CStarAlgebra (Matrix n n ℂ) :=
   inferInstanceAs (CStarAlgebra (CStarMatrix n n ℂ))
 
+private local instance (n m : Type*) [Fintype n] [Fintype m]
+    [DecidableEq n] [DecidableEq m] :
+    NonUnitalContinuousFunctionalCalculus ℝ (Matrix n n ℂ × Matrix m m ℂ) IsSelfAdjoint :=
+  NonUnitalIsometricContinuousFunctionalCalculus.toNonUnitalContinuousFunctionalCalculus
+
 /-- Continuous linear map sending a block matrix to its `₁₁` principal block. -/
 noncomputable def toBlocks₁₁CLM (n m : Type*) [Fintype n] [Fintype m]
     [DecidableEq n] [DecidableEq m] :
@@ -249,7 +254,10 @@ private lemma cfcₙ_rpowIntegrand₀₁_eq_smul_one_sub_inv {k : Type*} [Fintyp
     cfcₙ (Real.rpowIntegrand₀₁ p t) X = (t ^ (p - 1) : ℝ) • (1 - (1 + (t⁻¹ : ℝ) • X)⁻¹) := by
   have hfun : Real.rpowIntegrand₀₁ p 1 = fun x : ℝ => 1 - (1 + x)⁻¹ := by
     funext x; rw [Real.rpowIntegrand₀₁, Real.one_rpow, one_mul, inv_one]
-  rw [CFC.cfcₙ_rpowIntegrand₀₁_eq_cfcₙ_rpowIntegrand₀₁_one hp ht X hX, hfun,
+  have hscale : cfcₙ (Real.rpowIntegrand₀₁ p t) X =
+      t ^ (p - 1) • cfcₙ (Real.rpowIntegrand₀₁ p 1) ((t⁻¹ : ℝ) • X) :=
+    CFC.cfcₙ_rpowIntegrand₀₁_eq_cfcₙ_rpowIntegrand₀₁_one hp ht X hX
+  rw [hscale, hfun,
     cfcₙ_one_sub_one_add_inv_real_eq (smul_nonneg (inv_nonneg.mpr ht.le) hX)]
 
 lemma toBlocks₁₁_cfcₙ_rpowIntegrand₀₁_le {n m : Type*}
@@ -296,11 +304,12 @@ lemma toBlocks₁₁_rpow_le_rpow_toBlocks₁₁ {n m : Type*}
   obtain ⟨hInt, hPow⟩ := hμ (M, M.toBlocks₁₁) ⟨hM_nonneg, hM11_nonneg⟩
   have hIntM := MeasureTheory.Integrable.fst hInt
   -- The two components of the representation: `M ^ q = ∫ (…).1` and `M₁₁ ^ q = ∫ (…).2`.
-  have hPowFst := (fst_cfcₙ_nnrpow_prod hM_nonneg hM11_nonneg).symm.trans
+  have hPowFst := (fst_cfcₙ_nnrpow_prod (q := q) hM_nonneg hM11_nonneg).symm.trans
     ((congrArg Prod.fst hPow).trans (fst_integral hInt))
-  have hPowSnd := (snd_cfcₙ_nnrpow_prod hM_nonneg hM11_nonneg).symm.trans
+  have hPowSnd := (snd_cfcₙ_nnrpow_prod (q := q) hM_nonneg hM11_nonneg).symm.trans
     ((congrArg Prod.snd hPow).trans (snd_integral hInt))
   -- Integrate the pointwise comparison `toBlocks₁₁_cfcₙ_rpowIntegrand₀₁_le` over `t > 0`.
+  letI : OrderClosedTopology (Matrix n n ℂ) := CStarAlgebra.instOrderClosedTopology
   have hmono := MeasureTheory.integral_mono_ae ((toBlocks₁₁CLM n m).integrable_comp hIntM)
     (MeasureTheory.Integrable.snd hInt) <| by
       filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with t ht
@@ -311,9 +320,15 @@ lemma toBlocks₁₁_rpow_le_rpow_toBlocks₁₁ {n m : Type*}
         · exact quasispectrum_nonneg_of_nonneg _ hM_nonneg _ hx
         · exact quasispectrum_nonneg_of_nonneg _ hM11_nonneg _ hx
       -- `cfcₙ f (M, M₁₁) = (cfcₙ f M, cfcₙ f M₁₁)`.
-      rw [cfcₙ_map_prod (S := ℝ) (Real.rpowIntegrand₀₁ q t) M M.toBlocks₁₁ hf
-        (IsSelfAdjoint.of_nonneg (show 0 ≤ (M, M.toBlocks₁₁) from ⟨hM_nonneg, hM11_nonneg⟩))
-        hM.isHermitian hM11_pd.isHermitian]
+      have hprod : cfcₙ (Real.rpowIntegrand₀₁ q t) (M, M.toBlocks₁₁) =
+          (cfcₙ (Real.rpowIntegrand₀₁ q t) M,
+            cfcₙ (Real.rpowIntegrand₀₁ q t) M.toBlocks₁₁) :=
+        cfcₙ_map_prod (S := ℝ) (Real.rpowIntegrand₀₁ q t) M M.toBlocks₁₁ hf
+          (IsSelfAdjoint.of_nonneg (show 0 ≤ (M, M.toBlocks₁₁) from ⟨hM_nonneg, hM11_nonneg⟩))
+          hM.isHermitian hM11_pd.isHermitian
+      change (cfcₙ (Real.rpowIntegrand₀₁ q t) (M, M.toBlocks₁₁)).1.toBlocks₁₁ ≤
+        (cfcₙ (Real.rpowIntegrand₀₁ q t) (M, M.toBlocks₁₁)).2
+      rw [hprod]
       exact toBlocks₁₁_cfcₙ_rpowIntegrand₀₁_le hM hp ht
   calc (M ^ p).toBlocks₁₁
       = (M ^ q).toBlocks₁₁ := congrArg Matrix.toBlocks₁₁ (CFC.nnrpow_eq_rpow hq.1).symm
@@ -374,6 +389,7 @@ lemma toBlocks₁₁_log_le_log_toBlocks₁₁ {n m : Type*}
     have hsub : (M ^ p).toBlocks₁₁ - 1 ≤ M.toBlocks₁₁ ^ p - 1 := sub_le_sub_right hpow 1
     have hpinv : 0 ≤ (p⁻¹ : ℝ) := by exact inv_nonneg.mpr hp.1.le
     exact smul_le_smul_of_nonneg_left hsub hpinv
+  letI : OrderClosedTopology (Matrix n n ℂ) := CStarAlgebra.instOrderClosedTopology
   exact le_of_tendsto_of_tendsto hTendBlock hTendM11 hEventually
 
 end InfoTheory.RelativeEntropy

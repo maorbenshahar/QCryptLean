@@ -439,7 +439,7 @@ theorem continuous_tensorFamily :
     Continuous fun A : Fin n → Matrix (Fin a) (Fin b) ℂ => tensorFamily A :=
   continuous_matrix fun i j => by
     simp only [tensorFamily_apply]
-    exact continuous_finset_prod _ fun k _ => (continuous_apply_apply _ _).comp (continuous_apply k)
+    exact continuous_finsetProd _ fun k _ => (continuous_apply_apply _ _).comp (continuous_apply k)
 
 /-- Casting every factor along `d = d'` casts the tensor product along `d ^ n = d' ^ n`. -/
 theorem tensorFamily_castDim {d' : ℕ} (h : d = d') (A : Fin n → Op d) :

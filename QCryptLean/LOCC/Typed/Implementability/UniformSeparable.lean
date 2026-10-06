@@ -219,7 +219,12 @@ theorem castRect_mul_coordinateKraus {T : TList} {D : ℕ}
           (appendIndexKraus sB (e (Boundary.uniformExitEquiv S T t)))
           (b.uniformPartyKraus Party.bob)) := by
   rw [coordinateKraus, ← Matrix.mul_assoc, castRect_mul_appendIndexKraus,
-    Quantum.TensorProducts.tensorRect_mul, Matrix.one_mul]
+    Quantum.TensorProducts.tensorRect_mul]
+  exact congrArg (fun M : Matrix (Fin sA) (Fin rA) ℂ =>
+    Quantum.TensorProducts.tensorRect M
+      (appendIndexKraus sB (e (Boundary.uniformExitEquiv S T t)) *
+        (show Matrix (Fin sB) (Fin rB) ℂ from b.uniformPartyKraus Party.bob)))
+    (Matrix.one_mul _)
 
 /-- The complete channel has a product-Kraus expansion with the transcript charged to Bob. -/
 theorem castDim_coordinateDenote_apply {T : TList} {D : ℕ}

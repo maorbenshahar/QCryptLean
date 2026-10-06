@@ -142,7 +142,7 @@ private def blockIndexFiberEquiv {k : ℕ} (dv : Fin k → ℕ) (i : Fin k) :
     apply Subtype.ext
     simp only [blockIndex] at ha
     subst ha
-    simp
+    simpa only [Fin.cast_eq_self] using finSigmaFinEquiv.apply_symm_apply a
   right_inv := by
     intro x
     dsimp only
@@ -300,6 +300,7 @@ theorem symmetricProjectorDirectSum_trace
     intro q
     simp only [hΨdef, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd,
       Equiv.symm_apply_apply, IsAlignedPair, blockIndex]
+    rfl
   simp_rw [hg]
   have hPdiag : ∀ q : (Fin n → Fin (∑ i, dAv i)) × (Fin n → Fin (∑ i, dRv i)),
       P (Ψ q) (Ψ q) = (1 / (n.factorial : ℂ)) * ∑ σ : Equiv.Perm (Fin n),

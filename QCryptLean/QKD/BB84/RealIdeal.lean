@@ -47,12 +47,14 @@ private theorem acceptedKeyClassical_of_honestRegistersDiagonal
     (alice', bob', v) = q'
   have hkey : A.layout.toBoundaryKeyLayout.acceptCoordinates haccept q = (alice, bob, u) := by
     rw [← hq, Equiv.apply_symm_apply]
+    rfl
   have hkey' : A.layout.toBoundaryKeyLayout.acceptCoordinates haccept q' = (alice', bob', v) := by
     rw [← hq', Equiv.apply_symm_apply]
+    rfl
   refine hdiag rho e q q' ?_
   -- Equal Alice and Bob registers would give equal key pairs.
   by_contra hregisters
-  push_neg at hregisters
+  push Not at hregisters
   apply hmismatch
   constructor
   · have hcoordinate : (A.layout.coordinates e q).1 = (A.layout.coordinates e q').1 := by

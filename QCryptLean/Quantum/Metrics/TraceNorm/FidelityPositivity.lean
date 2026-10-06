@@ -77,7 +77,7 @@ theorem fidelity_pos_of_posDef {n : ℕ} [NeZero n] (A B : PosSemidefOp n)
   -- A nonzero matrix acts nontrivially on some vector.
   obtain ⟨u, hu⟩ : ∃ u, S.mulVec u ≠ 0 := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     apply hS_ne
     ext i j
     have hj := congrFun (hcon (Pi.single j 1)) i

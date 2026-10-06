@@ -31,6 +31,8 @@ noncomputable section
 
 namespace InfoTheory.DeFinetti.PureState
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- Splitting a Bochner integral of a four-term combination a - b - c + d. -/
 private lemma integral_four_split {α E : Type*} [MeasurableSpace α]
     {μ : MeasureTheory.Measure α} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -87,15 +89,15 @@ lemma ckmr_gamma_identity {d n : ℕ} [NeZero d] [NeZero n]
     simp only [ckmrKetEmbed, Matrix.of_apply]
     split_ifs
     · exact continuous_const
-    · apply continuous_finset_prod; intro j _
+    · apply continuous_finsetProd; intro j _
       exact continuous_subtype_val.matrix_elem _ _
     · exact continuous_const
   have h_A_cont : Continuous (fun g : unitaryGroup (Fin d) ℂ => ckmrUnnorm Ψ k _hk g) := by
     apply continuous_matrix; intro a b
     simp only [ckmrUnnorm, Matrix.mul_apply, Matrix.conjTranspose_apply]
-    apply continuous_finset_sum; intro j _
+    apply continuous_finsetSum; intro j _
     apply Continuous.mul
-    · apply continuous_finset_sum; intro i _
+    · apply continuous_finsetSum; intro i _
       apply Continuous.mul
       · exact (h_V_entry i a).star
       · exact continuous_const
@@ -209,16 +211,16 @@ lemma ckmr_gamma_integral_form {d n : ℕ} [NeZero d] [NeZero n]
       simp only [ckmrKetEmbed, Matrix.of_apply]
       split_ifs
       · exact continuous_const  -- n-k=0, index match: value is 1
-      · apply continuous_finset_prod; intro j _  -- n-k≠0, index match: ∏ g entries
+      · apply continuous_finsetProd; intro j _  -- n-k≠0, index match: ∏ g entries
         exact continuous_subtype_val.matrix_elem _ _
       · exact continuous_const  -- index mismatch: value is 0
     -- Continuity of ckmrUnnorm = V† * Ψ_bip * V
     have h_unnorm_cont : Continuous (fun g => ckmrUnnorm Ψ k _hk g) := by
       apply continuous_matrix; intro a b
       simp only [ckmrUnnorm, Matrix.mul_apply, Matrix.conjTranspose_apply]
-      apply continuous_finset_sum; intro j _
+      apply continuous_finsetSum; intro j _
       apply Continuous.mul
-      · apply continuous_finset_sum; intro i _
+      · apply continuous_finsetSum; intro i _
         apply Continuous.mul
         · exact (h_V_entry i a).star
         · exact continuous_const

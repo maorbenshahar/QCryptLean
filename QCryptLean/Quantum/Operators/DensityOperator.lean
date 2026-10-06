@@ -154,7 +154,7 @@ lemma pure_has_eigenvalue_one {n : ℕ} [NeZero n] (ρ : DensityOp n) (hpure : �
       linarith
   -- Since ∑ᵢ λᵢ = 1 and each λᵢ ∈ {0, 1}, at least one λᵢ = 1
   by_contra h_none
-  push_neg at h_none
+  push Not at h_none
   have h_all_zero : ∀ i, hH.eigenvalues i = 0 := by
     intro i
     cases h_zero_or_one i with

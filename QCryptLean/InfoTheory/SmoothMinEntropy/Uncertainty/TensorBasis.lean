@@ -130,7 +130,7 @@ def tensor (P₁ : RankOneProjectiveBasis d₁) (P₂ : RankOneProjectiveBasis d
       have hne : (finProdFinEquiv.symm i).1 ≠ (finProdFinEquiv.symm j).1 ∨
           (finProdFinEquiv.symm i).2 ≠ (finProdFinEquiv.symm j).2 := by
         by_contra hc
-        push_neg at hc
+        push Not at hc
         exact h (finProdFinEquiv.symm.injective (Prod.ext_iff.mpr hc))
       rcases hne with h1 | h2
       · rw [if_neg h1, zero_mul]

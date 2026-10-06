@@ -45,9 +45,9 @@ lemma norm_entry_le_opNorm {d : ℕ} [NeZero d]
     ‖M i j‖ ≤ ‖M‖ := by
   let eⱼ : EuclideanSpace ℂ (Fin d) := EuclideanSpace.single j (1 : ℂ)
   have hnorm_j : ‖eⱼ‖ = 1 := by
-    rw [EuclideanSpace.norm_single]; simp
+    rw [PiLp.norm_single]; simp
   have hmulVec : M.mulVec eⱼ.ofLp = M.mulVec (Pi.single j 1) := by
-    rw [EuclideanSpace.ofLp_single]
+    rw [PiLp.ofLp_single]
   -- Identify the j-th column entry with `M i j`.
   have hcol : M.mulVec (Pi.single j 1) i = M i j := by
     simp [Matrix.mulVec, dotProduct, Pi.single_apply]

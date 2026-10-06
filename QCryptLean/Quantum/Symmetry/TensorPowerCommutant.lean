@@ -354,19 +354,19 @@ lemma Wvec_invariant (dR n : ℕ) [NeZero dR] (τ : Equiv.Perm (Fin n))
 harmless) complement. -/
 noncomputable def projMat (N : ℕ) (W : Submodule ℂ (Fin N × Fin N → ℂ)) :
     Matrix (Fin N × Fin N) (Fin N × Fin N) ℂ :=
-  LinearMap.toMatrix' (Submodule.IsCompl.projection (W.exists_isCompl.choose_spec))
+  LinearMap.toMatrix' (Submodule.projection W _ W.exists_isCompl.choose_spec)
 
 /-- `projMat N W` sends every vector into `W`. -/
 lemma projMat_apply_mem (N : ℕ) (W : Submodule ℂ (Fin N × Fin N → ℂ))
     (v : Fin N × Fin N → ℂ) : (projMat N W).mulVec v ∈ W := by
   rw [projMat, LinearMap.toMatrix'_mulVec]
-  exact Submodule.IsCompl.projection_apply_mem (W.exists_isCompl.choose_spec) v
+  exact Submodule.projection_apply_mem (W.exists_isCompl.choose_spec) v
 
 /-- `projMat N W` fixes every vector already in `W`. -/
 lemma projMat_apply_eq_self (N : ℕ) (W : Submodule ℂ (Fin N × Fin N → ℂ))
     (v : Fin N × Fin N → ℂ) (hv : v ∈ W) : (projMat N W).mulVec v = v := by
   rw [projMat, LinearMap.toMatrix'_mulVec]
-  exact (Submodule.IsCompl.projection_eq_self_iff (W.exists_isCompl.choose_spec) v).mpr hv
+  exact (Submodule.projection_eq_self_iff (W.exists_isCompl.choose_spec) v).mpr hv
 
 /-! ### the group-averaged projection lies in the amplified commutant -/
 

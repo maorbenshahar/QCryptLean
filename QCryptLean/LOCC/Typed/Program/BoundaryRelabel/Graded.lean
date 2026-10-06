@@ -251,7 +251,8 @@ def refl (B : Boundary P) : Graded B B where
   apply Equiv.ext
   intro x
   rcases x with ⟨e, q⟩
-  simp [space_apply, Graded.refl]
+  simp only [space_apply, Graded.refl]
+  rfl
 
 /-- Compose two exit-graded relabellings. -/
 def trans (G : Graded B₁ B₂) (H : Graded B₂ B₃) : Graded B₁ B₃ where
@@ -263,7 +264,8 @@ def trans (G : Graded B₁ B₂) (H : Graded B₂ B₃) : Graded B₁ B₃ where
   apply Equiv.ext
   intro x
   rcases x with ⟨e, q⟩
-  simp [space_apply, trans]
+  simp only [space_apply, trans]
+  rfl
 
 end Graded
 

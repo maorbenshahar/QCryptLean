@@ -37,6 +37,8 @@ noncomputable section
 
 namespace InfoTheory.DeFinetti.PureState
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- Each matrix entry of the coherent state density operator is continuous in g. -/
 lemma coherentStateDensityOp_entry_continuous {d n : ℕ} [NeZero d] [NeZero n]
     (i j : Fin (d ^ n)) :
@@ -50,10 +52,10 @@ lemma coherentStateDensityOp_entry_continuous {d n : ℕ} [NeZero d] [NeZero n]
   simp_rw [heq]
   apply Continuous.mul
   · simp only [coherentStateKet]
-    apply continuous_finset_prod; intro k _
+    apply continuous_finsetProd; intro k _
     exact ((continuous_apply 0).comp ((continuous_apply _).comp continuous_subtype_val))
   · apply Continuous.star; simp only [coherentStateKet]
-    apply continuous_finset_prod; intro k _
+    apply continuous_finsetProd; intro k _
     exact ((continuous_apply 0).comp ((continuous_apply _).comp continuous_subtype_val))
 
 /-- Each entry g ↦ (coherentStateDensityOp g n).toOp i j is integrable over Haar probability
@@ -79,7 +81,7 @@ lemma coherentStateKet_perm_fixed {d n : ℕ} [NeZero d] [NeZero n]
   set v := coherentStateKet g n
   set U := Math.RepresentationTheory.permutationRepresentation d n σ
   ext ⟨i, hi⟩
-  simp only [instHMulOpKet, Matrix.mulVec, dotProduct]
+  simp only [op_mul_ket_vec, Matrix.mulVec, dotProduct]
   simp only [v, coherentStateKet, U,
     Math.RepresentationTheory.permutationRepresentation, Matrix.of_apply]
   set e := @finFunctionFinEquiv d n
@@ -278,11 +280,7 @@ lemma coherent_integral_trace (d n : ℕ) [NeZero d] [NeZero n] :
       (continuous_matrix (fun i j =>
         coherentStateDensityOp_entry_continuous i j)).integrable_of_hasCompactSupport
           (HasCompactSupport.of_compactSpace _)
-    have h := (trace_CLM.integral_comp_comm h_int).symm
-    have key_trace : ∀ M : Op (d ^ n), trace_CLM M = M.trace := fun M => by
-      simp [trace_CLM, Matrix.traceLinearMap_apply]
-    simp_rw [key_trace] at h
-    exact h
+    exact (trace_CLM.integral_comp_comm h_int).symm
   rw [trace_comm, show (∫ g : unitaryGroup (Fin d) ℂ,
       (coherentStateDensityOp g n).toOp.trace
       ∂(haarProbUnitary d)) =
@@ -311,7 +309,8 @@ lemma coherent_integral_hermitian (d n : ℕ) [NeZero d] [NeZero n] :
   }
   have h_int := coherentStateDensityOp_integrable d n
   have h := (ct_CLM.integral_comp_comm h_int).symm
-  simp only [show ∀ M : Op (d ^ n), ct_CLM M = M† from fun _ => rfl] at h
+  change (∫ g, (coherentStateDensityOp g n).toOp ∂haarProbUnitary d)† =
+    ∫ g, (coherentStateDensityOp g n).toOp† ∂haarProbUnitary d at h
   rw [h]
   congr 1
   funext g
@@ -340,7 +339,7 @@ lemma continuous_tensorPowGen_entry {d n : ℕ} [NeZero d]
     simp only [Equiv.apply_symm_apply, e, fi, fj] at this
     exact this
   simp_rw [h_eq]
-  exact continuous_finset_prod Finset.univ (fun l _ =>
+  exact continuous_finsetProd Finset.univ (fun l _ =>
     (continuous_apply_apply (fi l) (fj l)).comp continuous_induced_dom)
 
 /-- The entry `(i,j)` of `integralTensorPower n μ` is the integral of the

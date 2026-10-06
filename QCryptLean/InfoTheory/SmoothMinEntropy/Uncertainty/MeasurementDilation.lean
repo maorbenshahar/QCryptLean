@@ -315,7 +315,7 @@ space cannot be pointwise orthogonal: `Σ_z |⟨x|z⟩|² = 1` forces some overl
 lemma overlapConst_pos [NeZero d] (P Q : RankOneProjectiveBasis d) : 0 < P.overlapConst Q := by
   obtain ⟨x⟩ : Nonempty (Fin d) := Fin.pos_iff_nonempty.mp (Nat.pos_of_ne_zero (NeZero.ne d))
   by_contra hle
-  push_neg at hle
+  push Not at hle
   have hzero : ∀ z : Fin d, Complex.normSq ((P.vec x).dag * Q.vec z) = 0 := fun z =>
     le_antisymm ((P.normSq_overlap_le_overlapConst Q x z).trans hle) (Complex.normSq_nonneg _)
   have := P.sum_normSq_overlap_eq_one Q x

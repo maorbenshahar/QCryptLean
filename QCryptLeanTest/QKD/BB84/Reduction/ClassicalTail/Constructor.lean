@@ -20,7 +20,6 @@ open TypedLOCC.TwoParty
 open QKD.BB84.Engine
 open QKD.BB84
 
-set_option linter.flexible false in
 /-- Decoding the actual final-point constructor returns the ordered Alice/Bob key slots when its
 actual flag is zero, and returns the key-free `Unit` abort payload when that flag is nonzero. -/
 theorem rawClassicalTailFinalPoint_decoder
@@ -61,7 +60,7 @@ theorem rawClassicalTailFinalPoint_decoder
         Boundary.publicSpaceEquiv_apply]
       simp [keys, hflag, finalStageLeafExit, FinalStage.flagBoundary,
         Boundary.leafSpaceEquiv, TwoParty.pairEquiv]
-      exact Unit.ext _ _
+      rfl
     rw [hpoint, (finalStageOutputEquiv ell).apply_symm_apply]
   · rw [if_neg hflag]
     have hflag_one : QKD.BB84.Model.acceptFlagOf n m ellEV peSel xSel leakEC ec delta Q
@@ -74,13 +73,14 @@ theorem rawClassicalTailFinalPoint_decoder
       simp only [rawClassicalTailFinalPoint, hflag_one, finalStageOutputEquiv,
         Equiv.coe_fn_symm_mk,
         Boundary.publicSpaceEquiv_apply]
-      simp [hflag_one, finalStageLeafExit, FinalStage.flagBoundary,
-        Boundary.publicSpaceEquiv, Boundary.leafSpaceEquiv,
-        Equiv.sigmaAssoc, TwoParty.pairEquiv]
-      constructor
-      · exact Unit.ext _ _
-      · funext p
-        cases p <;> exact Unit.ext _ _
+      simp only [Boundary.system_announce, Fin.isValue, one_ne_zero, ↓dreduceDIte,
+        eq_mpr_eq_cast, Sigma.mk.injEq]
+      refine ⟨hflag_one, ?_⟩
+      refine (cast_heq _ _).trans (heq_of_eq ?_)
+      apply Sigma.ext (Unit.ext _ _)
+      apply heq_of_eq
+      funext p
+      cases p <;> exact Unit.ext _ _
     rw [hpoint, (finalStageOutputEquiv ell).apply_symm_apply]
 
 end QKD.BB84.Reduction.DirectTailConstructorGate

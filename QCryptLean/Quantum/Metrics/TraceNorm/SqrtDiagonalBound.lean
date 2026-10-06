@@ -61,7 +61,7 @@ theorem trace_sqrtPosSemidefOp_re_le_sum_sqrt_diag {n : ℕ} (A : PosSemidefOp n
     have hre_le : (B i i).re ≤ Real.sqrt (Complex.normSq (B i i)) := by
       by_cases h : (B i i).re ≤ 0
       · exact le_trans h (Real.sqrt_nonneg _)
-      · push_neg at h
+      · push Not at h
         have h2 : ((B i i).re) ^ 2 ≤ Complex.normSq (B i i) := by
           rw [Complex.normSq_apply]; nlinarith [sq_nonneg (B i i).im]
         calc (B i i).re = Real.sqrt (((B i i).re) ^ 2) := (Real.sqrt_sq h.le).symm

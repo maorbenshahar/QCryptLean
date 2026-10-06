@@ -14,7 +14,8 @@ open Matrix
 namespace TypedLOCC
 
 /-- Coordinate a typed-register linear map by explicit input and output equivalences. -/
-def coordinateLinear {A B : Type} [Fintype A] [DecidableEq A] [Fintype B] [DecidableEq B]
+noncomputable def coordinateLinear {A B : Type} [Fintype A] [DecidableEq A]
+    [Fintype B] [DecidableEq B]
     {dA dB : ℕ} (eA : A ≃ Fin dA) (eB : B ≃ Fin dB) (Φ : Op A →ₗ[ℂ] Op B) :
     Quantum.Operators.Op dA →ₗ[ℂ] Quantum.Operators.Op dB :=
   (Matrix.reindexLinearEquiv ℂ ℂ eB eB).toLinearMap.comp

@@ -80,14 +80,14 @@ theorem nonHermitian_not_selfAdjoint : nonHermitianᴴ ≠ nonHermitian := by
 theorem finFour_rawBranch_weight (r : Fin 4) :
     rawUniformBranch family r () nonHermitian 0 0 = (1 / 4 : ℂ) := by
   simp [rawUniformBranch, uniformChoiceKraus, finFour_scale, family, twoHidden,
-    basisProjector, nonHermitian, matrixConjLinear, Matrix.mul_apply]
+    basisProjector, nonHermitian, matrixConjLinear, Matrix.sum_apply, Matrix.mul_apply]
   norm_num [map_ofNat]
 
 /-- The dephasing member destroys the off-diagonal part of the same non-Hermitian witness. -/
 theorem finFour_rawBranch_offDiagonal (r : Fin 4) :
     rawUniformBranch family r () nonHermitian 0 1 = 0 := by
   simp [rawUniformBranch, uniformChoiceKraus, finFour_scale, family, twoHidden,
-    basisProjector, nonHermitian, matrixConjLinear, Matrix.mul_apply]
+    basisProjector, nonHermitian, matrixConjLinear, Matrix.sum_apply, Matrix.mul_apply]
 
 /-! ## Observed pairs and hidden fibres remain separate -/
 

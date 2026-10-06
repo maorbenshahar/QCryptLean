@@ -426,7 +426,9 @@ theorem ambientKraus_apply_eq_zero_of_exit_ne
 /-- The ideal channel is the sum of conjugations by all ambient Kraus matrices. -/
 theorem ideal_eq_krausSum :
     L.ideal = ∑ q, matrixConjLinear (L.ambientKraus q) := by
-  simp [ideal, idealInstrument, Instrument.channel, Instrument.operation]
+  simp only [ideal, idealInstrument, Instrument.channel, Instrument.operation,
+    Fintype.sum_unique]
+  rfl
 
 /-- A diagonal complete-exit block of the ambient ideal is the leaf ideal applied to the
 corresponding extracted input block. -/

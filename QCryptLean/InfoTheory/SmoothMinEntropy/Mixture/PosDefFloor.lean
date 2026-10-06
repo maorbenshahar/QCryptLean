@@ -60,7 +60,7 @@ theorem smoothMinEntropyReal_ge_of_posDef_ref_aux
       exact le_trans (min_le_right _ _)
         (div_le_div_of_nonneg_right (neg_le_neg hlog_le) hlog2.le)
     · -- Junk branch: zero optimum, `Real.log_zero` collapses the entropy to `0`.
-      push_neg at hpos
+      push Not at hpos
       have hzero : minFeasibleLambda ρ' σref = 0 := le_antisymm hpos hlam_nn
       rw [hzero, Real.log_zero, neg_zero, zero_div]
       exact hk_nonpos

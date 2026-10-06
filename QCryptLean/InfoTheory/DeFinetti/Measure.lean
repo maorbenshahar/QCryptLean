@@ -160,6 +160,8 @@ theorem partialTraceToFirst_tensorPowGen {d : ℕ} [NeZero d] (ρ : DensityOp d)
     apply DensityOp.ext
     change (partialTraceToFirst (ρ.tensorPowGen (k + 1))).toOp = ρ.toOp
     simp only [partialTraceToFirst, DensityOp.tensorPowGen]
+    change (DensityOp.castDim (pow_succ' d k)
+      (DensityOp.castDim (pow_succ' d k).symm (ρ.tensor (ρ.tensorPowGen k)))).partialTraceB.toOp = _
     rw [DensityOp.castDim_cancel]
     exact partialTraceB_tensor ρ (ρ.tensorPowGen k)
 
@@ -421,7 +423,7 @@ lemma continuous_tensorPowGen_toOp {d n : ℕ} [NeZero d] [NeZero (d ^ n)] :
     ext σ
     simpa [fi, fj] using tensorPowGen_toOp_eq_prod_of_fin (d := d) (n := n) σ i j
   rw [h_eq]
-  exact continuous_finset_prod Finset.univ (fun m _ =>
+  exact continuous_finsetProd Finset.univ (fun m _ =>
     ((continuous_apply (fj m)).comp ((continuous_apply (fi m)).comp continuous_induced_dom)))
 
 /-- The tensor-power map on density operators is continuous. -/
@@ -455,7 +457,7 @@ lemma partialTraceB_continuous_general {n m : ℕ} :
     unfold DensityOp.partialTraceB PosSemidefOp.partialTraceB partialTraceB
     simp only [Matrix.of_apply]
   rw [h_eq]
-  apply continuous_finset_sum
+  apply continuous_finsetSum
   intro k _
   exact ((continuous_apply (finProdFinEquiv (j, k))).comp
     ((continuous_apply (finProdFinEquiv (i, k))).comp continuous_induced_dom))
@@ -530,7 +532,7 @@ private lemma integralSingleCopy_posSemidef {d : ℕ} [NeZero d] (μ : DensityMe
     intro i
     simp only [Matrix.mulVec, Matrix.of_apply, dotProduct]
     simp_rw [← integral_mul_const]
-    exact (integral_finset_sum _ (fun j _ => (integrable_toOp_entry i j μ).mul_const _)).symm
+    exact (integral_finsetSum _ (fun j _ => (integrable_toOp_entry i j μ).mul_const _)).symm
   simp only [quadraticForm]
   have hmv_eq : (Matrix.of fun i j : Fin d => ∫ σ : DensityOp d, σ.toOp i j ∂μ.measure).mulVec x =
       fun i => ∫ σ : DensityOp d, (σ.toOp.mulVec x) i ∂μ.measure := funext hmv
@@ -542,14 +544,14 @@ private lemma integralSingleCopy_posSemidef {d : ℕ} [NeZero d] (μ : DensityMe
     intro i
     apply Integrable.const_mul
     simp only [Matrix.mulVec, dotProduct]
-    apply integrable_finset_sum
+    apply integrable_finsetSum
     intro j _
     exact (integrable_toOp_entry i j μ).mul_const _
-  rw [← (integral_finset_sum _ (fun i _ => hint i))]
+  rw [← (integral_finsetSum _ (fun i _ => hint i))]
   have hre : ∀ z : ℂ, z.re = Complex.reCLM z := fun z => (Complex.reCLM_apply z).symm
   simp_rw [hre]
   rw [ContinuousLinearMap.integral_comp_comm]
-  exact integrable_finset_sum _ (fun i _ => hint i)
+  exact integrable_finsetSum _ (fun i _ => hint i)
 
 /-- The entrywise integral ∫ σ_{ij} dμ(σ) has trace 1.
     Proof: Tr(M) = ∑ᵢ ∫ σ_{ii} dμ = ∫ ∑ᵢ σ_{ii} dμ = ∫ Tr(σ) dμ = ∫ 1 dμ = 1. -/
@@ -558,8 +560,8 @@ private lemma integralSingleCopy_trace {d : ℕ} [NeZero d] (μ : DensityMeasure
       (Matrix.of fun i j : Fin d => ∫ σ : DensityOp d, σ.toOp i j ∂μ.measure) = 1 := by
   -- Unfold trace to ∑ i, M i i and Matrix.of to get ∑ i, ∫ σ, σ.toOp i i ∂μ = 1
   simp only [Matrix.trace, Matrix.diag, Matrix.of_apply]
-  -- Swap ∑ and ∫ via integral_finset_sum
-  rw [← MeasureTheory.integral_finset_sum]
+  -- Swap ∑ and ∫ via integral_finsetSum
+  rw [← MeasureTheory.integral_finsetSum]
   · -- Recognise ∑ i, σ.toOp i i = Tr(σ) = 1, so integrand is constant 1
     have : (fun a : DensityOp d => ∑ i, a.toOp i i) = fun _ => (1 : ℂ) := by
       ext a
@@ -620,7 +622,7 @@ lemma pushforward_partialTraceB_exists {d : ℕ} [NeZero d]
     (∑ k : Fin d, ρ.toOp (finProdFinEquiv (i, k)) (finProdFinEquiv (j, k))) ∂ν.measure =
     ∑ k : Fin d, ∫ σ : DensityOp (d * d),
       σ.toOp (finProdFinEquiv (i, k)) (finProdFinEquiv (j, k)) ∂ν.measure
-  rw [integral_finset_sum]
+  rw [integral_finsetSum]
   exact fun k _ => integrable_toOp_entry (finProdFinEquiv (i, k)) (finProdFinEquiv (j, k)) ν
 
 -- Integral of tensor powers: ∫ σ^⊗n dμ(σ).
@@ -670,12 +672,12 @@ private lemma integralTensorPower_posSemidef {d : ℕ} [NeZero d]
     -- `(A *ᵥ x) k = ∑ⱼ A k j * x j` by definition
     change MeasureTheory.Integrable
       (fun σ : DensityOp d => ∑ j, (σ.tensorPowGen n).toOp k j * x j) μ.measure
-    exact MeasureTheory.integrable_finset_sum _ (fun j _ => (hint k j).mul_const (x j))
+    exact MeasureTheory.integrable_finsetSum _ (fun j _ => (hint k j).mul_const (x j))
   have h_int : MeasureTheory.Integrable
       (fun σ : DensityOp d => quadraticForm (σ.tensorPowGen n).toOp x) μ.measure := by
     change MeasureTheory.Integrable
       (fun σ : DensityOp d => ∑ k, star x k * ((σ.tensorPowGen n).toOp.mulVec x) k) μ.measure
-    exact MeasureTheory.integrable_finset_sum _ (fun k _ =>
+    exact MeasureTheory.integrable_finsetSum _ (fun k _ =>
       (h_int_mv k).const_mul (star x k))
   suffices key : quadraticForm
       (Matrix.of fun i j : Fin (d ^ n) =>
@@ -695,13 +697,13 @@ private lemma integralTensorPower_posSemidef {d : ℕ} [NeZero d]
     change ∑ j, (∫ σ, (σ.tensorPowGen n).toOp k j ∂μ.measure) * x j =
         ∫ σ, ∑ j, (σ.tensorPowGen n).toOp k j * x j ∂μ.measure
     simp_rw [← integral_mul_const]
-    exact (MeasureTheory.integral_finset_sum _
+    exact (MeasureTheory.integral_finsetSum _
       (fun j _ => (hint k j).mul_const (x j))).symm
   rw [h_mv]
   change ∑ k, star x k * ∫ σ, ((σ.tensorPowGen n).toOp.mulVec x) k ∂μ.measure =
       ∫ σ, ∑ k, star x k * ((σ.tensorPowGen n).toOp.mulVec x) k ∂μ.measure
   simp_rw [← integral_const_mul]
-  exact (MeasureTheory.integral_finset_sum _
+  exact (MeasureTheory.integral_finsetSum _
     (fun k _ => (h_int_mv k).const_mul (star x k))).symm
 
 /-- The entrywise integral ∫ (σ^⊗n)_{ij} dμ(σ) has trace 1.
@@ -712,7 +714,7 @@ private lemma integralTensorPower_trace {d : ℕ} [NeZero d]
       (Matrix.of fun i j : Fin (d ^ n) =>
         ∫ σ : DensityOp d, (σ.tensorPowGen n).toOp i j ∂μ.measure) = 1 := by
   simp only [Matrix.trace, Matrix.diag, Matrix.of_apply]
-  rw [← MeasureTheory.integral_finset_sum _
+  rw [← MeasureTheory.integral_finsetSum _
     (fun i _ => integrable_tensorPow_entry n i i μ)]
   have h : ∀ σ : DensityOp d, ∑ i : Fin (d ^ n), (σ.tensorPowGen n).toOp i i = 1 :=
     fun σ => by change (σ.tensorPowGen n).toOp.trace = 1; exact (σ.tensorPowGen n).trace_one

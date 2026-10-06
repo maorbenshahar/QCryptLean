@@ -414,7 +414,8 @@ theorem bb84_bellTwirl_traceNorm_invariant_stabilized_of_preCov (n m ℓ ℓEV :
       bb84SymSiftedIdealChannelDirect_withPEAnnounce, bb84PEAnnounceBareSummandInner]
     rw [← smul_sub, ← Finset.sum_sub_distrib]
     refine congrArg _ (Finset.sum_congr rfl fun π _ => ?_)
-    rw [LinearMap.sub_comp, LinearMap.comp_sub]
+    rw [LinearMap.sub_comp]
+    exact (LinearMap.comp_sub _ _ _).symm
   have hcompsplit : ∀ A0 : Op (4 ^ n * dimR),
       (∑ π : Equiv.Perm (Fin n),
         mapTensorId (k := dimR)

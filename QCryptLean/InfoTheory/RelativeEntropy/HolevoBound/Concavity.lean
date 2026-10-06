@@ -51,10 +51,10 @@ lemma diagonalOfRhoInSigmaBasis_linear {n : ℕ} {k : ℕ} [NeZero k]
     rw [Matrix.mul_smul, Matrix.smul_mul]
   rw [h_mul_sum]
   -- ((Σᵢ pᵢ • Mᵢ) j j).re = (Σᵢ (pᵢ • Mᵢ j j)).re = Σᵢ (pᵢ * Mᵢ j j).re = Σᵢ pᵢ * (Mᵢ j j).re
-  -- First, (Σᵢ pᵢ • Mᵢ) j j = Σᵢ (pᵢ • Mᵢ) j j (using Finset.sum_apply twice)
+  -- First, (Σᵢ pᵢ • Mᵢ) j j = Σᵢ (pᵢ • Mᵢ) j j (using Matrix.sum_apply)
   have h_sum_entry : (∑ i, (probs i : ℂ) • (V * (states i).toOp * V†)) j j =
       ∑ i, ((probs i : ℂ) • (V * (states i).toOp * V†)) j j := by
-    rw [Finset.sum_apply, Finset.sum_apply]
+    rw [Matrix.sum_apply]
   rw [h_sum_entry]
   -- (pᵢ • M) j j = pᵢ * M j j
   have h_smul_entry : ∀ i, ((probs i : ℂ) • (V * (states i).toOp * V†)) j j =

@@ -79,7 +79,9 @@ theorem zeroRound_reference_offDiagonal_survives (pA pB : PMF Basis) :
     (fun _ _ => (1 : ℂ))
     ((weightedScheduleOutputEquiv Unit 0).symm zeroRecordTuple)
     ((weightedScheduleOutputEquiv Unit 0).symm zeroRecordTuple)
-  simpa [zeroRecordTuple, weightedMeasurementSchedule,
-    weightedMeasurementScheduleAux_zero] using hcoord
+  refine hcoord.trans ?_
+  exact congrFun (congrFun (LinearMap.congr_fun
+    (Program.denote_done (R := weightedStreamSystem Unit 0))
+    (fun _ _ => (1 : ℂ))) _) _
 
 end ReferenceAudit

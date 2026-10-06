@@ -514,7 +514,8 @@ theorem selectedRecordContinuation_denote_apply {n N : ℕ} (f : Fin n ↪ Fin N
           (qA, qB))
         (((selectedRecordAliceAction f).out.set .bob (SelectedLocalRecord N n)).pairEquiv.symm
           (qA', qB')) = _
-  rw [Instrument.liftAt_bob_operation_apply, Instrument.functionAndForget_operation_apply]
+  rw [Instrument.liftAt_bob_operation_apply]
+  refine (Instrument.functionAndForget_operation_apply (selectedLocalRecord f) _ qB qB').trans ?_
   have hAliceApply (a a' : SelectedLocalRecord N n)
       (rB : streamRegister (finishAcc Unit N) 0) :
       ((selectedRecordAliceAction f).liftedOperation () xi)
@@ -531,10 +532,9 @@ theorem selectedRecordContinuation_denote_apply {n N : ℕ} (f : Fin n ↪ Fin N
           (SelectedLocalRecord N n)).pairEquiv.symm (a, rB))
         (((weightedStreamSystem (finishAcc Unit N) 0).set .alice
           (SelectedLocalRecord N n)).pairEquiv.symm (a', rB)) = _
-    rw [Instrument.liftAt_alice_operation_apply, Instrument.functionAndForget_operation_apply]
-    rfl
+    rw [Instrument.liftAt_alice_operation_apply]
+    exact Instrument.functionAndForget_operation_apply (selectedLocalRecord f) _ a a'
   simp_rw [Matrix.submatrix_apply, hAliceApply]
-  rfl
 
 /-- **Entry law of the grafted program.**  An output entry of the selected-record program sums
 the diagonal entries of the schedule output over the complete local records that project to the

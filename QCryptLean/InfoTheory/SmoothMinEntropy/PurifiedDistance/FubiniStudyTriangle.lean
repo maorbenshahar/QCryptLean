@@ -231,7 +231,7 @@ theorem fubiniStudy_triangle_pure
     have hγ_le : Real.arccos c ≤ Real.pi / 2 :=
       (Real.arccos_le_pi_div_two).mpr hc_nn
     linarith
-  · push_neg at hsum
+  · push Not at hsum
     -- Hard branch: use cos addition formula plus the algebraic inequality.
     have hα_le_pi2 : Real.arccos a ≤ Real.pi / 2 :=
       (Real.arccos_le_pi_div_two).mpr ha_nn

@@ -238,12 +238,12 @@ lemma finiteSizePenaltySecondOrderSharp_nonneg (V : ℝ) (hV : 0 ≤ V) (m : ℕ
       lt_of_lt_of_le hpos (min_le_right _ _)
     have harg : 0 < 2 * Real.logb 2 (2 / ε ^ 2) / (V * Real.log 2 * (m : ℝ)) := by
       by_contra hc
-      push_neg at hc
+      push Not at hc
       rw [Real.sqrt_eq_zero_of_nonpos hc] at hsq
       exact lt_irrefl _ hsq
     have hB : 0 < Real.logb 2 (2 / ε ^ 2) := by
       by_contra hc
-      push_neg at hc
+      push Not at hc
       have hnum : 2 * Real.logb 2 (2 / ε ^ 2) ≤ 0 := by linarith
       have hden : (0 : ℝ) ≤ V * Real.log 2 * (m : ℝ) :=
         mul_nonneg (mul_nonneg hV hl2) (Nat.cast_nonneg _)

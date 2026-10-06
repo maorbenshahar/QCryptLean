@@ -212,8 +212,11 @@ theorem bb84SiftedPEAnnounceEveVisible_baseChannel_real_sub_ideal_eq_passBranch_
     bb84SiftedPEAnnounceEveVisibleIdealPassChannel,
     bb84.retainedSiftedPEAnnouncePrivacyAmplifyAndAbortLinearMap,
     bb84.retainedSiftedPEAnnounceIdealKeyAndAbortChannel,
-    LinearMap.comp_assoc, ← LinearMap.sub_comp]
-  congr 1
+    LinearMap.comp_assoc]
+  ext M i j
+  simp only [LinearMap.comp_apply, LinearMap.sub_apply, LinearMap.add_apply,
+    Matrix.sub_apply, Matrix.add_apply]
+  change ((_ : ℂ) + _) - (_ + _) = _ - _
   abel
 
 /-- The general-`m` real pass channel is completely positive. -/
@@ -506,8 +509,7 @@ theorem bb84SiftedPEAnnounceEveVisible_baseChannel_mapTensorId_diff_eq_passOutpu
     change NeZero (bb84EveVisiblePEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC eveDim)
     infer_instance
   rw [bb84SiftedPEAnnounceEveVisible_baseChannel_real_sub_ideal_eq_passBranch_sub]
-  simp [bb84SiftedPEAnnounceEveVisibleRealPassOutput,
-    bb84SiftedPEAnnounceEveVisibleIdealPassOutput, mapTensorId_linearMap_sub]
+  exact mapTensorId_linearMap_sub _ _ _
 
 /-! ## The general-`m` agree/differ split and the differ-block correctness charge -/
 

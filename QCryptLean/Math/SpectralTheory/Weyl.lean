@@ -248,7 +248,7 @@ private lemma monotone_ofFn_sort_ge_eq {n : ℕ} (f : Fin n → ℝ) (hf : Monot
   have h_sorted_rev : (List.ofFn (f ∘ Fin.rev)).SortedGE :=
     List.sortedGE_ofFn_iff.mpr h_anti
   have h_sorted_sort : ((List.ofFn f : Multiset ℝ).sort (· ≥ ·)).SortedGE :=
-    List.sortedGE_iff_pairwise.mpr (Multiset.sort_sorted (List.ofFn f : Multiset ℝ) (· ≥ ·))
+    List.sortedGE_iff_pairwise.mpr (Multiset.pairwise_sort (List.ofFn f : Multiset ℝ) (· ≥ ·))
   have h_perm : ((List.ofFn f : Multiset ℝ).sort (· ≥ ·)).Perm (List.ofFn (f ∘ Fin.rev)) := by
     have h1 : (↑((List.ofFn f : Multiset ℝ).sort (· ≥ ·)) : Multiset ℝ) =
         (List.ofFn f : Multiset ℝ) := Multiset.sort_eq _ (· ≥ ·)
@@ -779,7 +779,7 @@ lemma weyl_eigenvalue_sum_bound {n : ℕ} [NeZero n]
     intro x
     by_cases hx : 0 ≤ x
     · rw [abs_of_nonneg hx, max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), add_zero]
-    · push_neg at hx
+    · push Not at hx
       rw [abs_of_neg hx, max_eq_left (le_of_lt hx), zero_add, max_eq_right (neg_pos.mpr hx).le]
   -- Step 2: Rewrite LHS using the split
   have h_lhs : ∑ i, |hA.eigenvalues i - hB.eigenvalues i| =

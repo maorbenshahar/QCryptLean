@@ -919,6 +919,7 @@ theorem millionSiftedParameters_improvedBudgetAt_le :
           = @Sampling.packedPESel 500000 250000 250000 from rfl,
       show Parameters.xSel (millionSiftedParameters aliceBasis bobBasis rounds ec)
           = @Sampling.packedXSel 500000 250000 250000 from rfl]
+    rfl
   rw [hunfold, hcor,
     show ((millionSiftedParameters aliceBasis bobBasis rounds ec).sifted + 3 : ℕ) = 1000003 from
       by simp only [millionSiftedParameters_sifted]]

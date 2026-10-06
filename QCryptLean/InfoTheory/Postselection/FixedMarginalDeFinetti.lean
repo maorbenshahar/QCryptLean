@@ -81,6 +81,8 @@ def fixedMarginalTwirlReference (dA dB n : ℕ) [NeZero dA] [NeZero dB] [NeZero 
 attribute [local instance] Matrix.frobeniusNormedAddCommGroup
 attribute [local instance] Matrix.frobeniusNormedSpace
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-! ### Marginal computation `Tr_{Rⁿ}[Tₙ] = id_{Aⁿ}` and the `σ̂A^{1/2} ⊗ id` distribution
 
 Facts needed for `fixedMarginalMeasure_twirl_identity`'s operator identity. The tensor-power
@@ -529,7 +531,8 @@ theorem fmTwirlReference_reindex_partialTraceB_eq {dA dB n : ℕ}
             := by
       change partialTraceB (Matrix.reindex ptb.symm ptb.symm (S * _ * S)) = _
       rfl
-    rw [← hlhs_eq, ← hcomm]
+    rw [← hlhs_eq]
+    refine hcomm.symm.trans ?_
     refine MeasureTheory.integral_congr_ae (MeasureTheory.ae_of_all _ (fun U => ?_))
     change partialTraceB (Matrix.reindex ptb.symm ptb.symm (S * _ * S)) = _
     exact perU_marginal_traceE_eq dA dB n σA hσA U
@@ -922,4 +925,3 @@ theorem deFinetti_fixedMarginal_op_le {dA dB n : ℕ} [NeZero dA] [NeZero dB] [N
 end InfoTheory.Postselection
 
 end
-

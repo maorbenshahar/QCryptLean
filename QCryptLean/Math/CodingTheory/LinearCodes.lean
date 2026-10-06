@@ -137,7 +137,7 @@ lemma hammingDistance_triangle {n : ℕ} (u v w : Fin n → ZMod 2) :
         intro i hi
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union] at hi ⊢
         by_contra hc
-        push_neg at hc
+        push Not at hc
         simp only [Pi.add_apply, hc.1, hc.2, add_zero, ne_eq, not_true_eq_false] at hi
     _ ≤ (Finset.univ.filter (fun i => (u - v) i ≠ 0)).card +
         (Finset.univ.filter (fun i => (v - w) i ≠ 0)).card := Finset.card_union_le _ _
@@ -160,7 +160,7 @@ lemma LinearCode.exists_nonzero_codeword {n k : ℕ} (C : LinearCode n k) (hk : 
     ∃ c ∈ C.codewords, c ≠ 0 := by
   obtain ⟨i⟩ := Fin.pos_iff_nonempty.mp hk
   by_contra hno
-  push_neg at hno
+  push Not at hno
   have hzero : ∀ m : Fin k → ZMod 2, C.generatorMatrix.transpose.mulVec m = 0 := by
     intro m
     have hmem : C.generatorMatrix.transpose.mulVec m ∈ C.codewords := ⟨m, rfl⟩

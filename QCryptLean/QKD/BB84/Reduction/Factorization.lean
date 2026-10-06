@@ -78,11 +78,10 @@ theorem coordinates_ideal_eq_retainedFactorizedIdeal
   rw [A.ideal_eq_resource_comp_real, hreal]
   calc
     A.resource.comp (Post.comp (L.comp Pre)) =
-        (A.resource.comp Post).comp (L.comp Pre) := by
-      rw [← LinearMap.comp_assoc]
-    _ = (Post.comp R).comp (L.comp Pre) := by rw [hcomm]
-    _ = Post.comp ((R.comp L).comp Pre) := by
-      simp only [LinearMap.comp_assoc]
+        (A.resource.comp Post).comp (L.comp Pre) := by rfl
+    _ = (Post.comp R).comp (L.comp Pre) :=
+      congrArg (fun F => F.comp (L.comp Pre)) hcomm
+    _ = Post.comp ((R.comp L).comp Pre) := by rfl
     _ = retainedFactorizedIdeal
         pA pB N nK mZ mX ell ellEV leakEC hN ec delta Q := by
       rw [show R.comp L =
@@ -114,7 +113,7 @@ theorem coordinates_difference_eq_retainedFactorizedDifference
   rw [retainedControlLift_sub]
   conv_rhs =>
     rw [← LinearMap.comp_assoc, LinearMap.comp_sub, LinearMap.sub_comp]
-  simp only [LinearMap.comp_assoc]
+  rfl
 
 /-- For feasible quotas, the physical real-minus-ideal map has at most the diamond norm of the
 retained-round difference. -/

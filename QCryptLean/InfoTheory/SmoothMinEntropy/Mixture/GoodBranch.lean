@@ -38,6 +38,8 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- A pointwise block-weight cap `E` on the complement of a measurable good set bounds the
 trace of its block integral by `E`, for a probability measure. -/
 theorem traceSetIntegral_le_of_pointwise_weight_bounds {Xt : Type*} [Fintype Xt] {dE : ℕ}
@@ -64,11 +66,11 @@ theorem traceSetIntegral_le_of_pointwise_weight_bounds {Xt : Type*} [Fintype Xt]
         = fun a => ∑ i, (((f a).stateMap x).toOp i i).re := by
       funext a; simp only [Matrix.trace, Matrix.diag_apply, Complex.re_sum]
     rw [heq]
-    exact MeasureTheory.integrable_finset_sum _ fun i _ =>
+    exact MeasureTheory.integrable_finsetSum _ fun i _ =>
       Complex.reCLM.integrable_comp (hentInt x i U)
   have hsumInt : ∀ U : Set α, MeasureTheory.IntegrableOn
       (fun a => ∑ x : Xt, ((f a).stateMap x).toOp.trace.re) U μ :=
-    fun U => MeasureTheory.integrable_finset_sum _ (fun x _ => htrInt x U)
+    fun U => MeasureTheory.integrable_finsetSum _ (fun x _ => htrInt x U)
   -- Reduce the entry-integral trace sum to the set integral of the total block weight.
   have hred : ∀ U : Set α, MeasurableSet U →
       (∑ x : Xt, ((Matrix.of fun i j : Fin dE =>
@@ -82,13 +84,13 @@ theorem traceSetIntegral_le_of_pointwise_weight_bounds {Xt : Type*} [Fintype Xt]
       intro x
       rw [Matrix.trace]
       simp only [Matrix.diag_apply, Matrix.of_apply]
-      rw [← MeasureTheory.integral_finset_sum _ (fun i _ => hentInt x i U), ← Complex.reCLM_apply,
+      rw [← MeasureTheory.integral_finsetSum _ (fun i _ => hentInt x i U), ← Complex.reCLM_apply,
         ← ContinuousLinearMap.integral_comp_comm Complex.reCLM
-          (MeasureTheory.integrable_finset_sum _ (fun i _ => hentInt x i U))]
+          (MeasureTheory.integrable_finsetSum _ (fun i _ => hentInt x i U))]
       refine MeasureTheory.setIntegral_congr_fun hU (fun a _ => ?_)
       simp only [Complex.reCLM_apply, Matrix.trace, Matrix.diag_apply, Complex.re_sum]
     rw [Finset.sum_congr rfl (fun x _ => hperx x),
-      ← MeasureTheory.integral_finset_sum _ (fun x _ => htrInt x U)]
+      ← MeasureTheory.integral_finsetSum _ (fun x _ => htrInt x U)]
   rw [hred Bᶜ hB.compl]
   have hBcbound : (∫ a in Bᶜ, (∑ x : Xt, ((f a).stateMap x).toOp.trace.re) ∂μ) ≤ E := by
     calc ∫ a in Bᶜ, (∑ x : Xt, ((f a).stateMap x).toOp.trace.re) ∂μ

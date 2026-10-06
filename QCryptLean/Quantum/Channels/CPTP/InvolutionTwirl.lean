@@ -121,7 +121,11 @@ theorem involutionTwirlKraus_applyOp (U : Op n) (hU : Uᴴ * U = 1) :
     rw [← Complex.ofReal_mul, Real.mul_self_sqrt (by norm_num)]
     norm_num
   funext ρ
-  simp only [involutionTwirlKraus, KrausRepresentation.applyOp, Fin.sum_univ_two,
+  change (∑ x : Fin 2, (![(((√(1 / 2) : ℝ) : ℂ)) • (1 : Op n),
+    (((√(1 / 2) : ℝ) : ℂ)) • U] x) * ρ *
+      (![(((√(1 / 2) : ℝ) : ℂ)) • (1 : Op n),
+        (((√(1 / 2) : ℝ) : ℂ)) • U] x)ᴴ) = _
+  simp only [Fin.sum_univ_two,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.conjTranspose_smul,
     Matrix.conjTranspose_one, Complex.star_def, Complex.conj_ofReal, Matrix.smul_mul,
     Matrix.mul_smul, smul_smul, Matrix.one_mul, Matrix.mul_one, hs, involutionTwirl_apply]

@@ -120,7 +120,7 @@ lemma one_le_bennettTiltWidth {n_copies : ℕ} {ε : ℝ}
     (hsmall : ¬ iidAEPBennettRegime n_copies ε) :
     1 ≤ bennettTiltWidth n_copies ε := by
   unfold iidAEPBennettRegime at hsmall
-  push_neg at hsmall
+  push Not at hsmall
   exact one_le_bennettFactor_of_three_quarters_le hsmall.le
 
 /-- **The Bennett correction dominates Renner's on the whole regime.**

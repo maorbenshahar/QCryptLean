@@ -233,7 +233,7 @@ theorem povm_statisticalDistance_le_traceNormHermitian {n k : ℕ} [NeZero n]
       rw [abs_of_nonneg hi.2]
     · refine Finset.sum_congr rfl (fun i hi => ?_)
       simp only [Finset.mem_filter] at hi
-      rw [abs_of_neg (by push_neg at hi; exact hi.2)]
+      rw [abs_of_neg (by push Not at hi; exact hi.2)]
   have hPsum : ∑ i ∈ S, ((M.elements i) * A).trace.re = (P * A).trace.re := by
     rw [hP, Finset.sum_mul, Matrix.trace_sum, Complex.re_sum]
   have hPcsum : ∑ i ∈ Sc, (-((M.elements i) * A).trace.re) = -((1 - P) * A).trace.re := by

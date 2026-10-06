@@ -109,7 +109,7 @@ lemma conditionalMinEntropyReal_coarsen_le
       Real.log_le_log hpos hle
     unfold conditionalMinEntropyReal
     exact div_le_div_of_nonneg_right (neg_le_neg hlog_le) hlog2.le
-  · push_neg at hpos
+  · push Not at hpos
     have hfzero : minFeasibleLambda ρ σ = 0 :=
       le_antisymm hpos (minFeasibleLambda_nonneg ρ σ)
     have h0fine : isFeasible ρ σ 0 := by

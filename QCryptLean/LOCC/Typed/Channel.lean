@@ -91,6 +91,7 @@ theorem liftAt_operation_apply
   simp_rw [hsum]
   simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
   simp [apply_ite]
+  rfl
 
 end Instrument
 end TypedLOCC

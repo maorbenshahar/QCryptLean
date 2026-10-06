@@ -356,7 +356,7 @@ lemma matrix_rpow_mul_of_commute {n : Type*} [Fintype n] [DecidableEq n]
     intro lm lm' hne
     have hne' : a lm ≠ a lm' ∨ b lm ≠ b lm' := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       exact hne (Subtype.ext (Prod.ext hcon.1 hcon.2))
     change specProj c (a lm) * specProj d (b lm) * (specProj c (a lm') * specProj d (b lm')) = 0
     -- reorder to `(Q_l Q_l') (R_m R_m')` using commutation, then one factor vanishes

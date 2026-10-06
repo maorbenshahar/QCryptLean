@@ -87,7 +87,9 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
           ((x .alice), (x .bob)))
         (((QKD.BB84.selectedBitsToRawAliceAction N n).out.set .bob (Fin (2 ^ n))).pairEquiv.symm
           ((x .alice), (x .bob))) = _
-  rw [Instrument.liftAt_bob_operation_apply, Instrument.functionAndForget_operation_apply]
+  rw [Instrument.liftAt_bob_operation_apply]
+  refine (Instrument.functionAndForget_operation_apply
+    (@QKD.BB84.selectedBitsToRaw N n) _ _ _).trans ?_
   have hAliceApply (a a' : Fin (2 ^ n))
       (rB : SelectedLocalRecord N n) :
       ((QKD.BB84.selectedBitsToRawAliceAction N n).liftedOperation () σ)
@@ -104,8 +106,8 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
           (Fin (2 ^ n))).pairEquiv.symm (a, rB))
         (((weightedSelectedRecordSystem N n).set .alice
           (Fin (2 ^ n))).pairEquiv.symm (a', rB)) = _
-    rw [Instrument.liftAt_alice_operation_apply, Instrument.functionAndForget_operation_apply]
-    rfl
+    rw [Instrument.liftAt_alice_operation_apply]
+    exact Instrument.functionAndForget_operation_apply (@QKD.BB84.selectedBitsToRaw N n) _ _ _
   simp_rw [Matrix.submatrix_apply, hAliceApply]
   apply Finset.sum_congr rfl
   intro qB _
@@ -113,7 +115,13 @@ theorem selectedBitsToRawProgram_denote_diag (N n : ℕ)
   · simp only [hB, and_self, ite_true]
     apply Finset.sum_congr rfl
     intro qA _
-    by_cases hA : x .alice = QKD.BB84.selectedBitsToRaw qA <;> simp [hA]
-  · simp [hB]
+    simp only [and_true]
+    rfl
+  · simp only [and_self]
+    refine (if_neg hB).trans ?_
+    symm
+    apply Finset.sum_eq_zero
+    intro qA _
+    exact if_neg (fun h => hB h.2)
 
 end QKD.BB84.Reduction

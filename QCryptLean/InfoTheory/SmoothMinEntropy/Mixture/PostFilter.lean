@@ -20,6 +20,9 @@ noncomputable section
 
 namespace InfoTheory.SmoothMinEntropy
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
 /-- Pointwise extended entropy floors pass to the retained branch, including zero retained mass. -/
 lemma conditionalMinEntropy_ge_of_goodBranch_forall
     {d dE : ℕ} {X : Type*} [Fintype X]

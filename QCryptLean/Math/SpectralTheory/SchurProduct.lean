@@ -7,7 +7,7 @@ import Mathlib.LinearAlgebra.Matrix.PosDef
 # The Schur product theorem
 
 The **Schur product theorem**: the Hadamard (entrywise) product of two positive semidefinite
-matrices is positive semidefinite. The proof used here is the Kronecker one: `A ⊗ₖ B` is
+matrices is positive semidefinite. A Kronecker interpretation is: `A ⊗ₖ B` is
 positive semidefinite, and `A ⊙ B` is the principal submatrix of `A ⊗ₖ B` selected by the
 diagonal embedding `i ↦ (i, i)`, so it inherits positivity from
 `Matrix.PosSemidef.submatrix`.
@@ -42,8 +42,9 @@ Mathlib supplies the Hadamard product itself and its ring-theoretic algebra
 `Matrix.diagonal_hadamard : diagonal w ⊙ M = diagonal (w * M.diag)` and
 `Matrix.hadamard_diagonal : M ⊙ diagonal w = diagonal (M.diag * w)`, which already settle the
 positivity of a Hadamard product with a diagonal matrix through
-`Matrix.posSemidef_diagonal_iff`. What is missing there, and supplied here, is the interaction
-of `⊙` with positive semidefiniteness in general, and the trace formulas above.
+`Matrix.posSemidef_diagonal_iff`. Mathlib also supplies `Matrix.PosSemidef.hadamard` in
+`Mathlib/Analysis/Matrix/Order.lean`. This file supplies the trace formulas and rank-one
+corollaries above.
 
 ## References
 
@@ -104,17 +105,6 @@ end Algebra
 section PosSemidef
 
 variable {𝕜 : Type*} [RCLike 𝕜]
-
-/-- **Schur product theorem.** The Hadamard (entrywise) product of two positive semidefinite
-matrices is positive semidefinite.
-
-`A ⊙ B` is the principal submatrix of the positive semidefinite `A ⊗ₖ B` selected by
-`i ↦ (i, i)` (`kronecker_submatrix_diag_eq_hadamard`), and principal submatrices of positive
-semidefinite matrices are positive semidefinite. -/
-theorem PosSemidef.hadamard [Finite n] {A B : Matrix n n 𝕜}
-    (hA : A.PosSemidef) (hB : B.PosSemidef) : (A ⊙ B).PosSemidef := by
-  rw [← kronecker_submatrix_diag_eq_hadamard]
-  exact (hA.kronecker hB).submatrix _
 
 /-- The trace of a Hadamard product of positive semidefinite matrices is nonnegative.
 Combined with `Matrix.trace_hadamard` this is the statement `0 ≤ A.diag ⬝ᵥ B.diag`. -/

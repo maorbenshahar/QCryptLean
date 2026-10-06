@@ -60,14 +60,15 @@ theorem liftedOperation_ofInstrument_functionAndForget_apply
         (L.operation () rhoqq)
           ((R.splitAtSet i HH) q).1
           ((R.splitAtSet i HH) q').1 := by
-    simp only [PrivateAction.liftedOperation, PrivateAction.liftedKraus,
-      PrivateAction.ofInstrument, Instrument.operation, matrixConjLinear,
+    change ((L.liftAt R i).operation () rho) q q' = _
+    simp only [Instrument.liftAt, Instrument.operation, matrixConjLinear,
       LinearMap.coe_sum, LinearMap.coe_mk, AddHom.coe_mk, Finset.sum_apply,
       Matrix.sum_apply, Matrix.mul_apply, localKrausLift_apply, ite_mul, zero_mul,
       Matrix.conjTranspose_apply, RCLike.star_def, rhoqq]
     simp_rw [hsum]
     simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
     simp [apply_ite]
+    rfl
   rw [hlift (Instrument.functionAndForget f)]
   simp only [Instrument.functionAndForget_operation_apply, rhoqq,
     Matrix.submatrix_apply]

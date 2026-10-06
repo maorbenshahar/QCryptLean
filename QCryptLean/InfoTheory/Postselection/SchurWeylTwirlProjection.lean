@@ -49,6 +49,8 @@ noncomputable section
 
 namespace InfoTheory.Postselection
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-! ## Continuity and integrability of the twirl kernel -/
 
 /-- The Kraus map `U ↦ 1_{Aⁿ} ⊗ U^{⊗n}` of the Haar twirl is continuous in `U`. -/
@@ -363,8 +365,8 @@ theorem twirlMap_selfAdjoint (dA dR n : ℕ) [NeZero dR] (A B : Op (dA ^ n * dR 
       ∫ U, (K U * Aᴴ * (K U)ᴴ * B).trace ∂(haarProbUnitary dR) := by
     rw [← htrMulB]
     change trMulB (∫ U, K U * Aᴴ * (K U)ᴴ ∂(haarProbUnitary dR)) = _
-    rw [← trMulB.integral_comp_comm hfIntAH]
-    simp_rw [htrMulB]
+    refine (trMulB.integral_comp_comm hfIntAH).symm.trans ?_
+    rfl
   -- Step 3: cyclicity — move `K(U)` from the left of the product to the right.
   have hcyc : ∀ U : Matrix.unitaryGroup (Fin dR) ℂ,
       (K U * Aᴴ * (K U)ᴴ * B).trace = (Aᴴ * ((K U)ᴴ * B * K U)).trace := by
@@ -404,7 +406,7 @@ theorem twirlMap_selfAdjoint (dA dR n : ℕ) [NeZero dR] (A B : Op (dA ^ n * dR 
       (Aᴴ * twirlMap dA dR n B).trace := by
     rw [← hsubst, ← htrMulAH]
     change ∫ U, trMulAH ((K U)ᴴ * B * K U) ∂(haarProbUnitary dR) = _
-    rw [← trMulAH.integral_comp_comm hgInt]
+    exact trMulAH.integral_comp_comm hgInt
   rw [step1, step2, step3]
 
 /-! ## Step 7: ricochet and trace identities -/

@@ -898,7 +898,7 @@ private lemma weak_logMaj_sum_le {N : ℕ} (a b : ℕ → ℝ)
       · exact le_of_lt hspec.1
       · intro i hi
         have hmin := Nat.find_min hex hi
-        push_neg at hmin
+        push Not at hmin
         rcases lt_or_ge i N with hiN | hiN
         · exact lt_of_le_of_ne (ha0 i) (Ne.symm (hmin hiN))
         · exact absurd (lt_of_lt_of_le hi (le_trans (le_of_lt hspec.1) hiN)) (by omega)
@@ -906,13 +906,13 @@ private lemma weak_logMaj_sum_le {N : ℕ} (a b : ℕ → ℝ)
         have hle : a i ≤ a (Nat.find hex) := haA hji
         rw [hspec.2] at hle
         exact le_antisymm hle (ha0 i)
-    · push_neg at h
+    · push Not at h
       exact ⟨N, le_rfl, fun i hi => lt_of_le_of_ne (ha0 i) (Ne.symm (h i hi)),
         fun i hji hiN => absurd hiN (by omega)⟩
   have hbpos : ∀ i, i < j → 0 < b i := by
     intro i hi
     by_contra hb
-    push_neg at hb
+    push Not at hb
     have hbz : b i = 0 := le_antisymm hb (hb0 i)
     have hbprod : ∏ l ∈ Finset.range (i + 1), b l = 0 :=
       Finset.prod_eq_zero (Finset.mem_range.mpr (Nat.lt_succ_self i)) hbz

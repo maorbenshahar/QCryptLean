@@ -243,6 +243,7 @@ theorem system_eq_of_sifted (N nK mZ mX ℓ ℓEV leakEC : ℕ)
         tailAnnouncementsEquiv N nK mZ mX ℓ ℓEV leakEC f.1 f.2 := rfl
     simp only [PublicTranscript.sifted, htail, tailAnnouncementsEquiv, dif_pos hquota,
       Equiv.trans_apply, Equiv.cast_apply, cast_cast, cast_eq]
+    exact congrArg Prod.snd ((cast_cast _ _ _).trans (cast_eq _ _))
   rw [hflag, system_of_boundary_eq hboundary f.2, system_rawClassicalTailBoundary]
 
 /-- **A run whose announced control is short of a quota ends with no key register**, and both

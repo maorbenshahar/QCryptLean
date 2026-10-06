@@ -181,7 +181,7 @@ theorem bb84SiftedKeyRoundCQ_tensorPower_stateMap_eq_fiberSumCount {N : ℕ}
     rw [if_pos (congrFun hk i)]
   · rw [if_neg hk, Matrix.zero_apply]
     obtain ⟨i, hi⟩ : ∃ i, bb84AliceBitMap (k i) ≠ z i := by
-      by_contra hcon; push_neg at hcon; exact hk (funext hcon)
+      by_contra hcon; push Not at hcon; exact hk (funext hcon)
     exact Finset.prod_eq_zero (Finset.mem_univ i) (by rw [if_neg hi])
 
 /-! ## L3 — the coarsen-key split of the trivial-attack per-σ family block

@@ -201,9 +201,8 @@ theorem registerExtendedMixtureFloorReal_linear
         = ∑ x : Fin M.toProtocol.rawKeyDim, ((M.mixCQ_En μ h_int).stateMap x).trace := by
       rw [RawKeyMeasurement.mixCQ]
       exact Finset.sum_congr rfl (fun x _ => htr (M.mixCQ_En μ h_int) x)
-    rw [hmix]
-    simp only [htr ρ_good]
-    exact hgap
+    exact (congrArg₂ (fun a b : ℝ => a - b) hmix
+      (Finset.sum_congr rfl (fun x _ => htr ρ_good x))).le.trans hgap
   · -- B17 register-extension penalty at the same radius `ε̄`, chained with the good floor.
     rw [RawKeyMeasurement.mixRef]
     have hB17 :
@@ -216,7 +215,7 @@ theorem registerExtendedMixtureFloorReal_linear
     have hassoc : 2 * Real.log (g : ℝ) / Real.log 2 = 2 * (Real.log (g : ℝ) / Real.log 2) := by
       ring
     rw [hlogb]
-    linarith [hfloor, hB17, hassoc]
+    exact (sub_le_sub_right hfloor _).trans (by simpa only [hassoc] using hB17)
 
 end RawKeyMeasurement
 

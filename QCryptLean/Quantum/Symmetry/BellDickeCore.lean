@@ -246,7 +246,7 @@ private lemma bellType_eq_iff_map_eq {n : ℕ} (a b : Fin (4 ^ n)) :
       Finset.univ.val.map ((@finFunctionFinEquiv 4 n).symm a)
         = Finset.univ.val.map ((@finFunctionFinEquiv 4 n).symm b) := by
   unfold bellTypeOfIndex
-  rw [Subtype.mk_eq_mk]
+  exact Subtype.mk_eq_mk
 
 /-- The Bell type multiplicity is the size of the multiset-orbit of the Bell string. -/
 lemma bellTypeMult_eq_orbit {n : ℕ} (i : Fin (4 ^ n)) :

@@ -16,6 +16,9 @@ noncomputable section
 
 namespace QKD.BB84.Engine
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) :=
+  SeminormedAddGroup.toContinuousENorm
+
 /-!
 # The genuine-LOCC de Finetti mixture and its two analytic data
 
@@ -163,7 +166,8 @@ theorem bb84_rhoEtilde_eq_haar_integral_blocks {n : ℕ} [NeZero n] [NeZero (4 ^
     rw [show ((bb84EnVRhoEtilde eveDim pre hpre peSel xSel Q δ).stateMap x).toOp i j =
           L (pairedDeFinettiState signalDim n).toOp from
         hgen (pairedDeFinettiState signalDim n)]
-    rw [hpaired, ← L.integral_comp_comm hint]
+    rw [hpaired]
+    refine (L.integral_comp_comm hint).symm.trans ?_
     refine MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall (fun ψ => ?_))
     exact (show ((bb84PairedHaarPerSigmaFamily eveDim pre hpre peSel xSel Q δ ψ).stateMap x).toOp i
         j =

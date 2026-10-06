@@ -65,14 +65,15 @@ theorem testLiftedOperation_eq_local
         ∑ p : testSystem.reg .alice × testSystem.rest .alice,
           g ((testSystem.splitAt .alice).symm p) := by
     exact (Equiv.sum_comp (testSystem.splitAt .alice).symm g).symm
-  simp only [PrivateAction.liftedOperation, PrivateAction.liftedKraus,
-    PrivateAction.ofInstrument, Instrument.operation, matrixConjLinear,
+  change ((L.liftAt testSystem .alice).operation o rho) q q' = _
+  simp only [Instrument.liftAt, Instrument.operation, matrixConjLinear,
     LinearMap.coe_sum, LinearMap.coe_mk, AddHom.coe_mk, Finset.sum_apply,
     Matrix.sum_apply, Matrix.mul_apply, localKrausLift_apply, ite_mul,
     zero_mul, Matrix.conjTranspose_apply, RCLike.star_def]
   simp_rw [hsum]
   simp only [Equiv.apply_symm_apply, Fintype.sum_prod_type]
   simp [apply_ite]
+  rfl
 
 /-- The private computational measurement has the expected branch formula on arbitrary operators,
 while its two spectator coordinates remain unrelated. -/
@@ -85,8 +86,11 @@ theorem testPrivateAction_entry
     ((PrivateAction.ofInstrument (R := testSystem) .alice
       (Instrument.computationalMeasurement (Fin 2))).liftedOperation o rho)
         (outputAt a s) (outputAt a' s') = _
-  rw [testLiftedOperation_eq_local]
+  have hlocal := testLiftedOperation_eq_local (Instrument.computationalMeasurement (Fin 2))
+    o rho (outputAt a s) (outputAt a' s')
+  refine hlocal.trans ?_
   simp [Instrument.computationalMeasurement, outputAt, inputAt]
+  exact Instrument.nondemolitionReadout_operation_apply id o _ a a'
 
 /-- Summing the private outcomes dephases only Alice's coordinate. -/
 theorem testPrivateAction_channel_entry

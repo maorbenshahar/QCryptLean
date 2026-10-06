@@ -62,7 +62,7 @@ theorem exists_decode_eq_of_hammingDist_le (n : ℕ) (peSel : Fin n → Bool) (t
   apply (coset_decode_eq_iff syn rep a b).mpr
   apply syndromeRepresentative_eq_of_hamming_separation syn t rep
     (fun e he => (hrep e he).1) (fun e he => (hrep e he).2) hsep
-  rw [hammingDist_zero_right, ← hammingDist_eq_hammingNorm]
+  rw [hammingDist_zero_right, sub_eq_neg_add, ← hammingDist_eq_hammingNorm, hammingDist_comm]
   exact hab
 
 /-- The shared coset construction of the two reconciliation guarantees: a binary linear syndrome

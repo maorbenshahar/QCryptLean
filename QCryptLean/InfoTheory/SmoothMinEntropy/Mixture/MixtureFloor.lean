@@ -530,7 +530,7 @@ theorem conditionalMinEntropyReal_mixture_ge_inf_component
     -- Some component z₀ has positive weight p z₀ but zero state-weight.
     obtain ⟨z₀, hz₀_pos⟩ : ∃ z, 0 < p z := by
       by_contra hnone
-      push_neg at hnone
+      push Not at hnone
       have : ∑ z, p z = 0 := by
         apply Finset.sum_eq_zero
         intro z _

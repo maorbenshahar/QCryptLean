@@ -163,7 +163,7 @@ private lemma sum_sqrt_eq_sqrt_sum_of_card_supp_le_one
       by_contra hfi
       exact hij (h_others i hfi)
     rw [h_sum_sqrt, h_sum]
-  · push_neg at hall
+  · push Not at hall
     simp [hall]
 
 /-- **(H2, sub-helper L3)** For any matrix `A` such that `Aᴴ * A` has

@@ -174,7 +174,7 @@ theorem conditionalMinEntropyReal_classical_extension
       unfold conditionalMinEntropyReal
       exact div_le_div_of_nonneg_right (neg_le_neg hlog_le) hlog2.le
     · -- `lFull = 0`. Use Helper B to force `lMarg = 0` as well.
-      push_neg at hpos
+      push Not at hpos
       have hzero : lFull = 0 := le_antisymm hpos hlFull_nn
       obtain ⟨t', ht'⟩ := hne
       have ht_full : (setOf (isFeasible ρ σ)).Nonempty := ⟨t', hsub ht'⟩

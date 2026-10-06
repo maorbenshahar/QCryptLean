@@ -152,6 +152,7 @@ theorem basisOrders_relabel {N : ℕ} (τ : Fin N ≃ Fin N) (omega : RawControl
     · simpa using matched_relabel_card τ omega.a omega.b
     · intro n hn₁ hn₂
       simp
+      rfl
   refine ⟨hmatched, ?_, ?_⟩
   · rw [zOrder, zOrder, hmatched, List.filter_map]
     simp [rawControlRelabel, relabelRaw, relabelBasis, Function.comp_def]

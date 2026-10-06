@@ -55,7 +55,7 @@ lemma classicalRank_filter_pos
     1 ≤ (Finset.univ.filter (fun x : X => 0 < (ρ.stateMap x).trace)).card := by
   classical
   by_contra h
-  push_neg at h
+  push Not at h
   have hcard :
       (Finset.univ.filter (fun x : X => 0 < (ρ.stateMap x).trace)).card = 0 := by
     omega

@@ -78,7 +78,7 @@ lemma minFeasibleLambda_le_pow_neg_k_subNorm
         have := (Real.rpow_le_rpow_left_iff (x := (2:ℝ)) one_lt_two).mpr h_neg_k
         simpa [Real.rpow_zero] using this
       linarith
-    · push_neg at hk_sign
+    · push Not at hk_sign
       have hk_le_H : k ≤ conditionalMinEntropyReal ρ σ :=
         (ENNReal.ofReal_le_ofReal_iff hH_nn).mp hk
       have hH_def : conditionalMinEntropyReal ρ σ =
@@ -94,7 +94,7 @@ lemma minFeasibleLambda_le_pow_neg_k_subNorm
       have h_log_le : Real.log lam ≤ Real.log ((2 : ℝ) ^ (-k)) := by
         rw [hlog_rpow]; exact hlog_le2
       exact (Real.log_le_log_iff hpos hrpow_pos).mp h_log_le
-  · push_neg at hpos
+  · push Not at hpos
     have hzero : lam = 0 := le_antisymm hpos hlam_nn
     rw [hzero]
     exact Real.rpow_nonneg (by norm_num) _

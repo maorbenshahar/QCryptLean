@@ -57,7 +57,7 @@ lemma exists_rawKeyCQ_stateMap_toOp_ne_zero_of_pos (C : MeasureThenHash M l')
     ∃ x, ((M.rawKeyCQ σ).stateMap x).toOp ≠ 0 := by
   classical
   by_contra hzero
-  push_neg at hzero
+  push Not at hzero
   rw [C.acceptProj_variantReal_trace_re_eq_pAcc] at hpos
   have hmass : M.pAcc σ = 0 := by
     simp only [RawKeyMeasurement.pAcc, SubDensityOp.trace, hzero, Matrix.trace_zero,
@@ -205,12 +205,20 @@ def measureThenHash : MeasureThenHash measurement 1 where
   hash_isUniversal := hash_universal
   card_key := rfl
   encode := (1 : Op (1 * Fintype.card (Fin 1 × Fin 2)))
-  encode_isometry := by simp
+  encode_isometry := by
+    change (1 : Op 2)ᴴ * (1 : Op 2) = (1 : Op 2)
+    simp
   acceptProj_isCompletelyPositive := (id_is_cptp (1 * Fintype.card (Fin 1 × Fin 2))).2.1
   acceptProj_variantReal := by
     intro ρ
     dsimp only [measurement, protocol]
-    rw [ofInstrument_id_eq_raw]
+    change DensityOp 1 at ρ
+    have hraw := ofInstrument_id_eq_raw ρ (fun _ => (id_is_cptp 1).2.1)
+      (fun σ => by simp [σ.trace_one])
+    refine Eq.trans ?_ (congrArg (fun σ : CQState (Fin 1) 1 =>
+      (1 : Op (1 * Fintype.card (Fin 1 × Fin 2))) *
+        (seedKeyExtractorOutputState hash σ).toJointDensity.toOp *
+        (1 : Op (1 * Fintype.card (Fin 1 × Fin 2)))ᴴ) hraw).symm
     change ((Matrix.reindex (roundGroupEquiv 1 1 1) (roundGroupEquiv 1 1 1)
       ρ.toOp).trace * 1) • realState.toOp =
         (1 : Op (1 * Fintype.card (Fin 1 × Fin 2))) * realState.toOp *
@@ -220,7 +228,13 @@ def measureThenHash : MeasureThenHash measurement 1 where
   acceptProj_variantIdeal := by
     intro ρ
     dsimp only [measurement, protocol]
-    rw [ofInstrument_id_eq_raw]
+    change DensityOp 1 at ρ
+    have hraw := ofInstrument_id_eq_raw ρ (fun _ => (id_is_cptp 1).2.1)
+      (fun σ => by simp [σ.trace_one])
+    refine Eq.trans ?_ (congrArg (fun σ : CQState (Fin 1) 1 =>
+      (1 : Op (1 * Fintype.card (Fin 1 × Fin 2))) *
+        (seedUniformOutputState (S := Fin 1) (Z := Fin 2) σ.quantumMarginal).toJointDensity.toOp *
+        (1 : Op (1 * Fintype.card (Fin 1 × Fin 2)))ᴴ) hraw).symm
     change ((Matrix.reindex (roundGroupEquiv 1 1 1) (roundGroupEquiv 1 1 1)
       ρ.toOp).trace * 1) • idealState.toOp =
         (1 : Op (1 * Fintype.card (Fin 1 × Fin 2))) * idealState.toOp *

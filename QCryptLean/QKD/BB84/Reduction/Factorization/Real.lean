@@ -66,12 +66,18 @@ private theorem reconstruction_rawControlDiagonal
   have hrawY : rawOf y = omega := by
     dsimp only [rawOf, y, QKD.BB84.exitEquiv,
       QKD.BB84.boundary]
-    rw [← Boundary.graftSpaceEquiv_fst, Equiv.apply_symm_apply]
+    refine (congrArg (QKD.BB84.lateSelectionExitEquiv N nK mZ mX)
+      ((Boundary.graftSpaceEquiv_fst (Measurement.lateSelectionBoundary N nK mZ mX)
+        (QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC) _).symm.trans
+          (congrArg Sigma.fst (G.apply_symm_apply _)))).trans ?_
     exact (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply omega
   have hrawZ : rawOf z = omega' := by
     dsimp only [rawOf, z, QKD.BB84.exitEquiv,
       QKD.BB84.boundary]
-    rw [← Boundary.graftSpaceEquiv_fst, Equiv.apply_symm_apply]
+    refine (congrArg (QKD.BB84.lateSelectionExitEquiv N nK mZ mX)
+      ((Boundary.graftSpaceEquiv_fst (Measurement.lateSelectionBoundary N nK mZ mX)
+        (QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC) _).symm.trans
+          (congrArg Sigma.fst (G.apply_symm_apply _)))).trans ?_
     exact (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply omega'
   have hsuccessRaw
       (S : Set.powersetCard (Fin N) (nK + mZ + mX))
@@ -141,8 +147,11 @@ private theorem reconstruction_rawControlDiagonal
           _ = eta.1 := by rw [hy, hfailureRaw]
           _ = rawOf z := by rw [hz, hfailureRaw]
           _ = omega' := hrawZ
-      rw [Matrix.single_apply_of_row_ne (Ne.symm hz), star_zero, mul_zero]
-    · rw [Matrix.single_apply_of_row_ne (Ne.symm hy), zero_mul]
+      refine (congrArg (fun w : ℂ => (_ : ℂ) * star w)
+        (Matrix.single_apply_of_row_ne (Ne.symm hz) _ _ _)).trans ?_
+      simp only [star_zero, mul_zero]
+    · exact (congrArg (fun w : ℂ => w * (_ : ℂ))
+        (Matrix.single_apply_of_row_ne (Ne.symm hy) _ _ _)).trans (zero_mul _)
   let EPost := reconstructionInputEquiv N nK mZ mX ell ellEV leakEC
   let sigma : Matrix
       (ReconstructionInput N nK mZ mX ell ellEV leakEC)
@@ -250,12 +259,18 @@ theorem coordinates_real_eq_retainedFactorizedReal
     have hrawY : rawOf y = omega := by
       dsimp only [rawOf, y, G, QKD.BB84.exitEquiv,
         QKD.BB84.boundary]
-      rw [← Boundary.graftSpaceEquiv_fst, Equiv.apply_symm_apply]
+      refine (congrArg (QKD.BB84.lateSelectionExitEquiv N nK mZ mX)
+        ((Boundary.graftSpaceEquiv_fst (Measurement.lateSelectionBoundary N nK mZ mX)
+          (QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC) _).symm.trans
+            (congrArg Sigma.fst (G.apply_symm_apply _)))).trans ?_
       exact (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply omega
     have hrawZ : rawOf z = omega' := by
       dsimp only [rawOf, z, G, QKD.BB84.exitEquiv,
         QKD.BB84.boundary]
-      rw [← Boundary.graftSpaceEquiv_fst, Equiv.apply_symm_apply]
+      refine (congrArg (QKD.BB84.lateSelectionExitEquiv N nK mZ mX)
+        ((Boundary.graftSpaceEquiv_fst (Measurement.lateSelectionBoundary N nK mZ mX)
+          (QKD.BB84.completeContinuationBoundary N nK mZ mX ell ellEV leakEC) _).symm.trans
+            (congrArg Sigma.fst (G.apply_symm_apply _)))).trans ?_
       exact (QKD.BB84.lateSelectionExitEquiv N nK mZ mX).apply_symm_apply omega'
     have hexit : y.1 ≠ z.1 := by
       intro he

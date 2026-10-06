@@ -44,9 +44,9 @@ private lemma continuous_quadraticForm_re {m : ℕ} (v : Fin m → ℂ) :
   unfold quadraticForm
   apply Complex.continuous_re.comp
   simp only [dotProduct, Matrix.mulVec]
-  exact continuous_finset_sum Finset.univ (fun i _ =>
+  exact continuous_finsetSum Finset.univ (fun i _ =>
     continuous_const.mul
-      (continuous_finset_sum Finset.univ (fun j _ =>
+      (continuous_finsetSum Finset.univ (fun j _ =>
         ((h_entry i j).mul continuous_const))))
 
 private lemma continuous_tensorPowGen_quadraticForm_re
@@ -70,14 +70,14 @@ private lemma integrable_tensorPowGen_quadraticForm_re
     intro k
     change MeasureTheory.Integrable
       (fun σ : DensityOp d => ∑ j, (σ.tensorPowGen n).toOp k j * v j) μ.measure
-    exact MeasureTheory.integrable_finset_sum _ fun j _ =>
+    exact MeasureTheory.integrable_finsetSum _ fun j _ =>
       (h_entry k j).mul_const (v j)
   have h_int_q : MeasureTheory.Integrable
       (fun σ : DensityOp d => quadraticForm (σ.tensorPowGen n).toOp v) μ.measure := by
     change MeasureTheory.Integrable
       (fun σ : DensityOp d =>
         ∑ k, star (v k) * ((σ.tensorPowGen n).toOp.mulVec v) k) μ.measure
-    exact MeasureTheory.integrable_finset_sum _ fun k _ =>
+    exact MeasureTheory.integrable_finsetSum _ fun k _ =>
       (h_int_mv k).const_mul (star (v k))
   exact ContinuousLinearMap.integrable_comp Complex.reCLM h_int_q
 

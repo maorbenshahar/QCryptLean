@@ -130,7 +130,7 @@ theorem one_sub_binomialPassSum_le_exp_klBer (m : ℕ) (Q δ q : ℝ)
       -- Outside the band means `k/m < Q - δ` or `Q + δ < k/m` (valid for every sign of `δ`).
       have hout : (k : ℝ) / m < Q - δ ∨ Q + δ < (k : ℝ) / m := by
         by_contra hcon
-        push_neg at hcon
+        push Not at hcon
         exact hband (abs_le.mpr ⟨by linarith, by linarith⟩)
       rcases hout with hlow | hhigh
       · rw [if_pos (by linarith : (k : ℝ) / m ≤ Q - δ)]

@@ -161,9 +161,9 @@ theorem bb84SiftedLocalAcceptProbabilityOnComponent_continuous
     (n : ℕ) (peSel xSel : Fin n → Bool) (Q δ : ℝ) :
     Continuous (bb84SiftedLocalAcceptProbabilityOnComponent n peSel xSel Q δ) := by
   unfold bb84SiftedLocalAcceptProbabilityOnComponent
-  refine continuous_finset_sum _ (fun ω _ => ?_)
+  refine continuous_finsetSum _ (fun ω _ => ?_)
   split_ifs
-  · exact continuous_finset_prod _
+  · exact continuous_finsetProd _
       (fun i _ => bb84SiftedBorn_continuous (peSel i) (xSel i) (ω i))
   · exact continuous_const
 

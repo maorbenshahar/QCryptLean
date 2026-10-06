@@ -90,7 +90,7 @@ lemma kronecker_blockDiagonal_blockDiagonal_swap
   · obtain ⟨hx, hy⟩ := hxy
     subst hx; subst hy
     simp
-  · push_neg at hxy
+  · push Not at hxy
     by_cases hx : x = u
     · have hy : y ≠ v := hxy hx
       subst hx

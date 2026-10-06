@@ -489,7 +489,7 @@ theorem IsIrreduciblyEquivalentGen_of_intertwiner_ne_zero {G : Type*} [Group G]
   -- A nonzero entry `(k, l)` of `Λ` (both dimensions are then positive)
   obtain ⟨k, l, hkl⟩ : ∃ k : Fin d, ∃ l : Fin d', Λ k l ≠ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hΛ0 (Matrix.ext fun i j => h i j)
   -- The adjoint intertwines back: `π₂ h · Λᴴ = Λᴴ · π₁ h`
   have hadj : ∀ h : G, π₂ h * Λᴴ = Λᴴ * π₁ h := by

@@ -294,7 +294,7 @@ lemma iidAEPSingleCopyMGF_pos
   -- `hρ_norm` (total mass `= 1`) forces some block `ρ_{x₀}` to be nonzero
   obtain ⟨x₀, hx₀⟩ : ∃ x₀ : X, (ρ.stateMap x₀).toOp ≠ 0 := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hzero : ∑ x : X, (ρ.stateMap x).trace = 0 := by
       apply Finset.sum_eq_zero
       intro x _

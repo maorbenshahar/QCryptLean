@@ -77,7 +77,7 @@ theorem matrixConjLinear_sum_eq_single_proportional {p q : ℕ} {κ : Type*}
   refine Or.inr ?_
   obtain ⟨a₀, i₀, ha₀⟩ : ∃ a i, K x a i ≠ 0 := by
     by_contra hc
-    push_neg at hc
+    push Not at hc
     exact hx (by ext a i; simpa using hc a i)
   refine ⟨K y a₀ i₀ / K x a₀ i₀, ?_⟩
   ext b j

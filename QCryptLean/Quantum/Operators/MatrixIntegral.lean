@@ -34,6 +34,9 @@ noncomputable section
 
 namespace Quantum.Operators
 
+private local instance {m n : ℕ} : ContinuousENorm (Matrix (Fin m) (Fin n) ℂ) :=
+  SeminormedAddGroup.toContinuousENorm
+
 /-- Bochner integration commutes with selecting a matrix entry. -/
 lemma matrix_integral_entry {α : Type*} [MeasurableSpace α]
     {μ : MeasureTheory.Measure α} {m n : ℕ}
@@ -85,7 +88,7 @@ lemma matrix_setIntegral_isHermitian {α : Type*} [MeasurableSpace α]
     cont := continuous_star
   }
   have h := (ctCLM.integral_comp_comm h_int).symm
-  simp only [show ∀ M : Op N, ctCLM M = M† from fun _ => rfl] at h
+  change (∫ a in s, F a ∂μ)† = ∫ a in s, (F a)† ∂μ at h
   change (∫ a in s, F a ∂μ)† = ∫ a in s, F a ∂μ
   rw [h]
   congr 1
@@ -153,8 +156,8 @@ def DensityOp.integral {α : Type*} [MeasurableSpace α] {m : ℕ}
     pos_semidef := posSemidef_re_quadraticForm_nonneg hpsd
     trace_one := by
       have h := (Matrix.traceLinearMap (Fin m) ℂ ℂ).toContinuousLinearMap.integral_comp_comm hf
-      simpa only [LinearMap.coe_toContinuousLinearMap', Matrix.traceLinearMap_apply,
-        (f _).trace_one, integral_const, probReal_univ, one_smul] using h.symm }
+      change (∫ a, (f a).toOp.trace ∂μ) = (∫ a, (f a).toOp ∂μ).trace at h
+      simpa only [(f _).trace_one, integral_const, probReal_univ, one_smul] using h.symm }
 
 /-- The underlying operator of a density mixture is its Bochner integral. -/
 @[simp] lemma DensityOp.integral_toOp {α : Type*} [MeasurableSpace α] {m : ℕ}

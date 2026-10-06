@@ -101,7 +101,8 @@ section sqrtContinuity
 -- `NormedRing` from leaking into downstream typeclass synthesis.
 -- The parent instances (`NormedRing`, `NormedAlgebra ℂ`, `CStarRing`) come
 -- from the file-level `open scoped Matrix.Norms.L2Operator MatrixOrder`.
-private noncomputable def instCStarAlgebraOp_def (m : ℕ) [DecidableEq (Fin m)] :
+@[implicit_reducible] private noncomputable def instCStarAlgebraOp_def
+    (m : ℕ) [DecidableEq (Fin m)] :
     CStarAlgebra (Op m) where
   norm_mul_self_le := Matrix.instCStarRing.norm_mul_self_le
 
@@ -521,7 +522,7 @@ lemma purificationDensityOp_continuous {d n : ℕ} [NeZero d] [NeZero n] :
   simp only [purificationOp]
   have h_T : Continuous (fun ρ : DensityOp (d ^ n) => sqrtOp ρ ⊗ (1 : Op (d ^ n))) :=
     tensor_one_continuous.comp sqrtOp_continuous
-  exact ((continuous_mul_right _).comp h_T).mul (continuous_star.comp h_T)
+  exact ((continuous_mul_const _).comp h_T).mul (continuous_star.comp h_T)
 
 /-- The operator of the canonical purification of a tensor power depends continuously on
 its single-copy density operator. -/
@@ -783,7 +784,7 @@ lemma densityOp_rank_pos {m : ℕ} [NeZero m] (ρ : DensityOp m) :
   -- so some eigenvalue is nonzero
   have hex : ∃ i, hH.eigenvalues i ≠ 0 := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     rw [Finset.sum_eq_zero (fun i _ => hcon i)] at hsum
     exact one_ne_zero hsum.symm
   obtain ⟨i₀, hi₀⟩ := hex

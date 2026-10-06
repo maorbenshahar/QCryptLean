@@ -34,6 +34,8 @@ noncomputable section
 
 namespace Quantum.Channels
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-- Reindexing the paired tensor power along the interleaving equivalence depends
     continuously on the underlying pure state. -/
 lemma continuous_reindexed_tensorPowGen_toOp

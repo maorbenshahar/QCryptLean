@@ -40,7 +40,7 @@ An announcement alphabet may be empty — `TList.cons Empty .nil` has no transcr
 hypothesis is genuine and is not assumed of an arbitrary transcript word. -/
 instance instNonemptyUniformExit (S : MultipartiteSystem P) (T : TList) [Nonempty (Transcript T)] :
     Nonempty (uniform S T).Exit :=
-  (inferInstanceAs (Nonempty (Transcript T))).elim fun t => ⟨(uniformExitEquiv S T).symm t⟩
+  (inferInstance : Nonempty (Transcript T)).elim fun t => ⟨(uniformExitEquiv S T).symm t⟩
 
 /-- Every exit from a uniform boundary selects its defining final multipartite system. -/
 @[simp] theorem uniform_system (S : MultipartiteSystem P) (T : TList) (e : (uniform S T).Exit) :

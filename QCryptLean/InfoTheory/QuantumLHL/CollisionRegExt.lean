@@ -82,7 +82,7 @@ theorem collisionRegExt_sum_sq {ι : Type*} [Fintype ι] (f : ι → ℝ)
         (fun h => absurd (Finset.mem_univ j) h)
       by_contra hfi; exact hij (h_others i hfi)
     rw [h1, h2]
-  · push_neg at hall; simp [hall]
+  · push Not at hall; simp [hall]
 
 /-- **Rank-≤1 PSD trace-square collapse.** For a positive-semidefinite operator `B` of rank
 ≤ 1, `Re Tr(B²) = (Re Tr B)²`.  Proof: `B` has at most one nonzero eigenvalue, so its

@@ -38,9 +38,7 @@ namespace InfoTheory.RelativeEntropy
 open InfoTheory.VonNeumannEntropy
 
 noncomputable local instance instCStarAlgebraMatrix (n : Type*) [Fintype n] [DecidableEq n] :
-    CStarAlgebra (Matrix n n ℂ) := by
-  simpa [CStarMatrix] using
-    (inferInstance : CStarAlgebra (CStarMatrix n n ℂ))
+    CStarAlgebra (Matrix n n ℂ) := {}
 
 /-- A diagonal matrix with real entries is Hermitian. -/
 lemma diagonal_isHermitian_of_real {n : Type*} [Finite n] [DecidableEq n]
@@ -259,7 +257,7 @@ lemma compression_diagonal_le_log_compression_exp_diagonal {N n : ℕ}
     S.conjTranspose * D * S = M.toBlocks₁₁ := by
       rw [← hM₁₁]
     _ = (CFC.log (NormedSpace.exp M)).toBlocks₁₁ := by
-      rw [CFC.log_exp M hM.isSelfAdjoint]
+      exact (congrArg Matrix.toBlocks₁₁ (CFC.log_exp M hM.isSelfAdjoint)).symm
     _ ≤ CFC.log ((NormedSpace.exp M).toBlocks₁₁) := hBlockLog
     _ = CFC.log (S.conjTranspose * NormedSpace.exp D * S) := by
       rw [hExpM₁₁]

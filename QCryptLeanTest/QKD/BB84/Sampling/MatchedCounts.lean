@@ -70,7 +70,7 @@ exactly two, while a Z quota of three is infeasible. -/
 theorem pureZ_endpoint :
     selectionFailureMass 2 1 1 0 pureZBasis pureZBasis = 0 ∧
       selectionFailureMass 2 1 2 0 pureZBasis pureZBasis = 1 := by
-  refine ⟨le_antisymm ?_ (zero_le _), selectionFailureMass_eq_one_of_lt _ _ (by norm_num)⟩
+  refine ⟨le_antisymm ?_ (zero_le), selectionFailureMass_eq_one_of_lt _ _ (by norm_num)⟩
   refine (selectionFailureMass_le_add 2 1 1 0 pureZBasis pureZBasis).trans (le_of_eq ?_)
   simp [matchedShortfallMass, matchedProb, pureZBasis, Finset.sum_range_succ]
 

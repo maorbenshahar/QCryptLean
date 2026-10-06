@@ -93,7 +93,7 @@ def retainedOffDiagonalSplit :
     then 3 else 0
 
 /-- Transport the retained off-diagonal matrix unit back to full two-round bit strings. -/
-def retainedOffDiagonalInput :
+noncomputable def retainedOffDiagonalInput :
     Op ((Fin 2 → Bit) × (Fin 2 → Bit)) :=
   reindexOp (selectedPairBitSplit selectSecond).symm retainedOffDiagonalSplit
 
@@ -119,7 +119,7 @@ def discardedOffDiagonalSplit :
     then 5 else 0
 
 /-- Transport the discarded off-diagonal matrix unit back to full two-round bit strings. -/
-def discardedOffDiagonalInput :
+noncomputable def discardedOffDiagonalInput :
     Op ((Fin 2 → Bit) × (Fin 2 → Bit)) :=
   reindexOp (selectedPairBitSplit selectSecond).symm discardedOffDiagonalSplit
 
@@ -156,7 +156,7 @@ def emptySelectionDiagonalSplit :
     then 7 else 0
 
 /-- Transport the empty-selection diagonal matrix unit to the full one-round input. -/
-def emptySelectionDiagonalInput :
+noncomputable def emptySelectionDiagonalInput :
     Op ((Fin 1 → Bit) × (Fin 1 → Bit)) :=
   reindexOp (selectedPairBitSplit selectNoneOne).symm emptySelectionDiagonalSplit
 

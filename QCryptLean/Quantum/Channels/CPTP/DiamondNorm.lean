@@ -40,6 +40,8 @@ noncomputable section
 
 namespace Quantum.Channels
 
+private local instance {n : ℕ} : ContinuousENorm (Op n) := SeminormedAddGroup.toContinuousENorm
+
 /-!
 ## Diamond Norm
 
@@ -116,10 +118,10 @@ lemma linearMap_apply_eq_sum_single {n m : ℕ} (Δ : Op n →ₗ[ℂ] Op m)
         (Finset.sum_eq_single l
           (fun j _ hj => if_neg (fun ⟨_, h2⟩ => hj h2))
           (fun h => absurd (Finset.mem_univ l) h) |>.trans (by simp))
-  conv_lhs => rw [hM, map_sum, Finset.sum_apply, Finset.sum_apply]
+  conv_lhs => rw [hM, map_sum, Matrix.sum_apply]
   congr 1
   ext i
-  rw [map_sum, Finset.sum_apply, Finset.sum_apply]
+  rw [map_sum, Matrix.sum_apply]
   congr 1
   ext j
   rw [Δ.map_smul, Matrix.smul_apply, smul_eq_mul]
@@ -678,9 +680,9 @@ lemma mapTensorId_tensor {n m k : ℕ} [NeZero n] [NeZero m] [NeZero k]
   have linearity : ∀ (a b : Fin m), ∑ i : Fin n, ∑ j : Fin n,
       A i j * Φ (single i j 1) a b = Φ A a b := by
     intro a b
-    conv_rhs => rw [hA_decomp, map_sum, Finset.sum_apply, Finset.sum_apply]
+    conv_rhs => rw [hA_decomp, map_sum, Matrix.sum_apply]
     congr 1; ext i
-    rw [map_sum, Finset.sum_apply, Finset.sum_apply]
+    rw [map_sum, Matrix.sum_apply]
     congr 1; ext j
     rw [Φ.map_smul]
     simp [Matrix.smul_apply, smul_eq_mul]

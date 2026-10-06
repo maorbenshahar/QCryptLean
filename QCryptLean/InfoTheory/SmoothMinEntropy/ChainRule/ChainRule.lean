@@ -1546,7 +1546,7 @@ theorem smoothMinEntropyReal_extension_at_correlated_ref_ge_of_smoothedDominatio
       rw [Real.sSup_of_not_bddAbove hBddB]
       have hweightER_le : (∑ x : X, (ρER.stateMap x).trace) ≤ ε ^ 2 := by
         by_contra hgt
-        push_neg at hgt
+        push Not at hgt
         apply hBddB
         set wER : ℝ := ∑ x : X, (ρER.stateMap x).trace with hwER_def
         have hwER_le_one : wER ≤ 1 := by simpa [hwER_def] using ρER.weight_le_one

@@ -339,7 +339,7 @@ lemma pure_density_eq_vecMulVec {n : ℕ} [NeZero n]
     have : (∑ i, ev i : ℂ) = 1 := h.symm
     exact_mod_cast this
   have ⟨j, hj⟩ : ∃ j, ev j = 1 := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     have : ∀ i, ev i = 0 := fun i =>
       (hev_01 i).resolve_right (h i)
     simp [this] at hev_sum_r

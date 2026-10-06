@@ -39,13 +39,13 @@ lemma quadraticForm_re_matrix_entry_integral
     intro k
     change MeasureTheory.Integrable
       (fun a : α => ∑ j, F a k j * v j) ν
-    exact MeasureTheory.integrable_finset_sum _ fun j _hj =>
+    exact MeasureTheory.integrable_finsetSum _ fun j _hj =>
       (hF_int k j).mul_const (v j)
   have h_int_q :
       MeasureTheory.Integrable (fun a : α => quadraticForm (F a) v) ν := by
     change MeasureTheory.Integrable
       (fun a : α => ∑ k, star (v k) * ((F a).mulVec v) k) ν
-    exact MeasureTheory.integrable_finset_sum _ fun k _hk =>
+    exact MeasureTheory.integrable_finsetSum _ fun k _hk =>
       (h_int_mv k).const_mul (star (v k))
   have hcomplex :
       quadraticForm
@@ -59,13 +59,13 @@ lemma quadraticForm_re_matrix_entry_integral
       change ∑ j, (∫ a : α, F a k j ∂ν) * v j =
         ∫ a : α, ∑ j, F a k j * v j ∂ν
       simp_rw [← MeasureTheory.integral_mul_const]
-      exact (MeasureTheory.integral_finset_sum _
+      exact (MeasureTheory.integral_finsetSum _
         (fun j _hj => (hF_int k j).mul_const (v j))).symm
     rw [h_mv]
     change ∑ k, star (v k) * (∫ a : α, ((F a).mulVec v) k ∂ν) =
       ∫ a : α, ∑ k, star (v k) * ((F a).mulVec v) k ∂ν
     simp_rw [← MeasureTheory.integral_const_mul]
-    exact (MeasureTheory.integral_finset_sum _
+    exact (MeasureTheory.integral_finsetSum _
       (fun k _hk => (h_int_mv k).const_mul (star (v k)))).symm
   rw [hcomplex]
   simpa using (integral_re h_int_q).symm

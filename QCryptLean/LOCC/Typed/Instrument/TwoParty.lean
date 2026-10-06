@@ -75,7 +75,7 @@ theorem liftAt_alice_operation_apply (R : MultipartiteSystem Party)
     cast_eq]
   apply congrArg (fun sigma => I.operation o sigma a a')
   congr 1 <;> funext x j <;> cases j <;>
-    simp [MultipartiteSystem.splitAt, MultipartiteSystem.pairEquiv]
+    simp [MultipartiteSystem.splitAt, MultipartiteSystem.pairEquiv] <;> rfl
 
 /-- Bob's lifted operation preserves Alice's independent row and column coordinates. -/
 theorem liftAt_bob_operation_apply (R : MultipartiteSystem Party)
@@ -91,7 +91,7 @@ theorem liftAt_bob_operation_apply (R : MultipartiteSystem Party)
     cast_eq]
   apply congrArg (fun sigma => I.operation o sigma b b')
   congr 1 <;> funext x j <;> cases j <;>
-    simp [MultipartiteSystem.splitAt, MultipartiteSystem.pairEquiv]
+    simp [MultipartiteSystem.splitAt, MultipartiteSystem.pairEquiv] <;> rfl
 
 end Instrument
 

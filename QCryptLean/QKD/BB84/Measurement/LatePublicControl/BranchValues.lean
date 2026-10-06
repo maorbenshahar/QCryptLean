@@ -1,5 +1,6 @@
 import QCryptLean.QKD.BB84.Measurement.LatePublicControl
 import QCryptLean.LOCC.Typed.Program.ExitWeight
+import QCryptLean.LOCC.Typed.Program.BoundaryRelabel.Basic
 import QCryptLean.LOCC.Typed.Instrument.MatrixConj
 
 /-!
@@ -119,22 +120,30 @@ theorem shuffleAnnouncement_liftedOperation_apply (N : ℕ) (a b : Fin N → Bas
     change ((uniformShuffleInstrument N a b).liftAt R .alice).operation
       (order, ()) upsilon _ _ = _
     rw [Instrument.liftAt_operation_apply (R := R) .alice (uniformShuffleInstrument N a b)]
-    simp only [Equiv.apply_symm_apply, uniformShuffleInstrument,
-      Instrument.uniformChoice_operation, LinearMap.smul_apply, Matrix.smul_apply, smul_eq_mul]
-    congr 1
-    simpa only [and_self, ite_true, Matrix.submatrix_apply, Prod.eta,
-      Equiv.symm_apply_apply] using
-      Instrument.nondemolitionReadout_operation_apply (fun _ : CompletedLocalRecord N => ()) ()
+    simp only [Equiv.apply_symm_apply, uniformShuffleInstrument]
+    refine (congrFun (congrFun (LinearMap.congr_fun
+      (Instrument.uniformChoice_operation
+        (fun _ : Shuffle a b =>
+          Instrument.nondemolitionReadout (fun _ : CompletedLocalRecord N => ())) order ())
+      _) _) _).trans ?_
+    simp only [LinearMap.smul_apply, Matrix.smul_apply, smul_eq_mul]
+    apply congrArg (fun z : ℂ => (Fintype.card (Shuffle a b) : ℂ)⁻¹ * z)
+    refine (Instrument.nondemolitionReadout_operation_apply
+        (fun _ : CompletedLocalRecord N => ()) ()
         (upsilon.submatrix
           (fun x => (R.splitAt .alice).symm (x, (R.splitAt .alice q).2))
           (fun x => (R.splitAt .alice).symm (x, (R.splitAt .alice q').2)))
-        (R.splitAt .alice q).1 (R.splitAt .alice q').1
+        (R.splitAt .alice q).1 (R.splitAt .alice q').1).trans ?_
+    simp only [and_self, ite_true, Matrix.submatrix_apply, Prod.eta, Equiv.symm_apply_apply]
   ext q q'
+  change R.total at q q'
   change (shuffleAnnouncement N a b).liftedOperation (order, ()) upsilon
     (cast (congrArg MultipartiteSystem.total (R.set_self .alice).symm) q)
     (cast (congrArg MultipartiteSystem.total (R.set_self .alice).symm) q') = _
-  rw [← MultipartiteSystem.splitAtSet_self_symm, ← MultipartiteSystem.splitAtSet_self_symm]
-  exact hentry q q'
+  exact (congrArg₂
+    (fun x y => (shuffleAnnouncement N a b).liftedOperation (order, ()) upsilon x y)
+    (R.splitAtSet_self_symm .alice q)
+    (R.splitAtSet_self_symm .alice q')).symm.trans (hentry q q')
 
 /-- Exact arbitrary-operator value in a successful complete public branch.
 
@@ -160,7 +169,11 @@ theorem weightedLatePublicSelectionProgram_success_apply
             (reindexOp (weightedScheduleUnitInputEquiv N) rho) q q'
       else 0 := by
   unfold weightedLatePublicSelectionProgram
-  rw [Program.denote_graft]
+  refine (congrFun (congrFun (LinearMap.congr_fun
+    ((weightedMeasurementSchedule pA pB N).denote_graft
+      (fun _ => latePublicSelectionProgram N nK mZ mX)) rho)
+    (lateSelectionSuccessAt N nK mZ mX omega h q))
+    (lateSelectionSuccessAt N nK mZ mX omega h q')).trans ?_
   have hrow (x : (lateSelectionBoundary N nK mZ mX).space) :
       ((Boundary.graftSpaceEquiv
         (.leaf (weightedStreamSystem (finishAcc Unit N) 0))
@@ -241,7 +254,7 @@ theorem weightedLatePublicSelectionProgram_success_apply
     (shuffleAnnouncement N omega.a omega.b) (Equiv.prodUnique _ _) (fun _ => rfl)
   simp only [shuffleAnnouncement_announce] at hShuffle
   refine (hShuffle _ _ upsilonRaw (omega.order, ()) _ _).trans ?_
-  rw [Program.denote_cast_apply hfinal rfl]
+  refine (Program.denote_cast_apply hfinal rfl _ _ _ _).trans ?_
   simp only [Equiv.cast_refl, Equiv.refl_apply]
   change (quotaSelectionContinuation N nK mZ mX omega).denote
     (((shuffleAnnouncement N omega.a omega.b).liftedOperation
@@ -300,7 +313,12 @@ theorem weightedLatePublicSelectionProgram_success_apply
     have hentry := congrFun (congrFun hop q) q'
     simp only [LinearMap.comp_apply] at hentry
     unfold weightedSelectedMeasurementProgram at hentry
-    rw [Program.denote_graft] at hentry
+    have hgraft := LinearMap.congr_fun
+      ((weightedMeasurementSchedule pA pB N).denote_graft
+        (fun _ => selectedRecordContinuation (selectedEmbedding omega h))) rho
+    replace hentry := (congrArg
+      (fun M => reindexOp (selectedRecordOutputEquiv N (nK + mZ + mX)) M q q')
+      hgraft).symm.trans hentry
     simp only [reindexOp] at hentry
     let xq := (Boundary.leafSpaceEquiv
       (weightedSelectedRecordSystem N (nK + mZ + mX))).symm
@@ -498,7 +516,11 @@ theorem weightedLatePublicSelectionProgram_abort_apply
             (completeStoredRecords omega.b xB))
           (reindexOp (weightedScheduleUnitInputEquiv N) rho)) () () := by
   unfold weightedLatePublicSelectionProgram
-  rw [Program.denote_graft]
+  refine (congrFun (congrFun (LinearMap.congr_fun
+    ((weightedMeasurementSchedule pA pB N).denote_graft
+      (fun _ => latePublicSelectionProgram N nK mZ mX)) rho)
+    (lateSelectionAbortAt N nK mZ mX omega h))
+    (lateSelectionAbortAt N nK mZ mX omega h)).trans ?_
   have hrow (x : (lateSelectionBoundary N nK mZ mX).space) :
       ((Boundary.graftSpaceEquiv
         (.leaf (weightedStreamSystem (finishAcc Unit N) 0))
@@ -579,7 +601,7 @@ theorem weightedLatePublicSelectionProgram_abort_apply
     (shuffleAnnouncement N omega.a omega.b) (Equiv.prodUnique _ _) (fun _ => rfl)
   simp only [shuffleAnnouncement_announce] at hShuffle
   refine (hShuffle _ _ upsilonRaw (omega.order, ()) _ _).trans ?_
-  rw [Program.denote_cast_apply hfinal rfl]
+  refine (Program.denote_cast_apply hfinal rfl _ _ _ _).trans ?_
   simp only [Equiv.cast_refl, Equiv.refl_apply]
   change (quotaSelectionContinuation N nK mZ mX omega).denote
     (((shuffleAnnouncement N omega.a omega.b).liftedOperation
@@ -703,8 +725,9 @@ theorem weightedLatePublicSelectionProgram_abort_apply
                 ((TwoParty.pairEquiv _ _).symm
                   (recordStreamEquiv.symm rA,
                     recordStreamEquiv.symm rB))) := by
-      simp [sigma, Matrix.mul_apply, Boundary.exitKraus_apply,
-        Boundary.leafSpaceEquiv]
+      exact congrFun (congrFun (BoundaryRelabel.exitKraus_sandwich_eq_blockAt
+        (.leaf (weightedStreamSystem (finishAcc Unit N) 0)) ()
+        ((weightedMeasurementSchedule pA pB N).denote rho)) _) _
     rw [hentry]
     have hs := weightedMeasurementSchedule_output_apply pA pB N rho
       rA rA rB rB

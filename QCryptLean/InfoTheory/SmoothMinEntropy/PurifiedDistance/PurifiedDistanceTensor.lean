@@ -240,7 +240,7 @@ lemma fidelityAngle_tensor_subadditive
     linarith
   -- Antitonicity of `cos` on `[0, π]` reverses the inequality.
   by_contra hlt
-  push_neg at hlt
+  push Not at hlt
   -- `hlt : α + β < γ`.
   have hstrict : Real.cos γ < Real.cos (α + β) :=
     Real.cos_lt_cos_of_nonneg_of_le_pi hαβ_nn hγ_le_pi hlt

@@ -204,7 +204,9 @@ theorem classicalReplacement_localOperation_preservesDiagonal
       ∀ b b', b ≠ b' →
         (A.classicalReplacement.localOperation o rho) b b' = 0 := by
   intro o rho _ b b' hne
-  simp only [classicalReplacement, localOperation, matrixConjLinear,
+  change ((∑ ab : R.reg A.actor × A.Output (A.announce o),
+    matrixConjLinear (A.classicalReplacementKraus o ab)) rho) b b' = 0
+  simp only [matrixConjLinear,
     classicalReplacementKraus, Matrix.conjTranspose_single, RCLike.star_def,
     Complex.conj_ofReal, Matrix.single_mul_mul_single, LinearMap.coe_sum,
     LinearMap.coe_mk, AddHom.coe_mk, Finset.sum_apply]
@@ -288,7 +290,9 @@ theorem classicalReplacement_localOperation_diagonal
       A.classicalReplacement.localClassicalWeight o a b =
         A.localClassicalWeight o a b := by
     rw [localClassicalWeight_eq_sum_normSq]
-    simp only [classicalReplacement, classicalReplacementKraus,
+    change (∑ ab : R.reg A.actor × A.Output (A.announce o),
+      Complex.normSq (A.classicalReplacementKraus o ab b a)) = _
+    simp only [classicalReplacementKraus,
       Matrix.single_apply]
     simp_rw [Fintype.sum_prod_type]
     rw [Finset.sum_eq_single a]
@@ -460,7 +464,7 @@ theorem classicalReplacement_preservesHonestRegistersDiagonal
       · exact Or.inl ha
     change (A.classicalReplacement.localOperation o sigma) _ _ = 0
     rw [hsigmaZero]
-    simp [localOperation]
+    exact congrFun (congrFun (map_zero (A.classicalReplacement.localOperation o)) _) _
 
 /-- On CQ inputs, a diagonality-preserving raw announced branch and its manifest classical
 replacement have the same lifted operation, including arbitrary reference blocks. -/
@@ -518,9 +522,9 @@ theorem PreservesHonestRegistersDiagonal.classicalReplacement_liftedOperation_te
         (A.localOperation o sigma)
           ((R.splitAtSet A.actor (A.Output (A.announce o)) qOut).1)
           ((R.splitAtSet A.actor (A.Output (A.announce o)) qOut').1)
-    rw [hsigma,
-      A.classicalReplacement_localOperation_diagonal o
-        (hA.localOperation_preservesDiagonal_at A s o)]
+    rw [hsigma]
+    exact congrFun (congrFun (A.classicalReplacement_localOperation_diagonal o
+      (hA.localOperation_preservesDiagonal_at A s o) _) _) _
 
 end AnnouncedAction
 
@@ -762,6 +766,7 @@ private theorem controlledContinuation_leaf_eq_denote_comp_reindexOp
       rw [LinearMap.comp_assoc]
     _ = (k ()).denote.comp (reindexOp (Boundary.leafSpaceEquiv R)) := by
       rw [controlledContinuation_comp_denote_done]
+      rfl
 
 /-- A program that creates a CQ leaf output followed by an honest-classical continuation has a CQ
 grafted output.  The leaf's unique public coordinate is transported to the continuation's input
@@ -779,7 +784,6 @@ theorem IsHonestClassical.graft_leaf_denote_tensorId
       (tensorIdLinear E (p.graft (fun _ => k)).denote rho) := by
   rw [Program.denote_graft,
     controlledContinuation_leaf_eq_denote_comp_reindexOp]
-  rw [LinearMap.comp_assoc, tensorIdLinear_comp, tensorIdLinear_comp]
   exact hk.denote_tensorId
     (tensorIdLinear E (reindexOp (Boundary.leafSpaceEquiv S))
       (tensorIdLinear E p.denote rho))

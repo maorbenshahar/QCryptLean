@@ -71,10 +71,12 @@ theorem pathKraus_eq_famKraus {R : MultipartiteSystem P} {B : Boundary P} {p : P
       rcases b with ⟨o, r, b⟩
       simp only [Program.Branch.pathKraus, partyKraus]
       rw [ih (A.announce o) b, A.liftedKraus_eq_famKraus, famKraus_mul]
+      rfl
   | @priv R B A k ih =>
       rcases b with ⟨o, r, b⟩
       simp only [Program.Branch.pathKraus, partyKraus]
       rw [ih b, A.liftedKraus_eq_famKraus, famKraus_mul]
+      rfl
 
 end Branch
 

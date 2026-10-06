@@ -625,7 +625,7 @@ noncomputable def relativeEntropy {n : ℕ} [NeZero n]
 /-- The ENNReal quantum relative entropy is non-negative (trivially, as ENNReal ≥ 0). -/
 theorem relativeEntropy_nonneg {n : ℕ} [NeZero n] (ρ σ : DensityOp n) :
     0 ≤ relativeEntropy ρ σ :=
-  zero_le _
+  zero_le
 
 /-- Classical KL divergence is non-negative under the support condition
     (generalizes `classicalRelEntropy_nonneg` which requires full rank). -/
@@ -643,7 +643,7 @@ private theorem classicalRelEntropy_nonneg_support {n : ℕ} [NeZero n]
   · -- Support condition (contrapositive): r_i > 0 → μ_i > 0
     intro i hri
     by_contra h
-    push_neg at h
+    push Not at h
     have hμ := (InfoTheory.VonNeumannEntropy.eigenvaluesOf_spec σ).1 i
     have hμ_zero : InfoTheory.VonNeumannEntropy.eigenvaluesOf σ i = 0 :=
       le_antisymm h hμ
@@ -862,7 +862,7 @@ private theorem classicalRelEntropy_zero_implies_diagonal_eq_eigenvalues {n : �
     have h_supp_pos : ∀ i, r i > 0 → μ i > 0 := by
       intro i hri
       by_contra h
-      push_neg at h
+      push Not at h
       have := le_antisymm h (hμ_nonneg i)
       linarith [h_supp i this]
     have h_kl_eq : ∑ j ∈ S, r j * Real.log (r j / μ j) = 0 := by
@@ -1296,7 +1296,7 @@ theorem klein_inequality {n : ℕ} [NeZero n] (ρ σ : DensityOp n) :
       -- This means relativeEntropyReal ρ σ ≤ 0
       have h_le : relativeEntropyReal ρ σ ≤ 0 := by
         by_contra h_pos
-        push_neg at h_pos
+        push Not at h_pos
         exact absurd h (ne_of_gt (ENNReal.ofReal_pos.mpr h_pos))
       exact relativeEntropyReal_nonpos_imp_eq ρ σ h_supp h_le
     · -- Support condition fails, D = ⊤ ≠ 0

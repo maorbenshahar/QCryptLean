@@ -373,7 +373,7 @@ private lemma flat_support_condition {n k m : ℕ}
   unfold flatJoint flatProduct jointProb marginalProbY
   intro hpos
   have hp_pos : probs i.divNat > 0 := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     have h' : probs i.divNat = 0 := le_antisymm h (hprobs_nonneg _)
     simp only [h', zero_mul] at hpos
     exact absurd hpos (lt_irrefl 0)
@@ -526,7 +526,7 @@ lemma mutual_info_eq_kl_divergence {n k m : ℕ} [NeZero k] [NeZero m]
           · simp only [hpxy0, ↓reduceIte]
             -- When pxy > 0, probs > 0 (since pxy = probs * pyx and pyx >= 0)
             have hprobs_pos : probs x > 0 := by
-              by_contra h; push_neg at h
+              by_contra h; push Not at h
               have h' := le_antisymm h (hprobs_nonneg x)
               rw [hpxy_def x y, h', zero_mul] at hpxy0
               exact hpxy0 rfl

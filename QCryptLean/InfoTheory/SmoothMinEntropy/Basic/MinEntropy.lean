@@ -402,7 +402,7 @@ lemma minFeasibleLambda_le_pow_neg_k_of_conditionalMinEntropyReal_le
       rw [hlog_rpow]
       exact hlog_le2
     exact (Real.log_le_log_iff hpos hrpow_pos).mp h_log_le
-  · push_neg at hpos
+  · push Not at hpos
     have hzero : lam = 0 := le_antisymm hpos hlam_nn
     rw [hzero]
     exact Real.rpow_nonneg (by norm_num) _
@@ -580,7 +580,7 @@ lemma isFeasible_of_ofReal_lt_conditionalMinEntropy
   have hfeas : hasFeasibleLambda ρ σ := by
     by_contra h
     rw [conditionalMinEntropy_eq_zero_of_not_hasFeasibleLambda ρ σ h] at hH
-    exact (not_lt_of_ge (zero_le _)) hH
+    exact (not_lt_of_ge (zero_le)) hH
   apply isFeasible_mono_t (isFeasible_minFeasibleLambda_of_hasFeasibleLambda ρ σ hfeas)
   by_cases hpos : 0 < minFeasibleLambda ρ σ
   · rw [conditionalMinEntropy, if_pos hpos] at hH
@@ -623,7 +623,7 @@ lemma conditionalMinEntropyOpt_eq_iSup {X : Type*} [Fintype X] {n : ℕ}
     by_cases hfeas : hasFeasibleLambda ρ σ
     · exact le_sSup ⟨σ, hfeas, rfl⟩
     · rw [conditionalMinEntropy_eq_zero_of_not_hasFeasibleLambda ρ σ hfeas]
-      exact zero_le _
+      exact zero_le
 
 /-!
 ## POVM Guessing Probability Formulation
@@ -1113,7 +1113,7 @@ lemma conditionalMinEntropyReal_le_log_card {X : Type*} [Fintype X] [Nonempty X]
       linarith
     gcongr
   · -- Degenerate case: `minFeasibleLambda ρ σ ≤ 0`, so the LHS is `0`.
-    push_neg at hm_pos
+    push Not at hm_pos
     have hm_zero : minFeasibleLambda ρ σ = 0 :=
       le_antisymm hm_pos (minFeasibleLambda_nonneg ρ σ)
     rw [hm_zero, Real.log_zero, neg_zero, zero_div]

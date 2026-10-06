@@ -366,7 +366,7 @@ theorem binaryEntropyBitsHalfRoot_approx : binaryEntropyBitsHalfRoot ∈ Set.Ioo
   · -- Lower bound: binaryEntropyBitsHalfRoot > 0.109
     suffices h : binaryEntropyBitsHalfRoot > 0.11 by linarith
     by_contra h
-    push_neg at h
+    push Not at h
     rcases eq_or_lt_of_le h with heq | hlt
     · rw [heq] at ht_ent
       exact absurd ht_ent (by linarith [binaryEntropyBits_011_lt_half])
@@ -377,7 +377,7 @@ theorem binaryEntropyBitsHalfRoot_approx : binaryEntropyBitsHalfRoot ∈ Set.Ioo
       linarith [binaryEntropyBits_011_lt_half]
   · -- Upper bound: binaryEntropyBitsHalfRoot < 0.112
     by_contra h
-    push_neg at h
+    push Not at h
     rcases eq_or_lt_of_le h with heq | hlt
     · rw [← heq] at ht_ent
       exact absurd ht_ent (by linarith [binaryEntropyBits_0112_gt_half])

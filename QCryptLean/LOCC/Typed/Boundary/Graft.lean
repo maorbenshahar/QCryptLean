@@ -190,7 +190,8 @@ the attached continuation space. -/
     (C : (Boundary.leaf R).Exit → Boundary P) :
     graftInclKraus (.leaf R) C () =
       (1 : Matrix (C ()).space (C ()).space ℂ) := by
-  ext p q
+  classical
+  refine Matrix.ext (fun (p q : (C ()).space) => ?_)
   simp only [graftInclKraus, Matrix.submatrix_apply, sigmaInclKraus_apply,
     graftSpaceEquiv_leaf_apply, Matrix.one_apply, id_eq]
   apply if_congr

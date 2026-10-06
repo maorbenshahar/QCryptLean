@@ -126,8 +126,10 @@ theorem retainedAnalysisProgram_denote_apply
         PrivateAction.computationalMeasurement_out]
     unfold retainedAnalysisProgram retainedAnalysisPrefix permutationStage
     simp only [AnnouncedAction.then, Program.graft_announced]
+    change Program.announced _ _ = Program.announced _ _
     congr 1
     funext pi
+    change Program.announced _ _ = Program.announced _ _
     congr 1
     funext u
     cases u
@@ -149,7 +151,8 @@ theorem retainedAnalysisProgram_denote_apply
       (sigma : TypedLOCC.Op R.total) (x : R.total) :
       measure R i sigma (cast (congrArg MultipartiteSystem.total (R.set_self i).symm) x)
         (cast (congrArg MultipartiteSystem.total (R.set_self i).symm) x) = sigma x x := by
-    rw [← MultipartiteSystem.splitAtSet_self_symm]
+    refine (congrArg₂ (fun u v => measure R i sigma u v)
+      (R.splitAtSet_self_symm i x) (R.splitAtSet_self_symm i x)).symm.trans ?_
     simpa only [measure, if_pos rfl] using
       PrivateAction.computationalMeasurement_liftedChannel_apply R i sigma x x
   have hMeasurements (sigma : TypedLOCC.Op (FinalStage.rawSystem n).total)
@@ -170,7 +173,10 @@ theorem retainedAnalysisProgram_denote_apply
           cast (congrArg MultipartiteSystem.total hb).symm
             (cast (congrArg MultipartiteSystem.total ha).symm x) := by
         simp only [cast_cast]
-      rw [hcoord, hMeasureDiagonal, hMeasureDiagonal]
+        rfl
+      rw [hcoord]
+      exact (hMeasureDiagonal (alicePrivateMeasurement n).out .bob _ _).trans
+        (hMeasureDiagonal (FinalStage.rawSystem n) .alice sigma x)
     dsimp only [QKD.BB84.Reduction.privateMeasurements]
     rw [hPrivate, hPrivate]
     rw [Program.denote_cast_apply hf rfl]
@@ -179,7 +185,12 @@ theorem retainedAnalysisProgram_denote_apply
     rw [rawClassicalTailProgram_output_apply, rawClassicalTailProgram_output_apply]
     dsimp only [measure, alicePrivateMeasurement, bobPrivateMeasurement] at hdiag
     dsimp only [alicePrivateMeasurement, bobPrivateMeasurement]
-    simp only [hdiag]
+    apply if_congr Iff.rfl _ rfl
+    apply Finset.sum_congr rfl
+    intro x _
+    apply Finset.sum_congr rfl
+    intro st _
+    exact if_congr Iff.rfl (congrArg (fun z : ℂ => _ * z) (hdiag x)) rfl
   let KA (pi : Equiv.Perm (Fin n)) :=
     localKrausLift (FinalStage.rawSystem n) .alice (Fin (2 ^ n))
       (QKD.BB84.Model.siftPermHalf n peSel xSel pi)
@@ -233,14 +244,16 @@ theorem retainedAnalysisProgram_denote_apply
     refine (Program.denote_then_publicSpaceEquiv_symm_apply
       (bobSiftUnitAnnouncement n peSel xSel pi) (Equiv.refl Unit) (fun _ => rfl)
       (fun _ => B) _ _ () a b).trans ?_
-    rw [Program.denote_cast_apply (hout pi) rfl]
+    refine (Program.denote_cast_apply (hout pi) rfl _ _ _ _).trans ?_
     simp only [Equiv.cast_refl, Equiv.refl_apply]
-    rw [hMeasurements, hBob, hAlice, map_smul]
-    change tail.denote (reindexOp (Equiv.cast (congrArg MultipartiteSystem.total (hout pi)))
-      (weight • matrixConjLinear (KB pi) (matrixConjLinear (KA pi) rho))) a b = _
-    simp only [reindexOp, map_smul,
-      Matrix.smul_apply, smul_eq_mul]
-    rfl
+    rw [hMeasurements, hBob, hAlice]
+    refine (congrArg (fun tau :
+      TypedLOCC.Op ((bobSiftUnitAnnouncement n peSel xSel pi).out ()).total =>
+      tail.denote (Matrix.reindex (Equiv.cast (congrArg MultipartiteSystem.total (hout pi)))
+        (Equiv.cast (congrArg MultipartiteSystem.total (hout pi))) tau) a b)
+      ((matrixConjLinear (KB pi)).map_smul weight _)).trans ?_
+    change tail.denote (weight • retainedAnalysisSiftedState peSel xSel pi rho) a b = _
+    exact congrFun (congrFun (tail.denote.map_smul weight _) a) b
   have hCross (pi pj : Equiv.Perm (Fin n)) (hpi : pi ≠ pj) (a b : B.space) :
       (retainedAnalysisProgram nK mZ mX ell ellEV leakEC ec delta Q).denote rho
           (E.symm (pi, a)) (E.symm (pj, b)) = 0 := by
@@ -432,6 +445,7 @@ theorem reindex_retainedAnalysisSiftedState {n : ℕ}
     refine (localKrausLift_alice_apply (FinalStage.rawSystem n) kappa
       i.divNat i.modNat j.modNat j.divNat).trans ?_
     simp [Quantum.TensorProducts.Op.tensor, Matrix.reindex_apply, Matrix.one_apply]
+    rfl
   have hliftB : Matrix.reindex eB eA kb =
       Quantum.TensorProducts.Op.tensor (1 : Quantum.Operators.Op (2 ^ n)) kappa := by
     ext i j
@@ -444,6 +458,7 @@ theorem reindex_retainedAnalysisSiftedState {n : ℕ}
     refine (localKrausLift_bob_apply ((alicePermutationAnnouncement n peSel xSel).out pi)
       kappa i.divNat j.divNat i.modNat j.modNat).trans ?_
     simp [Quantum.TensorProducts.Op.tensor, Matrix.reindex_apply, Matrix.one_apply]
+    rfl
   have hprefix : Matrix.reindex eB e (kb * ka) =
       Quantum.TensorProducts.Op.tensor kappa kappa := by
     change (kb * ka).submatrix eB.symm e.symm = _
@@ -473,7 +488,9 @@ theorem reindex_retainedAnalysisSiftedState {n : ℕ}
   unfold retainedAnalysisSiftedState
   rw [htransport]
   change coordinateLinear e eB ((matrixConjLinear kb).comp (matrixConjLinear ka)) sigma = _
-  rw [← matrixConjLinear_mul, coordinateMatrixConj_eq, hprefix]
+  rw [← matrixConjLinear_mul]
+  refine (congrArg (fun F => F sigma) (coordinateMatrixConj_eq e eB (kb * ka))).trans ?_
+  rw [hprefix]
   rfl
 
 /-- Apply the genuine round-to-Alice/Bob regrouping independently in every reference block. -/

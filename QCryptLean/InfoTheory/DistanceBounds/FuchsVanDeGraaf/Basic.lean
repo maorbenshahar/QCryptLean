@@ -38,7 +38,7 @@ structure that allows direct eigenvalue analysis.
 /-- For a pure state |ψ⟩⟨ψ|, the quadratic form ⟨v|(|ψ⟩⟨ψ|)|v⟩ equals |⟨v|ψ⟩|². -/
 private lemma pure_quadratic_form {n : ℕ} (ψ : Ket n) (v : Fin n → ℂ) :
     (star v ⬝ᵥ ((ψ * ψ.dag).mulVec v)).re = Complex.normSq (star v ⬝ᵥ ψ.vec) := by
-  simp only [dotProduct, mulVec, instHMulKetBra, Ket.dag, Matrix.of_apply,
+  simp only [dotProduct, mulVec, ket_mul_bra_apply, Ket.dag_vec,
              Pi.star_apply, starRingEnd_apply]
   have h_factor : ∑ x, star (v x) * ∑ x_1, ψ.vec x * star (ψ.vec x_1) * v x_1 =
       (∑ i, star (v i) * ψ.vec i) * (∑ j, star (ψ.vec j) * v j) := by
@@ -268,7 +268,7 @@ private lemma pos_sum_sq_le_of_key_bounds {n : ℕ} [NeZero n]
     rw [h_pos_sum_zero, zero_pow (by norm_num : 2 ≠ 0)]
     linarith [h_fid_le]
   · -- Case 2: There exists a negative eigenvalue
-    push_neg at h_all_nonneg
+    push Not at h_all_nonneg
     obtain ⟨k, h_k_neg⟩ := h_all_nonneg
     -- At most one negative eigenvalue: if β_k > 1/2 for each negative k,
     -- and ∑ β = 1 with β ≥ 0, there can be at most one.
@@ -292,7 +292,7 @@ private lemma pos_sum_sq_le_of_key_bounds {n : ℕ} [NeZero n]
       linarith only [h_sum_gt, h_sum_le, h_β_sum]
     -- All non-k eigenvalues are ≥ 0
     have h_rest_nonneg : ∀ j, j ≠ k → 0 ≤ ev j := by
-      intro j h_ne; by_contra h_neg; push_neg at h_neg
+      intro j h_ne; by_contra h_neg; push Not at h_neg
       exact h_ne (h_unique_neg j h_neg)
     -- Since trace = 0 and only k is negative: pos_sum = |ev k| = -ev k
     have h_neg_sum : ev k = -(∑ j ∈ Finset.univ.erase k, ev j) := by
@@ -594,7 +594,7 @@ lemma traceDistance_sq_le_one_sub_fidelityPureSq {n : ℕ} [NeZero n] (ρ : Dens
       congr 1; ext i
       by_cases hx : 0 ≤ ev i
       · rw [max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), sub_zero]
-      · push_neg at hx
+      · push Not at hx
         rw [max_eq_left (le_of_lt hx), max_eq_right (neg_pos.mpr hx).le, zero_sub, neg_neg]
     rw [h_sum_zero, Finset.sum_sub_distrib] at h1
     linarith only [h1]
@@ -603,7 +603,7 @@ lemma traceDistance_sq_le_one_sub_fidelityPureSq {n : ℕ} [NeZero n] (ρ : Dens
       intro i
       by_cases hx : 0 ≤ ev i
       · rw [abs_of_nonneg hx, max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), add_zero]
-      · push_neg at hx
+      · push Not at hx
         rw [abs_of_neg hx, max_eq_left (le_of_lt hx), zero_add, max_eq_right (neg_pos.mpr hx).le]
     have h_sum_abs : ∑ i, |ev i| = pos_sum + neg_sum := by
       conv_lhs => rw [show ∑ i, |ev i| = ∑ i, (max 0 (ev i) + max 0 (-ev i)) from
@@ -703,7 +703,7 @@ lemma traceDistance_sq_eq_one_sub_fidelityPureSq_pure_pure {n : ℕ} [NeZero n]
       congr 1; ext i
       by_cases hx : 0 ≤ ev i
       · rw [max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), sub_zero]
-      · push_neg at hx
+      · push Not at hx
         rw [max_eq_left (le_of_lt hx), max_eq_right (neg_pos.mpr hx).le, zero_sub, neg_neg]
     rw [h_sum_zero, Finset.sum_sub_distrib] at h1
     linarith only [h1]
@@ -712,7 +712,7 @@ lemma traceDistance_sq_eq_one_sub_fidelityPureSq_pure_pure {n : ℕ} [NeZero n]
       intro i
       by_cases hx : 0 ≤ ev i
       · rw [abs_of_nonneg hx, max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), add_zero]
-      · push_neg at hx
+      · push Not at hx
         rw [abs_of_neg hx, max_eq_left (le_of_lt hx), zero_add,
             max_eq_right (neg_pos.mpr hx).le]
     have h_sum_abs : ∑ i, |ev i| = pos_sum + neg_sum := by
@@ -734,7 +734,7 @@ lemma traceDistance_sq_eq_one_sub_fidelityPureSq_pure_pure {n : ℕ} [NeZero n]
         from Finset.sum_congr rfl (fun i _ => by
           by_cases hx : 0 ≤ ev i
           · rw [max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx)]; ring
-          · push_neg at hx
+          · push Not at hx
             rw [max_eq_left (le_of_lt hx), max_eq_right (neg_pos.mpr hx).le]; ring)]
       rw [Finset.sum_add_distrib]
     have h_pos_sq : ∑ i, (max 0 (ev i)) ^ 2 ≤ pos_sum ^ 2 :=

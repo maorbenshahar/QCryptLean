@@ -134,7 +134,7 @@ lemma le_two_mul_of_forall_hashing_bound (d ε : ℝ) (z : ℕ)
     Filter.tendsto_neg_atTop_atBot
   have hs := (Real.continuous_sqrt.tendsto 0).comp
     (show Filter.Tendsto (fun k : ℝ => (z : ℝ) * 2 ^ (-k)) Filter.atTop (nhds 0) by
-      simpa using hp.const_mul (z : ℝ))
+      simpa only [Function.comp_def, mul_zero] using hp.const_mul (z : ℝ))
   have hf := (hs.const_mul (1 / 2 : ℝ)).add_const (2 * ε)
   simpa using ge_of_tendsto' hf h
 

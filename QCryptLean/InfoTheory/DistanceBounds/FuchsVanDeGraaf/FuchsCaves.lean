@@ -791,7 +791,7 @@ lemma sigmaD_mul_coordProj {n : ℕ} (σ : DensityOp n) :
   ext k
   by_cases hk : (sigmaHerm σ).eigenvalues k ≠ 0
   · simp [hk]
-  · push_neg at hk
+  · push Not at hk
     simp [hk]
 
 /-- The coordinate projector fixes the eigenvalue diagonal on the left: `(S Sᵀ) · D = D`. -/
@@ -802,7 +802,7 @@ lemma coordProj_mul_sigmaD {n : ℕ} (σ : DensityOp n) :
   ext k
   by_cases hk : (sigmaHerm σ).eigenvalues k ≠ 0
   · simp [hk]
-  · push_neg at hk
+  · push Not at hk
     simp [hk]
 
 /-- The compression of `σ` to its support: `V† σ.toOp V`, the `r × r` diagonal of the

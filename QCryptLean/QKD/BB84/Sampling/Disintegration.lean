@@ -333,7 +333,7 @@ theorem reconstructedStatusRawLaw_eq
                 if HasQuotas nK mZ mX x then rawControlLaw N pA pB x else 0) = 0 :=
             hsuccess
           have hterm :=
-            (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => zero_le _)).mp hsumzero
+            (Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => zero_le)).mp hsumzero
               omega (Finset.mem_univ omega)
           simpa [hq] using hterm.symm
         · simp [hq]

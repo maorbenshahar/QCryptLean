@@ -400,8 +400,11 @@ theorem realProtocolMapBare_apply (n m ℓ ℓEV : ℕ) [NeZero n] (peSel xSel :
         ((bb84SiftedPEAnnounceEveVisibleProtocol n m ℓ ℓEV peSel xSel leakEC ec Q
             δ).realProtocolMap (eveDim := 1) (Op.castDim (Nat.mul_one (4 ^ n)).symm A)) := by
   simp only [bb84RealProtocolMapBare, bb84ClassicalPostBare, LinearMap.comp_apply,
-    Op.castDimLinear, LinearMap.coe_mk, AddHom.coe_mk, bb84SiftedPEAnnounceEveVisibleProtocol,
-    measurementChannel_one_castDim]
+    Op.castDimLinear, LinearMap.coe_mk, AddHom.coe_mk, bb84SiftedPEAnnounceEveVisibleProtocol]
+  exact congrArg (fun M =>
+    Op.castDim (Nat.mul_one (bb84PEAnnounceBaseOutputDim n m ℓ ℓEV peSel leakEC))
+      (bb84.retainedSiftedPEAnnouncePrivacyAmplifyAndAbortLinearMap
+        n m ℓ ℓEV 1 peSel xSel leakEC ec δ Q M)) (measurementChannel_one_castDim n A).symm
 
 /-- **The general-`m` headline channel, computed.** Writes `bb84SymRealChannel` as the `(1/n!)`
 mixture over `π` of "conjugate by the sift-after-permutation, run the measure-and-postprocess

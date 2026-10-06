@@ -63,8 +63,8 @@ set_option linter.unusedFintypeInType false in
 function. -/
 theorem differentiable_matrix_diagonal {d : n → ℂ → ℂ} (hd : ∀ i, Differentiable ℂ (d i)) :
     Differentiable ℂ fun z => Matrix.diagonal fun i => d i z := by
-  rw [differentiable_pi]; intro a
-  rw [differentiable_pi]; intro b
+  apply differentiable_pi.mpr; intro a
+  apply differentiable_pi.mpr; intro b
   simp only [Matrix.diagonal_apply]
   split_ifs with h
   · subst h; exact hd a
@@ -75,8 +75,8 @@ omit [DecidableEq n] in
 each entry of the product is a finite sum of products of differentiable scalars. -/
 theorem differentiable_matrix_mul {f g : ℂ → Matrix n n ℂ} (hf : Differentiable ℂ f)
     (hg : Differentiable ℂ g) : Differentiable ℂ fun z => f z * g z := by
-  rw [differentiable_pi]; intro a
-  rw [differentiable_pi]; intro b
+  apply differentiable_pi.mpr; intro a
+  apply differentiable_pi.mpr; intro b
   simp_rw [Matrix.mul_apply]
   refine Differentiable.fun_sum fun k _ => ?_
   exact ((differentiable_pi.mp ((differentiable_pi.mp hf) a)) k).mul
@@ -100,8 +100,8 @@ set_option linter.unusedFintypeInType false in
 function is differentiable. -/
 theorem differentiable_matrix_comp {f : ℂ → Matrix n n ℂ} (hf : Differentiable ℂ f)
     {g : ℂ → ℂ} (hg : Differentiable ℂ g) : Differentiable ℂ fun z => f (g z) := by
-  rw [differentiable_pi]; intro a
-  rw [differentiable_pi]; intro b
+  apply differentiable_pi.mpr; intro a
+  apply differentiable_pi.mpr; intro b
   exact ((differentiable_pi.mp ((differentiable_pi.mp hf) a)) b).comp hg
 
 omit [DecidableEq n] in

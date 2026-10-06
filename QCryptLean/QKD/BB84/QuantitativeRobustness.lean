@@ -276,7 +276,8 @@ theorem one_sub_honestAbortBudgetKL_le_acceptProbability_of_honestOperation
     hq0 hq1 hband hdec hZ hZ1 hX hX1
   rw [← p.abortProbability_eq_honestSource_of_honestOperation ρ q h] at habort
   have hsplit := p.protocol.acceptProbability_add_abortProbability ρ
-  rw [h.trace_eq_one, Complex.one_re] at hsplit
+  replace hsplit := hsplit.trans (congrArg Complex.re h.trace_eq_one)
+  simp only [Complex.one_re] at hsplit
   linarith
 
 /-- Honest acceptance is at least one minus the total abort budget under matched-probability
@@ -291,7 +292,8 @@ theorem one_sub_honestAbortBudget_le_acceptProbability_of_honestOperation
     h.rate_nonneg h.rate_le_one hB hS
   rw [← p.abortProbability_eq_honestSource_of_honestOperation ρ q h] at habort
   have hsplit := p.protocol.acceptProbability_add_abortProbability ρ
-  rw [h.trace_eq_one, Complex.one_re] at hsplit
+  replace hsplit := hsplit.trans (congrArg Complex.re h.trace_eq_one)
+  simp only [Complex.one_re] at hsplit
   linarith
 
 end Parameters

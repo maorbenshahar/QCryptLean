@@ -105,7 +105,7 @@ theorem traceDistance_le_one {n : ℕ} [NeZero n] (ρ σ : DensityOp n) :
       intro i
       by_cases hx : 0 ≤ h_herm.eigenvalues i
       · rw [abs_of_nonneg hx, max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), add_zero]
-      · push_neg at hx
+      · push Not at hx
         rw [abs_of_neg hx, max_eq_left (le_of_lt hx), zero_add,
             max_eq_right (neg_pos.mpr hx).le]
     -- pos_sum = neg_sum since trace = 0
@@ -117,7 +117,7 @@ theorem traceDistance_le_one {n : ℕ} [NeZero n] (ρ σ : DensityOp n) :
         congr 1; ext i
         by_cases hx : 0 ≤ h_herm.eigenvalues i
         · rw [max_eq_right hx, max_eq_left (neg_nonpos_of_nonneg hx), sub_zero]
-        · push_neg at hx
+        · push Not at hx
           rw [max_eq_left (le_of_lt hx), max_eq_right (neg_pos.mpr hx).le, zero_sub, neg_neg]
       rw [h_sum_zero, Finset.sum_sub_distrib] at h1
       linarith
