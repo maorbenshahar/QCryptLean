@@ -1,0 +1,26 @@
+name = "QCryptLean"
+version = "0.1.0"
+keywords = ["math"]
+defaultTargets = ["QCryptLean"]
+testDriver = "QCryptLeanTest"
+lintDriver = "batteries/runLinter"
+
+[leanOptions]
+pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+relaxedAutoImplicit = false
+weak.linter.mathlibStandardSet = true
+weak.linter.style.header = false # no per-file copyright headers; LICENSE covers the repository
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.34.1"
+
+[[lean_lib]]
+name = "QCryptLean"
+
+# Regression tests and worked examples, mirroring the library layout; built by `lake test`.
+[[lean_lib]]
+name = "QCryptLeanTest"
+globs = ["QCryptLeanTest.+"]
