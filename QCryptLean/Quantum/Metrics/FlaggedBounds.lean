@@ -34,7 +34,7 @@ theorem fidelity_cqBlock_eq_sum [DecidableEq I]
     Matrix.PosSemidef.sqrt_blockDiagonal hp, Matrix.trace_blockDiagonal, Complex.re_sum]
 
 /-- Discarding a classical flag gives finite superadditivity of fidelity. -/
-theorem sum_fidelity_le_fidelity_sum [Nonempty X] (A B : I → PosSemidefOp X) :
+theorem sum_fidelity_le_fidelity_sum (A B : I → PosSemidefOp X) :
     ∑ i, fidelity (A i) (B i) ≤
       fidelity (sumPosSemidefOp Finset.univ A) (sumPosSemidefOp Finset.univ B) := by
   classical

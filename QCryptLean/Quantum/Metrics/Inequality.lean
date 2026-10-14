@@ -35,7 +35,7 @@ theorem traceDistance_apply_le (Φ : Operation X Y) (h : IsChannel Φ)
   exact mul_le_mul_of_nonneg_left (traceNorm_apply_le Φ h (A - B)) (by norm_num)
 
 /-- Uhlmann fidelity increases under a channel, with explicitly specified positive images. -/
-theorem fidelity_le_apply [Nonempty Y] (Φ : Operation X Y) (h : IsChannel Φ)
+theorem fidelity_le_apply (Φ : Operation X Y) (h : IsChannel Φ)
     (A B : PosSemidefOp X) (C D : PosSemidefOp Y)
     (hC : C.val = Φ A.val) (hD : D.val = Φ B.val) : fidelity A B ≤ fidelity C D := by
   classical

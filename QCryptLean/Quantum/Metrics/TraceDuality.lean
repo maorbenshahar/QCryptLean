@@ -25,28 +25,31 @@ open scoped ComplexOrder MatrixOrder Matrix.Norms.L2Operator
 
 variable {X R : Type*} [Fintype X] [Fintype R]
 
-open Classical in
-/-- The trace pairing is bounded by L2 operator norm times trace norm. -/
-theorem norm_trace_mul_le_opNorm_mul_traceNorm [Nonempty X] (W A : Op X) :
+/-- `‖(W * A).trace‖` is at most the operator norm of `W` times the trace norm of `A`. -/
+theorem norm_trace_mul_le_opNorm_mul_traceNorm [DecidableEq X] (W A : Op X) :
     ‖(W * A).trace‖ ≤ ‖W‖ * traceNorm A := by
   classical
-  obtain ⟨U, he⟩ := Matrix.exists_unitary_mul_eq_sqrt_gram A
-  have hA : A = U.valᴴ * CFC.sqrt (Aᴴ * A) := by
-    rw [← he, ← Matrix.mul_assoc, show U.valᴴ * U.val = 1 from U.property.1, Matrix.one_mul]
-  have hn : ‖W * U.valᴴ‖ ≤ ‖W‖ := by
+  rcases isEmpty_or_nonempty X with hX | hX
+  · simp [Subsingleton.elim W 0, Subsingleton.elim A 0]
+  · obtain ⟨U, he⟩ := Matrix.exists_unitary_mul_eq_sqrt_gram A
+    have hA : A = U.valᴴ * CFC.sqrt (Aᴴ * A) := by
+      rw [← he, ← Matrix.mul_assoc, show U.valᴴ * U.val = 1 from U.property.1,
+        Matrix.one_mul]
+    have hn : ‖W * U.valᴴ‖ ≤ ‖W‖ := by
+      calc
+        _ ≤ ‖W‖ * ‖U.valᴴ‖ := Matrix.l2_opNorm_mul _ _
+        _ = ‖W‖ := by
+          rw [Matrix.l2_opNorm_conjTranspose, CStarRing.norm_of_mem_unitary U.property,
+            mul_one]
     calc
-      _ ≤ ‖W‖ * ‖U.valᴴ‖ := Matrix.l2_opNorm_mul _ _
-      _ = ‖W‖ := by
-        rw [Matrix.l2_opNorm_conjTranspose, CStarRing.norm_of_mem_unitary U.property, mul_one]
-  calc
-    ‖(W * A).trace‖ = ‖(W * U.valᴴ * CFC.sqrt (Aᴴ * A)).trace‖ := by
-      conv_lhs => rw [hA]
-      rw [Matrix.mul_assoc]
-    _ ≤ ‖W * U.valᴴ‖ * (CFC.sqrt (Aᴴ * A)).trace.re :=
-      (nonneg_iff_posSemidef.mp (CFC.sqrt_nonneg _)).norm_trace_mul_le _
-    _ ≤ ‖W‖ * traceNorm A := by
-      rw [← traceNorm_eq_trace_sqrt]
-      exact mul_le_mul_of_nonneg_right hn (traceNorm_nonneg A)
+      ‖(W * A).trace‖ = ‖(W * U.valᴴ * CFC.sqrt (Aᴴ * A)).trace‖ := by
+        conv_lhs => rw [hA]
+        rw [Matrix.mul_assoc]
+      _ ≤ ‖W * U.valᴴ‖ * (CFC.sqrt (Aᴴ * A)).trace.re :=
+        (nonneg_iff_posSemidef.mp (CFC.sqrt_nonneg _)).norm_trace_mul_le _
+      _ ≤ ‖W‖ * traceNorm A := by
+        rw [← traceNorm_eq_trace_sqrt]
+        exact mul_le_mul_of_nonneg_right hn (traceNorm_nonneg A)
 
 /-- Fidelity is the trace norm of the product of the positive square roots. -/
 theorem traceNorm_sqrt_mul_sqrt (A B : PosSemidefOp X) :
@@ -60,8 +63,7 @@ theorem traceNorm_sqrt_mul_sqrt (A B : PosSemidefOp X) :
   rfl
 
 /-- Rectangular purifying matrices have overlap bounded by fidelity of their left Grams. -/
-theorem norm_trace_conjTranspose_mul_le_fidelity [Nonempty X]
-    (A B : Matrix X R ℂ) :
+theorem norm_trace_conjTranspose_mul_le_fidelity (A B : Matrix X R ℂ) :
     ‖(Aᴴ * B).trace‖ ≤ fidelity ⟨A * Aᴴ, posSemidef_self_mul_conjTranspose A⟩
       ⟨B * Bᴴ, posSemidef_self_mul_conjTranspose B⟩ := by
   classical
@@ -89,7 +91,7 @@ theorem norm_trace_conjTranspose_mul_le_fidelity [Nonempty X]
     ((mul_le_of_le_one_left (traceNorm_nonneg _) hn).trans_eq (traceNorm_sqrt_mul_sqrt P Q))
 
 /-- Arbitrary finite ancillas obey the purification overlap bound. -/
-theorem norm_overlap_le_fidelity [Nonempty X] (A B : PosSemidefOp X)
+theorem norm_overlap_le_fidelity (A B : PosSemidefOp X)
     (v w : Ket (X × R)) (hv : partialTraceRight v.projector = A.val)
     (hw : partialTraceRight w.projector = B.val) :
     ‖(v.dag * w : ℂ)‖ ≤ fidelity A B := by

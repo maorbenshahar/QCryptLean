@@ -25,7 +25,7 @@ open scoped ComplexOrder
 
 variable {X R : Type*} [Fintype X] [Fintype R] [Nonempty X] [Nonempty R]
 
-omit [Nonempty R] in
+omit [Nonempty R] [Nonempty X] in
 /-- Generalized fidelity increases under a right partial trace.
 This follows from fidelity data processing and trace preservation. -/
 theorem SubDensityOp.fidelityGen_le_fidelityGen_partialTraceRight
@@ -42,13 +42,14 @@ theorem SubDensityOp.fidelityGen_le_fidelityGen_partialTraceRight
   rw [ht, ht]
   exact add_le_add hf le_rfl
 
-omit [Nonempty R] in
+omit [Nonempty R] [Nonempty X] in
 /-- Purified distance contracts under a right partial trace. -/
 theorem SubDensityOp.purifiedDistance_partialTraceRight_le (ρ σ : SubDensityOp (X × R)) :
     purifiedDistance ρ.partialTraceRight σ.partialTraceRight ≤ purifiedDistance ρ σ :=
   purifiedDistance_le_of_le_fidelityGen _ _ _ _
     (ρ.fidelityGen_le_fidelityGen_partialTraceRight σ)
 
+omit [Nonempty X] in
 /-- An arbitrary target marginal admits an extension attaining the marginal fidelity.
 The proof uses native prerequisites. -/
 theorem SubDensityOp.exists_extension_of_partialTraceRight_fidelityGen_eq
@@ -108,6 +109,7 @@ theorem SubDensityOp.exists_extension_of_partialTraceRight_fidelityGen_eq
   change _ + Real.sqrt ((1 - ρ.trace) * (1 - (Matrix.partialTraceRight u.projector).trace.re)) = _
   rw [ht, hρ]
 
+omit [Nonempty X] in
 /-- The same extension attains the distance of the two marginals. -/
 theorem SubDensityOp.exists_extension_of_partialTraceRight_purifiedDistance_eq
     (ρ : SubDensityOp (X × R)) (σ : SubDensityOp X) :

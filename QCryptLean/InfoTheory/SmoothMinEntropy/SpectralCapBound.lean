@@ -15,9 +15,7 @@ namespace InfoTheory.SmoothMinEntropy.SpectralCap
 open Matrix Quantum.Operators
 open scoped ComplexOrder MatrixOrder
 variable {C Q : Type*} [Fintype C] [Fintype Q] [DecidableEq C] [DecidableEq Q]
-  [Nonempty C] [Nonempty Q]
 
-omit [Nonempty C] in
 /-- A tilted-moment budget yields a fixed-reference smooth entropy floor on the full CQ ball. -/
 theorem ofReal_le_smoothMinEntropy_of_moment_bound (ρ : CQState C Q)
     (hρ : ∑ c, (ρ.stateMap c).trace = 1) (σ : SubDensityOp Q) (hscale : HasScale ρ σ)

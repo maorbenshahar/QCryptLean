@@ -12,7 +12,7 @@ import QCryptLean.Quantum.Operators.Projector
 namespace Quantum.Metrics
 open Matrix Quantum.Operators
 open scoped ComplexOrder MatrixOrder
-variable {X I : Type*} [Fintype X] [Fintype I] [Nonempty X] [Nonempty I]
+variable {X I : Type*} [Fintype X] [Fintype I] [Nonempty I]
 
 omit [Nonempty I] in
 /-- Projecting each term in a positive decomposition retains at least its output trace

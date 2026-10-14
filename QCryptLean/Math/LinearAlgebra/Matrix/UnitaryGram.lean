@@ -118,10 +118,10 @@ theorem exists_coisometry_of_rowGram_eq
   · have h := congrArg Matrix.conjTranspose he
     simpa only [conjTranspose_mul, conjTranspose_conjTranspose, Matrix.mul_assoc] using h.symm
 
-open scoped MatrixOrder ComplexOrder Classical in
+open scoped MatrixOrder ComplexOrder in
 /-- A unitary left factor sends a square matrix to the positive square root of its Gram matrix. -/
 theorem exists_unitary_mul_eq_sqrt_gram
-    {X : Type*} [Fintype X] (A : Matrix X X ℂ) :
+    {X : Type*} [Fintype X] [DecidableEq X] (A : Matrix X X ℂ) :
     ∃ U : unitaryGroup X ℂ, U.val * A = CFC.sqrt (Aᴴ * A) := by
   classical
   have hp := nonneg_iff_posSemidef.mp (CFC.sqrt_nonneg (Aᴴ * A))

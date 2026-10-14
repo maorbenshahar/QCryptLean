@@ -66,7 +66,7 @@ theorem IsFeasible.subconvexMixture
     Finset.mul_sum, mul_left_comm (p _)] using hn
 
 /-- Every common extended smooth-entropy floor passes to a finite subconvex CQ mixture. -/
-theorem smoothMinEntropy_subconvexMixture_floor [DecidableEq C] [Nonempty C] [Nonempty Q]
+theorem smoothMinEntropy_subconvexMixture_floor [DecidableEq C]
     (p : I → ℝ) (hp : ∀ i, 0 ≤ p i) (hs : ∑ i, p i ≤ 1)
     (ρ : I → CQState C Q) (τ : CQState C Q)
     (hτ : ∀ c, (τ.stateMap c).toOp = ∑ i, (p i : ℂ) • ((ρ i).stateMap c).toOp)
