@@ -10,7 +10,7 @@ complex matrices that are independent of quantum-channel infrastructure.
 - `Matrix.IsHermitian.eq_sum_sqrt_eigenvalues_vecMulVec`: Hermitian matrix with
   nonnegative eigenvalues as a full eigenvector outer-product sum.
 - `Matrix.PosSemidef.exists_eq_sum_vecMulVec`: PSD matrix as a sum of exactly `Matrix.rank M`
-  rank-one outer products.
+  rank-one outer products, over any finite index type.
 -/
 
 open scoped Matrix BigOperators ComplexConjugate ComplexOrder
@@ -23,31 +23,31 @@ namespace Math.SpectralTheory
 /-- A Hermitian matrix with nonnegative eigenvalues is the sum of outer products
 of eigenvectors scaled by the square roots of those eigenvalues. -/
 lemma _root_.Matrix.IsHermitian.eq_sum_sqrt_eigenvalues_vecMulVec
-    {N : ℕ} {M : Matrix (Fin N) (Fin N) ℂ} (hH : M.IsHermitian)
-    (h_nonneg : ∀ k : Fin N, 0 ≤ hH.eigenvalues k) :
+    {n : Type*} [Fintype n] [DecidableEq n] {M : Matrix n n ℂ} (hH : M.IsHermitian)
+    (h_nonneg : ∀ k : n, 0 ≤ hH.eigenvalues k) :
     M =
-      ∑ k : Fin N,
+      ∑ k : n,
         Matrix.vecMulVec
           (fun i => (Real.sqrt (hH.eigenvalues k) : ℂ) *
-            (hH.eigenvectorUnitary : Matrix (Fin N) (Fin N) ℂ) i k)
+            (hH.eigenvectorUnitary : Matrix n n ℂ) i k)
           (star (fun i => (Real.sqrt (hH.eigenvalues k) : ℂ) *
-            (hH.eigenvectorUnitary : Matrix (Fin N) (Fin N) ℂ) i k)) := by
+            (hH.eigenvectorUnitary : Matrix n n ℂ) i k)) := by
   classical
-  set U : Matrix (Fin N) (Fin N) ℂ :=
-    (hH.eigenvectorUnitary : Matrix (Fin N) (Fin N) ℂ) with hU_def
-  set lams : Fin N → ℝ := hH.eigenvalues with hlams_def
-  set w : Fin N → Fin N → ℂ := fun k i =>
+  set U : Matrix n n ℂ :=
+    (hH.eigenvectorUnitary : Matrix n n ℂ) with hU_def
+  set lams : n → ℝ := hH.eigenvalues with hlams_def
+  set w : n → n → ℂ := fun k i =>
     (Real.sqrt (lams k) : ℂ) * U i k with hw_def
-  have hM_full : M = ∑ k : Fin N, Matrix.vecMulVec (w k) (star (w k)) := by
+  have hM_full : M = ∑ k : n, Matrix.vecMulVec (w k) (star (w k)) := by
     have hspec := hH.spectral_theorem
     rw [hspec, Unitary.conjStarAlgAut_apply]
     ext i j
     rw [Matrix.mul_apply, Matrix.sum_apply]
     have hLHS_expand :
-        ∑ p : Fin N,
-            ((U * Matrix.diagonal (RCLike.ofReal ∘ lams) : Matrix (Fin N) (Fin N) ℂ)
-              i p) * (star U : Matrix (Fin N) (Fin N) ℂ) p j =
-          ∑ k : Fin N, U i k * (lams k : ℂ) * star (U j k) := by
+        ∑ p : n,
+            ((U * Matrix.diagonal (RCLike.ofReal ∘ lams) : Matrix n n ℂ)
+              i p) * (star U : Matrix n n ℂ) p j =
+          ∑ k : n, U i k * (lams k : ℂ) * star (U j k) := by
       apply Finset.sum_congr rfl
       intro k _
       rw [Matrix.mul_diagonal]
@@ -87,40 +87,40 @@ lemma _root_.Matrix.IsHermitian.eq_sum_sqrt_eigenvalues_vecMulVec
     Compare `Matrix.posSemidef_iff_eq_sum_vecMulVec` (Mathlib) which only provides
     *some* `m` summands; here we pin the count to `Matrix.rank M`. -/
 theorem _root_.Matrix.PosSemidef.exists_eq_sum_vecMulVec
-    {N : ℕ} {M : Matrix (Fin N) (Fin N) ℂ} (hM : M.PosSemidef) :
-    ∃ (v : Fin (Matrix.rank M) → Fin N → ℂ),
+    {n : Type*} [Fintype n] {M : Matrix n n ℂ} (hM : M.PosSemidef) :
+    ∃ (v : Fin (Matrix.rank M) → n → ℂ),
       M = ∑ k, Matrix.vecMulVec (v k) (star (v k)) := by
   classical
   have hH : M.IsHermitian := hM.1
   -- Convenient aliases for the spectral data.
-  set U : Matrix (Fin N) (Fin N) ℂ :=
-    (hH.eigenvectorUnitary : Matrix (Fin N) (Fin N) ℂ) with hU_def
-  set lams : Fin N → ℝ := hH.eigenvalues with hlams_def
+  set U : Matrix n n ℂ :=
+    (hH.eigenvectorUnitary : Matrix n n ℂ) with hU_def
+  set lams : n → ℝ := hH.eigenvalues with hlams_def
   -- Scaled eigenvectors w k i = √(λ_k) * (k-th eigenvector at coord i).
-  set w : Fin N → Fin N → ℂ := fun k i =>
+  set w : n → n → ℂ := fun k i =>
     (Real.sqrt (lams k) : ℂ) * U i k with hw_def
   -- Step 1: M is the full sum of outer products of scaled eigenvectors.
-  have hM_full : M = ∑ k : Fin N, Matrix.vecMulVec (w k) (star (w k)) := by
+  have hM_full : M = ∑ k : n, Matrix.vecMulVec (w k) (star (w k)) := by
     simpa [hU_def, hlams_def, hw_def] using
       Matrix.IsHermitian.eq_sum_sqrt_eigenvalues_vecMulVec hH
         (fun k => by simpa [hlams_def] using hM.eigenvalues_nonneg k)
   -- Step 2: pin the count to rank M by reindexing through the nonzero-eigenvalue
   -- subtype.  When `λ_k = 0`, `w k = 0` so the summand vanishes.
-  have hcard : Matrix.rank M = Fintype.card {i : Fin N // lams i ≠ 0} :=
+  have hcard : Matrix.rank M = Fintype.card {i : n // lams i ≠ 0} :=
     hH.rank_eq_card_non_zero_eigs
-  let e : Fin (Matrix.rank M) ≃ {i : Fin N // lams i ≠ 0} :=
+  let e : Fin (Matrix.rank M) ≃ {i : n // lams i ≠ 0} :=
     (Fintype.equivFinOfCardEq hcard.symm).symm
   refine ⟨fun k => w (e k).val, ?_⟩
   conv_lhs => rw [hM_full]
   -- Restrict to nonzero-eigenvalue indices.
-  have hzero : ∀ k : Fin N, lams k = 0 →
+  have hzero : ∀ k : n, lams k = 0 →
       Matrix.vecMulVec (w k) (star (w k)) = 0 := by
     intro k hk
     ext i j
     simp [hw_def, Matrix.vecMulVec_apply, hk]
   have h_restrict :
-      (∑ k : Fin N, Matrix.vecMulVec (w k) (star (w k))) =
-        ∑ k ∈ Finset.univ.filter (fun i : Fin N => lams i ≠ 0),
+      (∑ k : n, Matrix.vecMulVec (w k) (star (w k))) =
+        ∑ k ∈ Finset.univ.filter (fun i : n => lams i ≠ 0),
           Matrix.vecMulVec (w k) (star (w k)) := by
     symm
     apply Finset.sum_filter_of_ne
@@ -129,9 +129,9 @@ theorem _root_.Matrix.PosSemidef.exists_eq_sum_vecMulVec
   rw [h_restrict]
   -- Convert filter sum to subtype sum, then reindex via `e`.
   have h_filter_iff :
-      ∀ x : Fin N, x ∈ Finset.univ.filter (fun i : Fin N => lams i ≠ 0) ↔ lams x ≠ 0 := by
+      ∀ x : n, x ∈ Finset.univ.filter (fun i : n => lams i ≠ 0) ↔ lams x ≠ 0 := by
     intro x; simp
-  rw [Finset.sum_subtype (s := Finset.univ.filter (fun i : Fin N => lams i ≠ 0))
+  rw [Finset.sum_subtype (s := Finset.univ.filter (fun i : n => lams i ≠ 0))
         h_filter_iff (fun k => Matrix.vecMulVec (w k) (star (w k)))]
   exact (Fintype.sum_equiv e _
     (fun p => Matrix.vecMulVec (w p.val) (star (w p.val))) (fun _ => rfl)).symm
