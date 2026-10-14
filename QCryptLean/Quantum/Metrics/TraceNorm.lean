@@ -117,6 +117,40 @@ theorem traceNorm_conjTranspose (A : Op X) : traceNorm Aᴴ = traceNorm A := by
   simp only [traceNorm, conjTranspose_conjTranspose]
   convert congrArg (fun f : X → ℝ => ∑ i, Real.sqrt (f i)) hv using 1
 
+/-- Equal column Gram matrices give equal trace norms. -/
+theorem traceNorm_eq_of_conjTranspose_mul_self_eq {A B : Op X} (h : Aᴴ * A = Bᴴ * B) :
+    traceNorm A = traceNorm B := by
+  simp only [traceNorm_eq_trace_sqrt, h]
+
+/-- Equal row Gram matrices give equal trace norms. -/
+theorem traceNorm_eq_of_mul_conjTranspose_self_eq {A B : Op X} (h : A * Aᴴ = B * Bᴴ) :
+    traceNorm A = traceNorm B := by
+  calc
+    traceNorm A = traceNorm Aᴴ := (traceNorm_conjTranspose A).symm
+    _ = traceNorm Bᴴ :=
+      traceNorm_eq_of_conjTranspose_mul_self_eq (by simpa using h)
+    _ = traceNorm B := traceNorm_conjTranspose B
+
+/-- Left multiplication by a unitary preserves the trace norm. -/
+theorem traceNorm_unitary_mul [DecidableEq X] {U : Matrix X X ℂ} (hU : U ∈ unitaryGroup X ℂ)
+    (A : Op X) : traceNorm (U * A) = traceNorm A := by
+  refine traceNorm_eq_of_conjTranspose_mul_self_eq ?_
+  have hUU : Uᴴ * U = 1 := Matrix.mem_unitaryGroup_iff'.mp hU
+  calc
+    (U * A)ᴴ * (U * A) = Aᴴ * (Uᴴ * U) * A := by
+      simp only [conjTranspose_mul, Matrix.mul_assoc]
+    _ = Aᴴ * A := by rw [hUU, Matrix.mul_one]
+
+/-- Right multiplication by a unitary preserves the trace norm. -/
+theorem traceNorm_mul_unitary [DecidableEq X] (A : Op X) {U : Matrix X X ℂ}
+    (hU : U ∈ unitaryGroup X ℂ) : traceNorm (A * U) = traceNorm A := by
+  refine traceNorm_eq_of_mul_conjTranspose_self_eq ?_
+  have hUU : U * Uᴴ = 1 := Matrix.mem_unitaryGroup_iff.mp hU
+  calc
+    (A * U) * (A * U)ᴴ = A * (U * Uᴴ) * Aᴴ := by
+      simp only [conjTranspose_mul, Matrix.mul_assoc]
+    _ = A * Aᴴ := by rw [hUU, Matrix.mul_one]
+
 /-- Two off-diagonal square blocks contribute additively to the trace norm. -/
 theorem traceNorm_fromBlocks_offDiagonal (A B : Op X) :
     traceNorm (fromBlocks 0 A B 0) = traceNorm A + traceNorm B := by

@@ -9,11 +9,13 @@ import QCryptLean.Quantum.Operators.BraKet
 import QCryptLean.Quantum.Operators.Purification
 
 /-!
-# Trace duality and rectangular purification overlaps
+# Trace-norm duality, Hölder inequalities, and rectangular purification overlaps
 
-Only this file's operator-norm bounds select `Matrix.Norms.L2Operator`, locally.
-The trace norm itself is the explicit singular-value function. Positive square
-roots use matrix star order. Frobenius instances in importing modules are unchanged.
+The trace norm of `A` is the maximum of `‖(W * A).trace‖` over the operator-norm unit
+ball, attained at a unitary; the two Hölder inequalities for products follow. Only
+this file's operator-norm bounds select `Matrix.Norms.L2Operator`, locally; the trace
+norm itself is the explicit singular-value function. Positive square roots use matrix
+star order. Frobenius instances in importing modules are unchanged.
 -/
 
 noncomputable section
@@ -50,6 +52,69 @@ theorem norm_trace_mul_le_opNorm_mul_traceNorm [DecidableEq X] (W A : Op X) :
       _ ≤ ‖W‖ * traceNorm A := by
         rw [← traceNorm_eq_trace_sqrt]
         exact mul_le_mul_of_nonneg_right hn (traceNorm_nonneg A)
+
+/-- Some unitary `U` makes the trace of `U * A` equal to the trace norm of `A`. -/
+theorem exists_unitary_trace_mul_eq_traceNorm [DecidableEq X] (A : Op X) :
+    ∃ U ∈ unitaryGroup X ℂ, (U * A).trace = (traceNorm A : ℂ) := by
+  obtain ⟨U, hU⟩ := Matrix.exists_unitary_mul_eq_sqrt_gram A
+  have hSqrt : (CFC.sqrt (Aᴴ * A)).PosSemidef := (CFC.sqrt_nonneg _).posSemidef
+  refine ⟨U.val, U.property, ?_⟩
+  calc
+    (U.val * A).trace = (CFC.sqrt (Aᴴ * A)).trace := by rw [hU]
+    _ = (traceNorm A : ℂ) := by
+      apply Complex.ext
+      · simpa using (traceNorm_eq_trace_sqrt A).symm
+      · simpa using (Complex.nonneg_iff.mp hSqrt.trace_nonneg).2.symm
+
+/-- The trace norm of `A` is the maximum of `‖(W * A).trace‖` over all `W` of operator norm at
+most one; the maximum is attained. -/
+theorem isGreatest_norm_trace_mul_traceNorm [DecidableEq X] (A : Op X) :
+    IsGreatest ((fun W : Op X => ‖(W * A).trace‖) '' {W : Op X | ‖W‖ ≤ 1})
+      (traceNorm A) := by
+  obtain ⟨U, hUmem, hUtrace⟩ := exists_unitary_trace_mul_eq_traceNorm A
+  have hUnorm : ‖U‖ ≤ 1 := by
+    have h1 : ‖(1 : Op X)‖ ≤ 1 := by
+      rw [Matrix.cstar_norm_def, map_one]
+      exact ContinuousLinearMap.norm_id_le
+    have h2 : ‖U‖ * ‖U‖ = ‖(1 : Op X)‖ := by
+      rw [← Matrix.l2_opNorm_conjTranspose_mul_self U, show Uᴴ * U = 1 from
+        Matrix.mem_unitaryGroup_iff'.mp hUmem]
+    exact (sq_le_sq₀ (norm_nonneg U) zero_le_one).mp
+      (by rw [sq, sq, h2, mul_one]; exact h1)
+  refine ⟨⟨U, hUnorm, ?_⟩, ?_⟩
+  · change ‖(U * A).trace‖ = traceNorm A
+    rw [hUtrace, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (traceNorm_nonneg A)]
+  · rintro y ⟨W, hW, rfl⟩
+    exact (norm_trace_mul_le_opNorm_mul_traceNorm W A).trans
+      (mul_le_of_le_one_left (traceNorm_nonneg A) hW)
+
+/-- Hölder's inequality: left multiplication scales the trace norm by at most the operator norm. -/
+theorem traceNorm_mul_le_opNorm_mul_traceNorm [DecidableEq X] (A B : Op X) :
+    traceNorm (A * B) ≤ ‖A‖ * traceNorm B := by
+  have hGreatest := isGreatest_norm_trace_mul_traceNorm (A * B)
+  have hUpper : ‖A‖ * traceNorm B ∈
+      upperBounds ((fun W : Op X => ‖(W * (A * B)).trace‖) '' {W : Op X | ‖W‖ ≤ 1}) := by
+    rintro y ⟨W, hW, rfl⟩
+    have hnorm : ‖W * A‖ ≤ ‖A‖ :=
+      (Matrix.l2_opNorm_mul W A).trans (mul_le_of_le_one_left (norm_nonneg A) hW)
+    calc
+      ‖(W * (A * B)).trace‖ = ‖((W * A) * B).trace‖ := by
+        rw [Matrix.mul_assoc]
+      _ ≤ ‖W * A‖ * traceNorm B := norm_trace_mul_le_opNorm_mul_traceNorm _ _
+      _ ≤ ‖A‖ * traceNorm B := mul_le_mul_of_nonneg_right hnorm (traceNorm_nonneg B)
+  exact (isLUB_le_iff hGreatest.isLUB).2 hUpper
+
+/-- Hölder's inequality: right multiplication scales the trace norm by at most
+the operator norm. -/
+theorem traceNorm_mul_le_traceNorm_mul_opNorm [DecidableEq X] (A B : Op X) :
+    traceNorm (A * B) ≤ traceNorm A * ‖B‖ := by
+  calc
+    traceNorm (A * B) = traceNorm (A * B)ᴴ := (traceNorm_conjTranspose (A * B)).symm
+    _ = traceNorm (Bᴴ * Aᴴ) := by rw [conjTranspose_mul]
+    _ ≤ ‖Bᴴ‖ * traceNorm Aᴴ := traceNorm_mul_le_opNorm_mul_traceNorm Bᴴ Aᴴ
+    _ = traceNorm A * ‖B‖ := by
+      rw [Matrix.l2_opNorm_conjTranspose, traceNorm_conjTranspose]
+      ring
 
 /-- Fidelity is the trace norm of the product of the positive square roots. -/
 theorem traceNorm_sqrt_mul_sqrt (A B : PosSemidefOp X) :
