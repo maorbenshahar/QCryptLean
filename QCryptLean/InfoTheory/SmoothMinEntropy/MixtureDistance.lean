@@ -17,7 +17,7 @@ open Matrix Quantum.Operators Quantum.Metrics
 open scoped ComplexOrder MatrixOrder
 open private InfoTheory.SmoothMinEntropy.le_sum_mul_add_sqrt_mul_of_forall_le
   from QCryptLean.InfoTheory.SmoothMinEntropy.Mixture.MixtureFloor
-variable {Q I : Type*} [Fintype Q] [Fintype I] [Nonempty Q]
+variable {Q I : Type*} [Fintype Q] [Fintype I]
 
 /-- Subconvex mixtures preserve any common purified-distance bound. -/
 theorem purifiedDistance_subconvex_mixture

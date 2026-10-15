@@ -55,7 +55,7 @@ theorem IsFeasible.extension {ρ : CQState C (Q × R)} {σ : SubDensityOp Q} {t 
   field_simp [Nat.cast_ne_zero.mpr (Fintype.card_ne_zero (α := R))]
 
 /-- A correlated register costs at most twice its base-two log dimension at the same radius. -/
-theorem smoothMinEntropy_le_extension_add [DecidableEq C] [Nonempty Q]
+theorem smoothMinEntropy_le_extension_add [DecidableEq C]
     (ρ : CQState C (Q × R)) (σ : SubDensityOp Q) (ε : ℝ) :
     smoothMinEntropy ε ρ.partialTraceRight σ ≤
       smoothMinEntropy ε ρ (σ.kronecker (DensityOp.maxMixed (X := R)).toSubDensityOp) +

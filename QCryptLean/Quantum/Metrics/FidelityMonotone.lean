@@ -22,7 +22,7 @@ open Matrix Quantum.Operators
 variable {X R : Type*} [Fintype X] [Fintype R]
 
 /-- Discarding a finite environment increases the fidelity of positive operators. -/
-theorem fidelity_le_partialTraceRight [Nonempty X]
+theorem fidelity_le_partialTraceRight
     (A B : PosSemidefOp (X × R)) :
     fidelity A B ≤ fidelity A.partialTraceRight B.partialTraceRight := by
   obtain ⟨w, hw, ho⟩ := exists_purification_overlap_re_eq_fidelity A B

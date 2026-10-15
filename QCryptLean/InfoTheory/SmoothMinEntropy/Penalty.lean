@@ -77,7 +77,7 @@ theorem smoothMinEntropy_le_tensorLeftKernel_add (ε : ℝ) (ρ : CQState C Q)
   simp only [CQState.tensorLeftKernel, SubDensityOp.kronecker, DensityOp.toSubDensityOp,
     smul_kronecker, kronecker_smul, smul_smul, Complex.ofReal_mul, mul_comm (c : ℂ)]
 
-omit [Nonempty C] in
+omit [Nonempty C] [Nonempty Q] in
 /-- A correlated extension costs at most twice the logarithm of the reference cardinality. -/
 theorem smoothMinEntropy_le_extension_add_of_partialTraceRight_eq
     (ρQR : CQState C (Q × R)) (ρ : CQState C Q) (σ : SubDensityOp Q)

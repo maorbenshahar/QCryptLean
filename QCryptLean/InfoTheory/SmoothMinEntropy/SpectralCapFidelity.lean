@@ -16,7 +16,7 @@ namespace InfoTheory.SmoothMinEntropy.SpectralCap
 open Matrix Quantum.Operators Quantum.Metrics
 open _root_.InfoTheory.SmoothMinEntropy.RankOneProjectiveBasis
 open scoped ComplexOrder MatrixOrder
-variable {Q : Type*} [Fintype Q] [DecidableEq Q] [Nonempty Q]
+variable {Q : Type*} [Fintype Q] [DecidableEq Q]
 
 /-- Spectral capping retains at least the capped trace as fidelity. -/
 theorem trace_block_le_fidelity (A σ : PosSemidefOp Q) {ell : ℝ} (hell : 0 ≤ ell) :

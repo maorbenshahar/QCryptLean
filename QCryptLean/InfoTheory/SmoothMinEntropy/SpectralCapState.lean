@@ -42,7 +42,7 @@ theorem cqState_trace_le [DecidableEq C] (ρ : CQState C Q) (σ : SubDensityOp Q
   exact Finset.sum_le_sum fun c _ => trace_block_le _ _ hell
 
 /-- The capped joint trace is a fidelity lower bound, including subnormalized input. -/
-theorem cqState_trace_le_fidelity [DecidableEq C] [Nonempty Q]
+theorem cqState_trace_le_fidelity [DecidableEq C]
     (ρ : CQState C Q) (σ : SubDensityOp Q) {ell : ℝ} (hell : 0 ≤ ell) :
     (cqState ρ σ ell hell).toJointDensity.trace ≤
       fidelity ρ.toJointDensity.toPosSemidefOp
@@ -54,7 +54,7 @@ theorem cqState_trace_le_fidelity [DecidableEq C] [Nonempty Q]
   exact Finset.sum_le_sum fun c _ => trace_block_le_fidelity _ _ hell
 
 /-- For a normalized input, the cap's trace deficit bounds its squared purified distance. -/
-theorem cqState_purifiedDistance_le [DecidableEq C] [Nonempty Q]
+theorem cqState_purifiedDistance_le [DecidableEq C]
     (ρ : CQState C Q) (hρ : ∑ c, (ρ.stateMap c).trace = 1) (σ : SubDensityOp Q)
     {ell : ℝ} (hell : 0 ≤ ell) :
     ρ.purifiedDistance (cqState ρ σ ell hell) ≤

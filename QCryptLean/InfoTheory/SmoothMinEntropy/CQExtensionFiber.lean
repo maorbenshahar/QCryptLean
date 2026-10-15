@@ -15,7 +15,7 @@ noncomputable section
 namespace InfoTheory.SmoothMinEntropy
 open Matrix Quantum.Operators Quantum.Metrics
 variable {C Q R : Type*} [Fintype C] [Fintype Q] [Fintype R]
-  [DecidableEq C] [Nonempty C] [Nonempty Q] [Nonempty R]
+  [DecidableEq C] [Nonempty C] [Nonempty R]
 
 omit [Nonempty C] in
 /-- Every target CQ marginal has a blockwise extension attaining its marginal distance. -/

@@ -21,7 +21,7 @@ variable {X R : Type*} [Fintype X] [Fintype R]
 
 /-- The overlap of live purification branches is bounded by ordinary fidelity.
 This uses the native rectangular-polar estimate. -/
-theorem SubDensityOp.livePurificationOverlap_norm_le_fidelity [Nonempty X]
+theorem SubDensityOp.livePurificationOverlap_norm_le_fidelity
     (ρ σ : SubDensityOp X) (v w : Ket (X × R))
     (hv : Matrix.partialTraceRight v.projector = ρ.toOp)
     (hw : Matrix.partialTraceRight w.projector = σ.toOp) :
@@ -29,7 +29,7 @@ theorem SubDensityOp.livePurificationOverlap_norm_le_fidelity [Nonempty X]
   exact norm_overlap_le_fidelity ρ.toPosSemidefOp σ.toPosSemidefOp v w hv hw
 
 /-- The real live-branch overlap bound follows from its complex norm bound. -/
-theorem SubDensityOp.livePurificationOverlap_re_le_fidelity [Nonempty X]
+theorem SubDensityOp.livePurificationOverlap_re_le_fidelity
     (ρ σ : SubDensityOp X) (v w : Ket (X × R))
     (hv : Matrix.partialTraceRight v.projector = ρ.toOp)
     (hw : Matrix.partialTraceRight w.projector = σ.toOp) :
