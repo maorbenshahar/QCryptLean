@@ -576,6 +576,7 @@ import QCryptLean.Quantum.Channels.RecordedConjugation
 import QCryptLean.Quantum.Channels.Recording
 import QCryptLean.Quantum.Channels.Separable
 import QCryptLean.Quantum.Channels.Stinespring
+import QCryptLean.Quantum.Channels.StinespringMinimal
 import QCryptLean.Quantum.Channels.SubchannelCompletion
 import QCryptLean.Quantum.Channels.SubstateExtraction
 import QCryptLean.Quantum.Channels.SupportedBound
